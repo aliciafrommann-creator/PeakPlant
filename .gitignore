@@ -21,6 +21,7 @@ public/*.mov
 public/*.webm
 !public/film-intimacy.mp4
 !public/film-wildness.mp4
+!public/film-distance.mp4
 
 # misc
 .DS_Store

@@ -45,6 +45,7 @@ const phases: { number: string; name: string; headline: string; body: string; im
     headline: 'The space between two people is not empty.',
     body: 'It holds everything that hasn\'t been said yet. Longing. Curiosity. The quiet awareness that someone else is in the room — and that they matter to you. This is where intimacy begins: in the silence before anything happens.',
     image: '/bw-grid-2.png',
+    video: '/film-distance.mp4',
   },
   {
     number: '02',
