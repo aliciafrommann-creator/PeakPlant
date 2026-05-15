@@ -53,6 +53,7 @@ const phases: { number: string; name: string; headline: string; body: string; im
     headline: 'To be seen is already an act of courage.',
     body: 'Presence is the moment you stop performing and start actually being there. Breath slowing. Shoulders softening. No script, no right answer. Just two people paying attention to each other — and choosing to stay.',
     image: '/scenery-1.jpg',
+    video: '/film-presence.mp4',
   },
   {
     number: '03',
