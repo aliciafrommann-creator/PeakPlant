@@ -94,29 +94,29 @@ function Product() {
   )
 }
 
-function SlidePanel({ src, caption }: { src: string; caption: string }) {
+function QuadPanel({ objectPosition, caption }: { objectPosition: string; caption: string }) {
   const [hovered, setHovered] = useState(false)
   return (
     <div
-      style={{ width: '25vw', height: '100%', flex: '0 0 25vw', position: 'relative', overflow: 'hidden', cursor: 'default' }}
+      style={{ position: 'relative', overflow: 'hidden', cursor: 'default' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <motion.img
-        src={src} alt={caption}
-        animate={{ filter: hovered ? 'grayscale(100%) brightness(0.45)' : 'grayscale(100%) brightness(0.75)' }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        src="/couples-bw.jpg" alt=""
+        animate={{ filter: hovered ? 'grayscale(100%) brightness(0.35)' : 'grayscale(100%) brightness(0.72)', scale: hovered ? 1.04 : 1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition, display: 'block' }}
       />
       <motion.div
         animate={{ opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}
       >
         <motion.p
-          animate={{ y: hovered ? 0 : 20 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: 'clamp(1.4rem, 2.2vw, 3rem)', fontWeight: 200, color: '#ffffff', fontFamily: PP, letterSpacing: '0.3em', lineHeight: 1, textTransform: 'uppercase' }}
+          animate={{ y: hovered ? 0 : 16 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          style={{ fontSize: 'clamp(1.2rem, 2vw, 2.2rem)', fontWeight: 200, color: '#ffffff', fontFamily: PP, letterSpacing: '0.35em', lineHeight: 1, textTransform: 'uppercase' }}
         >
           {caption}
         </motion.p>
@@ -125,18 +125,17 @@ function SlidePanel({ src, caption }: { src: string; caption: string }) {
   )
 }
 
-function HorizontalSlideshow() {
-  const photos = [
-    { src: '/couples-bw.jpg', caption: 'Warmth' },
-    { src: '/couples-joy.jpg', caption: 'Closeness' },
-    { src: '/couples-rain.jpg', caption: 'Tenderness' },
-    { src: '/alicia.jpg', caption: 'Presence' },
+function PhotoGrid() {
+  const quads = [
+    { objectPosition: '30% 20%', caption: 'Warmth' },
+    { objectPosition: '70% 20%', caption: 'Closeness' },
+    { objectPosition: '30% 80%', caption: 'Tenderness' },
+    { objectPosition: '70% 80%', caption: 'Presence' },
   ]
-
   return (
-    <div style={{ height: '100vh', display: 'flex', overflow: 'hidden' }}>
-      {photos.map((p, i) => (
-        <SlidePanel key={i} src={p.src} caption={p.caption} />
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '50vh 50vh' }}>
+      {quads.map((q, i) => (
+        <QuadPanel key={i} objectPosition={q.objectPosition} caption={q.caption} />
       ))}
     </div>
   )
@@ -226,7 +225,7 @@ export default function Home() {
       <Nav />
       <LogoHero />
       <Product />
-      <HorizontalSlideshow />
+      <PhotoGrid />
       <FullBleed />
       <Waitlist />
       <Footer />
