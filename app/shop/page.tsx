@@ -82,13 +82,13 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
   )
 }
 
-function ParallaxImage({ src, alt }: { src: string; alt: string }) {
+function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; alt: string; objectPosition?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   const y = useTransform(scrollYProgress, [0, 1], ['-8%', '8%'])
   return (
     <div ref={ref} style={{ overflow: 'hidden', width: '100%', height: '100%' }}>
-      <motion.img src={src} alt={alt} style={{ width: '100%', height: '115%', objectFit: 'cover', y }} />
+      <motion.img src={src} alt={alt} style={{ width: '100%', height: '120%', objectFit: 'cover', objectPosition, y }} />
     </div>
   )
 }
@@ -119,7 +119,7 @@ export default function ShopPage() {
           initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ aspectRatio: '3/4', background: '#f5f5f5', overflow: 'hidden' }}
         >
-          <ParallaxImage src="/product-hero.png" alt="PeakPlant packaging" />
+          <ParallaxImage src="/product-hero.png" alt="PeakPlant packaging" objectPosition="center 20%" />
         </motion.div>
 
         <motion.div

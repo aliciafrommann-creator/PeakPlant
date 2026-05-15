@@ -42,7 +42,7 @@ function Hero() {
   }
 
   return (
-    <section style={{ height: '100vh', backgroundColor: '#ffffff', display: 'grid', gridTemplateRows: '1fr 56vh', overflow: 'hidden' }}>
+    <section style={{ backgroundColor: '#ffffff', display: 'grid', gridTemplateRows: 'auto 72vh', overflow: 'hidden' }}>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
@@ -166,7 +166,7 @@ function Product() {
         </Link>
       </motion.div>
       <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1.6 }} viewport={{ once: true }} style={{ overflow: 'hidden' }}>
-        <img src="/product-hero.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img src="/product-hero.png" alt="" style={{ width: '100%', height: '120%', objectFit: 'cover', objectPosition: 'center 20%' }} />
       </motion.div>
     </section>
   )
