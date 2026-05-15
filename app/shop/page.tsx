@@ -156,7 +156,7 @@ export default function ShopPage() {
         <motion.div initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }} animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
           transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           style={{ aspectRatio: '3/4', background: '#f5f5f5', overflow: 'hidden' }}>
-          <ParallaxImage src="/bw-grid-2.png" alt="PeakPlant founding collection" objectPosition="center 20%" />
+          <ParallaxImage src="/couples-joy.jpg" alt="PeakPlant founding collection" objectPosition="center 40%" />
         </motion.div>
       </section>
 
