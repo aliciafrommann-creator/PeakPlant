@@ -23,6 +23,7 @@ public/*.webm
 !public/film-wildness.mp4
 !public/film-distance.mp4
 !public/film-presence.mp4
+!public/film-logo-transform.mp4
 
 # misc
 .DS_Store

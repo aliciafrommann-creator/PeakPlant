@@ -91,9 +91,9 @@ function Hero() {
       <motion.div
         initial={{ clipPath: 'inset(100% 0 0 0)' }} animate={{ clipPath: 'inset(0% 0 0 0)' }}
         transition={{ duration: 1.4, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        style={{ height: '65vh', overflow: 'hidden', margin: '0 40px' }}>
+        style={{ margin: '0 40px' }}>
         <video ref={videoRef} autoPlay muted playsInline loop
-          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', display: 'block' }}>
+          style={{ width: '100%', height: 'auto', display: 'block' }}>
           <source src="/film-wildness.mp4" type="video/mp4" />
           <source src="/film-presence.mp4" type="video/mp4" />
         </video>
@@ -240,6 +240,20 @@ function FullBleed() {
   )
 }
 
+function LogoTransform() {
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] })
+  const opacity = useTransform(scrollYProgress, [0, 0.4], [0, 1])
+  return (
+    <motion.section ref={ref} style={{ opacity, background: '#000', margin: '0 0 0' }}>
+      <video autoPlay muted playsInline loop
+        style={{ width: '100%', height: 'auto', display: 'block' }}>
+        <source src="/film-logo-transform.mp4" type="video/mp4" />
+      </video>
+    </motion.section>
+  )
+}
+
 function Waitlist() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
@@ -313,6 +327,7 @@ export default function Home() {
       <PhotoEssay />
       <Product />
       <FullBleed />
+      <LogoTransform />
       <Waitlist />
       <Footer />
     </main>
