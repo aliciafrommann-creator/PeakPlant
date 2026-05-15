@@ -119,7 +119,7 @@ export default function ShopPage() {
           initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ aspectRatio: '3/4', background: '#f5f5f5', overflow: 'hidden' }}
         >
-          <ParallaxImage src="/product-hero.jpg" alt="PeakPlant packaging" />
+          <ParallaxImage src="/product-hero.png" alt="PeakPlant packaging" />
         </motion.div>
 
         <motion.div
@@ -182,7 +182,7 @@ export default function ShopPage() {
           initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           style={{ aspectRatio: '1/1', background: '#f5f5f5', overflow: 'hidden' }}
         >
-          <ParallaxImage src="/product-detail.jpg" alt="PeakPlant detail" />
+          <ParallaxImage src="/product-detail.png" alt="PeakPlant detail" />
         </motion.div>
       </section>
 
