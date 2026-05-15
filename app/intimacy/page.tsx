@@ -44,21 +44,21 @@ const phases: { number: string; name: string; headline: string; body: string; im
     name: 'Distance',
     headline: 'The space between two people is not empty.',
     body: 'It holds everything that hasn\'t been said yet. Longing. Curiosity. The quiet awareness that someone else is in the room — and that they matter to you. This is where intimacy begins: in the silence before anything happens.',
-    image: '/intimacy-distance.jpg',
+    image: '/bw-grid-2.png',
   },
   {
     number: '02',
     name: 'Presence',
     headline: 'To be seen is already an act of courage.',
     body: 'Presence is the moment you stop performing and start actually being there. Breath slowing. Shoulders softening. No script, no right answer. Just two people paying attention to each other — and choosing to stay.',
-    image: '/intimacy-presence.jpg',
+    image: '/scenery-1.jpg',
   },
   {
     number: '03',
     name: 'Intimacy',
     headline: 'Closeness is something you build together.',
     body: 'Not a destination but a feeling — warm, unhurried, honest. Intimacy happens when safety and openness arrive in the same room at the same time. When vulnerability is not weakness, but the closest thing to freedom.',
-    image: '/intimacy-intimacy.jpg',
+    image: '/scenery-2.jpg',
     video: '/film-intimacy.mp4',
   },
   {
@@ -66,7 +66,7 @@ const phases: { number: string; name: string; headline: string; body: string; im
     name: 'Wildness',
     headline: 'Joy is allowed to be big.',
     body: 'Wildness is not chaos. It is full permission — to feel, to laugh, to cry, to move freely, to express what is alive in you. The best moments of connection are the ones where nothing had to be held back.',
-    image: '/intimacy-wildness.jpg',
+    image: '/scenery-3.jpg',
     video: '/film-wildness.mp4',
   },
 ]
