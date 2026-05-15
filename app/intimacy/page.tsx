@@ -150,9 +150,9 @@ export default function IntimacyPage() {
       {/* 2×2 photo grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '50vh 50vh' }}>
         {[
-          { bgPosition: '0% 0%',     caption: 'Distance' },
-          { bgPosition: '100% 0%',   caption: 'Presence' },
-          { bgPosition: '0% 100%',   caption: 'Intimacy' },
+          { bgPosition: '0% 0%',     caption: 'Softness' },
+          { bgPosition: '100% 0%',   caption: 'Safety' },
+          { bgPosition: '0% 100%',   caption: 'Openness' },
           { bgPosition: '100% 100%', caption: 'Wildness' },
         ].map((q, i) => <QuadPanel key={i} bgPosition={q.bgPosition} caption={q.caption} />)}
       </div>
