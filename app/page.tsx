@@ -66,26 +66,27 @@ function LogoHero() {
 }
 
 function Product() {
-  const lines = [
-    { label: true, text: 'WHAT WE MADE' },
-    { heading: true, text: 'Made for the moments\nthat stay with you.' },
-    { text: 'Thin, safe, and honest. On each of the six wrappers, a question — because the best moments always start with one.' },
-    { text: 'Everything else we made as good as we possibly could — so you can forget about it and enjoy the rest.' },
-  ]
   return (
-    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '80vh', backgroundColor: '#ffffff' }}>
+    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '80vh', backgroundColor: '#0a0a0a' }}>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '120px 80px' }}>
-        {lines.map((l, i) => (
-          <motion.div key={i}
-            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.1, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
-            {l.label && <p style={{ fontSize: 10, letterSpacing: '0.55em', color: '#1A1A1A', opacity: 0.38, marginBottom: 36, fontFamily: PP }}>{l.text}</p>}
-            {l.heading && <h2 style={{ fontSize: 'clamp(26px, 3vw, 42px)', fontWeight: 300, color: '#1A1A1A', lineHeight: 1.15, marginBottom: 32, letterSpacing: '-0.02em', fontFamily: PP, whiteSpace: 'pre-line' }}>{l.text}</h2>}
-            {!l.label && !l.heading && <p style={{ fontSize: 15, lineHeight: 1.85, color: '#1A1A1A', opacity: 0.55, fontWeight: 300, maxWidth: 360, marginBottom: 20, fontFamily: PP }}>{l.text}</p>}
-          </motion.div>
-        ))}
-        <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.45 }} viewport={{ once: true }}>
-          <Link href="/shop" style={{ alignSelf: 'flex-start', display: 'inline-block', marginTop: 28, fontSize: 10, letterSpacing: '0.45em', color: '#1A1A1A', opacity: 0.6, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.3)', paddingBottom: 4 }}>
+        <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
+          style={{ fontSize: 10, letterSpacing: '0.55em', color: '#ffffff', opacity: 0.35, marginBottom: 36, fontFamily: PP }}>
+          WHAT WE MADE
+        </motion.p>
+        <motion.h2 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
+          style={{ fontSize: 'clamp(32px, 3.8vw, 54px)', fontWeight: 200, color: '#ffffff', lineHeight: 1.12, marginBottom: 36, letterSpacing: '-0.03em', fontFamily: PP, whiteSpace: 'pre-line' }}>
+          {'Made for the moments\nthat stay with you.'}
+        </motion.h2>
+        <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
+          style={{ fontSize: 15, lineHeight: 1.85, color: '#ffffff', opacity: 0.5, fontWeight: 300, maxWidth: 360, marginBottom: 16, fontFamily: PP }}>
+          Thin, safe, and honest. On each of the six wrappers, a question — because the best moments always start with one.
+        </motion.p>
+        <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.28 }} viewport={{ once: true }}
+          style={{ fontSize: 15, lineHeight: 1.85, color: '#ffffff', opacity: 0.5, fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
+          Everything else we made as good as we possibly could — so you can forget about it and enjoy the rest.
+        </motion.p>
+        <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}>
+          <Link href="/shop" style={{ display: 'inline-block', marginTop: 36, fontSize: 10, letterSpacing: '0.45em', color: '#ffffff', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(255,255,255,0.25)', paddingBottom: 4 }}>
             SEE IT →
           </Link>
         </motion.div>
