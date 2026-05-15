@@ -100,10 +100,10 @@ export default function PhilosophyPage() {
           style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}
         >
           <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
-            For a long time, Alicia tied her self-worth to external performance — achievement, ambition, being enough. She was successful on the outside and not fully free on the inside. Through reflection, vulnerability work, and emotional honesty, she slowly began to understand how deeply the systems surrounding us shape our relationships, our intimacy, and our sense of worth.
+            For a long time, I tied my self-worth to external performance — achievement, ambition, being enough. I was successful on the outside and not fully free on the inside. Through reflection, vulnerability work, and emotional honesty, I slowly began to understand how deeply the systems surrounding us shape our relationships, our intimacy, and our sense of worth.
           </p>
           <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
-            The more she worked on her own mental models, the more intimacy changed too. It became safe, deep, growing — something built between two people rather than performed for each other. That transformation did not only affect romantic relationships. It changed friendships, communication, and the way she moved through the world itself.
+            The more I worked on my own mental models, the more intimacy changed too. It became safe, deep, growing — something built between two people rather than performed for each other. That transformation did not only affect romantic relationships. It changed friendships, communication, and the way I moved through the world itself.
           </p>
           <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
             PeakPlant exists because more people deserve to experience that kind of connection. Not the performance of it. The actual thing.
