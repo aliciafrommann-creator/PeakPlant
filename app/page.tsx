@@ -49,44 +49,56 @@ function Nav() {
   )
 }
 
-function LogoHero() {
+function CouplesHero() {
   return (
-    <section style={{ height: '100vh', paddingTop: '76px', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative', boxSizing: 'border-box' }}>
+    <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
       <video autoPlay muted playsInline loop
-        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}>
-        <source src="/film-logo-transform.mp4" type="video/mp4" />
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
+        <source src="/film-shadows.mp4" type="video/mp4" />
       </video>
-      <motion.p
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2, delay: 1.5 }}
-        style={{ position: 'absolute', bottom: '3.5rem', left: '50%', transform: 'translateX(-50%)', fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-        Scroll to explore
-      </motion.p>
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 35%, rgba(0,0,0,0.45) 100%)' }} />
+      <motion.div
+        initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+        style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}
+      >
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, delay: 0.2 }}
+          style={{ marginBottom: '1.5rem' }}>
+          <Logo color="#ffffff" size={36} />
+        </motion.div>
+        <p style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, marginBottom: '0.75rem' }}>
+          Grow where you feel most alive.
+        </p>
+        <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
+          Scroll to explore
+        </p>
+      </motion.div>
     </section>
   )
 }
 
 function Product() {
   return (
-    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '80vh', backgroundColor: '#0a0a0a' }}>
+    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '80vh', backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb' }}>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '120px 80px' }}>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
-          style={{ fontSize: 10, letterSpacing: '0.55em', color: '#ffffff', opacity: 0.35, marginBottom: 36, fontFamily: PP }}>
+          style={{ fontSize: 10, letterSpacing: '0.55em', color: '#1A1A1A', opacity: 0.35, marginBottom: 36, fontFamily: PP }}>
           WHAT WE MADE
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-          style={{ fontSize: 'clamp(32px, 3.8vw, 54px)', fontWeight: 200, color: '#ffffff', lineHeight: 1.12, marginBottom: 36, letterSpacing: '-0.03em', fontFamily: PP, whiteSpace: 'pre-line' }}>
+          style={{ fontSize: 'clamp(32px, 3.8vw, 54px)', fontWeight: 200, color: '#1A1A1A', lineHeight: 1.12, marginBottom: 36, letterSpacing: '-0.03em', fontFamily: PP, whiteSpace: 'pre-line' }}>
           {'Made for the moments\nthat stay with you.'}
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
-          style={{ fontSize: 15, lineHeight: 1.85, color: '#ffffff', opacity: 0.5, fontWeight: 300, maxWidth: 360, marginBottom: 16, fontFamily: PP }}>
+          style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 16, fontFamily: PP }}>
           Thin, safe, and honest. On each of the six wrappers, a question — because the best moments always start with one.
         </motion.p>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.28 }} viewport={{ once: true }}
-          style={{ fontSize: 15, lineHeight: 1.85, color: '#ffffff', opacity: 0.5, fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
+          style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
           Everything else we made as good as we possibly could — so you can forget about it and enjoy the rest.
         </motion.p>
         <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}>
-          <Link href="/shop" style={{ display: 'inline-block', marginTop: 36, fontSize: 10, letterSpacing: '0.45em', color: '#ffffff', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(255,255,255,0.25)', paddingBottom: 4 }}>
+          <Link href="/shop" style={{ display: 'inline-block', marginTop: 36, fontSize: 10, letterSpacing: '0.45em', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.25)', paddingBottom: 4 }}>
             SEE IT →
           </Link>
         </motion.div>
@@ -168,7 +180,7 @@ export default function Home() {
     <main style={{ backgroundColor: '#ffffff', fontFamily: PP }}>
       <ScrollBar />
       <Nav />
-      <LogoHero />
+      <CouplesHero />
       <Product />
       <Waitlist />
       <Footer />
