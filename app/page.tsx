@@ -98,20 +98,25 @@ function SlidePanel({ src, caption }: { src: string; caption: string }) {
   const [hovered, setHovered] = useState(false)
   return (
     <div
-      style={{ width: '100vw', height: '100%', flex: '0 0 100vw', position: 'relative', overflow: 'hidden' }}
+      style={{ width: '25vw', height: '100%', flex: '0 0 25vw', position: 'relative', overflow: 'hidden', cursor: 'default' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <img src={src} alt={caption} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      <motion.img
+        src={src} alt={caption}
+        animate={{ filter: hovered ? 'grayscale(100%) brightness(0.45)' : 'grayscale(100%) brightness(0.75)' }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
       <motion.div
         animate={{ opacity: hovered ? 1 : 0 }}
         transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
         style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}
       >
         <motion.p
-          animate={{ y: hovered ? 0 : 32 }}
-          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: 'clamp(5rem, 11vw, 10rem)', fontWeight: 200, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.04em', lineHeight: 1, mixBlendMode: 'difference' }}
+          animate={{ y: hovered ? 0 : 20 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          style={{ fontSize: 'clamp(1.4rem, 2.2vw, 3rem)', fontWeight: 200, color: '#ffffff', fontFamily: PP, letterSpacing: '0.3em', lineHeight: 1, textTransform: 'uppercase' }}
         >
           {caption}
         </motion.p>
@@ -122,24 +127,17 @@ function SlidePanel({ src, caption }: { src: string; caption: string }) {
 
 function HorizontalSlideshow() {
   const photos = [
-    { src: '/scenery-1.jpg', caption: 'WARMTH' },
-    { src: '/scenery-3.jpg', caption: 'CLOSENESS' },
-    { src: '/scenery-4.jpg', caption: 'TENDERNESS' },
-    { src: '/scenery-2.jpg', caption: 'PRESENCE' },
+    { src: '/couples-bw.jpg', caption: 'Warmth' },
+    { src: '/couples-joy.jpg', caption: 'Closeness' },
+    { src: '/couples-rain.jpg', caption: 'Tenderness' },
+    { src: '/alicia.jpg', caption: 'Presence' },
   ]
-  const containerRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] })
-  const x = useTransform(scrollYProgress, [0, 1], ['0vw', '-300vw'])
 
   return (
-    <div ref={containerRef} style={{ height: '400vh', position: 'relative' }}>
-      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}>
-        <motion.div style={{ display: 'flex', height: '100%', x, willChange: 'transform' }}>
-          {photos.map((p, i) => (
-            <SlidePanel key={i} src={p.src} caption={p.caption} />
-          ))}
-        </motion.div>
-      </div>
+    <div style={{ height: '100vh', display: 'flex', overflow: 'hidden' }}>
+      {photos.map((p, i) => (
+        <SlidePanel key={i} src={p.src} caption={p.caption} />
+      ))}
     </div>
   )
 }
