@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -20,6 +20,42 @@ function ParallaxImage({ src, alt }: { src: string; alt: string }) {
   return (
     <div ref={ref} style={{ overflow: 'hidden', width: '100%', height: '100%' }}>
       <motion.img src={src} alt={alt} style={{ width: '100%', height: '115%', objectFit: 'cover', y }} />
+    </div>
+  )
+}
+
+function QuadPanel({ bgPosition, caption }: { bgPosition: string; caption: string }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        position: 'relative', overflow: 'hidden', cursor: 'default',
+        backgroundImage: 'url(/couples-bw.jpg)',
+        backgroundSize: '200% 200%',
+        backgroundPosition: bgPosition,
+        filter: 'grayscale(1)',
+      }}
+    >
+      <motion.div
+        animate={{ opacity: hovered ? 0.55 : 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        style={{ position: 'absolute', inset: 0, background: '#000', pointerEvents: 'none' }}
+      />
+      <motion.div
+        animate={{ opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}
+      >
+        <motion.p
+          animate={{ y: hovered ? 0 : 16 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          style={{ fontSize: 'clamp(1.2rem, 2vw, 2.2rem)', fontWeight: 200, color: '#ffffff', fontFamily: PP, letterSpacing: '0.35em', lineHeight: 1, textTransform: 'uppercase' }}
+        >
+          {caption}
+        </motion.p>
+      </motion.div>
     </div>
   )
 }
@@ -110,6 +146,16 @@ export default function IntimacyPage() {
           </p>
         </motion.div>
       </section>
+
+      {/* 2×2 photo grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '50vh 50vh' }}>
+        {[
+          { bgPosition: '0% 0%',     caption: 'Distance' },
+          { bgPosition: '100% 0%',   caption: 'Presence' },
+          { bgPosition: '0% 100%',   caption: 'Intimacy' },
+          { bgPosition: '100% 100%', caption: 'Wildness' },
+        ].map((q, i) => <QuadPanel key={i} bgPosition={q.bgPosition} caption={q.caption} />)}
+      </div>
 
       <section style={{ paddingTop: '10rem', paddingBottom: '5rem', maxWidth: 800, margin: '0 auto', padding: '10rem 2.5rem 5rem' }}>
         <motion.p
