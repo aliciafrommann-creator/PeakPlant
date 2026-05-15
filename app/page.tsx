@@ -275,10 +275,10 @@ function Waitlist() {
           <Logo color="#ffffff" size={44} />
         </motion.div>
         <h2 style={{ marginTop: 36, fontSize: 'clamp(26px, 4vw, 48px)', fontWeight: 300, color: '#ffffff', lineHeight: 1.15, maxWidth: 560, margin: '36px auto 20px', fontFamily: PP, letterSpacing: '-0.02em' }}>
-          Be there when PeakPlant opens its doors.
+          First access to the founding collection.
         </h2>
         <p style={{ fontSize: 15, color: '#ffffff', opacity: 0.4, maxWidth: 400, margin: '0 auto 56px', lineHeight: 1.85, fontWeight: 300, fontFamily: PP }}>
-          We're launching soon and reaching out to our list first. Leave your email and you'll hear from us personally.
+          The first PeakPlant collection is limited. Leave your email and we'll reach out personally before anything goes public.
         </p>
         {status === 'success' ? (
           <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
