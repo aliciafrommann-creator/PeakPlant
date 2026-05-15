@@ -73,7 +73,7 @@ function Product() {
     { text: 'Everything else we made as good as we possibly could — so you can forget about it and enjoy the rest.' },
   ]
   return (
-    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '80vh', backgroundColor: '#F4F1EB' }}>
+    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '80vh', backgroundColor: '#ffffff' }}>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '120px 80px' }}>
         {lines.map((l, i) => (
           <motion.div key={i}
