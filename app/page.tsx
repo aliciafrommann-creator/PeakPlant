@@ -156,25 +156,11 @@ function CurtainImage({ src, height, delay = 0 }: { src: string; height: number;
 }
 
 function BWSection() {
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['-5%', '5%'])
-  return (
-    <motion.section ref={ref}
-      initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1.6 }} viewport={{ once: true }}
-      style={{ margin: '0 40px 100px', overflow: 'hidden' }}>
-      <motion.img src="/couples-bw.jpg" alt="" style={{ width: '100%', height: 'auto', display: 'block', y }} />
-    </motion.section>
-  )
-}
-
-function DiptychSection() {
   return (
     <motion.section
-      initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-      style={{ margin: '0 40px 180px', overflow: 'hidden' }}>
-      <img src="/couples-joy.jpg" alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />
+      initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
+      style={{ margin: '0 40px 100px' }}>
+      <img src="/couples-bw.jpg" alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />
     </motion.section>
   )
 }
@@ -231,9 +217,8 @@ function Product() {
 
       <motion.div
         initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }}
-        transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-        style={{ overflow: 'hidden' }}>
-        <img src="/couples-bw.jpg" alt="" style={{ width: '100%', height: '120%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+        transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
+        <img src="/couples-joy.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
       </motion.div>
     </section>
   )
@@ -327,7 +312,6 @@ export default function Home() {
       <BWSection />
       <PhotoEssay />
       <Product />
-      <DiptychSection />
       <FullBleed />
       <Waitlist />
       <Footer />
