@@ -116,7 +116,7 @@ function ParallaxImage({ src, height = 600 }: { src: string; height?: number }) 
 function BWGrid() {
   return (
     <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1.8 }} viewport={{ once: true }} style={{ margin: '0 40px 160px' }}>
-      <ParallaxImage src="/bw-grid.png" height={600} />
+      <img src="/bw-grid.png" alt="" style={{ width: '100%', display: 'block' }} />
     </motion.section>
   )
 }
