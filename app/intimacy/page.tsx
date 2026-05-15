@@ -90,6 +90,27 @@ export default function IntimacyPage() {
         </div>
       </nav>
 
+      {/* Cinematic hero */}
+      <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
+        <video autoPlay muted playsInline loop
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
+          <source src="/film-shadows.mp4" type="video/mp4" />
+        </video>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55) 100%)' }} />
+        <motion.div
+          initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+          style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}
+        >
+          <p style={{ fontFamily: PP, fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 600, marginBottom: '0.75rem' }}>
+            Intimacy is not a single moment.
+          </p>
+          <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase' }}>
+            Scroll to explore
+          </p>
+        </motion.div>
+      </section>
+
       <section style={{ paddingTop: '10rem', paddingBottom: '5rem', maxWidth: 800, margin: '0 auto', padding: '10rem 2.5rem 5rem' }}>
         <motion.p
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
