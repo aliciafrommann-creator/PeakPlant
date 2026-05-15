@@ -40,10 +40,13 @@ function Nav() {
         <Logo color="#1A1A1A" size={22} />
         <span style={{ color: '#1A1A1A', fontSize: 11, letterSpacing: '0.45em', fontFamily: PP, fontWeight: 400 }}>PEAKPLANT</span>
       </Link>
-      <div style={{ display: 'flex', gap: 36 }}>
+      <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
         {['Intimacy', 'Philosophy', 'Shop', 'Journal'].map(item => (
           <NavLink key={item} href={`/${item.toLowerCase()}`} label={item} />
         ))}
+        <Link href="/shop" style={{ fontFamily: PP, fontSize: 10, letterSpacing: '0.3em', color: '#ffffff', background: '#1A1A1A', padding: '9px 20px', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+          JOIN WAITLIST
+        </Link>
       </div>
     </nav>
   )
@@ -93,7 +96,7 @@ function Hero() {
         initial={{ clipPath: 'inset(100% 0 0 0)' }} animate={{ clipPath: 'inset(0% 0 0 0)' }}
         transition={{ duration: 1.4, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
         style={{ height: '50vh', overflow: 'hidden', margin: '0 40px' }}>
-        <video ref={videoRef} autoPlay muted playsInline loop
+        <video ref={videoRef} autoPlay muted playsInline loop poster="/hero-bg.png"
           style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}>
           <source src="/hero.mp4" type="video/mp4" />
         </video>
@@ -215,35 +218,6 @@ function Product() {
   )
 }
 
-function Questions() {
-  const qs = [
-    'When did you last feel fully yourself with someone?',
-    'What does it feel like to be really seen?',
-    'What does tenderness feel like to you?',
-    'When do you feel safe enough to let go?',
-    'What would you do if you weren\'t afraid?',
-    'What does wild mean to you?',
-  ]
-  return (
-    <section style={{ padding: '180px 40px' }}>
-      <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1 }} viewport={{ once: true }}
-        style={{ textAlign: 'center', fontSize: 10, letterSpacing: '0.55em', color: '#1A1A1A', opacity: 0.35, marginBottom: 80, fontFamily: PP }}>
-        SIX QUESTIONS. ONE FOR EACH.
-      </motion.p>
-      <div style={{ maxWidth: 760, margin: '0 auto' }}>
-        {qs.map((q, i) => (
-          <motion.div key={i}
-            initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-            style={{ padding: '28px 0', borderBottom: '1px solid rgba(26,26,26,0.07)', display: 'flex', gap: 40, alignItems: 'baseline' }}>
-            <span style={{ fontSize: 9, letterSpacing: '0.3em', color: '#1A1A1A', opacity: 0.25, minWidth: 24, fontFamily: PP }}>0{i + 1}</span>
-            <p style={{ fontSize: 'clamp(16px, 2vw, 22px)', fontWeight: 300, color: '#1A1A1A', fontStyle: 'italic', fontFamily: PP }}>{q}</p>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  )
-}
 
 function FullBleed() {
   const ref = useRef<HTMLDivElement>(null)
@@ -276,11 +250,11 @@ function Waitlist() {
         <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
           <Logo color="#ffffff" size={44} />
         </motion.div>
-        <h2 style={{ marginTop: 36, fontSize: 'clamp(26px, 4vw, 48px)', fontWeight: 300, color: '#ffffff', lineHeight: 1.15, maxWidth: 500, margin: '36px auto 20px', fontFamily: PP, letterSpacing: '-0.01em' }}>
-          Something good is coming.
+        <h2 style={{ marginTop: 36, fontSize: 'clamp(26px, 4vw, 48px)', fontWeight: 300, color: '#ffffff', lineHeight: 1.15, maxWidth: 560, margin: '36px auto 20px', fontFamily: PP, letterSpacing: '-0.02em' }}>
+          Be there when PeakPlant opens its doors.
         </h2>
-        <p style={{ fontSize: 15, color: '#ffffff', opacity: 0.4, maxWidth: 380, margin: '0 auto 56px', lineHeight: 1.85, fontWeight: 300, fontFamily: PP }}>
-          Leave your email and we'll reach out personally — before anything goes public.
+        <p style={{ fontSize: 15, color: '#ffffff', opacity: 0.4, maxWidth: 400, margin: '0 auto 56px', lineHeight: 1.85, fontWeight: 300, fontFamily: PP }}>
+          We're launching soon and reaching out to our list first. Leave your email and you'll hear from us personally.
         </p>
         {status === 'success' ? (
           <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
@@ -331,7 +305,6 @@ export default function Home() {
       <Manifesto />
       <PhotoEssay />
       <Product />
-      <Questions />
       <FullBleed />
       <Waitlist />
       <Footer />
