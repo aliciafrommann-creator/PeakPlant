@@ -88,7 +88,7 @@ const collections = [
     number: '01',
     name: 'The Founding Collection',
     tag: 'AVAILABLE SOON',
-    description: 'Six condoms. Six questions. One box designed for the evenings you will actually remember. Ultra-thin latex, silicone lubricant, and a question on every wrapper — because the best evenings always start with one.',
+    description: 'Six condoms. Six questions. One box designed for the moments you will actually remember. Ultra-thin latex, silicone lubricant, and a question on every wrapper — because the best moments always start with one.',
     note: 'The first PeakPlant collection. Limited.',
     available: true,
   },
@@ -104,7 +104,7 @@ const collections = [
     number: '03',
     name: 'Gift Giving',
     tag: 'COMING',
-    description: 'Designed to be given. The most thoughtful thing you can bring to an evening is presence — this box makes that intention visible.',
+    description: 'Designed to be given. The most thoughtful thing you can bring to a moment is presence — this box makes that intention visible.',
     note: 'Love Language Edition',
     available: false,
   },
@@ -142,7 +142,7 @@ export default function ShopPage() {
         <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
           <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem' }}>The Collections</p>
           <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '2rem' }}>
-            Not every evening.<br />The ones that stay with you.
+            Not every moment.<br />The ones that stay with you.
           </h1>
           <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', maxWidth: 440, marginBottom: '2.5rem' }}>
             PeakPlant is not a commodity. It is a collection — designed for specific moments, growing with the people who carry it. Each edition has its own intention. Start with one. Come back for the next.
@@ -213,7 +213,7 @@ export default function ShopPage() {
             Ultra-thin latex. Silicone lubricant. Clean, minimal packaging. A question on every wrapper.
           </p>
           <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555' }}>
-            Each box is a complete set — six evenings, six conversations. Designed to feel as good to hold as it does to open.
+            Each box is a complete set — six moments, six conversations. Designed to feel as good to hold as it does to open.
           </p>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}

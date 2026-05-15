@@ -74,7 +74,7 @@ const voices = [
 const whatYouGet = [
   {
     label: 'Events',
-    body: 'Real gatherings — not webinars. We host intimate evenings, pop-ups, and seasonal moments for people in the community. Think run club energy, but for the people who care about how they show up in relationships.',
+    body: 'Real gatherings — not webinars. We host intimate moments, pop-ups, and seasonal gatherings for people in the community. Think run club energy, but for the people who care about how they show up in relationships.',
   },
   {
     label: 'First access to new drops',
