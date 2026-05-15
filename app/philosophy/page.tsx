@@ -24,26 +24,26 @@ function ParallaxImage({ src, alt }: { src: string; alt: string }) {
   )
 }
 
-const pillars = [
+const beliefs = [
   {
     number: '01',
-    title: 'Honesty',
-    body: 'We say what we are. An intimacy brand. We make condoms — and we think that deserves to be said with warmth, not embarrassment.',
+    title: 'Softness is strength.',
+    body: 'Vulnerability does not make you weak. It makes you real. And realness is what creates actual connection — the kind that stays with you.',
   },
   {
     number: '02',
-    title: 'Softness',
-    body: 'Closeness is not a performance. It's a feeling. We design everything around that — the product, the packaging, the words on the wrapper.',
+    title: 'Presence over performance.',
+    body: 'Intimacy is not something to get right. It is a place you arrive at when both people feel safe enough to stop performing and start actually being there.',
   },
   {
     number: '03',
-    title: 'Wildness',
-    body: 'Being alive is extraordinary. Being close to someone you want to be close to is one of the best things about it. We celebrate that, fully.',
+    title: 'Wildness without safety is not freedom.',
+    body: 'True wildness — the kind that feels alive, not reckless — only becomes possible when psychological safety is already in the room.',
   },
   {
     number: '04',
-    title: 'Safety',
-    body: 'Real safety is not just physical. It's the feeling that you can be yourself. We hold both — the literal and the emotional — with equal care.',
+    title: 'Your worth is not earned.',
+    body: 'You do not have to perform to be worthy of love. You do not have to become more, look different, or get it right. You are already enough — and intimacy should feel that way.',
   },
 ]
 
@@ -51,7 +51,6 @@ export default function PhilosophyPage() {
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
 
-      {/* Nav */}
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '1.5rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)' }}>
         <Link href="/" style={{ textDecoration: 'none', color: '#1A1A1A' }}>
           <Logo size={32} />
@@ -65,7 +64,6 @@ export default function PhilosophyPage() {
         </div>
       </nav>
 
-      {/* Hero */}
       <section style={{ paddingTop: '10rem', paddingBottom: '6rem', maxWidth: 800, margin: '0 auto', padding: '10rem 2.5rem 6rem' }}>
         <motion.p
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
@@ -83,11 +81,10 @@ export default function PhilosophyPage() {
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
           style={{ fontSize: '1.15rem', lineHeight: 1.85, color: '#444', maxWidth: 620 }}
         >
-          Being close to someone is one of the best things about being alive. Not performing closeness — actually being there, with another person, in a way that feels real. PeakPlant exists to make that easier, more beautiful, and more honest.
+          We only have one life to live. And modern society keeps teaching us to spend it performing — for status, for desirability, for validation. PeakPlant exists to intervene in that system. We believe intimacy has the power to reconnect people: to themselves, to others, and to the emotional depth of being human.
         </motion.p>
       </section>
 
-      {/* Image break */}
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2.5rem 6rem', height: '55vh', overflow: 'hidden' }}>
         <motion.div
           initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
@@ -97,54 +94,81 @@ export default function PhilosophyPage() {
         </motion.div>
       </section>
 
-      {/* Body text */}
       <section style={{ maxWidth: 720, margin: '0 auto', padding: '0 2.5rem 7rem' }}>
         <motion.div
           initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}
         >
           <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
-            You do not have to perform to be worthy of love. You do not have to earn intimacy by being a certain way, wanting a certain thing, or knowing all the right moves. Intimacy is not a skill to master. It's a place you can arrive at — together — when both people feel safe enough to show up.
+            For a long time, Alicia tied her self-worth to external performance — achievement, ambition, being enough. She was successful on the outside and not fully free on the inside. Through reflection, vulnerability work, and emotional honesty, she slowly began to understand how deeply the systems surrounding us shape our relationships, our intimacy, and our sense of worth.
           </p>
           <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
-            PeakPlant started from a simple frustration: why does a product designed for one of the most tender moments of human life come wrapped in language that feels clinical, aggressive, or embarrassing? We wanted something different. Packaging you'd be comfortable leaving on a nightstand. Words that invite, not instruct.
+            The more she worked on her own mental models, the more intimacy changed too. It became safe, deep, growing — something built between two people rather than performed for each other. That transformation did not only affect romantic relationships. It changed friendships, communication, and the way she moved through the world itself.
           </p>
           <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
-            So we made it. And on each wrapper, a question — not because we think intimacy needs a script, but because the best evenings usually start with someone asking something real.
+            PeakPlant exists because more people deserve to experience that kind of connection. Not the performance of it. The actual thing.
+          </p>
+          <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
+            You do not have to perform to be worthy of love. That is not a slogan. It is the center of everything we build.
           </p>
         </motion.div>
       </section>
 
-      {/* Pillars */}
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '4rem' }}
         >
-          What we stand for
+          What we believe
         </motion.p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '3rem 5rem' }}>
-          {pillars.map((p, i) => (
+          {beliefs.map((b, i) => (
             <motion.div
-              key={p.number}
+              key={b.number}
               initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
             >
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '1rem' }}>{p.number}</p>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '0.85rem' }}>{p.title}</h3>
-              <p style={{ fontSize: '0.95rem', lineHeight: 1.75, color: '#555' }}>{p.body}</p>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '1rem' }}>{b.number}</p>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '0.85rem' }}>{b.title}</h3>
+              <p style={{ fontSize: '0.95rem', lineHeight: 1.75, color: '#555' }}>{b.body}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Closing line */}
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: '5rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1px', background: '#e8e8e8', border: '1px solid #e8e8e8' }}
+        >
+          {[
+            ['Before', 'After'],
+            ['Performance', 'Presence'],
+            ['External validation', 'Self-worth'],
+            ['Emotional armor', 'Vulnerability'],
+            ['Fear', 'Trust'],
+            ['Disconnection', 'Deep connection'],
+            ['Shame', 'Openness'],
+          ].map(([left, right], i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.06 }}
+              style={{ display: 'contents' }}
+            >
+              <div style={{ padding: '1.25rem 2rem', background: '#ffffff', fontSize: i === 0 ? '0.65rem' : '0.95rem', letterSpacing: i === 0 ? '0.15em' : 0, textTransform: i === 0 ? 'uppercase' : 'none', opacity: i === 0 ? 0.4 : 0.7, fontWeight: i === 0 ? 500 : 300 }}>{left}</div>
+              <div style={{ padding: '1.25rem 2rem', background: '#ffffff', fontSize: i === 0 ? '0.65rem' : '0.95rem', letterSpacing: i === 0 ? '0.15em' : 0, textTransform: i === 0 ? 'uppercase' : 'none', opacity: i === 0 ? 0.4 : 1, fontWeight: i === 0 ? 500 : 400 }}>{right}</div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </section>
+
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', textAlign: 'center' }}>
         <motion.p
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', fontWeight: 300, lineHeight: 1.45, maxWidth: 640, margin: '0 auto', letterSpacing: '-0.015em' }}
         >
-          Safe. Soft. Wild. — in that order, and at the same time.
+          Safe. Soft. Wild — in that order, and at the same time.
         </motion.p>
       </section>
 

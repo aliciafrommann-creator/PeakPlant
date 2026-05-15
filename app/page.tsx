@@ -84,9 +84,9 @@ function Manifesto() {
         Being close to someone is one of the best things about being alive.
       </motion.p>
       {[
-        'The warmth of someone who knows you. The ease of not having to explain yourself. The softness that comes when you feel completely safe — and the wildness that follows.',
-        'PeakPlant is made for all of it. For the quiet moments and the electric ones. For the evenings that start slowly and go somewhere unexpected.',
-        'We just wanted to make something honest. Something that belongs in those moments — and doesn\'t take you out of them.',
+        'Not performing closeness. Actually being there — soft, open, safe enough to fully let go. That is what we are building toward.',
+        'We live in systems that made intimacy feel like something to get right. Something to earn. PeakPlant exists to intervene in that. To make space for presence over performance — in the most human moments of all.',
+        'We made something honest. Something that belongs in those moments and doesn\'t take you out of them. Safe. Soft. Wild — in that order, and at the same time.',
       ].map((text, i) => (
         <motion.p
           key={i}
@@ -124,7 +124,7 @@ function BWGrid() {
 function PhotoEssay() {
   const photos = [
     { src: '/img-1.png', caption: 'WARMTH' },
-    { src: '/img-2.png', caption: 'FORM' },
+    { src: '/img-7.png', caption: 'FORM' },
     { src: '/img-4.png', caption: 'CLOSENESS' },
   ]
   return (
@@ -173,12 +173,12 @@ function Product() {
 
 function Questions() {
   const qs = [
-    'What does tenderness feel like to you?',
-    'When do you feel most yourself?',
-    'What makes you feel safe?',
+    'When did you last feel fully yourself with someone?',
     'What does it feel like to be really seen?',
-    'When did you last feel fully alive?',
-    'What does wild feel like for you?',
+    'What does tenderness feel like to you?',
+    'When do you feel safe enough to let go?',
+    'What would you do if you weren\'t afraid?',
+    'What does wild mean to you?',
   ]
   return (
     <section style={{ padding: '160px 40px' }}>

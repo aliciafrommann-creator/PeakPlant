@@ -20,7 +20,7 @@ const voices = [
     location: 'Berlin',
   },
   {
-    quote: 'The question on the wrapper was better than anything I could have thought to ask. It opened something we hadn\'t talked about in years.',
+    quote: 'The question on the wrapper opened something we hadn\'t talked about in years. Simple as that.',
     initials: 'J.K.',
     location: 'Amsterdam',
   },
@@ -35,12 +35,12 @@ const voices = [
     location: 'Zurich',
   },
   {
-    quote: 'It made us both laugh, then it made us both honest. That combination is rare.',
+    quote: 'It gave us language for something we\'d both been feeling but couldn\'t name. That\'s rare.',
     initials: 'T.B.',
     location: 'London',
   },
   {
-    quote: 'The packaging alone was worth it. Left it on the nightstand and felt good about it.',
+    quote: 'Leaving it on the nightstand and feeling good about it — that alone was worth it.',
     initials: 'R.F.',
     location: 'Paris',
   },
@@ -76,13 +76,13 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
       >
         {sent ? (
           <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, textAlign: 'center' }}>
-            You're on the list. We'll be in touch soon.
+            You're in. We'll be in touch soon.
           </p>
         ) : (
           <>
             <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>Join the community</p>
             <p style={{ fontFamily: PP, fontSize: '1rem', color: '#555', lineHeight: 1.7, marginBottom: '2rem' }}>
-              Be part of what PeakPlant is building — stories, conversations, early access.
+              Early access, The Letter, and a space for people who take intimacy seriously.
             </p>
             <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <input
@@ -110,7 +110,6 @@ export default function CommunityPage() {
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
 
-      {/* Nav */}
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '1.5rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)' }}>
         <Link href="/" style={{ textDecoration: 'none', color: '#1A1A1A' }}>
           <Logo size={32} />
@@ -124,7 +123,6 @@ export default function CommunityPage() {
         </div>
       </nav>
 
-      {/* Hero */}
       <section style={{ paddingTop: '10rem', paddingBottom: '5rem', maxWidth: 800, margin: '0 auto', padding: '10rem 2.5rem 5rem' }}>
         <motion.p
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
@@ -136,17 +134,16 @@ export default function CommunityPage() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '2.5rem' }}
         >
-          People who believe that closeness is worth celebrating.
+          A home for people who want deeper, softer, more conscious connection.
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-          style={{ fontSize: '1.1rem', lineHeight: 1.8, color: '#555', maxWidth: 560 }}
+          style={{ fontSize: '1.1rem', lineHeight: 1.8, color: '#555', maxWidth: 580 }}
         >
-          PeakPlant is more than a product. It's a gathering place for people who take intimacy seriously — as something worth paying attention to, talking about, and doing well.
+          PeakPlant is not built through advertising. It grows through emotional resonance, founder truth, and shared vulnerability. The goal is not only to create customers — it is to create a cultural shift around intimacy, presence, and what it means to be fully yourself with another person.
         </motion.p>
       </section>
 
-      {/* Voices */}
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
@@ -176,18 +173,17 @@ export default function CommunityPage() {
         </div>
       </section>
 
-      {/* What to expect */}
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'start' }}>
           <motion.div
             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
-            <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem' }}>What you'll get</p>
+            <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem' }}>What you become part of</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
               {[
                 ['Early access', 'Be the first to experience new products, editions, and collaborations before anyone else.'],
-                ['The Letter', 'A monthly piece about intimacy, desire, connection, and everything that lives in between.'],
-                ['Community conversations', 'A private space for people who want to talk about closeness without performance or pretence.'],
+                ['The Letter', 'A monthly piece about intimacy, emotional safety, and the systems that shape how we love. Personal, slow, and honest — like a letter from a friend who thinks deeply.'],
+                ['Conversations', 'A private space for people who want to talk about closeness without performance or pretence. Reflection, not advice. Depth, not noise.'],
               ].map(([title, body]) => (
                 <div key={title} style={{ paddingTop: '1.5rem', borderTop: '1px solid #e8e8e8' }}>
                   <h3 style={{ fontSize: '1rem', fontWeight: 500, marginBottom: '0.6rem' }}>{title}</h3>
@@ -202,10 +198,10 @@ export default function CommunityPage() {
             style={{ padding: '3rem', border: '1px solid #1A1A1A', display: 'flex', flexDirection: 'column', gap: '2rem' }}
           >
             <h2 style={{ fontSize: '1.5rem', fontWeight: 300, lineHeight: 1.3, letterSpacing: '-0.015em' }}>
-              Grow where you feel most alive.
+              People do not stay because of products alone. They stay because they feel seen.
             </h2>
             <p style={{ fontSize: '0.95rem', lineHeight: 1.75, color: '#555' }}>
-              Join a community built around the belief that intimacy is one of the most important parts of a life well lived.
+              PeakPlant community is for people who crave depth — who are tired of performative culture and want intimacy, communication, and emotional honesty to be normal.
             </p>
             <button
               onClick={() => setModalOpen(true)}

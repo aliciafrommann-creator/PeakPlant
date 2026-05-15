@@ -14,57 +14,57 @@ function Logo({ size = 28 }: { size?: number }) {
 
 const posts = [
   {
-    slug: 'on-asking-better-questions',
-    category: 'Connection',
-    title: 'On asking better questions.',
-    excerpt: 'The question you ask someone at the beginning of an evening shapes everything that comes after it. A small experiment in curiosity.',
+    slug: 'performance-entered-intimacy',
+    category: 'Vulnerability',
+    title: 'Performance entered intimacy.',
+    excerpt: 'We learned to optimize everything — our productivity, our appearance, our feeds. At some point, without noticing, we started optimizing our relationships too. This is about what that costs us.',
     date: 'May 2025',
-    readTime: '4 min',
+    readTime: '5 min',
     image: '/journal-01.jpg',
   },
   {
-    slug: 'the-case-for-slowness',
-    category: 'Presence',
-    title: 'The case for slowness.',
-    excerpt: 'We have been trained to move fast. But the best moments of closeness tend to happen in the gaps — the pauses, the silences, the in-betweens.',
-    date: 'April 2025',
-    readTime: '5 min',
+    slug: 'the-systems-behind-disconnection',
+    category: 'Systems Thinking',
+    title: 'The systems behind disconnected intimacy.',
+    excerpt: 'Disconnected intimacy is not a personal failure. It is a symptom — created by larger systems: social media, dating apps, performance culture, emotional illiteracy. Understanding the system changes everything.',
+    date: 'May 2025',
+    readTime: '7 min',
     image: '/journal-02.jpg',
   },
   {
-    slug: 'what-safety-actually-feels-like',
-    category: 'Safety',
-    title: 'What safety actually feels like.',
-    excerpt: 'Physical safety is table stakes. Emotional safety is harder to name — but you know it when it's there. And you know it when it isn't.',
+    slug: 'the-case-for-slowness',
+    category: 'Embodiment',
+    title: 'The case for slowness.',
+    excerpt: 'The best moments of closeness tend to happen in the gaps — the pauses, the silences, the in-betweens. We have been trained to move fast. This is a case for not doing that.',
     date: 'April 2025',
-    readTime: '6 min',
+    readTime: '4 min',
     image: '/journal-03.jpg',
   },
   {
-    slug: 'desire-is-not-a-problem-to-solve',
-    category: 'Wildness',
-    title: 'Desire is not a problem to solve.',
-    excerpt: 'We spend a lot of time managing desire, explaining it, contextualising it. What if we just let it be what it is?',
-    date: 'March 2025',
-    readTime: '4 min',
+    slug: 'what-emotional-safety-feels-like',
+    category: 'Relationships',
+    title: 'What emotional safety actually feels like.',
+    excerpt: 'It is not the absence of conflict. It is the presence of trust — the knowledge that you can be yourself without risking the relationship. Once you feel it, you understand why everything else is harder without it.',
+    date: 'April 2025',
+    readTime: '5 min',
     image: '/journal-04.jpg',
   },
   {
-    slug: 'the-intimacy-of-small-things',
-    category: 'Tenderness',
-    title: 'The intimacy of small things.',
-    excerpt: 'The way someone makes coffee. The specific weight of their hand. How they laugh when something genuinely catches them off guard.',
+    slug: 'you-are-allowed-to-be-fully-alive',
+    category: 'Aliveness',
+    title: 'You are allowed to be fully alive.',
+    excerpt: 'Not performing aliveness. Not optimizing for it. Just feeling it — the warmth, the electricity, the strangeness and privilege of being a person who can feel things. This is what PeakPlant is really about.',
     date: 'March 2025',
-    readTime: '3 min',
+    readTime: '4 min',
     image: '/journal-05.jpg',
   },
   {
-    slug: 'packaging-and-what-it-signals',
+    slug: 'why-the-wrapper-has-a-question',
     category: 'Design',
-    title: 'Packaging and what it signals.',
-    excerpt: 'We spent a long time thinking about what a box says before you open it. Here's what we learned.',
-    date: 'February 2025',
-    readTime: '5 min',
+    title: 'Why the wrapper has a question on it.',
+    excerpt: 'A product designed for one of the most tender moments in human life — and most of the time it comes in packaging that feels clinical, aggressive, or just awkward. We wanted to make something different.',
+    date: 'March 2025',
+    readTime: '3 min',
     image: '/journal-06.jpg',
   },
 ]
@@ -75,7 +75,6 @@ export default function JournalPage() {
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
 
-      {/* Nav */}
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '1.5rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)' }}>
         <Link href="/" style={{ textDecoration: 'none', color: '#1A1A1A' }}>
           <Logo size={32} />
@@ -89,7 +88,6 @@ export default function JournalPage() {
         </div>
       </nav>
 
-      {/* Header */}
       <section style={{ paddingTop: '9rem', paddingBottom: '4rem', maxWidth: 1100, margin: '0 auto', padding: '9rem 2.5rem 4rem' }}>
         <motion.p
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
@@ -101,11 +99,10 @@ export default function JournalPage() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em' }}
         >
-          On closeness, desire, and everything in between.
+          On vulnerability, systems, and the courage to feel.
         </motion.h1>
       </section>
 
-      {/* Featured post */}
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2.5rem 5rem', borderBottom: '1px solid #e8e8e8' }}>
         <motion.div
           initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
@@ -128,7 +125,6 @@ export default function JournalPage() {
         </motion.div>
       </section>
 
-      {/* Grid */}
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '5rem 2.5rem' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '3rem 2.5rem' }}>
           {rest.map((post, i) => (
