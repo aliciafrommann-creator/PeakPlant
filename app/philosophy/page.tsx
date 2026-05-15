@@ -173,16 +173,7 @@ export default function PhilosophyPage() {
         </section>
       ))}
 
-      <section style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2.5rem 6rem', height: '55vh', overflow: 'hidden' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ width: '100%', height: '100%' }}
-        >
-          <ParallaxImage src="/bw-grid-2.png" alt="Natural light, soft textures" />
-        </motion.div>
-      </section>
-
-      <section style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2.5rem 7rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '7rem', alignItems: 'start' }}>
+      <section style={{ maxWidth: 1100, margin: '0 auto', padding: '6rem 2.5rem 7rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '7rem', alignItems: 'start', borderTop: '1px solid #e8e8e8' }}>
         <motion.div
           initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }} whileInView={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }} viewport={{ once: true }}
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
@@ -192,8 +183,7 @@ export default function PhilosophyPage() {
             <img src="/alicia.jpg" alt="Alicia Frommann" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', filter: 'grayscale(100%)' }} />
           </div>
           <div style={{ marginTop: '1.5rem' }}>
-            <p style={{ fontSize: '1rem', fontWeight: 400, letterSpacing: '-0.01em', color: '#1A1A1A' }}>Alicia Frommann</p>
-            <p style={{ fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase', opacity: 0.4, marginTop: '0.25rem' }}>Founder, PeakPlant</p>
+            <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4 }}>Our story</p>
           </div>
         </motion.div>
 
