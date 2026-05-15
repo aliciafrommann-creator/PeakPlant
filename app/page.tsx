@@ -64,7 +64,7 @@ function Hero() {
         animate={{ opacity: 1 }}
         transition={{ duration: 2.4, delay: 0.7 }}
         style={{ overflow: 'hidden', width: '100%' }}>
-        <video ref={videoRef} autoPlay muted playsInline loop style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}>
+        <video ref={videoRef} autoPlay muted playsInline loop style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}>
           <source src="/hero.mp4" type="video/mp4" />
         </video>
       </motion.div>
