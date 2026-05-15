@@ -96,9 +96,10 @@ function Hero() {
         initial={{ clipPath: 'inset(100% 0 0 0)' }} animate={{ clipPath: 'inset(0% 0 0 0)' }}
         transition={{ duration: 1.4, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
         style={{ height: '65vh', overflow: 'hidden', margin: '0 40px' }}>
-        <video ref={videoRef} autoPlay muted playsInline loop poster="/hero-bg.png"
-          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}>
-          <source src="/hero.mp4" type="video/mp4" />
+        <video ref={videoRef} autoPlay muted playsInline loop
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center', display: 'block' }}>
+          <source src="/film-wildness.mp4" type="video/mp4" />
+          <source src="/film-presence.mp4" type="video/mp4" />
         </video>
       </motion.div>
     </section>

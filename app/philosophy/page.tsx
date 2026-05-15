@@ -174,22 +174,39 @@ export default function PhilosophyPage() {
         </motion.div>
       </section>
 
-      <section style={{ maxWidth: 720, margin: '0 auto', padding: '0 2.5rem 7rem', display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
-        {[
-          'For a long time, I tied my self-worth to external performance — achievement, ambition, being enough. I was successful on the outside and not fully free on the inside. Through reflection, vulnerability work, and emotional honesty, I slowly began to understand how deeply the systems surrounding us shape our relationships, our intimacy, and our sense of worth.',
-          'The more I worked on my own mental models, the more intimacy changed too. It became safe, deep, growing — something built between two people rather than performed for each other. That transformation did not only affect romantic relationships. It changed friendships, communication, and the way I moved through the world itself.',
-          'PeakPlant exists because more people deserve to experience that kind of connection. Not the performance of it. The actual thing.',
-          'You do not have to perform to be worthy of love. That is not a slogan. It is the center of everything we build.',
-        ].map((text, i) => (
-          <motion.p
-            key={i}
-            initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.9, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-            style={{ fontSize: '1.05rem', lineHeight: 1.85, color: i === 3 ? '#1A1A1A' : '#444', fontWeight: i === 3 ? 400 : 300 }}
-          >
-            {text}
-          </motion.p>
-        ))}
+      <section style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2.5rem 7rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '7rem', alignItems: 'start' }}>
+        <motion.div
+          initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }} whileInView={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }} viewport={{ once: true }}
+          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+          style={{ position: 'sticky', top: '8rem' }}
+        >
+          <div style={{ aspectRatio: '3/4', overflow: 'hidden', background: '#f0f0f0' }}>
+            <img src="/alicia.jpg" alt="Alicia Frommann" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', filter: 'grayscale(100%)' }} />
+          </div>
+          <div style={{ marginTop: '1.5rem' }}>
+            <p style={{ fontSize: '1rem', fontWeight: 400, letterSpacing: '-0.01em', color: '#1A1A1A' }}>Alicia Frommann</p>
+            <p style={{ fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase', opacity: 0.4, marginTop: '0.25rem' }}>Founder, PeakPlant</p>
+          </div>
+        </motion.div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem', paddingTop: '0.5rem' }}>
+          {[
+            'For a long time, I tied my self-worth to external performance — achievement, ambition, being enough. I was successful on the outside and not fully free on the inside. Through reflection, vulnerability work, and emotional honesty, I slowly began to understand how deeply the systems surrounding us shape our relationships, our intimacy, and our sense of worth.',
+            'I studied systems thinking — how feedback loops, mental models, and cultural architecture shape behavior at scale. What I realized is that loneliness and emotional disconnection are not personal failures. They are systemic outcomes. The systems we live inside — social media, productivity culture, dating apps, performance norms — were not designed to help us feel emotionally safe. They were designed to make us feel not enough.',
+            'The more I worked on my own mental models, the more intimacy changed too. It became safe, deep, growing — something built between two people rather than performed for each other. That transformation did not only affect romantic relationships. It changed friendships, communication, and the way I moved through the world itself.',
+            'PeakPlant exists because more people deserve to experience that kind of connection. Not the performance of it. The actual thing.',
+            'You do not have to perform to be worthy of love. That is not a slogan. It is the center of everything we build.',
+          ].map((text, i) => (
+            <motion.p
+              key={i}
+              initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ duration: 0.9, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              style={{ fontSize: '1.05rem', lineHeight: 1.85, color: i === 4 ? '#1A1A1A' : '#444', fontWeight: i === 4 ? 400 : 300 }}
+            >
+              {text}
+            </motion.p>
+          ))}
+        </div>
       </section>
 
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>

@@ -62,13 +62,11 @@ function JoinModal({ onClose }: { onClose: () => void }) {
   )
 }
 
-const voices = [
-  { quote: 'I gave one to my partner before our anniversary dinner. We ended up talking for three hours before we even got to the restaurant.', initials: 'L.M.', location: 'Berlin' },
-  { quote: 'The question on the wrapper opened something we hadn\'t talked about in years. Simple as that.', initials: 'J.K.', location: 'Amsterdam' },
-  { quote: 'Finally something that doesn\'t feel clinical. Like someone thought about the whole evening, not just the product.', initials: 'S.R.', location: 'Vienna' },
-  { quote: 'We keep the wrappers. There\'s something about them — the question stays in the room.', initials: 'A.W.', location: 'Zurich' },
-  { quote: 'It gave us language for something we\'d both been feeling but couldn\'t name. That\'s rare.', initials: 'T.B.', location: 'London' },
-  { quote: 'Leaving it on the nightstand and feeling good about it — that alone was worth it.', initials: 'R.F.', location: 'Paris' },
+const communityValues = [
+  { label: 'Emotional honesty over performance', body: 'This is a space for people who are done pretending. The conversations here are real — about relationships, vulnerability, and what it actually takes to feel connected.' },
+  { label: 'Depth, not content', body: 'We are not building a feed. We are building slow, intentional touchpoints — events, letters, questions — that leave something behind.' },
+  { label: 'Warmth over exclusivity', body: 'The community is small on purpose. Not because it is elite. Because intimacy does not scale. You cannot have depth at volume.' },
+  { label: 'Becoming, not performing', body: 'Nobody here has it figured out. We are all exploring this together — what safety feels like, what wildness means, what kind of love we want to build.' },
 ]
 
 const whatYouGet = [
@@ -152,21 +150,17 @@ export default function CommunityPage() {
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '4rem' }}>
-          What people are saying
+          What this community believes
         </motion.p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2.5rem' }}>
-          {voices.map((v, i) => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '3rem 5rem' }}>
+          {communityValues.map((v, i) => (
             <motion.div key={i}
               initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              style={{ padding: '2rem', border: '1px solid #e8e8e8', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <p style={{ fontSize: '1rem', lineHeight: 1.75, fontWeight: 300, fontStyle: 'italic', color: '#333', flexGrow: 1 }}>"{v.quote}"</p>
-              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                <div style={{ width: 32, height: 32, borderRadius: '50%', background: '#1A1A1A', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ color: '#fff', fontSize: '0.65rem', letterSpacing: '0.05em' }}>{v.initials}</span>
-                </div>
-                <p style={{ fontSize: '0.75rem', letterSpacing: '0.08em', opacity: 0.55 }}>{v.location}</p>
-              </div>
+              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={{ y: -4 }} style={{ cursor: 'default' }}>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '1rem' }}>0{i + 1}</p>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '0.85rem', lineHeight: 1.3 }}>{v.label}</h3>
+              <p style={{ fontSize: '0.95rem', lineHeight: 1.75, color: '#555' }}>{v.body}</p>
             </motion.div>
           ))}
         </div>
