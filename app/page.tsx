@@ -124,9 +124,9 @@ function BWGrid() {
 function PhotoEssay() {
   const photos = [
     { src: '/scenery-1.jpg', caption: 'WARMTH', height: 520 },
+    { src: '/scenery-3.jpg', caption: 'CLOSENESS', height: 400 },
+    { src: '/scenery-4.jpg', caption: 'TENDERNESS', height: 520 },
     { src: '/scenery-2.jpg', caption: 'PRESENCE', height: 400 },
-    { src: '/scenery-3.jpg', caption: 'CLOSENESS', height: 520 },
-    { src: '/scenery-4.jpg', caption: 'TENDERNESS', height: 400 },
   ]
   return (
     <section style={{ padding: '0 40px 160px' }}>
