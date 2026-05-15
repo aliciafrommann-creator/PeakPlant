@@ -51,9 +51,9 @@ function Nav() {
 
 function LogoHero() {
   return (
-    <section style={{ height: '100vh', background: '#000', overflow: 'hidden', position: 'relative' }}>
+    <section style={{ height: '100vh', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
       <video autoPlay muted playsInline loop
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
+        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}>
         <source src="/film-logo-transform.mp4" type="video/mp4" />
       </video>
     </section>
