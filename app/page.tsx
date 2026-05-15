@@ -41,7 +41,7 @@ function Nav() {
         <Logo color="#1A1A1A" size={28} />
       </Link>
       <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
-        {['Home', 'Intimacy', 'Philosophy', 'Shop', 'Journal', 'Community'].map(item => (
+        {['Home', 'Intimacy', 'Philosophy', 'About', 'Shop', 'Journal', 'Community'].map(item => (
           <NavLink key={item} href={item === 'Home' ? '/' : `/${item.toLowerCase()}`} label={item} />
         ))}
       </div>
@@ -79,7 +79,7 @@ function CouplesHero() {
 
 function Product() {
   return (
-    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '80vh', backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb' }}>
+    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '80vh', backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb', borderBottom: '1px solid #ebebeb' }}>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '120px 80px' }}>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
           style={{ fontSize: 10, letterSpacing: '0.55em', color: '#1A1A1A', opacity: 0.35, marginBottom: 36, fontFamily: PP }}>

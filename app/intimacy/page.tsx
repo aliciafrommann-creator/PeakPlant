@@ -125,7 +125,7 @@ export default function IntimacyPage() {
           <Logo size={32} />
         </Link>
         <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
-          {[['/', 'Home'], ['/intimacy', 'Intimacy'], ['/philosophy', 'Philosophy'], ['/shop', 'Shop'], ['/journal', 'Journal'], ['/community', 'Community']].map(([href, label]) => (
+          {[['/', 'Home'], ['/intimacy', 'Intimacy'], ['/philosophy', 'Philosophy'], ['/about', 'About'], ['/shop', 'Shop'], ['/journal', 'Journal'], ['/community', 'Community']].map(([href, label]) => (
             <Link key={href} href={href} style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', color: '#1A1A1A', opacity: href === '/intimacy' ? 1 : 0.5 }}>
               {label}
             </Link>
@@ -171,7 +171,7 @@ export default function IntimacyPage() {
           initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
           style={{ fontSize: '1.1rem', lineHeight: 1.8, color: '#555', maxWidth: 580 }}
         >
-          It is a landscape. You move through it at your own pace — from the quiet electricity of distance, through the courage of presence, into connection, and out into freedom. Every phase is worth being in.
+          It is a landscape. You move through it at your own pace — from the quiet electricity of becoming aware of each other, through the courage of presence, into connection, and out into freedom. Every phase is worth being in.
         </motion.p>
       </section>
 

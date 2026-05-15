@@ -47,10 +47,10 @@ function TransformRow({ before, after, index }: { before: string; after: string;
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
-function Logo({ size = 28 }: { size?: number }) {
+function Logo({ size = 28, color = '#1A1A1A' }: { size?: number; color?: string }) {
   return (
     <svg width={size} height={size * 0.75} viewBox="0 0 48 38" fill="none">
-      <path d="M4 34 L24 4 L44 34" stroke="#1A1A1A" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 34 L24 4 L44 34" stroke={color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -139,7 +139,7 @@ export default function CommunityPage() {
       <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '1.5rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)' }}>
         <Link href="/" style={{ textDecoration: 'none', color: '#1A1A1A' }}><Logo size={32} /></Link>
         <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
-          {[['/', 'Home'], ['/intimacy', 'Intimacy'], ['/philosophy', 'Philosophy'], ['/shop', 'Shop'], ['/journal', 'Journal'], ['/community', 'Community']].map(([href, label]) => (
+          {[['/', 'Home'], ['/intimacy', 'Intimacy'], ['/philosophy', 'Philosophy'], ['/about', 'About'], ['/shop', 'Shop'], ['/journal', 'Journal'], ['/community', 'Community']].map(([href, label]) => (
             <Link key={href} href={href} style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', color: '#1A1A1A', opacity: 0.5 }}>
               {label}
             </Link>
@@ -199,6 +199,10 @@ export default function CommunityPage() {
 
       {/* Before / After */}
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '5rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
+        <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+          style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '1rem' }}>
+          What this community transforms
+        </motion.p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 60px 1fr', padding: '0 1rem 1rem', marginBottom: '0.25rem' }}>
           <p style={{ fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.3, fontFamily: PP }}>Before</p>
           <div />
@@ -233,7 +237,7 @@ export default function CommunityPage() {
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '8rem 2.5rem', textAlign: 'center', background: '#1A1A1A' }}>
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ maxWidth: 580, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2.5rem' }}>
-          <Logo size={40} />
+          <Logo size={40} color="#ffffff" />
           <p style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 300, lineHeight: 1.45, letterSpacing: '-0.015em', color: '#ffffff' }}>
             The community is small on purpose. There are no ads, no algorithm, no noise. Just people who want to do this differently.
           </p>
