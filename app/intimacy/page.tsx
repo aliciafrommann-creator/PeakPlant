@@ -67,6 +67,7 @@ const phases: { number: string; name: string; headline: string; body: string; im
     headline: 'Joy is allowed to be big.',
     body: 'Wildness is not chaos. It is full permission — to feel, to laugh, to cry, to move freely, to express what is alive in you. The best moments of connection are the ones where nothing had to be held back.',
     image: '/intimacy-wildness.jpg',
+    video: '/film-wildness.mp4',
   },
 ]
 
