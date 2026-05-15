@@ -109,7 +109,10 @@ export default function CommunityPage() {
       <section style={{ padding: '8rem 5rem 6rem', maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
         <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src="/brand-flowers.png" alt="PeakPlant" style={{ width: '100%', maxWidth: 480, objectFit: 'contain', display: 'block' }} />
+          <video autoPlay muted playsInline loop
+            style={{ width: '100%', maxWidth: 480, objectFit: 'contain', display: 'block' }}>
+            <source src="/film-logo-transform.mp4" type="video/mp4" />
+          </video>
         </motion.div>
         <div>
           <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
