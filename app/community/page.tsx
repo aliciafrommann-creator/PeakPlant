@@ -106,24 +106,30 @@ export default function CommunityPage() {
       </nav>
 
       {/* Hero */}
-      <section style={{ padding: '10rem 2.5rem 7rem', maxWidth: 800, margin: '0 auto' }}>
-        <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
-          style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem' }}>
-          Community
-        </motion.p>
-        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '2.5rem' }}>
-          For people who take connection seriously.
-        </motion.h1>
-        <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-          style={{ fontSize: '1.1rem', lineHeight: 1.8, color: '#555', maxWidth: 580, marginBottom: '3rem' }}>
-          PeakPlant community is not a newsletter or a feed — it is a group of people who show up in real life and build something together. We run workshops, host talks, partner with cafes and local communities, and create moments where the conversations that matter actually happen.
-        </motion.p>
-        <motion.button initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.35 }}
-          onClick={() => setModalOpen(true)}
-          style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-          Join the inner circle
-        </motion.button>
+      <section style={{ padding: '8rem 5rem 6rem', maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
+        <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img src="/brand-flowers.png" alt="PeakPlant" style={{ width: '100%', maxWidth: 480, objectFit: 'contain', display: 'block' }} />
+        </motion.div>
+        <div>
+          <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
+            style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem' }}>
+            Community
+          </motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            style={{ fontSize: 'clamp(2rem, 3.5vw, 3.2rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '2.5rem' }}>
+            For people who take connection seriously.
+          </motion.h1>
+          <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+            style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', marginBottom: '3rem' }}>
+            PeakPlant community is not a newsletter or a feed — it is a group of people who show up in real life and build something together. We run workshops, host talks, partner with cafes and local communities, and create moments where the conversations that matter actually happen.
+          </motion.p>
+          <motion.button initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.35 }}
+            onClick={() => setModalOpen(true)}
+            style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
+            Join the inner circle
+          </motion.button>
+        </div>
       </section>
 
       {/* What you get */}
