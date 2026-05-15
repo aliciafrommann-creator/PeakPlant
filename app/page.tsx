@@ -51,11 +51,16 @@ function Nav() {
 
 function LogoHero() {
   return (
-    <section style={{ height: '100vh', background: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+    <section style={{ height: '100vh', background: '#0a0a0a', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
       <video autoPlay muted playsInline loop
         style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}>
         <source src="/film-logo-transform.mp4" type="video/mp4" />
       </video>
+      <motion.p
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2, delay: 1.5 }}
+        style={{ position: 'absolute', bottom: '3.5rem', left: '50%', transform: 'translateX(-50%)', fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+        Scroll to explore
+      </motion.p>
     </section>
   )
 }
