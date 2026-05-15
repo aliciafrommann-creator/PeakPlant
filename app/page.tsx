@@ -20,15 +20,16 @@ function ScrollBar() {
   )
 }
 
-function NavLink({ href, label }: { href: string; label: string }) {
+function NavLink({ href, label, light }: { href: string; label: string; light?: boolean }) {
   const [hov, setHov] = useState(false)
+  const c = light ? '#ffffff' : '#1A1A1A'
   return (
     <Link href={href}
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ position: 'relative', color: '#1A1A1A', fontSize: 10, letterSpacing: '0.35em', fontFamily: PP, textDecoration: 'none', opacity: 0.45, paddingBottom: 3 }}>
+      style={{ position: 'relative', color: c, fontSize: 10, letterSpacing: '0.35em', fontFamily: PP, textDecoration: 'none', opacity: 0.55, paddingBottom: 3 }}>
       {label.toUpperCase()}
       <motion.span animate={{ scaleX: hov ? 1 : 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '0.5px', background: '#1A1A1A', transformOrigin: 'left', display: 'block' }} />
+        style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '0.5px', background: c, transformOrigin: 'left', display: 'block' }} />
     </Link>
   )
 }
@@ -48,143 +49,13 @@ function Nav() {
   )
 }
 
-function WordReveal({ text, delay = 0, style }: { text: string; delay?: number; style?: React.CSSProperties }) {
+function LogoHero() {
   return (
-    <span style={{ ...style, display: 'block' }}>
-      {text.split(' ').map((word, i) => (
-        <span key={i} style={{ overflow: 'hidden', display: 'inline-block', verticalAlign: 'bottom' }}>
-          <motion.span
-            initial={{ y: '110%' }} animate={{ y: 0 }}
-            transition={{ duration: 0.9, delay: delay + i * 0.07, ease: [0.16, 1, 0.3, 1] }}
-            style={{ display: 'inline-block' }}>
-            {word}{i < text.split(' ').length - 1 ? ' ' : ''}
-          </motion.span>
-        </span>
-      ))}
-    </span>
-  )
-}
-
-function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const replay = () => { const v = videoRef.current; if (!v) return; v.currentTime = 0; v.play() }
-
-  return (
-    <section style={{ backgroundColor: '#ffffff', overflow: 'hidden' }}>
-      <motion.div
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }}
-        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '88px 40px 28px', gap: 18 }}>
-        <motion.div onMouseEnter={replay} title="Replay" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}
-          initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}>
-          <Logo color="#1A1A1A" size={84} />
-          <span style={{ fontSize: 12, letterSpacing: '0.62em', color: '#1A1A1A', fontFamily: PP, fontWeight: 300 }}>PEAKPLANT</span>
-        </motion.div>
-        <WordReveal text="Grow where you feel most alive."
-          delay={0.5}
-          style={{ fontSize: 17, fontStyle: 'italic', fontWeight: 300, color: '#1A1A1A', opacity: 0.62, letterSpacing: '0.12em', fontFamily: PP }} />
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.4, delay: 1.1 }}
-          style={{ fontSize: 9, letterSpacing: '0.62em', color: '#1A1A1A', opacity: 0.28, fontFamily: PP }}>
-          SAFE.&nbsp;&nbsp;&nbsp;SOFT.&nbsp;&nbsp;&nbsp;WILD.
-        </motion.p>
-      </motion.div>
-
-      <motion.div
-        initial={{ clipPath: 'inset(100% 0 0 0)' }} animate={{ clipPath: 'inset(0% 0 0 0)' }}
-        transition={{ duration: 1.4, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        style={{ margin: '0 40px' }}>
-        <video ref={videoRef} autoPlay muted playsInline loop
-          style={{ width: '100%', height: 'auto', display: 'block' }}>
-          <source src="/film-wildness.mp4" type="video/mp4" />
-          <source src="/film-presence.mp4" type="video/mp4" />
-        </video>
-      </motion.div>
-    </section>
-  )
-}
-
-function Manifesto() {
-  return (
-    <section style={{ padding: '180px 40px', maxWidth: 680, margin: '0 auto' }}>
-      <div style={{ overflow: 'hidden', marginBottom: 56 }}>
-        <motion.p
-          initial={{ y: 60, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-          style={{ fontSize: 'clamp(28px, 4vw, 46px)', fontWeight: 300, color: '#1A1A1A', lineHeight: 1.15, letterSpacing: '-0.02em', fontFamily: PP, fontStyle: 'italic' }}>
-          Being close to someone is one of the best things about being alive.
-        </motion.p>
-      </div>
-
-      <motion.div
-        initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        style={{ height: 1, background: '#1A1A1A', opacity: 0.08, marginBottom: 48, transformOrigin: 'left' }}
-      />
-
-      {[
-        'Not performing closeness. Actually being there — soft, open, safe enough to fully let go. That is what we are building toward.',
-        'We live in systems that made intimacy feel like something to get right. Something to earn. PeakPlant exists to intervene in that. To make space for presence over performance — in the most human moments of all.',
-        'We made something honest. Something that belongs in those moments and does not take you out of them. Safe. Soft. Wild — in that order, and at the same time.',
-      ].map((text, i) => (
-        <motion.p key={i}
-          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-          style={{ fontSize: 16, lineHeight: 1.9, color: '#1A1A1A', opacity: 0.58, fontWeight: 300, marginBottom: 28, fontFamily: PP }}>
-          {text}
-        </motion.p>
-      ))}
-    </section>
-  )
-}
-
-function CurtainImage({ src, height, delay = 0 }: { src: string; height: number; delay?: number }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['-7%', '7%'])
-  const [hov, setHov] = useState(false)
-  return (
-    <motion.div ref={ref}
-      initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }}
-      transition={{ duration: 1.1, delay, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-      style={{ height, overflow: 'hidden', position: 'relative', cursor: 'pointer' }}
-      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}>
-      <motion.img src={src} alt="" style={{ width: '100%', height: '114%', objectFit: 'cover', display: 'block', y }}
-        animate={{ scale: hov ? 1.04 : 1 }} transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }} />
-      <motion.div animate={{ opacity: hov ? 0.08 : 0 }} transition={{ duration: 0.5 }}
-        style={{ position: 'absolute', inset: 0, background: '#000' }} />
-    </motion.div>
-  )
-}
-
-function BWSection() {
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-      style={{ margin: '0 40px 100px' }}>
-      <img src="/couples-bw.jpg" alt="" style={{ width: '100%', height: 'auto', display: 'block' }} />
-    </motion.section>
-  )
-}
-
-function PhotoEssay() {
-  const photos = [
-    { src: '/scenery-1.jpg', caption: 'WARMTH', height: 520 },
-    { src: '/scenery-3.jpg', caption: 'CLOSENESS', height: 400 },
-    { src: '/scenery-4.jpg', caption: 'TENDERNESS', height: 520 },
-    { src: '/scenery-2.jpg', caption: 'PRESENCE', height: 400 },
-  ]
-  return (
-    <section style={{ padding: '0 40px 180px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10, alignItems: 'end' }}>
-        {photos.map((p, i) => (
-          <div key={i}>
-            <CurtainImage src={p.src} height={p.height} delay={i * 0.1} />
-            <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1, delay: i * 0.1 + 0.5 }} viewport={{ once: true }}
-              style={{ marginTop: 10, fontSize: 9, letterSpacing: '0.5em', color: '#1A1A1A', opacity: 0.35, fontFamily: PP }}>
-              {p.caption}
-            </motion.p>
-          </div>
-        ))}
-      </div>
+    <section style={{ height: '100vh', background: '#000', overflow: 'hidden', position: 'relative' }}>
+      <video autoPlay muted playsInline loop
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
+        <source src="/film-logo-transform.mp4" type="video/mp4" />
+      </video>
     </section>
   )
 }
@@ -214,7 +85,6 @@ function Product() {
           </Link>
         </motion.div>
       </div>
-
       <motion.div
         initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }}
         transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
@@ -224,6 +94,55 @@ function Product() {
   )
 }
 
+function SlidePanel({ src, caption }: { src: string; caption: string }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <div
+      style={{ width: '100vw', height: '100%', flex: '0 0 100vw', position: 'relative', overflow: 'hidden' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <img src={src} alt={caption} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      <motion.div
+        animate={{ opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}
+      >
+        <motion.p
+          animate={{ y: hovered ? 0 : 32 }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          style={{ fontSize: 'clamp(5rem, 11vw, 10rem)', fontWeight: 200, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.04em', lineHeight: 1, mixBlendMode: 'difference' }}
+        >
+          {caption}
+        </motion.p>
+      </motion.div>
+    </div>
+  )
+}
+
+function HorizontalSlideshow() {
+  const photos = [
+    { src: '/scenery-1.jpg', caption: 'WARMTH' },
+    { src: '/scenery-3.jpg', caption: 'CLOSENESS' },
+    { src: '/scenery-4.jpg', caption: 'TENDERNESS' },
+    { src: '/scenery-2.jpg', caption: 'PRESENCE' },
+  ]
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] })
+  const x = useTransform(scrollYProgress, [0, 1], ['0vw', '-300vw'])
+
+  return (
+    <div ref={containerRef} style={{ height: '400vh', position: 'relative' }}>
+      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden' }}>
+        <motion.div style={{ display: 'flex', height: '100%', x, willChange: 'transform' }}>
+          {photos.map((p, i) => (
+            <SlidePanel key={i} src={p.src} caption={p.caption} />
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  )
+}
 
 function FullBleed() {
   const ref = useRef<HTMLDivElement>(null)
@@ -236,20 +155,6 @@ function FullBleed() {
       style={{ margin: '0 0 180px', height: '70vh', overflow: 'hidden', position: 'relative' }}>
       <motion.img src="/hero-bg.png" alt=""
         style={{ width: '100%', height: '124%', objectFit: 'cover', display: 'block', y, position: 'absolute', top: 0, left: 0 }} />
-    </motion.section>
-  )
-}
-
-function LogoTransform() {
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] })
-  const opacity = useTransform(scrollYProgress, [0, 0.4], [0, 1])
-  return (
-    <motion.section ref={ref} style={{ opacity, background: '#000', margin: '0 0 0' }}>
-      <video autoPlay muted playsInline loop
-        style={{ width: '100%', height: 'auto', display: 'block' }}>
-        <source src="/film-logo-transform.mp4" type="video/mp4" />
-      </video>
     </motion.section>
   )
 }
@@ -321,13 +226,10 @@ export default function Home() {
     <main style={{ backgroundColor: '#ffffff', fontFamily: PP }}>
       <ScrollBar />
       <Nav />
-      <Hero />
-      <Manifesto />
-      <BWSection />
-      <PhotoEssay />
+      <LogoHero />
       <Product />
+      <HorizontalSlideshow />
       <FullBleed />
-      <LogoTransform />
       <Waitlist />
       <Footer />
     </main>

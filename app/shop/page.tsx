@@ -172,7 +172,7 @@ export default function ShopPage() {
         <motion.div initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }} animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
           transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
           style={{ aspectRatio: '3/4', background: '#f5f5f5', overflow: 'hidden' }}>
-          <ParallaxImage src="/couples-joy.jpg" alt="PeakPlant founding collection" objectPosition="center 40%" />
+          <ParallaxImage src="/product-box.jpg" alt="PeakPlant founding collection" objectPosition="center center" />
         </motion.div>
       </section>
 
@@ -216,6 +216,29 @@ export default function ShopPage() {
             </motion.div>
           ))}
         </div>
+      </section>
+
+      {/* Wildness film */}
+      <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
+        <video autoPlay muted playsInline loop
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
+          <source src="/film-wildness.mp4" type="video/mp4" />
+        </video>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}>
+          <p style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.025em', lineHeight: 1.2, maxWidth: 560, marginBottom: '2.5rem' }}>
+            Not just a product.<br />A decision to feel.
+          </p>
+          <button
+            style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            onClick={() => setModalOpen(true)}>
+            Reserve yours →
+          </button>
+        </motion.div>
       </section>
 
       {/* Wrapper Questions */}
