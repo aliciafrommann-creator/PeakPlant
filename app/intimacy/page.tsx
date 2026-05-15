@@ -24,7 +24,7 @@ function ParallaxImage({ src, alt }: { src: string; alt: string }) {
   )
 }
 
-function QuadPanel({ bgPosition, caption }: { bgPosition: string; caption: string }) {
+function QuadPanel({ bgPosition, title, body }: { bgPosition: string; title: string; body: string }) {
   const [hovered, setHovered] = useState(false)
   return (
     <div
@@ -39,21 +39,28 @@ function QuadPanel({ bgPosition, caption }: { bgPosition: string; caption: strin
       }}
     >
       <motion.div
-        animate={{ opacity: hovered ? 0.55 : 0 }}
+        animate={{ opacity: hovered ? 0.62 : 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         style={{ position: 'absolute', inset: 0, background: '#000', pointerEvents: 'none' }}
       />
       <motion.div
         animate={{ opacity: hovered ? 1 : 0 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}
+        style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2.5rem', textAlign: 'center', pointerEvents: 'none' }}
       >
         <motion.p
-          animate={{ y: hovered ? 0 : 16 }}
+          animate={{ y: hovered ? 0 : 20 }}
           transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: 'clamp(1.2rem, 2vw, 2.2rem)', fontWeight: 200, color: '#ffffff', fontFamily: PP, letterSpacing: '0.35em', lineHeight: 1, textTransform: 'uppercase' }}
+          style={{ fontSize: 'clamp(1rem, 1.6vw, 1.5rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '1rem' }}
         >
-          {caption}
+          {title}
+        </motion.p>
+        <motion.p
+          animate={{ y: hovered ? 0 : 24 }}
+          transition={{ duration: 0.5, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+          style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', fontWeight: 300, color: 'rgba(255,255,255,0.75)', fontFamily: PP, lineHeight: 1.65, maxWidth: 280 }}
+        >
+          {body}
         </motion.p>
       </motion.div>
     </div>
@@ -150,11 +157,11 @@ export default function IntimacyPage() {
       {/* 2×2 photo grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '50vh 50vh' }}>
         {[
-          { bgPosition: '0% 0%',     caption: 'Softness' },
-          { bgPosition: '100% 0%',   caption: 'Safety' },
-          { bgPosition: '0% 100%',   caption: 'Openness' },
-          { bgPosition: '100% 100%', caption: 'Wildness' },
-        ].map((q, i) => <QuadPanel key={i} bgPosition={q.bgPosition} caption={q.caption} />)}
+          { bgPosition: '0% 0%',     title: 'Softness is strength.',                      body: 'Vulnerability does not make you weak. It makes you real. And realness is what creates actual connection — the kind that stays with you.' },
+          { bgPosition: '100% 0%',   title: 'Presence over performance.',                 body: 'Intimacy is not something to get right. It is a place you arrive at when both people feel safe enough to stop performing and start actually being there.' },
+          { bgPosition: '0% 100%',   title: 'Wildness without safety is not freedom.',    body: 'True wildness — the kind that feels alive, not reckless — only becomes possible when psychological safety is already in the room.' },
+          { bgPosition: '100% 100%', title: 'Your worth is not earned.',                  body: 'You do not have to perform to be worthy of love. You are already enough — and intimacy should feel that way.' },
+        ].map((q, i) => <QuadPanel key={i} bgPosition={q.bgPosition} title={q.title} body={q.body} />)}
       </div>
 
       <section style={{ paddingTop: '10rem', paddingBottom: '5rem', maxWidth: 800, margin: '0 auto', padding: '10rem 2.5rem 5rem' }}>

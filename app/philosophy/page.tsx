@@ -104,28 +104,6 @@ function TransformTable() {
   )
 }
 
-const beliefs = [
-  {
-    number: '01',
-    title: 'Softness is strength.',
-    body: 'Vulnerability does not make you weak. It makes you real. And realness is what creates actual connection — the kind that stays with you.',
-  },
-  {
-    number: '02',
-    title: 'Presence over performance.',
-    body: 'Intimacy is not something to get right. It is a place you arrive at when both people feel safe enough to stop performing and start actually being there.',
-  },
-  {
-    number: '03',
-    title: 'Wildness without safety is not freedom.',
-    body: 'True wildness — the kind that feels alive, not reckless — only becomes possible when psychological safety is already in the room.',
-  },
-  {
-    number: '04',
-    title: 'Your worth is not earned.',
-    body: 'You do not have to perform to be worthy of love. You do not have to become more, look different, or get it right. You are already enough — and intimacy should feel that way.',
-  },
-]
 
 export default function PhilosophyPage() {
   return (
@@ -205,33 +183,6 @@ export default function PhilosophyPage() {
             >
               {text}
             </motion.p>
-          ))}
-        </div>
-      </section>
-
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
-        <motion.p
-          initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
-          style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '4rem' }}
-        >
-          What we believe
-        </motion.p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '3rem 5rem' }}>
-          {beliefs.map((b, i) => (
-            <motion.div
-              key={b.number}
-              initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={{ y: -4 }}
-              style={{ cursor: 'default' }}
-            >
-              <motion.p
-                initial={{ opacity: 0.35 }} whileHover={{ opacity: 0.7 }} transition={{ duration: 0.3 }}
-                style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '1rem' }}
-              >{b.number}</motion.p>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '0.85rem' }}>{b.title}</h3>
-              <p style={{ fontSize: '0.95rem', lineHeight: 1.75, color: '#555' }}>{b.body}</p>
-            </motion.div>
           ))}
         </div>
       </section>
