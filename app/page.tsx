@@ -209,7 +209,7 @@ function PhotoEssay() {
 function Product() {
   const lines = [
     { label: true, text: 'WHAT WE MADE' },
-    { heading: true, text: 'Made for the evenings\nthat stay with you.' },
+    { heading: true, text: 'Made for the moments\nthat stay with you.' },
     { text: 'Thin, safe, and honest. On each of the six wrappers, a question — because the best evenings always start with one.' },
     { text: 'Everything else we made as good as we possibly could — so you can forget about it and enjoy the rest.' },
   ]
@@ -236,7 +236,7 @@ function Product() {
         initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }}
         transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
         style={{ overflow: 'hidden' }}>
-        <img src="/product-hero.png" alt="" style={{ width: '100%', height: '120%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
+        <img src="/couples-bw.jpg" alt="" style={{ width: '100%', height: '120%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
       </motion.div>
     </section>
   )
