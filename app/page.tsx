@@ -113,13 +113,6 @@ function ParallaxImage({ src, height = 600 }: { src: string; height?: number }) 
   )
 }
 
-function BWGrid() {
-  return (
-    <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1.8 }} viewport={{ once: true }} style={{ margin: '0 40px 160px' }}>
-      <img src="/bw-grid-2.png" alt="" style={{ width: '100%', height: '70vh', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-    </motion.section>
-  )
-}
 
 function PhotoEssay() {
   const photos = [
@@ -165,8 +158,8 @@ function Product() {
           SEE IT →
         </Link>
       </motion.div>
-      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1.6 }} viewport={{ once: true }} style={{ overflow: 'hidden' }}>
-        <img src="/product-hero.png" alt="" style={{ width: '100%', height: '120%', objectFit: 'cover', objectPosition: 'center 20%' }} />
+      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1.6 }} viewport={{ once: true }} style={{ overflow: 'hidden', clipPath: 'inset(0 0 18% 0)' }}>
+        <img src="/product-hero.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', imageRendering: 'auto' }} />
       </motion.div>
     </section>
   )
@@ -285,7 +278,6 @@ export default function Home() {
       <Nav />
       <Hero />
       <Manifesto />
-      <BWGrid />
       <PhotoEssay />
       <Product />
       <Questions />
