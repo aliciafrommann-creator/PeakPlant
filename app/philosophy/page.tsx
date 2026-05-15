@@ -37,41 +37,51 @@ function TransformRow({ before, after, index }: { before: string; after: string;
   const [hovered, setHovered] = useState(false)
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-      transition={{ duration: 0.7, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+      initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+      transition={{ duration: 0.8, delay: index * 0.09, ease: [0.16, 1, 0.3, 1] }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{ display: 'grid', gridTemplateColumns: '1fr 60px 1fr', alignItems: 'center', padding: '1.6rem 0', borderBottom: '1px solid #ebebeb', cursor: 'default' }}
+      style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr', alignItems: 'center', padding: '2rem 1rem', borderBottom: '1px solid #ebebeb', cursor: 'default', position: 'relative' }}
     >
-      <div style={{ position: 'relative', overflow: 'hidden' }}>
+      {/* subtle row highlight */}
+      <motion.div
+        animate={{ opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.25 }}
+        style={{ position: 'absolute', inset: 0, background: '#f8f8f8', zIndex: 0, pointerEvents: 'none' }}
+      />
+
+      {/* Before */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
         <motion.p
-          animate={{ opacity: hovered ? 0.2 : 0.65 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: 'clamp(1.05rem, 1.6vw, 1.35rem)', fontWeight: 300, fontFamily: PP, letterSpacing: '-0.01em' }}
+          animate={{ opacity: hovered ? 0.15 : 0.6, x: hovered ? -10 : 0 }}
+          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.45rem)', fontWeight: 300, fontFamily: PP, letterSpacing: '-0.01em', position: 'relative', display: 'inline-block' }}
         >
           {before}
+          <motion.span
+            animate={{ scaleX: hovered ? 1 : 0 }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            style={{ position: 'absolute', top: '52%', left: 0, right: 0, height: '1.5px', background: '#1A1A1A', opacity: 0.55, transformOrigin: 'left', display: 'block' }}
+          />
         </motion.p>
-        <motion.div
-          animate={{ scaleX: hovered ? 1 : 0 }}
-          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          style={{ position: 'absolute', bottom: 0, left: 0, right: '10%', height: '1px', background: '#1A1A1A', opacity: 0.2, transformOrigin: 'left', top: '50%' }}
-        />
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      {/* Arrow */}
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
         <motion.svg
-          width="24" height="10" viewBox="0 0 24 10" fill="none"
-          animate={{ opacity: hovered ? 0.7 : 0.15 }}
-          transition={{ duration: 0.4 }}
+          width="32" height="14" viewBox="0 0 32 14" fill="none"
+          animate={{ opacity: hovered ? 1 : 0.12, x: hovered ? 5 : 0 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
-          <path d="M0 5h21M17 1.5l4 3.5-4 3.5" stroke="#1A1A1A" strokeWidth="0.9" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M0 7h28M22 2.5l6 4.5-6 4.5" stroke="#1A1A1A" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
         </motion.svg>
       </div>
 
+      {/* After */}
       <motion.p
-        animate={{ opacity: hovered ? 1 : 0.65, color: hovered ? '#1A1A1A' : '#555' }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        style={{ fontSize: 'clamp(1.05rem, 1.6vw, 1.35rem)', fontWeight: hovered ? 400 : 300, fontFamily: PP, letterSpacing: '-0.01em' }}
+        animate={{ opacity: hovered ? 1 : 0.6, x: hovered ? 0 : 8, color: hovered ? '#1A1A1A' : '#666' }}
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.45rem)', fontWeight: hovered ? 500 : 300, fontFamily: PP, letterSpacing: '-0.01em', zIndex: 1 }}
       >
         {after}
       </motion.p>
@@ -164,24 +174,22 @@ export default function PhilosophyPage() {
         </motion.div>
       </section>
 
-      <section style={{ maxWidth: 720, margin: '0 auto', padding: '0 2.5rem 7rem' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem' }}
-        >
-          <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
-            For a long time, I tied my self-worth to external performance — achievement, ambition, being enough. I was successful on the outside and not fully free on the inside. Through reflection, vulnerability work, and emotional honesty, I slowly began to understand how deeply the systems surrounding us shape our relationships, our intimacy, and our sense of worth.
-          </p>
-          <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
-            The more I worked on my own mental models, the more intimacy changed too. It became safe, deep, growing — something built between two people rather than performed for each other. That transformation did not only affect romantic relationships. It changed friendships, communication, and the way I moved through the world itself.
-          </p>
-          <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
-            PeakPlant exists because more people deserve to experience that kind of connection. Not the performance of it. The actual thing.
-          </p>
-          <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
-            You do not have to perform to be worthy of love. That is not a slogan. It is the center of everything we build.
-          </p>
-        </motion.div>
+      <section style={{ maxWidth: 720, margin: '0 auto', padding: '0 2.5rem 7rem', display: 'flex', flexDirection: 'column', gap: '1.8rem' }}>
+        {[
+          'For a long time, I tied my self-worth to external performance — achievement, ambition, being enough. I was successful on the outside and not fully free on the inside. Through reflection, vulnerability work, and emotional honesty, I slowly began to understand how deeply the systems surrounding us shape our relationships, our intimacy, and our sense of worth.',
+          'The more I worked on my own mental models, the more intimacy changed too. It became safe, deep, growing — something built between two people rather than performed for each other. That transformation did not only affect romantic relationships. It changed friendships, communication, and the way I moved through the world itself.',
+          'PeakPlant exists because more people deserve to experience that kind of connection. Not the performance of it. The actual thing.',
+          'You do not have to perform to be worthy of love. That is not a slogan. It is the center of everything we build.',
+        ].map((text, i) => (
+          <motion.p
+            key={i}
+            initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.9, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+            style={{ fontSize: '1.05rem', lineHeight: 1.85, color: i === 3 ? '#1A1A1A' : '#444', fontWeight: i === 3 ? 400 : 300 }}
+          >
+            {text}
+          </motion.p>
+        ))}
       </section>
 
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
@@ -196,9 +204,14 @@ export default function PhilosophyPage() {
             <motion.div
               key={b.number}
               initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.7, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={{ y: -4 }}
+              style={{ cursor: 'default' }}
             >
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '1rem' }}>{b.number}</p>
+              <motion.p
+                initial={{ opacity: 0.35 }} whileHover={{ opacity: 0.7 }} transition={{ duration: 0.3 }}
+                style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '1rem' }}
+              >{b.number}</motion.p>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '0.85rem' }}>{b.title}</h3>
               <p style={{ fontSize: '0.95rem', lineHeight: 1.75, color: '#555' }}>{b.body}</p>
             </motion.div>
