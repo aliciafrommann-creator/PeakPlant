@@ -24,7 +24,21 @@ function ParallaxImage({ src, alt }: { src: string; alt: string }) {
   )
 }
 
-const phases = [
+function PhaseMedia({ image, video, name }: { image: string; video?: string; name: string }) {
+  if (video) {
+    return (
+      <video
+        autoPlay muted playsInline loop
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      >
+        <source src={video} type="video/mp4" />
+      </video>
+    )
+  }
+  return <ParallaxImage src={image} alt={name} />
+}
+
+const phases: { number: string; name: string; headline: string; body: string; image: string; video?: string }[] = [
   {
     number: '01',
     name: 'Distance',
@@ -45,6 +59,7 @@ const phases = [
     headline: 'Closeness is something you build together.',
     body: 'Not a destination but a feeling — warm, unhurried, honest. Intimacy happens when safety and openness arrive in the same room at the same time. When vulnerability is not weakness, but the closest thing to freedom.',
     image: '/intimacy-intimacy.jpg',
+    video: '/film-intimacy.mp4',
   },
   {
     number: '04',
@@ -103,7 +118,7 @@ export default function IntimacyPage() {
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             style={{ order: i % 2 === 0 ? 0 : 1, aspectRatio: '4/3', background: '#f5f5f5', overflow: 'hidden' }}
           >
-            <ParallaxImage src={phase.image} alt={phase.name} />
+            <PhaseMedia image={phase.image} video={phase.video} name={phase.name} />
           </motion.div>
 
           <motion.div

@@ -15,10 +15,11 @@ out/
 # vercel
 .vercel
 
-# videos (too large for GitHub)
+# videos (large files excluded, small clips committed individually)
 public/*.mp4
 public/*.mov
 public/*.webm
+!public/film-intimacy.mp4
 
 # misc
 .DS_Store
