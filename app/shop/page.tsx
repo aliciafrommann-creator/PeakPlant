@@ -303,7 +303,7 @@ export default function ShopPage() {
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           style={{ aspectRatio: '1/1', background: '#f5f5f5', overflow: 'hidden' }}>
-          <ParallaxImage src="/product-hero.png" alt="PeakPlant detail" objectPosition="center top" />
+          <ParallaxImage src="/product-box.jpg" alt="PeakPlant founding collection" objectPosition="center center" />
         </motion.div>
       </section>
 
