@@ -94,19 +94,24 @@ function Product() {
   )
 }
 
-function QuadPanel({ objectPosition, caption }: { objectPosition: string; caption: string }) {
+function QuadPanel({ bgPosition, caption }: { bgPosition: string; caption: string }) {
   const [hovered, setHovered] = useState(false)
   return (
     <div
-      style={{ position: 'relative', overflow: 'hidden', cursor: 'default' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      style={{
+        position: 'relative', overflow: 'hidden', cursor: 'default',
+        backgroundImage: 'url(/couples-bw.jpg)',
+        backgroundSize: '200% 200%',
+        backgroundPosition: bgPosition,
+        filter: 'grayscale(1)',
+      }}
     >
-      <motion.img
-        src="/couples-bw.jpg" alt=""
-        animate={{ filter: hovered ? 'grayscale(100%) brightness(0.35)' : 'grayscale(100%) brightness(0.72)', scale: hovered ? 1.04 : 1 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition, display: 'block' }}
+      <motion.div
+        animate={{ opacity: hovered ? 0.55 : 0 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        style={{ position: 'absolute', inset: 0, background: '#000', pointerEvents: 'none' }}
       />
       <motion.div
         animate={{ opacity: hovered ? 1 : 0 }}
@@ -127,15 +132,15 @@ function QuadPanel({ objectPosition, caption }: { objectPosition: string; captio
 
 function PhotoGrid() {
   const quads = [
-    { objectPosition: '30% 20%', caption: 'Warmth' },
-    { objectPosition: '70% 20%', caption: 'Closeness' },
-    { objectPosition: '30% 80%', caption: 'Tenderness' },
-    { objectPosition: '70% 80%', caption: 'Presence' },
+    { bgPosition: '0% 0%',   caption: 'Warmth' },
+    { bgPosition: '100% 0%', caption: 'Closeness' },
+    { bgPosition: '0% 100%', caption: 'Tenderness' },
+    { bgPosition: '100% 100%', caption: 'Presence' },
   ]
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '50vh 50vh' }}>
       {quads.map((q, i) => (
-        <QuadPanel key={i} objectPosition={q.objectPosition} caption={q.caption} />
+        <QuadPanel key={i} bgPosition={q.bgPosition} caption={q.caption} />
       ))}
     </div>
   )
