@@ -36,17 +36,13 @@ function NavLink({ href, label }: { href: string; label: string }) {
 function Nav() {
   return (
     <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 40px', backgroundColor: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)' }}>
-      <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
-        <Logo color="#1A1A1A" size={22} />
-        <span style={{ color: '#1A1A1A', fontSize: 11, letterSpacing: '0.45em', fontFamily: PP, fontWeight: 400 }}>PEAKPLANT</span>
+      <Link href="/" style={{ textDecoration: 'none' }}>
+        <Logo color="#1A1A1A" size={28} />
       </Link>
       <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
-        {['Intimacy', 'Philosophy', 'Shop', 'Journal', 'Community'].map(item => (
-          <NavLink key={item} href={`/${item.toLowerCase()}`} label={item} />
+        {['Home', 'Intimacy', 'Philosophy', 'Shop', 'Journal', 'Community'].map(item => (
+          <NavLink key={item} href={item === 'Home' ? '/' : `/${item.toLowerCase()}`} label={item} />
         ))}
-        <Link href="/community" style={{ fontFamily: PP, fontSize: 10, letterSpacing: '0.3em', color: '#ffffff', background: '#1A1A1A', padding: '9px 20px', textDecoration: 'none', whiteSpace: 'nowrap' }}>
-          JOIN
-        </Link>
       </div>
     </nav>
   )

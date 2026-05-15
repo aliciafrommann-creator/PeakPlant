@@ -2,23 +2,31 @@ import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json()
+    const { email, source } = await req.json()
     if (!email || typeof email !== 'string' || !email.includes('@')) {
       return NextResponse.json({ error: 'Valid email required' }, { status: 400 })
     }
     const sanitized = email.trim().toLowerCase()
-    console.log(`[PeakPlant Waitlist] ${new Date().toISOString()} — ${sanitized}`)
 
-    const apiKey = process.env.RESEND_API_KEY
-    if (apiKey) {
-      const { Resend } = await import('resend')
-      const resend = new Resend(apiKey)
-      await resend.emails.send({
-        from: 'PeakPlant <onboarding@resend.dev>',
-        to: [process.env.OWNER_EMAIL ?? 'hello@peakplant.com'],
-        subject: `New waitlist signup: ${sanitized}`,
-        html: `<p>New PeakPlant waitlist signup:<br><strong>${sanitized}</strong></p><p><small>${new Date().toISOString()}</small></p>`,
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (supabaseUrl && supabaseKey) {
+      const res = await fetch(`${supabaseUrl}/rest/v1/waitlist`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify({ email: sanitized, source: source ?? 'homepage' }),
       })
+      if (!res.ok && res.status !== 409) {
+        console.error('[Waitlist] Supabase error:', res.status, await res.text())
+      }
+    } else {
+      console.log(`[PeakPlant Waitlist] ${new Date().toISOString()} — ${sanitized}`)
     }
 
     return NextResponse.json({ success: true })

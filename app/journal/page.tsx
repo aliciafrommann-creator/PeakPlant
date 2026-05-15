@@ -104,47 +104,50 @@ export default function JournalPage() {
       </section>
 
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2.5rem 5rem', borderBottom: '1px solid #e8e8e8' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}
-        >
-          <div style={{ aspectRatio: '4/3', background: '#f5f5f5', overflow: 'hidden' }}>
-            <img src={featured.image} alt={featured.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.4 }}>{featured.category}</p>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', opacity: 0.4 }}>{featured.date}</p>
+        <Link href={`/journal/${featured.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center', cursor: 'pointer' }}
+          >
+            <div style={{ aspectRatio: '4/3', background: '#f5f5f5', overflow: 'hidden' }}>
+              <img src={featured.image} alt={featured.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
-            <h2 style={{ fontSize: 'clamp(1.6rem, 2.5vw, 2.4rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em' }}>
-              {featured.title}
-            </h2>
-            <p style={{ fontSize: '1rem', lineHeight: 1.75, color: '#555' }}>{featured.excerpt}</p>
-            <p style={{ fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.5 }}>{featured.readTime} read</p>
-          </div>
-        </motion.div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+                <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.4 }}>{featured.category}</p>
+                <p style={{ fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', opacity: 0.4 }}>{featured.date}</p>
+              </div>
+              <h2 style={{ fontSize: 'clamp(1.6rem, 2.5vw, 2.4rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em' }}>
+                {featured.title}
+              </h2>
+              <p style={{ fontSize: '1rem', lineHeight: 1.75, color: '#555' }}>{featured.excerpt}</p>
+              <p style={{ fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.5 }}>{featured.readTime} read</p>
+            </div>
+          </motion.div>
+        </Link>
       </section>
 
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '5rem 2.5rem' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '3rem 2.5rem' }}>
           {rest.map((post, i) => (
-            <motion.article
-              key={post.slug}
-              initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
-            >
-              <div style={{ aspectRatio: '4/3', background: '#f5f5f5', overflow: 'hidden', marginBottom: '0.5rem' }}>
-                <img src={post.image} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <p style={{ fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.4 }}>{post.category}</p>
-                <p style={{ fontSize: '0.6rem', letterSpacing: '0.1em', opacity: 0.35 }}>{post.date}</p>
-              </div>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 400, lineHeight: 1.35, letterSpacing: '-0.01em' }}>{post.title}</h3>
-              <p style={{ fontSize: '0.9rem', lineHeight: 1.7, color: '#666' }}>{post.excerpt}</p>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.45, marginTop: '0.25rem' }}>{post.readTime} read</p>
-            </motion.article>
+            <Link key={post.slug} href={`/journal/${post.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              <motion.article
+                initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '1rem', cursor: 'pointer' }}
+              >
+                <div style={{ aspectRatio: '4/3', background: '#f5f5f5', overflow: 'hidden', marginBottom: '0.5rem' }}>
+                  <img src={post.image} alt={post.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <p style={{ fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.4 }}>{post.category}</p>
+                  <p style={{ fontSize: '0.6rem', letterSpacing: '0.1em', opacity: 0.35 }}>{post.date}</p>
+                </div>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: 400, lineHeight: 1.35, letterSpacing: '-0.01em' }}>{post.title}</h3>
+                <p style={{ fontSize: '0.9rem', lineHeight: 1.7, color: '#666' }}>{post.excerpt}</p>
+                <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.45, marginTop: '0.25rem' }}>{post.readTime} read</p>
+              </motion.article>
+            </Link>
           ))}
         </div>
       </section>
