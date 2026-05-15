@@ -74,7 +74,7 @@ function Hero() {
     <section style={{ backgroundColor: '#ffffff', overflow: 'hidden' }}>
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2 }}
-        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '110px 40px 36px', gap: 20 }}>
+        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '88px 40px 28px', gap: 18 }}>
         <motion.div onMouseEnter={replay} title="Replay" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}
           initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}>
           <Logo color="#1A1A1A" size={84} />
@@ -92,7 +92,7 @@ function Hero() {
       <motion.div
         initial={{ clipPath: 'inset(100% 0 0 0)' }} animate={{ clipPath: 'inset(0% 0 0 0)' }}
         transition={{ duration: 1.4, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        style={{ height: '72vh', overflow: 'hidden' }}>
+        style={{ height: '50vh', overflow: 'hidden', margin: '0 40px' }}>
         <video ref={videoRef} autoPlay muted playsInline loop
           style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}>
           <source src="/hero.mp4" type="video/mp4" />
