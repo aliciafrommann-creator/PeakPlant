@@ -71,20 +71,20 @@ const communityValues = [
 
 const whatYouGet = [
   {
-    label: 'Events',
-    body: 'Real gatherings — not webinars. We host intimate moments, pop-ups, and seasonal gatherings for people in the community. Think run club energy, but for the people who care about how they show up in relationships.',
+    label: 'Workshops & gatherings',
+    body: 'Real events in real spaces — intimate workshops in cafes, evening talks, and gatherings with people building something together around how we love and connect. Small groups. No stage, no performance.',
   },
   {
-    label: 'First access to new drops',
-    body: 'Every new collection — love language editions, event boxes, collabs — goes to community members first. Limited runs. Personal reach-outs. No mass marketing.',
+    label: 'Live talks',
+    body: 'We go live on the topics that matter — intimacy, emotional safety, connection, the systems behind how we love. Sometimes a conversation, sometimes a deep dive. Always something worth staying for.',
   },
   {
-    label: 'The Letter',
-    body: 'A monthly piece on intimacy, emotional safety, and the systems shaping how we love. Personal and slow — written like a letter from someone who thinks deeply about this stuff.',
+    label: 'The journal — early',
+    body: 'Community members receive each new journal issue before it goes public. Every issue comes with a QR code linking to a curated podcast or TED talk that goes deeper on the essay inside — a companion for the walk, the commute, or the quiet hour.',
   },
   {
-    label: 'The inner circle',
-    body: 'The people in this community are building something together. Early feedback on new products, input on future collections, and access to conversations that don\'t happen in public.',
+    label: 'Partner communities',
+    body: 'We cooperate with run clubs, cafes, and local groups who care about the same things. The workshop sometimes follows the run. The conversation starts over coffee. It all connects.',
   },
 ]
 
@@ -113,11 +113,11 @@ export default function CommunityPage() {
         </motion.p>
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '2.5rem' }}>
-          A run club for people who take intimacy seriously.
+          For people who take connection seriously.
         </motion.h1>
         <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
           style={{ fontSize: '1.1rem', lineHeight: 1.8, color: '#555', maxWidth: 580, marginBottom: '3rem' }}>
-          Running every week is good. A run club is something else entirely. PeakPlant community is not a newsletter or a feed — it is a group of people who show up, meet in real life, and build something together around how we love and connect.
+          PeakPlant community is not a newsletter or a feed — it is a group of people who show up in real life and build something together. We run workshops, host talks, partner with cafes and local communities, and create moments where the conversations that matter actually happen.
         </motion.p>
         <motion.button initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.35 }}
           onClick={() => setModalOpen(true)}
