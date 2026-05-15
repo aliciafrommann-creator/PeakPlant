@@ -1,6 +1,6 @@
 'use client'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { motion, useScroll } from 'framer-motion'
+import { useState } from 'react'
 import Link from 'next/link'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
@@ -94,72 +94,6 @@ function Product() {
   )
 }
 
-function QuadPanel({ bgPosition, caption }: { bgPosition: string; caption: string }) {
-  const [hovered, setHovered] = useState(false)
-  return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: 'relative', overflow: 'hidden', cursor: 'default',
-        backgroundImage: 'url(/couples-bw.jpg)',
-        backgroundSize: '200% 200%',
-        backgroundPosition: bgPosition,
-        filter: 'grayscale(1)',
-      }}
-    >
-      <motion.div
-        animate={{ opacity: hovered ? 0.55 : 0 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        style={{ position: 'absolute', inset: 0, background: '#000', pointerEvents: 'none' }}
-      />
-      <motion.div
-        animate={{ opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}
-      >
-        <motion.p
-          animate={{ y: hovered ? 0 : 16 }}
-          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: 'clamp(1.2rem, 2vw, 2.2rem)', fontWeight: 200, color: '#ffffff', fontFamily: PP, letterSpacing: '0.35em', lineHeight: 1, textTransform: 'uppercase' }}
-        >
-          {caption}
-        </motion.p>
-      </motion.div>
-    </div>
-  )
-}
-
-function PhotoGrid() {
-  const quads = [
-    { bgPosition: '0% 0%',   caption: 'Warmth' },
-    { bgPosition: '100% 0%', caption: 'Closeness' },
-    { bgPosition: '0% 100%', caption: 'Tenderness' },
-    { bgPosition: '100% 100%', caption: 'Presence' },
-  ]
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '50vh 50vh' }}>
-      {quads.map((q, i) => (
-        <QuadPanel key={i} bgPosition={q.bgPosition} caption={q.caption} />
-      ))}
-    </div>
-  )
-}
-
-function FullBleed() {
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['-12%', '12%'])
-  return (
-    <motion.section ref={ref}
-      initial={{ clipPath: 'inset(0 8% 0 8%)' }} whileInView={{ clipPath: 'inset(0 0% 0 0%)' }}
-      transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-      style={{ margin: '0 0 180px', height: '70vh', overflow: 'hidden', position: 'relative' }}>
-      <motion.img src="/hero-bg.png" alt=""
-        style={{ width: '100%', height: '124%', objectFit: 'cover', display: 'block', y, position: 'absolute', top: 0, left: 0 }} />
-    </motion.section>
-  )
-}
 
 function Waitlist() {
   const [email, setEmail] = useState('')
@@ -230,8 +164,6 @@ export default function Home() {
       <Nav />
       <LogoHero />
       <Product />
-      <PhotoGrid />
-      <FullBleed />
       <Waitlist />
       <Footer />
     </main>
