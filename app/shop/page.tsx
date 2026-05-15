@@ -88,32 +88,48 @@ const collections = [
     number: '01',
     name: 'The Founding Collection',
     tag: 'AVAILABLE SOON',
-    description: 'Six condoms. Six questions. One box designed for the moments you will actually remember. Ultra-thin latex, silicone lubricant, and a question on every wrapper — because the best moments always start with one.',
-    note: 'The first PeakPlant collection. Limited.',
+    description: 'Six condoms. Five love languages. One box. Each wrapper carries a question from a different love language — so every moment opens something different. The starting point for anyone who wants to discover what moves them.',
+    note: 'Mixed Edition — All five love languages. Limited.',
     available: true,
   },
   {
     number: '02',
     name: 'Words of Affirmation',
     tag: 'COMING',
-    description: 'A collection built around language — the kind that stays. For couples who know that what you say before, during, and after matters as much as anything else.',
-    note: 'Love Language Edition',
+    description: 'For couples who know that language is everything. All six questions live in the world of words — what you say, what you hear, what you\'ve been afraid to ask for. The kind of conversation that starts in bed and doesn\'t stop.',
+    note: 'Love Language Edition — Single',
     available: false,
   },
   {
     number: '03',
-    name: 'Gift Giving',
+    name: 'Physical Touch',
     tag: 'COMING',
-    description: 'Designed to be given. The most thoughtful thing you can bring to a moment is presence — this box makes that intention visible.',
-    note: 'Love Language Edition',
+    description: 'Six questions built around the body — presence, sensation, closeness, and the kind of touch that communicates what words can\'t. For the people who feel most alive through contact.',
+    note: 'Love Language Edition — Single',
     available: false,
   },
   {
     number: '04',
-    name: 'The Event Box',
+    name: 'Quality Time',
     tag: 'COMING',
-    description: 'For the occasions that deserve more. A curated box with extras — designed in collaboration with the PeakPlant community for specific moments.',
-    note: 'Special Edition',
+    description: 'For the couples who feel most connected when nothing else is competing for attention. Questions about presence, slowness, and what it means to truly be somewhere together.',
+    note: 'Love Language Edition — Single',
+    available: false,
+  },
+  {
+    number: '05',
+    name: 'Acts of Service',
+    tag: 'COMING',
+    description: 'Love shown through action — care, attention, the small decisions that say "I see you." Questions that bring that language into the most intimate moments.',
+    note: 'Love Language Edition — Single',
+    available: false,
+  },
+  {
+    number: '06',
+    name: 'Receiving Gifts',
+    tag: 'COMING',
+    description: 'Designed to be given. The most thoughtful thing you can bring to a moment is intention — this box makes it visible. For someone who feels love through the care behind a gesture.',
+    note: 'Love Language Edition — Single',
     available: false,
   },
 ]
@@ -199,6 +215,42 @@ export default function ShopPage() {
               </div>
             </motion.div>
           ))}
+        </div>
+      </section>
+
+      {/* Subscription */}
+      <section style={{ borderTop: '1px solid #e8e8e8', background: '#f9f9f9', padding: '6rem 2.5rem' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
+            <div>
+              <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '1.5rem' }}>Monthly subscription</p>
+              <h2 style={{ fontSize: 'clamp(1.6rem, 2.5vw, 2.4rem)', fontWeight: 300, lineHeight: 1.25, marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
+                A different love language. Every month.
+              </h2>
+              <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', marginBottom: '1rem' }}>
+                Start with the Founding Collection to discover all five. Then, each month, go deeper into one — a full box of six questions living entirely in that language.
+              </p>
+              <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', marginBottom: '2.5rem' }}>
+                Five months. Five love languages. Or take your time — every two months, at your own pace. Either way, it becomes a ritual. A regular reason to go deeper.
+              </p>
+              <button onClick={() => {}} style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem 2rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'default', opacity: 0.4 }}>
+                Subscription coming soon
+              </button>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+              {['Words of Affirmation', 'Physical Touch', 'Quality Time', 'Acts of Service', 'Receiving Gifts'].map((lang, i) => (
+                <motion.div key={lang}
+                  initial={{ opacity: 0, x: 16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '1.2rem 0', borderBottom: '1px solid #e8e8e8' }}>
+                  <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.3, minWidth: 24 }}>0{i + 1}</span>
+                  <span style={{ fontSize: '1rem', fontWeight: 300, color: '#1A1A1A' }}>{lang}</span>
+                  {i === 0 && <span style={{ marginLeft: 'auto', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.25rem 0.7rem', border: '1px solid #1A1A1A', opacity: 0.35 }}>Month 1</span>}
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
