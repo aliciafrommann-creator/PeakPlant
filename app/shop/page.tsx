@@ -153,26 +153,28 @@ export default function ShopPage() {
         </div>
       </nav>
 
-      {/* Hero */}
-      <section style={{ padding: '10rem 2.5rem 6rem', maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
-        <motion.div initial={{ opacity: 0, x: -24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
-          <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem' }}>The Collections</p>
-          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '2rem' }}>
-            Not every moment.<br />The ones that stay with you.
-          </h1>
-          <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', maxWidth: 440, marginBottom: '2.5rem' }}>
-            PeakPlant is not a commodity. It is a collection — designed for specific moments, growing with the people who carry it. Each edition has its own intention. Start with one. Come back for the next.
+      {/* Hero — full-viewport wildness film */}
+      <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
+        <video autoPlay muted playsInline loop
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
+          <source src="/film-wildness.mp4" type="video/mp4" />
+        </video>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55) 100%)' }} />
+        <motion.div
+          initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+          style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}
+        >
+          <p style={{ fontFamily: PP, fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 600, marginBottom: '2.5rem' }}>
+            Not just a product.<br />A decision to feel.
           </p>
-          <button onClick={() => setModalOpen(true)}
-            style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-            Reserve founding access
+          <button
+            style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
+            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
+            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            onClick={() => setModalOpen(true)}>
+            Reserve yours →
           </button>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }} animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
-          transition={{ duration: 1.2, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          style={{ aspectRatio: '3/4', background: '#f5f5f5', overflow: 'hidden' }}>
-          <ParallaxImage src="/product-box.jpg" alt="PeakPlant founding collection" objectPosition="center center" />
         </motion.div>
       </section>
 
@@ -216,29 +218,6 @@ export default function ShopPage() {
             </motion.div>
           ))}
         </div>
-      </section>
-
-      {/* Wildness film */}
-      <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
-        <video autoPlay muted playsInline loop
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
-          <source src="/film-wildness.mp4" type="video/mp4" />
-        </video>
-        <motion.div
-          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}>
-          <p style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.025em', lineHeight: 1.2, maxWidth: 560, marginBottom: '2.5rem' }}>
-            Not just a product.<br />A decision to feel.
-          </p>
-          <button
-            style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            onClick={() => setModalOpen(true)}>
-            Reserve yours →
-          </button>
-        </motion.div>
       </section>
 
       {/* Wrapper Questions */}
