@@ -226,7 +226,7 @@ export default function PhilosophyPage() {
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', fontWeight: 300, lineHeight: 1.45, maxWidth: 640, margin: '0 auto', letterSpacing: '-0.015em' }}
         >
-          Safe. Soft. Wild — in that order, and at the same time.
+          Grow where you feel most alive.
         </motion.p>
       </section>
 
