@@ -211,8 +211,8 @@ function Product() {
       <motion.div
         initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }}
         transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-        style={{ overflow: 'hidden', clipPath: 'inset(0 0 18% 0)' }}>
-        <img src="/product-hero.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }} />
+        style={{ overflow: 'hidden' }}>
+        <img src="/bw-grid-2.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
       </motion.div>
     </section>
   )
