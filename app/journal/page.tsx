@@ -20,7 +20,7 @@ const posts = [
     excerpt: 'We learned to optimize everything — our productivity, our appearance, our feeds. At some point, without noticing, we started optimizing our relationships too. This is about what that costs us.',
     date: 'May 2025',
     readTime: '5 min',
-    image: '/journal-01.jpg',
+    image: '/scenery-1.jpg',
   },
   {
     slug: 'the-systems-behind-disconnection',
@@ -29,7 +29,7 @@ const posts = [
     excerpt: 'Disconnected intimacy is not a personal failure. It is a symptom — created by larger systems: social media, dating apps, performance culture, emotional illiteracy. Understanding the system changes everything.',
     date: 'May 2025',
     readTime: '7 min',
-    image: '/journal-02.jpg',
+    image: '/scenery-2.jpg',
   },
   {
     slug: 'the-case-for-slowness',
@@ -38,7 +38,7 @@ const posts = [
     excerpt: 'The best moments of closeness tend to happen in the gaps — the pauses, the silences, the in-betweens. We have been trained to move fast. This is a case for not doing that.',
     date: 'April 2025',
     readTime: '4 min',
-    image: '/journal-03.jpg',
+    image: '/scenery-3.jpg',
   },
   {
     slug: 'what-emotional-safety-feels-like',
@@ -47,7 +47,7 @@ const posts = [
     excerpt: 'It is not the absence of conflict. It is the presence of trust — the knowledge that you can be yourself without risking the relationship. Once you feel it, you understand why everything else is harder without it.',
     date: 'April 2025',
     readTime: '5 min',
-    image: '/journal-04.jpg',
+    image: '/scenery-4.jpg',
   },
   {
     slug: 'you-are-allowed-to-be-fully-alive',
@@ -56,7 +56,7 @@ const posts = [
     excerpt: 'Not performing aliveness. Not optimizing for it. Just feeling it — the warmth, the electricity, the strangeness and privilege of being a person who can feel things. This is what PeakPlant is really about.',
     date: 'March 2025',
     readTime: '4 min',
-    image: '/journal-05.jpg',
+    image: '/bw-grid-2.png',
   },
   {
     slug: 'why-the-wrapper-has-a-question',
@@ -65,7 +65,7 @@ const posts = [
     excerpt: 'A product designed for one of the most tender moments in human life — and most of the time it comes in packaging that feels clinical, aggressive, or just awkward. We wanted to make something different.',
     date: 'March 2025',
     readTime: '3 min',
-    image: '/journal-06.jpg',
+    image: '/product-hero.png',
   },
 ]
 
@@ -80,7 +80,7 @@ export default function JournalPage() {
           <Logo size={32} />
         </Link>
         <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
-          {[['/', 'Home'], ['/intimacy', 'Intimacy'], ['/philosophy', 'Philosophy'], ['/shop', 'Shop'], ['/journal', 'Journal']].map(([href, label]) => (
+          {[['/', 'Home'], ['/intimacy', 'Intimacy'], ['/philosophy', 'Philosophy'], ['/shop', 'Shop'], ['/journal', 'Journal'], ['/community', 'Community']].map(([href, label]) => (
             <Link key={href} href={href} style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', color: '#1A1A1A', opacity: href === '/journal' ? 1 : 0.5 }}>
               {label}
             </Link>

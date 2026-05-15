@@ -145,7 +145,7 @@ export default function ShopPage() {
           <Logo size={32} />
         </Link>
         <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
-          {[['/', 'Home'], ['/intimacy', 'Intimacy'], ['/philosophy', 'Philosophy'], ['/shop', 'Shop'], ['/journal', 'Journal']].map(([href, label]) => (
+          {[['/', 'Home'], ['/intimacy', 'Intimacy'], ['/philosophy', 'Philosophy'], ['/shop', 'Shop'], ['/journal', 'Journal'], ['/community', 'Community']].map(([href, label]) => (
             <Link key={href} href={href} style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', color: '#1A1A1A', opacity: href === '/shop' ? 1 : 0.5 }}>
               {label}
             </Link>
@@ -213,6 +213,39 @@ export default function ShopPage() {
                   </button>
                 )}
               </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Wrapper Questions */}
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
+        <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+          style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '1.5rem' }}>
+          The questions on every wrapper
+        </motion.p>
+        <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.1 }}
+          style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', maxWidth: 560, marginBottom: '4rem' }}>
+          Each condom wrapper carries one question. Small enough to miss. Quiet enough to stay with you. The kind that slows a moment down.
+        </motion.p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0' }}>
+          {[
+            'Tell me something you\'ve never said out loud.',
+            'When do you feel most yourself?',
+            'What kind of love are you afraid of?',
+            'What do you want more of in life?',
+            'Where do you feel safest?',
+            'What memory still lives in your body?',
+            'What would freedom look like for you?',
+            'What are you slowly growing into?',
+            'What do you wish people understood about you?',
+          ].map((q, i) => (
+            <motion.div key={i}
+              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: i * 0.06 }}
+              style={{ padding: '2rem 2rem', borderBottom: '1px solid #e8e8e8', borderRight: i % 3 !== 2 ? '1px solid #e8e8e8' : 'none' }}>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem' }}>0{i + 1}</p>
+              <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{q}"</p>
             </motion.div>
           ))}
         </div>

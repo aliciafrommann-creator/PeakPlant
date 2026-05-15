@@ -41,11 +41,11 @@ function Nav() {
         <span style={{ color: '#1A1A1A', fontSize: 11, letterSpacing: '0.45em', fontFamily: PP, fontWeight: 400 }}>PEAKPLANT</span>
       </Link>
       <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
-        {['Intimacy', 'Philosophy', 'Shop', 'Journal'].map(item => (
+        {['Intimacy', 'Philosophy', 'Shop', 'Journal', 'Community'].map(item => (
           <NavLink key={item} href={`/${item.toLowerCase()}`} label={item} />
         ))}
-        <Link href="/shop" style={{ fontFamily: PP, fontSize: 10, letterSpacing: '0.3em', color: '#ffffff', background: '#1A1A1A', padding: '9px 20px', textDecoration: 'none', whiteSpace: 'nowrap' }}>
-          JOIN WAITLIST
+        <Link href="/community" style={{ fontFamily: PP, fontSize: 10, letterSpacing: '0.3em', color: '#ffffff', background: '#1A1A1A', padding: '9px 20px', textDecoration: 'none', whiteSpace: 'nowrap' }}>
+          JOIN
         </Link>
       </div>
     </nav>
