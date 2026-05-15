@@ -3,6 +3,48 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 
+const pairs = [
+  ['Performance', 'Presence'],
+  ['External validation', 'Self-worth'],
+  ['Emotional armor', 'Vulnerability'],
+  ['Fear', 'Trust'],
+  ['Disconnection', 'Deep connection'],
+  ['Shame', 'Openness'],
+]
+
+function TransformRow({ before, after, index }: { before: string; after: string; index: number }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+      transition={{ duration: 0.8, delay: index * 0.09, ease: [0.16, 1, 0.3, 1] }}
+      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+      style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr', alignItems: 'center', padding: '2rem 1rem', borderBottom: '1px solid #ebebeb', cursor: 'default', position: 'relative' }}
+    >
+      <motion.div animate={{ opacity: hovered ? 1 : 0 }} transition={{ duration: 0.25 }}
+        style={{ position: 'absolute', inset: 0, background: '#f8f8f8', zIndex: 0, pointerEvents: 'none' }} />
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <motion.p animate={{ opacity: hovered ? 0.15 : 0.6, x: hovered ? -10 : 0 }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+          style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.45rem)', fontWeight: 300, fontFamily: PP, letterSpacing: '-0.01em', position: 'relative', display: 'inline-block' }}>
+          {before}
+          <motion.span animate={{ scaleX: hovered ? 1 : 0 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            style={{ position: 'absolute', top: '52%', left: 0, right: 0, height: '1.5px', background: '#1A1A1A', opacity: 0.55, transformOrigin: 'left', display: 'block' }} />
+        </motion.p>
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1 }}>
+        <motion.svg width="32" height="14" viewBox="0 0 32 14" fill="none"
+          animate={{ opacity: hovered ? 1 : 0.12, x: hovered ? 5 : 0 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}>
+          <path d="M0 7h28M22 2.5l6 4.5-6 4.5" stroke="#1A1A1A" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+        </motion.svg>
+      </div>
+      <motion.p animate={{ opacity: hovered ? 1 : 0.6, x: hovered ? 0 : 8, color: hovered ? '#1A1A1A' : '#666' }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.45rem)', fontWeight: hovered ? 500 : 300, fontFamily: PP, letterSpacing: '-0.01em', zIndex: 1 }}>
+        {after}
+      </motion.p>
+    </motion.div>
+  )
+}
+
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 function Logo({ size = 28 }: { size?: number }) {
@@ -153,6 +195,18 @@ export default function CommunityPage() {
             </motion.div>
           ))}
         </div>
+      </section>
+
+      {/* Before / After */}
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: '5rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 60px 1fr', padding: '0 1rem 1rem', marginBottom: '0.25rem' }}>
+          <p style={{ fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.3, fontFamily: PP }}>Before</p>
+          <div />
+          <p style={{ fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.3, fontFamily: PP }}>After</p>
+        </div>
+        {pairs.map(([before, after], i) => (
+          <TransformRow key={before} before={before} after={after} index={i} />
+        ))}
       </section>
 
       {/* Voices */}

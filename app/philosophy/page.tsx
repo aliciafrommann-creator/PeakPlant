@@ -207,7 +207,6 @@ export default function PhilosophyPage() {
         </div>
       </section>
 
-      <TransformTable />
 
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', textAlign: 'center' }}>
         <motion.p
