@@ -210,7 +210,7 @@ function Product() {
   const lines = [
     { label: true, text: 'WHAT WE MADE' },
     { heading: true, text: 'Made for the moments\nthat stay with you.' },
-    { text: 'Thin, safe, and honest. On each of the six wrappers, a question — because the best evenings always start with one.' },
+    { text: 'Thin, safe, and honest. On each of the six wrappers, a question — because the best moments always start with one.' },
     { text: 'Everything else we made as good as we possibly could — so you can forget about it and enjoy the rest.' },
   ]
   return (
