@@ -116,24 +116,25 @@ function ParallaxImage({ src, height = 600 }: { src: string; height?: number }) 
 function BWGrid() {
   return (
     <motion.section initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1.8 }} viewport={{ once: true }} style={{ margin: '0 40px 160px' }}>
-      <img src="/bw-grid.png" alt="" style={{ width: '100%', display: 'block' }} />
+      <img src="/bw-grid-2.png" alt="" style={{ width: '100%', display: 'block' }} />
     </motion.section>
   )
 }
 
 function PhotoEssay() {
   const photos = [
-    { src: '/scenery-1.jpg', caption: 'WARMTH' },
-    { src: '/scenery-2.jpg', caption: 'FORM' },
-    { src: '/scenery-3.jpg', caption: 'CLOSENESS' },
+    { src: '/scenery-1.jpg', caption: 'WARMTH', height: 520 },
+    { src: '/scenery-2.jpg', caption: 'PRESENCE', height: 400 },
+    { src: '/scenery-3.jpg', caption: 'CLOSENESS', height: 520 },
+    { src: '/scenery-4.jpg', caption: 'TENDERNESS', height: 400 },
   ]
   return (
     <section style={{ padding: '0 40px 160px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10, alignItems: 'end' }}>
         {photos.map((p, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.4, delay: i * 0.1 }} viewport={{ once: true }} style={{ overflow: 'hidden' }}>
-            <div style={{ height: 480, overflow: 'hidden' }}>
-              <img src={p.src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 1s ease' }}
+            <div style={{ height: p.height, overflow: 'hidden' }}>
+              <img src={p.src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 1.2s ease' }}
                 onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.04)')}
                 onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')} />
             </div>
@@ -165,7 +166,7 @@ function Product() {
         </Link>
       </motion.div>
       <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1.6 }} viewport={{ once: true }} style={{ overflow: 'hidden' }}>
-        <img src="/img-3.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <img src="/product-hero.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       </motion.div>
     </section>
   )
@@ -203,19 +204,18 @@ function Questions() {
   )
 }
 
-function Moments() {
-  const imgs = ['/img-5.png', '/img-6.png', '/img-7.png', '/img-8.png', '/img-9.png', '/img-10.png']
+function FullBleed() {
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const y = useTransform(scrollYProgress, [0, 1], ['-6%', '6%'])
   return (
-    <section style={{ padding: '0 40px 160px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-        {imgs.map((src, i) => (
-          <motion.div key={i} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1.4, delay: i * 0.06 }} viewport={{ once: true }}
-            style={{ overflow: 'hidden', height: 300 }}>
-            <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          </motion.div>
-        ))}
-      </div>
-    </section>
+    <motion.section
+      ref={ref}
+      initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1.8 }} viewport={{ once: true }}
+      style={{ margin: '0 0 160px', height: '70vh', overflow: 'hidden', position: 'relative' }}
+    >
+      <motion.img src="/hero-bg.png" alt="" style={{ width: '100%', height: '115%', objectFit: 'cover', display: 'block', y, position: 'absolute', top: 0, left: 0 }} />
+    </motion.section>
   )
 }
 
@@ -289,7 +289,7 @@ export default function Home() {
       <PhotoEssay />
       <Product />
       <Questions />
-      <Moments />
+      <FullBleed />
       <Waitlist />
       <Footer />
     </main>
