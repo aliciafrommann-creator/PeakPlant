@@ -84,7 +84,7 @@ function PhaseMedia({ image, video, name }: { image: string; video?: string; nam
 const phases: { number: string; name: string; headline: string; body: string; image: string; video?: string }[] = [
   {
     number: '01',
-    name: 'Distance',
+    name: 'Awareness',
     headline: 'The space between two people is not empty.',
     body: 'It holds everything that hasn\'t been said yet. Longing. Curiosity. The quiet awareness that someone else is in the room — and that they matter to you. This is where intimacy begins: in the silence before anything happens.',
     image: '/bw-grid-2.png',
@@ -185,54 +185,6 @@ export default function IntimacyPage() {
         ].map((q, i) => <QuadPanel key={i} bgPosition={q.bgPosition} title={q.title} body={q.body} />)}
       </div>
 
-      {phases.map((phase, i) => (
-        <section
-          key={phase.number}
-          style={{ maxWidth: 1100, margin: '0 auto', padding: '4rem 2.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center', borderTop: '1px solid #e8e8e8' }}
-        >
-          <motion.div
-            initial={{ opacity: 0, x: i % 2 === 0 ? -24 : 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            style={{ order: i % 2 === 0 ? 0 : 1, aspectRatio: '4/3', background: '#f5f5f5', overflow: 'hidden' }}
-          >
-            <PhaseMedia image={phase.image} video={phase.video} name={phase.name} />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-            style={{ order: i % 2 === 0 ? 1 : 0, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
-          >
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem' }}>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.35 }}>{phase.number}</p>
-              <p style={{ fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.7 }}>{phase.name}</p>
-            </div>
-            <h2 style={{ fontSize: 'clamp(1.5rem, 2.5vw, 2rem)', fontWeight: 300, lineHeight: 1.3, letterSpacing: '-0.02em' }}>
-              {phase.headline}
-            </h2>
-            <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555' }}>
-              {phase.body}
-            </p>
-          </motion.div>
-        </section>
-      ))}
-
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', textAlign: 'center' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ maxWidth: 580, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2.5rem' }}
-        >
-          <p style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 300, lineHeight: 1.45, letterSpacing: '-0.015em' }}>
-            Wildness without safety is not freedom. Safety without wildness is not fully alive. PeakPlant holds both.
-          </p>
-          <Link
-            href="/shop"
-            style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', border: '1px solid #1A1A1A', color: '#1A1A1A', textDecoration: 'none' }}
-          >
-            Explore the collection
-          </Link>
-        </motion.div>
-      </section>
 
     </div>
   )

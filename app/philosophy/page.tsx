@@ -143,6 +143,36 @@ export default function PhilosophyPage() {
         </motion.p>
       </section>
 
+      {[
+        { number: '01', name: 'Awareness',  headline: 'The space between two people is not empty.', body: 'It holds everything that hasn\'t been said yet. Longing. Curiosity. The quiet awareness that someone else is in the room — and that they matter to you. This is where intimacy begins: in the silence before anything happens.', video: '/film-distance.mp4' },
+        { number: '02', name: 'Presence',   headline: 'To be seen is already an act of courage.',   body: 'Presence is the moment you stop performing and start actually being there. Breath slowing. Shoulders softening. No script, no right answer. Just two people paying attention to each other — and choosing to stay.', video: '/film-presence.mp4' },
+        { number: '03', name: 'Intimacy',   headline: 'Closeness is something you build together.',  body: 'Not a destination but a feeling — warm, unhurried, honest. Intimacy happens when safety and openness arrive in the same room at the same time. When vulnerability is not weakness, but the closest thing to freedom.', video: '/film-intimacy.mp4' },
+        { number: '04', name: 'Wildness',   headline: 'Joy is allowed to be big.',                   body: 'Wildness is not chaos. It is full permission — to feel, to laugh, to cry, to move freely, to express what is alive in you. The best moments of connection are the ones where nothing had to be held back.', video: '/film-wildness.mp4' },
+      ].map((phase, i) => (
+        <section key={phase.number}
+          style={{ maxWidth: 1100, margin: '0 auto', padding: '4rem 2.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem', alignItems: 'center', borderTop: '1px solid #e8e8e8' }}>
+          <motion.div
+            initial={{ opacity: 0, x: i % 2 === 0 ? -24 : 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            style={{ order: i % 2 === 0 ? 0 : 1, aspectRatio: '4/3', background: '#f5f5f5', overflow: 'hidden' }}>
+            <video autoPlay muted playsInline loop style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}>
+              <source src={phase.video} type="video/mp4" />
+            </video>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            style={{ order: i % 2 === 0 ? 1 : 0, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem' }}>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.35 }}>{phase.number}</p>
+              <p style={{ fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.7 }}>{phase.name}</p>
+            </div>
+            <h2 style={{ fontSize: 'clamp(1.5rem, 2.5vw, 2rem)', fontWeight: 300, lineHeight: 1.3, letterSpacing: '-0.02em' }}>{phase.headline}</h2>
+            <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555' }}>{phase.body}</p>
+          </motion.div>
+        </section>
+      ))}
+
       <section style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2.5rem 6rem', height: '55vh', overflow: 'hidden' }}>
         <motion.div
           initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
