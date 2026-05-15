@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -137,30 +137,64 @@ export default function PhilosophyPage() {
       </section>
 
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '5rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1px', background: '#e8e8e8', border: '1px solid #e8e8e8' }}
-        >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', padding: '0.75rem 0', marginBottom: '0.5rem', borderBottom: '1px solid #e8e8e8' }}>
+            <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.35, fontFamily: PP }}>Before</p>
+            <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.35, fontFamily: PP, width: 40 }}></p>
+            <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.35, fontFamily: PP }}>After</p>
+          </div>
           {[
-            ['Before', 'After'],
             ['Performance', 'Presence'],
             ['External validation', 'Self-worth'],
             ['Emotional armor', 'Vulnerability'],
             ['Fear', 'Trust'],
             ['Disconnection', 'Deep connection'],
             ['Shame', 'Openness'],
-          ].map(([left, right], i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.06 }}
-              style={{ display: 'contents' }}
-            >
-              <div style={{ padding: '1.25rem 2rem', background: '#ffffff', fontSize: i === 0 ? '0.65rem' : '0.95rem', letterSpacing: i === 0 ? '0.15em' : 0, textTransform: i === 0 ? 'uppercase' : 'none', opacity: i === 0 ? 0.4 : 0.7, fontWeight: i === 0 ? 500 : 300 }}>{left}</div>
-              <div style={{ padding: '1.25rem 2rem', background: '#ffffff', fontSize: i === 0 ? '0.65rem' : '0.95rem', letterSpacing: i === 0 ? '0.15em' : 0, textTransform: i === 0 ? 'uppercase' : 'none', opacity: i === 0 ? 0.4 : 1, fontWeight: i === 0 ? 500 : 400 }}>{right}</div>
-            </motion.div>
-          ))}
-        </motion.div>
+          ].map(([before, after], i) => {
+            const [hovered, setHovered] = useState(false)
+            return (
+              <motion.div
+                key={before}
+                initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.09, ease: [0.16, 1, 0.3, 1] }}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+                style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', padding: '1.4rem 0', borderBottom: '1px solid #e8e8e8', cursor: 'default' }}
+              >
+                <motion.p
+                  animate={{ opacity: hovered ? 0.25 : 0.55, x: hovered ? -6 : 0 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ fontSize: 'clamp(1rem, 1.8vw, 1.3rem)', fontWeight: 300, fontFamily: PP, position: 'relative' }}
+                >
+                  {before}
+                  <motion.span
+                    animate={{ scaleX: hovered ? 1 : 0 }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: '1px', background: '#1A1A1A', opacity: 0.3, transformOrigin: 'left' }}
+                  />
+                </motion.p>
+
+                <motion.div
+                  animate={{ opacity: hovered ? 1 : 0.15, scaleX: hovered ? 1 : 0.5 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ width: 40, display: 'flex', justifyContent: 'center' }}
+                >
+                  <svg width="20" height="8" viewBox="0 0 20 8" fill="none">
+                    <path d="M0 4h18M14 1l4 3-4 3" stroke="#1A1A1A" strokeWidth="0.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </motion.div>
+
+                <motion.p
+                  animate={{ opacity: hovered ? 1 : 0.4, x: hovered ? 6 : 0 }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ fontSize: 'clamp(1rem, 1.8vw, 1.3rem)', fontWeight: hovered ? 400 : 300, fontFamily: PP, letterSpacing: '-0.01em' }}
+                >
+                  {after}
+                </motion.p>
+              </motion.div>
+            )
+          })}
+        </div>
       </section>
 
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', textAlign: 'center' }}>
