@@ -90,12 +90,9 @@ function Product() {
           {'Made for the moments\nthat stay with you.'}
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
-          style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 16, fontFamily: PP }}>
-          Thin, safe, and honest. On each of the six wrappers, a question — because the best moments always start with one.
-        </motion.p>
-        <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.28 }} viewport={{ once: true }}
           style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
-          Everything else we made as good as we possibly could — so you can forget about it and enjoy the rest.
+          6 condoms. 6 reflection cards. 1 seed paper card.<br />
+          vegan · fair rubber latex · launching august 2026.
         </motion.p>
         <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}>
           <Link href="/shop" style={{ display: 'inline-block', marginTop: 36, fontSize: 10, letterSpacing: '0.45em', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.25)', paddingBottom: 4 }}>
@@ -115,12 +112,16 @@ function Product() {
 
 function Waitlist() {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle')
   const submit = async (e: React.FormEvent) => {
-    e.preventDefault(); setStatus('loading')
+    e.preventDefault()
+    setStatus('loading')
     try {
       const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) })
-      setStatus(res.ok ? 'success' : 'error')
+      const data = await res.json()
+      if (data.duplicate) setStatus('duplicate')
+      else if (res.ok) setStatus('success')
+      else setStatus('error')
     } catch { setStatus('error') }
   }
   return (
@@ -130,15 +131,20 @@ function Waitlist() {
           <Logo color="#ffffff" size={44} />
         </motion.div>
         <h2 style={{ marginTop: 36, fontSize: 'clamp(26px, 4vw, 48px)', fontWeight: 300, color: '#ffffff', lineHeight: 1.15, maxWidth: 560, margin: '36px auto 20px', fontFamily: PP, letterSpacing: '-0.02em' }}>
-          First access to the founding collection.
+          be part of the founding edition.
         </h2>
         <p style={{ fontSize: 15, color: '#ffffff', opacity: 0.4, maxWidth: 400, margin: '0 auto 56px', lineHeight: 1.85, fontWeight: 300, fontFamily: PP }}>
-          The first PeakPlant collection is limited. Leave your email and we'll reach out personally before anything goes public.
+          edition 01 drops august 2026. leave your email and we'll reach out personally.
         </p>
         {status === 'success' ? (
           <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
-            style={{ fontSize: 11, letterSpacing: '0.45em', color: '#ffffff', opacity: 0.6, fontFamily: PP }}>
-            LOVELY. WE'LL BE IN TOUCH.
+            style={{ fontSize: 13, letterSpacing: '0.08em', color: '#ffffff', opacity: 0.7, fontFamily: PP, fontWeight: 300 }}>
+            we'll find you when it's time.
+          </motion.p>
+        ) : status === 'duplicate' ? (
+          <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
+            style={{ fontSize: 13, letterSpacing: '0.08em', color: '#ffffff', opacity: 0.5, fontFamily: PP, fontWeight: 300 }}>
+            you're already on the list.
           </motion.p>
         ) : (
           <form onSubmit={submit} style={{ display: 'inline-flex', maxWidth: 460, width: '100%', border: '1px solid rgba(255,255,255,0.22)' }}>
