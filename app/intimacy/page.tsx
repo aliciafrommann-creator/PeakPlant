@@ -2,16 +2,9 @@
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef, useState } from 'react'
+import { NavBar } from '../../components/NavBar'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
-
-function Logo({ size = 28 }: { size?: number }) {
-  return (
-    <svg width={size} height={size * 0.75} viewBox="0 0 48 38" fill="none">
-      <path d="M4 34 L24 4 L44 34" stroke="#1A1A1A" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
 
 function ParallaxImage({ src, alt }: { src: string; alt: string }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -120,18 +113,7 @@ export default function IntimacyPage() {
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
 
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '1.5rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)' }}>
-        <Link href="/" style={{ textDecoration: 'none', color: '#1A1A1A' }}>
-          <Logo size={32} />
-        </Link>
-        <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
-          {[['/', 'Home'], ['/intimacy', 'Intimacy'], ['/philosophy', 'Philosophy'], ['/about', 'About'], ['/shop', 'Shop'], ['/journal', 'Journal'], ['/community', 'Community']].map(([href, label]) => (
-            <Link key={href} href={href} style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', color: '#1A1A1A', opacity: href === '/intimacy' ? 1 : 0.5 }}>
-              {label}
-            </Link>
-          ))}
-        </div>
-      </nav>
+      <NavBar activePath="/intimacy" />
 
       {/* Cinematic hero */}
       <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
@@ -184,7 +166,6 @@ export default function IntimacyPage() {
           { bgPosition: '100% 100%', title: 'Your worth is not earned.',                  body: 'You do not have to perform to be worthy of love. You are already enough — and intimacy should feel that way.' },
         ].map((q, i) => <QuadPanel key={i} bgPosition={q.bgPosition} title={q.title} body={q.body} />)}
       </div>
-
 
     </div>
   )

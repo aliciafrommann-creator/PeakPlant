@@ -3,16 +3,9 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { useScroll, useTransform } from 'framer-motion'
+import { NavBar } from '../../components/NavBar'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
-
-function Logo({ color = '#1A1A1A', size = 28 }: { color?: string; size?: number }) {
-  return (
-    <svg width={size} height={size * 0.75} viewBox="0 0 48 38" fill="none">
-      <path d="M4 34 L24 4 L44 34" stroke={color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  )
-}
 
 function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; alt: string; objectPosition?: string }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -111,18 +104,7 @@ export default function ShopPage() {
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
 
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '1.5rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)' }}>
-        <Link href="/" style={{ textDecoration: 'none', color: '#1A1A1A' }}>
-          <Logo size={32} />
-        </Link>
-        <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
-          {[['/', 'Home'], ['/intimacy', 'Intimacy'], ['/philosophy', 'Philosophy'], ['/about', 'About'], ['/shop', 'Shop'], ['/journal', 'Journal'], ['/community', 'Community']].map(([href, label]) => (
-            <Link key={href} href={href} style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', color: '#1A1A1A', opacity: href === '/shop' ? 1 : 0.5 }}>
-              {label}
-            </Link>
-          ))}
-        </div>
-      </nav>
+      <NavBar activePath="/shop" />
 
       {/* Hero */}
       <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
@@ -264,7 +246,6 @@ export default function ShopPage() {
           compare
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-          {/* Header */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', borderBottom: '1px solid #1A1A1A', paddingBottom: '1rem', marginBottom: '0' }}>
             <div />
             <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>founders edition</p>
@@ -300,7 +281,7 @@ export default function ShopPage() {
               transition={{ duration: 0.6, delay: i * 0.06 }}
               style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', borderRight: i % 3 !== 2 ? '1px solid #e8e8e8' : 'none' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem' }}>0{i + 1}</p>
-              <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{q}"</p>
+              <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{ q}"</p>
             </motion.div>
           ))}
         </div>

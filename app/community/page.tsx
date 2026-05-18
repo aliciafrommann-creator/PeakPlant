@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
+import { NavBar } from '../../components/NavBar'
 
 const pairs = [
   ['Performance', 'Presence'],
@@ -11,6 +12,16 @@ const pairs = [
   ['Disconnection', 'Deep connection'],
   ['Shame', 'Openness'],
 ]
+
+const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+
+function Logo({ size = 28, color = '#1A1A1A' }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size * 0.75} viewBox="0 0 48 38" fill="none">
+      <path d="M4 34 L24 4 L44 34" stroke={color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
 
 function TransformRow({ before, after, index }: { before: string; after: string; index: number }) {
   const [hovered, setHovered] = useState(false)
@@ -42,16 +53,6 @@ function TransformRow({ before, after, index }: { before: string; after: string;
         {after}
       </motion.p>
     </motion.div>
-  )
-}
-
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
-
-function Logo({ size = 28, color = '#1A1A1A' }: { size?: number; color?: string }) {
-  return (
-    <svg width={size} height={size * 0.75} viewBox="0 0 48 38" fill="none">
-      <path d="M4 34 L24 4 L44 34" stroke={color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   )
 }
 
@@ -149,16 +150,7 @@ export default function CommunityPage() {
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
 
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '1.5rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)' }}>
-        <Link href="/" style={{ textDecoration: 'none', color: '#1A1A1A' }}><Logo size={32} /></Link>
-        <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
-          {[['/', 'Home'], ['/intimacy', 'Intimacy'], ['/philosophy', 'Philosophy'], ['/about', 'About'], ['/shop', 'Shop'], ['/journal', 'Journal'], ['/community', 'Community']].map(([href, label]) => (
-            <Link key={href} href={href} style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.12em', textTransform: 'uppercase', textDecoration: 'none', color: '#1A1A1A', opacity: 0.5 }}>
-              {label}
-            </Link>
-          ))}
-        </div>
-      </nav>
+      <NavBar activePath="/community" />
 
       {/* Hero */}
       <section style={{ padding: '8rem 5rem 6rem', maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
