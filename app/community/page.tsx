@@ -57,18 +57,22 @@ function Logo({ size = 28, color = '#1A1A1A' }: { size?: number; color?: string 
 
 function JoinModal({ onClose }: { onClose: () => void }) {
   const [email, setEmail] = useState('')
-  const [sent, setSent] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle')
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
-    setLoading(true)
+    setStatus('loading')
     try {
-      await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) })
-      setSent(true)
-    } finally {
-      setLoading(false)
-    }
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source: 'community' }),
+      })
+      const data = await res.json()
+      if (data.duplicate) setStatus('duplicate')
+      else if (res.ok) setStatus('success')
+      else setStatus('error')
+    } catch { setStatus('error') }
   }
 
   return (
@@ -79,9 +83,13 @@ function JoinModal({ onClose }: { onClose: () => void }) {
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         style={{ background: '#ffffff', border: '1px solid #1A1A1A', padding: '3rem', maxWidth: 440, width: '100%' }}
         onClick={e => e.stopPropagation()}>
-        {sent ? (
+        {status === 'success' ? (
           <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, textAlign: 'center' }}>
-            You're in. First event invite is on its way.
+            we'll find you when it's time.
+          </p>
+        ) : status === 'duplicate' ? (
+          <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, textAlign: 'center', opacity: 0.6 }}>
+            you're already on the list.
           </p>
         ) : (
           <>
@@ -92,11 +100,16 @@ function JoinModal({ onClose }: { onClose: () => void }) {
             <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com"
                 style={{ fontFamily: PP, fontSize: '1rem', padding: '0.85rem 1rem', border: '1px solid #1A1A1A', background: 'transparent', outline: 'none', color: '#1A1A1A' }} />
-              <button type="submit" disabled={loading}
+              <button type="submit" disabled={status === 'loading'}
                 style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem 1rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-                {loading ? 'Sending…' : 'Join'}
+                {status === 'loading' ? '…' : 'Join'}
               </button>
             </form>
+            {status === 'error' && (
+              <p style={{ marginTop: '0.75rem', fontSize: '0.75rem', color: '#e74c3c', fontFamily: PP }}>
+                Something went wrong. Try again.
+              </p>
+            )}
           </>
         )}
       </motion.div>
