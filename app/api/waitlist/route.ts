@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-const EMAIL_BODY = `∧ peakplant
+const CONFIRMATION = `∧ peakplant
 
 thank you for being here.
 we'll reach out when edition 01 drops in august 2026.
@@ -9,6 +9,15 @@ until then — slow down a little.
 
 safe. soft. wild.
 ∧ peakplant`
+
+function supabaseHeaders() {
+  return {
+    'Content-Type': 'application/json',
+    'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
+    'Prefer': 'return=minimal',
+  }
+}
 
 export async function POST(req: Request) {
   try {
@@ -22,15 +31,14 @@ export async function POST(req: Request) {
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
     if (supabaseUrl && supabaseKey) {
-      const res = await fetch(`${supabaseUrl}/rest/v1/waitlist`, {
+      const res = await fetch(`${supabaseUrl}/rest/v1/subscribers`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': supabaseKey,
-          'Authorization': `Bearer ${supabaseKey}`,
-          'Prefer': 'return=minimal',
-        },
-        body: JSON.stringify({ email: sanitized, source: source ?? 'homepage' }),
+        headers: supabaseHeaders(),
+        body: JSON.stringify({
+          email: sanitized,
+          source: source ?? 'homepage',
+          edition: 'edition_01',
+        }),
       })
 
       if (res.status === 409) {
@@ -52,7 +60,7 @@ export async function POST(req: Request) {
           from: 'hello@peakplant.com',
           to: sanitized,
           subject: "you're in.",
-          text: EMAIL_BODY,
+          text: CONFIRMATION,
         })
       } catch (err) {
         console.error('[Waitlist] Resend error:', err)
