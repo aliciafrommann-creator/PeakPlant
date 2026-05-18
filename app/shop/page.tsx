@@ -27,17 +27,19 @@ function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; a
 
 function WaitlistModal({ onClose }: { onClose: () => void }) {
   const [email, setEmail] = useState('')
-  const [sent, setSent] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle')
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
-    setLoading(true)
+    setStatus('loading')
     try {
-      await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) })
-      setSent(true)
+      const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, source: 'shop' }) })
+      const data = await res.json()
+      if (data.duplicate) setStatus('duplicate')
+      else if (res.ok) setStatus('success')
+      else setStatus('error')
     } finally {
-      setLoading(false)
+      if (status === 'loading') setStatus('error')
     }
   }
 
@@ -53,29 +55,40 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
         style={{ background: '#ffffff', border: '1px solid #1A1A1A', padding: '3rem', maxWidth: 440, width: '100%' }}
         onClick={e => e.stopPropagation()}
       >
-        {sent ? (
+        {status === 'success' ? (
           <div style={{ textAlign: 'center' }}>
             <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7 }}>
-              You're on the founding list. We'll reach out personally before anything goes public.
+              we'll find you when it's time.
+            </p>
+          </div>
+        ) : status === 'duplicate' ? (
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, opacity: 0.6 }}>
+              you're already on the list.
             </p>
           </div>
         ) : (
           <>
-            <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>Reserve your spot</p>
+            <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>join waitlist</p>
             <p style={{ fontFamily: PP, fontSize: '1rem', color: '#555', lineHeight: 1.7, marginBottom: '2rem' }}>
-              The founding collection launches soon. Leave your email and you'll hear from us first — personally.
+              edition 01 drops august 2026. leave your email and you'll hear from us first — personally.
             </p>
-            <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <input
                 type="email" required value={email} onChange={e => setEmail(e.target.value)}
                 placeholder="your@email.com"
                 style={{ fontFamily: PP, fontSize: '1rem', padding: '0.85rem 1rem', border: '1px solid #1A1A1A', background: 'transparent', outline: 'none', color: '#1A1A1A' }}
               />
-              <button type="submit" disabled={loading}
+              <button type="submit" disabled={status === 'loading'}
                 style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem 1rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-                {loading ? 'Sending…' : 'Reserve'}
+                {status === 'loading' ? '...' : 'join waitlist'}
               </button>
             </form>
+            <p style={{ marginTop: '1rem', fontSize: '0.7rem', color: '#1A1A1A', opacity: 0.4, lineHeight: 1.6, fontFamily: PP }}>
+              mit der anmeldung stimmst du unserer{' '}
+              <Link href="/datenschutz" style={{ color: 'inherit', textDecoration: 'underline' }}>datenschutzerklärung</Link>{' '}zu.
+            </p>
+            {status === 'error' && <p style={{ marginTop: 8, fontSize: 11, color: '#e74c3c', fontFamily: PP }}>Something went wrong. Try again.</p>}
           </>
         )}
       </motion.div>
@@ -83,55 +96,13 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
   )
 }
 
-const collections = [
-  {
-    number: '01',
-    name: 'The Founding Collection',
-    tag: 'AVAILABLE SOON',
-    description: 'Six condoms. Five love languages. One box. Each wrapper carries a question from a different love language — so every moment opens something different. The starting point for anyone who wants to discover what moves them.',
-    note: 'Mixed Edition — All five love languages. Limited.',
-    available: true,
-  },
-  {
-    number: '02',
-    name: 'Words of Affirmation',
-    tag: 'COMING',
-    description: 'For couples who know that language is everything. All six questions live in the world of words — what you say, what you hear, what you\'ve been afraid to ask for. The kind of conversation that starts in bed and doesn\'t stop.',
-    note: 'Love Language Edition — Single',
-    available: false,
-  },
-  {
-    number: '03',
-    name: 'Physical Touch',
-    tag: 'COMING',
-    description: 'Six questions built around the body — presence, sensation, closeness, and the kind of touch that communicates what words can\'t. For the people who feel most alive through contact.',
-    note: 'Love Language Edition — Single',
-    available: false,
-  },
-  {
-    number: '04',
-    name: 'Quality Time',
-    tag: 'COMING',
-    description: 'For the couples who feel most connected when nothing else is competing for attention. Questions about presence, slowness, and what it means to truly be somewhere together.',
-    note: 'Love Language Edition — Single',
-    available: false,
-  },
-  {
-    number: '05',
-    name: 'Acts of Service',
-    tag: 'COMING',
-    description: 'Love shown through action — care, attention, the small decisions that say "I see you." Questions that bring that language into the most intimate moments.',
-    note: 'Love Language Edition — Single',
-    available: false,
-  },
-  {
-    number: '06',
-    name: 'Receiving Gifts',
-    tag: 'COMING',
-    description: 'Designed to be given. The most thoughtful thing you can bring to a moment is intention — this box makes it visible. For someone who feels love through the care behind a gesture.',
-    note: 'Love Language Edition — Single',
-    available: false,
-  },
+const pricingRows = [
+  { label: 'price',          founders: '14,90€ incl. shipping', sub: '27€ + 12,90€/mo' },
+  { label: 'condoms',        founders: '6',                      sub: '6 / month' },
+  { label: 'cards',          founders: '6 reflection cards',     sub: '6 / month' },
+  { label: 'digital world',  founders: '✓',                      sub: '✓' },
+  { label: 'archive booklet',founders: '—',                      sub: 'month 3' },
+  { label: 'cancel anytime', founders: '—',                      sub: '✓' },
 ]
 
 export default function ShopPage() {
@@ -153,7 +124,7 @@ export default function ShopPage() {
         </div>
       </nav>
 
-      {/* Hero — full-viewport wildness film */}
+      {/* Hero */}
       <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
         <video autoPlay muted playsInline loop
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
@@ -173,79 +144,161 @@ export default function ShopPage() {
             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             onClick={() => setModalOpen(true)}>
-            Reserve yours →
+            join waitlist →
           </button>
         </motion.div>
       </section>
 
-      {/* Collections */}
-      <section style={{ borderTop: '1px solid #e8e8e8', maxWidth: 1100, margin: '0 auto', padding: '6rem 2.5rem' }}>
-        <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
-          style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '4rem' }}>
-          All collections
-        </motion.p>
-
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {collections.map((c, i) => (
-            <motion.div key={c.number}
-              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              style={{ display: 'grid', gridTemplateColumns: '80px 1fr auto', alignItems: 'start', gap: '3rem', padding: '2.5rem 0', borderBottom: '1px solid #e8e8e8', opacity: c.available ? 1 : 0.5 }}>
-              <div>
-                <p style={{ fontSize: '0.62rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.4 }}>{c.number}</p>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                  <h3 style={{ fontSize: 'clamp(1.1rem, 2vw, 1.5rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>{c.name}</h3>
-                  <span style={{ fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '0.3rem 0.8rem', border: '1px solid #1A1A1A', opacity: c.available ? 1 : 0.4 }}>{c.tag}</span>
+      {/* Product 1 — Founders Edition */}
+      <section style={{ borderTop: '1px solid #e8e8e8', maxWidth: 1100, margin: '0 auto', padding: '7rem 2.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'start' }}>
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            style={{ aspectRatio: '1/1', background: '#f5f5f5', overflow: 'hidden' }}>
+            <ParallaxImage src="/product-box.jpg" alt="PeakPlant founders edition" />
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingTop: '0.5rem' }}>
+            <div>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>
+                edition 01 — sommer 2026 · einmalig
+              </p>
+              <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
+                founders edition
+              </h2>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {[
+                '6 condoms — vegan, fair rubber latex',
+                '6 reflection cards — blauer engel certified, writable',
+                '1 seed paper card with QR to digital world',
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline' }}>
+                  <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
+                  <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.6 }}>{item}</p>
                 </div>
-                <p style={{ fontSize: '0.9rem', lineHeight: 1.7, color: '#666', maxWidth: 560 }}>{c.description}</p>
-                <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4 }}>{c.note}</p>
-              </div>
-              <div style={{ paddingTop: '0.25rem' }}>
-                {c.available ? (
-                  <button onClick={() => setModalOpen(true)}
-                    style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.75rem 1.5rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                    Reserve
-                  </button>
-                ) : (
-                  <button onClick={() => setModalOpen(true)}
-                    style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.75rem 1.5rem', background: 'transparent', color: '#1A1A1A', border: '1px solid rgba(26,26,26,0.3)', cursor: 'pointer', whiteSpace: 'nowrap', opacity: 0.55 }}>
-                    Notify me
-                  </button>
-                )}
-              </div>
-            </motion.div>
-          ))}
+              ))}
+            </div>
+            <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+              <p style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>14,90€</p>
+              <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
+            </div>
+            <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
+              launching august 2026
+            </p>
+            <button onClick={() => setModalOpen(true)}
+              style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
+              join waitlist
+            </button>
+          </motion.div>
         </div>
+      </section>
+
+      {/* Product 2 — Subscription */}
+      <section style={{ borderTop: '1px solid #e8e8e8', background: '#faf9f7', padding: '7rem 2.5rem' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'start' }}>
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>
+                subscription · monatlich kündbar
+              </p>
+              <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
+                the ritual, monthly
+              </h2>
+              <p style={{ fontSize: '1rem', color: '#666', fontWeight: 300, marginTop: '0.5rem' }}>a new edition every month</p>
+            </div>
+
+            <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>welcome box — once</p>
+              {[
+                'premium unboxing experience',
+                'personal letter from alicia',
+                'edition 01 box',
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline', marginBottom: '0.4rem' }}>
+                  <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>—</span>
+                  <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300 }}>{item}</p>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>then monthly</p>
+              {[
+                'new edition every month',
+                'new cards, new questions, new digital world',
+                'month 3: the archive booklet',
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline', marginBottom: '0.4rem' }}>
+                  <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>—</span>
+                  <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300 }}>{item}</p>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
+              <p style={{ fontSize: 'clamp(1rem, 1.5vw, 1.2rem)', fontWeight: 300, color: '#1A1A1A', letterSpacing: '-0.01em' }}>
+                27€ to start · then 12,90€/month · cancel anytime
+              </p>
+            </div>
+            <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
+              launching august 2026
+            </p>
+            <button onClick={() => setModalOpen(true)}
+              style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'pointer', alignSelf: 'flex-start' }}>
+              join waitlist
+            </button>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            style={{ aspectRatio: '1/1', background: '#f0f0f0', overflow: 'hidden' }}>
+            <ParallaxImage src="/couples-rain.jpg" alt="the ritual" />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Pricing Comparison */}
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
+        <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+          style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '3rem' }}>
+          compare
+        </motion.p>
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
+          {/* Header */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', borderBottom: '1px solid #1A1A1A', paddingBottom: '1rem', marginBottom: '0' }}>
+            <div />
+            <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>founders edition</p>
+            <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>subscription</p>
+          </div>
+          {pricingRows.map(({ label, founders, sub }, i) => (
+            <div key={label} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '1.1rem 0', borderBottom: '1px solid #ebebeb' }}>
+              <p style={{ fontSize: '0.8rem', letterSpacing: '0.06em', opacity: 0.5, textTransform: 'lowercase' }}>{label}</p>
+              <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{founders}</p>
+              <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{sub}</p>
+            </div>
+          ))}
+        </motion.div>
       </section>
 
       {/* Wrapper Questions */}
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '1.5rem' }}>
-          The questions on every wrapper
-        </motion.p>
-        <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.1 }}
-          style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', maxWidth: 560, marginBottom: '4rem' }}>
-          Each condom wrapper carries one question. Small enough to miss. Quiet enough to stay with you. The kind that slows a moment down.
+          edition 01 — the questions
         </motion.p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0' }}>
           {[
-            'Tell me something you\'ve never said out loud.',
-            'When do you feel most yourself?',
-            'What kind of love are you afraid of?',
-            'What do you want more of in life?',
-            'Where do you feel safest?',
-            'What memory still lives in your body?',
-            'What would freedom look like for you?',
-            'What are you slowly growing into?',
-            'What do you wish people understood about you?',
+            "what's your favorite memory of us?",
+            'when did you know?',
+            'what do you want to remember about tonight?',
+            'go for a walk. no destination. just talk.',
+            'who would you be without me?',
+            'how would you describe me — without age, job, family or hobbies?',
           ].map((q, i) => (
             <motion.div key={i}
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.06 }}
-              style={{ padding: '2rem 2rem', borderBottom: '1px solid #e8e8e8', borderRight: i % 3 !== 2 ? '1px solid #e8e8e8' : 'none' }}>
+              style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', borderRight: i % 3 !== 2 ? '1px solid #e8e8e8' : 'none' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem' }}>0{i + 1}</p>
               <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{q}"</p>
             </motion.div>
@@ -253,72 +306,16 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* Subscription */}
-      <section style={{ borderTop: '1px solid #e8e8e8', background: '#f9f9f9', padding: '6rem 2.5rem' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
-            <div>
-              <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '1.5rem' }}>Monthly subscription</p>
-              <h2 style={{ fontSize: 'clamp(1.6rem, 2.5vw, 2.4rem)', fontWeight: 300, lineHeight: 1.25, marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
-                A different love language. Every month.
-              </h2>
-              <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', marginBottom: '1rem' }}>
-                Start with the Founding Collection to discover all five. Then, each month, go deeper into one — a full box of six questions living entirely in that language.
-              </p>
-              <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', marginBottom: '2.5rem' }}>
-                Five months. Five love languages. Or take your time — every two months, at your own pace. Either way, it becomes a ritual. A regular reason to go deeper.
-              </p>
-              <button onClick={() => {}} style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem 2rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'default', opacity: 0.4 }}>
-                Subscription coming soon
-              </button>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-              {['Words of Affirmation', 'Physical Touch', 'Quality Time', 'Acts of Service', 'Receiving Gifts'].map((lang, i) => (
-                <motion.div key={lang}
-                  initial={{ opacity: 0, x: 16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
-                  style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '1.2rem 0', borderBottom: '1px solid #e8e8e8' }}>
-                  <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.3, minWidth: 24 }}>0{i + 1}</span>
-                  <span style={{ fontSize: '1rem', fontWeight: 300, color: '#1A1A1A' }}>{lang}</span>
-                  {i === 0 && <span style={{ marginLeft: 'auto', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.25rem 0.7rem', border: '1px solid #1A1A1A', opacity: 0.35 }}>Month 1</span>}
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* What's inside */}
-      <section style={{ padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center', borderTop: '1px solid #e8e8e8' }}>
-        <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}>
-          <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '1.5rem' }}>What's inside</p>
-          <h2 style={{ fontSize: 'clamp(1.6rem, 2.5vw, 2.2rem)', fontWeight: 300, lineHeight: 1.3, marginBottom: '1.5rem', letterSpacing: '-0.015em' }}>
-            Everything you need. Nothing that gets in the way.
-          </h2>
-          <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', marginBottom: '1.5rem' }}>
-            Ultra-thin latex. Silicone lubricant. Clean, minimal packaging. A question on every wrapper.
-          </p>
-          <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555' }}>
-            Each box is a complete set — six moments, six conversations. Designed to feel as good to hold as it does to open.
-          </p>
-        </motion.div>
-        <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          style={{ aspectRatio: '1/1', background: '#f5f5f5', overflow: 'hidden' }}>
-          <ParallaxImage src="/product-box.jpg" alt="PeakPlant founding collection" objectPosition="center center" />
-        </motion.div>
-      </section>
-
       {/* CTA */}
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', textAlign: 'center' }}>
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           style={{ maxWidth: 560, margin: '0 auto' }}>
           <p style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', fontWeight: 300, lineHeight: 1.4, marginBottom: '2.5rem', letterSpacing: '-0.01em' }}>
-            The founding collection is limited. Be there when it opens.
+            edition 01 is limited. be there when it opens.
           </p>
           <button onClick={() => setModalOpen(true)}
             style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'pointer' }}>
-            Reserve founding access
+            join waitlist
           </button>
         </motion.div>
       </section>

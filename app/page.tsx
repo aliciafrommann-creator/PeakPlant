@@ -157,7 +157,87 @@ function Waitlist() {
           </form>
         )}
         {status === 'error' && <p style={{ marginTop: 12, fontSize: 11, color: '#e74c3c', fontFamily: PP }}>Something went wrong. Try again.</p>}
+        {status !== 'success' && status !== 'duplicate' && (
+          <p style={{ marginTop: 16, fontSize: 11, color: '#ffffff', opacity: 0.35, fontFamily: PP, lineHeight: 1.65 }}>
+            mit der anmeldung stimmst du unserer{' '}
+            <Link href="/datenschutz" style={{ color: '#ffffff', opacity: 0.6, textDecoration: 'underline' }}>datenschutzerklärung</Link>
+            {' '}zu.
+          </p>
+        )}
       </motion.div>
+    </section>
+  )
+}
+
+const questions = [
+  { n: '01', q: "what's your favorite memory of us?" },
+  { n: '02', q: 'when did you know?' },
+  { n: '03', q: 'what do you want to remember about tonight?' },
+  { n: '04', q: 'go for a walk. no destination. just talk.' },
+  { n: '05', q: 'who would you be without me?' },
+  { n: '06', q: 'how would you describe me — without age, job, family or hobbies?' },
+]
+
+function SixQuestions() {
+  return (
+    <section style={{ backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb', padding: '8rem 2.5rem' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+          style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.5rem', fontFamily: PP }}>
+          edition 01
+        </motion.p>
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '5rem', fontFamily: PP }}>
+          six questions. one box.
+        </motion.h2>
+        <div style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #ebebeb' }}>
+          {questions.map(({ n, q }, i) => (
+            <motion.div key={n}
+              initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+              style={{ display: 'flex', alignItems: 'baseline', gap: '2.5rem', padding: '2rem 0', borderBottom: '1px solid #ebebeb' }}>
+              <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24 }}>{n}</span>
+              <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', fontStyle: 'italic', color: '#1A1A1A', fontFamily: PP }}>
+                "{q}"
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+const editions = [
+  { sym: '∧', label: 'edition 01 — sommer 2026' },
+  { sym: '∧', label: 'edition 02 — herbst 2026' },
+  { sym: '∧', label: 'edition 03 — winter 2026' },
+]
+
+function EditionSystem() {
+  return (
+    <section style={{ backgroundColor: '#1A1A1A', padding: '8rem 2.5rem' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '4rem', maxWidth: 560, fontFamily: PP }}>
+          every edition. a different world.
+        </motion.h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '4rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+          {editions.map(({ sym, label }, i) => (
+            <motion.div key={label}
+              initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+              <span style={{ color: '#C9A96E', fontSize: '1rem', lineHeight: 1 }}>{sym}</span>
+              <span style={{ fontSize: 'clamp(0.95rem, 1.8vw, 1.2rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.01em' }}>{label}</span>
+            </motion.div>
+          ))}
+        </div>
+        <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }}
+          style={{ fontSize: '0.95rem', color: '#ffffff', opacity: 0.45, lineHeight: 1.75, fontWeight: 300, maxWidth: 480, fontFamily: PP, whiteSpace: 'pre-line' }}>
+          {'same box outside. different world inside.\neach edition: new cards, new questions, new digital world.'}
+        </motion.p>
+      </div>
     </section>
   )
 }
@@ -169,14 +249,21 @@ function Footer() {
         <Logo color="#ffffff" size={18} />
         <span style={{ color: '#ffffff', fontSize: 10, letterSpacing: '0.4em', fontFamily: PP, opacity: 0.55 }}>PEAKPLANT</span>
       </div>
-      <div style={{ display: 'flex', gap: 32 }}>
+      <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
         {['Intimacy', 'Philosophy', 'Shop', 'Journal', 'Community'].map(item => (
           <Link key={item} href={`/${item.toLowerCase()}`} style={{ color: '#ffffff', fontSize: 9, letterSpacing: '0.35em', fontFamily: PP, textDecoration: 'none', opacity: 0.35 }}>
             {item.toUpperCase()}
           </Link>
         ))}
       </div>
-      <p style={{ fontSize: 9, letterSpacing: '0.3em', color: '#ffffff', opacity: 0.22, fontFamily: PP }}>© 2025 PEAKPLANT</p>
+      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
+        {[['impressum', '/impressum'], ['datenschutz', '/datenschutz'], ['agb', '/agb']].map(([label, href]) => (
+          <Link key={href} href={href} style={{ color: '#ffffff', fontSize: 9, letterSpacing: '0.25em', fontFamily: PP, textDecoration: 'none', opacity: 0.22 }}>
+            {label}
+          </Link>
+        ))}
+        <p style={{ fontSize: 9, letterSpacing: '0.3em', color: '#ffffff', opacity: 0.18, fontFamily: PP }}>© 2026 PEAKPLANT</p>
+      </div>
     </footer>
   )
 }
@@ -188,7 +275,9 @@ export default function Home() {
       <Nav />
       <CouplesHero />
       <Product />
+      <SixQuestions />
       <Waitlist />
+      <EditionSystem />
       <Footer />
     </main>
   )

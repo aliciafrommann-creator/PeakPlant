@@ -199,6 +199,32 @@ export default function Edition01Page() {
         </div>
       </section>
 
+      {/* Archive Booklet */}
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '5rem', alignItems: 'center' }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4 }}>month three surprise</p>
+            <div style={{ width: 40, height: 1, background: '#C9A96E', opacity: 0.7, marginTop: '0.5rem' }} />
+          </div>
+          <div>
+            <h3 style={{ fontSize: 'clamp(1.2rem, 2vw, 1.6rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.3, marginBottom: '1.25rem' }}>
+              the archive booklet.
+            </h3>
+            <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '1rem' }}>
+              12 months. one card per month.<br />
+              a year of moments, kept.
+            </p>
+            <p style={{ fontSize: '0.75rem', letterSpacing: '0.06em', opacity: 0.4, fontWeight: 300 }}>
+              included with every subscription. starting month three.
+            </p>
+          </div>
+        </motion.div>
+      </section>
+
       {/* Newsletter */}
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem 9rem', maxWidth: 800, margin: '0 auto' }}>
         <motion.div
