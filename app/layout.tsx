@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { CursorEffect } from '../components/CursorEffect'
+import CookieBanner from '../components/CookieBanner'
 
 export const metadata: Metadata = {
   title: 'peakplant — safe. soft. wild.',
@@ -18,6 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body style={{ margin: 0, padding: 0, overflowX: 'hidden', cursor: 'none' }}>
         <CursorEffect />
         {children}
+        <CookieBanner />
       </body>
     </html>
   )
