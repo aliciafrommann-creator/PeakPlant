@@ -16,10 +16,11 @@ const items = [
   { label: 'Home', href: '/' },
   { label: 'Intimacy', href: '/intimacy' },
   { label: 'Philosophy', href: '/philosophy' },
-  { label: 'About', href: '/about' },
+  { label: 'Ethics', href: '/ethics' },
   { label: 'Shop', href: '/shop' },
   { label: 'Journal', href: '/journal' },
   { label: 'Community', href: '/community' },
+  { label: 'About', href: '/about' },
 ]
 
 export function NavBar({ activePath }: { activePath?: string }) {
