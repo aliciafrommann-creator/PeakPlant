@@ -10,15 +10,6 @@ until then — slow down a little.
 safe. soft. wild.
 ∧ peakplant`
 
-function supabaseHeaders() {
-  return {
-    'Content-Type': 'application/json',
-    'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
-    'Prefer': 'return=minimal',
-  }
-}
-
 export async function POST(req: Request) {
   try {
     const { email, source } = await req.json()
@@ -30,10 +21,19 @@ export async function POST(req: Request) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+    // Log env var presence for debugging
+    console.log('[Waitlist] env check — url:', !!supabaseUrl, 'key:', !!supabaseKey)
+
     if (supabaseUrl && supabaseKey) {
-      const res = await fetch(`${supabaseUrl}/rest/v1/subscribers`, {
+      const endpoint = `${supabaseUrl.replace(/\/$/, '')}/rest/v1/subscribers`
+      const res = await fetch(endpoint, {
         method: 'POST',
-        headers: supabaseHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Prefer': 'return=minimal',
+        },
         body: JSON.stringify({
           email: sanitized,
           source: source ?? 'homepage',
@@ -46,11 +46,12 @@ export async function POST(req: Request) {
       }
 
       if (!res.ok) {
-        console.error('[Waitlist] Supabase error:', res.status, await res.text())
+        const body = await res.text()
+        console.error(`[Waitlist] Supabase ${res.status}:`, body)
         return NextResponse.json({ error: 'Server error' }, { status: 500 })
       }
     } else {
-      console.log(`[PeakPlant Waitlist] ${new Date().toISOString()} — ${sanitized}`)
+      console.warn('[Waitlist] Supabase env vars missing — logging only:', sanitized)
     }
 
     if (process.env.RESEND_API_KEY) {
@@ -69,7 +70,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true })
   } catch (err) {
-    console.error('[Waitlist] Error:', err)
+    console.error('[Waitlist] Uncaught error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
