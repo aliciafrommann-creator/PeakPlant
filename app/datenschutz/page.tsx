@@ -1,17 +1,14 @@
 'use client'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { NavBar } from '../../components/NavBar'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function DatenschutzPage() {
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '1.5rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)' }}>
-        <Link href="/" style={{ textDecoration: 'none', color: '#1A1A1A', fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.6, fontFamily: PP }}>
-          ∧ peakplant
-        </Link>
-      </nav>
+      <NavBar />
 
       <section style={{ maxWidth: 640, margin: '0 auto', padding: '10rem 2.5rem 8rem' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
@@ -28,27 +25,38 @@ export default function DatenschutzPage() {
           {[
             {
               label: 'verantwortlich',
-              lines: ['alicia frommann, peakplant', 'kontakt: hello@peakplant.com'],
+              lines: [
+                'Alicia Frommann, PeakPlant',
+                'Otto-Löffler-Weg 10, 73207 Plochingen',
+                'E-Mail: hello@peak-plant.com',
+              ],
             },
             {
               label: 'erhobene daten',
               lines: [
-                'wir erheben folgende daten:',
-                '— email-adressen über das waitlist-formular',
-                '— keine weiteren daten ohne einwilligung',
+                'Wir erheben folgende Daten:',
+                '— E-Mail-Adressen über das Waitlist-Formular',
+                '— Keine weiteren Daten ohne Einwilligung',
               ],
             },
             {
               label: 'drittanbieter',
               lines: [
-                '— supabase (datenspeicherung, EU-konform)',
-                '— resend (e-mail versand)',
-                '— vercel (hosting)',
+                '— Supabase (Datenspeicherung, EU-konform)',
+                '— Resend (E-Mail-Versand)',
+                '— Vercel (Hosting — technisch notwendige Cookies)',
+              ],
+            },
+            {
+              label: 'deine rechte',
+              lines: [
+                'Du hast das Recht auf Auskunft, Berichtigung und Löschung deiner Daten.',
+                'Anfragen an: hello@peak-plant.com',
               ],
             },
             {
               label: 'hinweis',
-              lines: ['vollständige datenschutzerklärung folgt vor launch.'],
+              lines: ['Vollständige Datenschutzerklärung folgt vor Launch.'],
             },
           ].map(({ label, lines }) => (
             <div key={label} style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
@@ -58,12 +66,6 @@ export default function DatenschutzPage() {
               ))}
             </div>
           ))}
-
-          <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem', marginTop: '1rem' }}>
-            <p style={{ fontSize: '0.75rem', color: '#999', lineHeight: 1.7, fontStyle: 'italic' }}>
-              placeholder — wird vor launch durch rechtssichere fassung von händlerbund.de ersetzt.
-            </p>
-          </div>
         </motion.div>
       </section>
     </div>

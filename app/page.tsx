@@ -2,6 +2,7 @@
 import { motion, useScroll } from 'framer-motion'
 import { useState } from 'react'
 import Link from 'next/link'
+import { NavBar } from '../components/NavBar'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -17,35 +18,6 @@ function ScrollBar() {
   const { scrollYProgress } = useScroll()
   return (
     <motion.div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 1, background: '#1A1A1A', transformOrigin: 'left', scaleX: scrollYProgress, zIndex: 200 }} />
-  )
-}
-
-function NavLink({ href, label, light }: { href: string; label: string; light?: boolean }) {
-  const [hov, setHov] = useState(false)
-  const c = light ? '#ffffff' : '#1A1A1A'
-  return (
-    <Link href={href}
-      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ position: 'relative', color: c, fontSize: 10, letterSpacing: '0.35em', fontFamily: PP, textDecoration: 'none', opacity: 0.55, paddingBottom: 3 }}>
-      {label.toUpperCase()}
-      <motion.span animate={{ scaleX: hov ? 1 : 0 }} transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-        style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '0.5px', background: c, transformOrigin: 'left', display: 'block' }} />
-    </Link>
-  )
-}
-
-function Nav() {
-  return (
-    <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 40px', backgroundColor: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)' }}>
-      <Link href="/" style={{ textDecoration: 'none' }}>
-        <Logo color="#1A1A1A" size={28} />
-      </Link>
-      <div style={{ display: 'flex', gap: 36, alignItems: 'center' }}>
-        {['Home', 'Intimacy', 'Philosophy', 'About', 'Shop', 'Journal', 'Community'].map(item => (
-          <NavLink key={item} href={item === 'Home' ? '/' : `/${item.toLowerCase()}`} label={item} />
-        ))}
-      </div>
-    </nav>
   )
 }
 
@@ -108,7 +80,6 @@ function Product() {
     </section>
   )
 }
-
 
 function Waitlist() {
   const [email, setEmail] = useState('')
@@ -272,7 +243,7 @@ export default function Home() {
   return (
     <main style={{ backgroundColor: '#ffffff', fontFamily: PP }}>
       <ScrollBar />
-      <Nav />
+      <NavBar activePath="/" />
       <CouplesHero />
       <Product />
       <SixQuestions />

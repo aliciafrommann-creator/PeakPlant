@@ -1,17 +1,14 @@
 'use client'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { NavBar } from '../../components/NavBar'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function ImpressumPage() {
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
-      <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '1.5rem 2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)' }}>
-        <Link href="/" style={{ textDecoration: 'none', color: '#1A1A1A', fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.6, fontFamily: PP }}>
-          ∧ peakplant
-        </Link>
-      </nav>
+      <NavBar />
 
       <section style={{ maxWidth: 640, margin: '0 auto', padding: '10rem 2.5rem 8rem' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
@@ -26,11 +23,26 @@ export default function ImpressumPage() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2 }}
           style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
           {[
-            { label: 'angaben gemäß § 5 tmg', lines: ['peakplant', '[rechtsform + name]', '[adresse]'] },
-            { label: 'kontakt', lines: ['e-mail: hello@peakplant.com', 'telefon: wird ergänzt'] },
-            { label: 'vertreten durch', lines: ['alicia frommann'] },
-            { label: 'handelsregister', lines: ['[handelsregisternummer nach UG-gründung]'] },
-            { label: 'umsatzsteuer', lines: ['umsatzsteuer-id: wird ergänzt nach gewerbeanmeldung'] },
+            {
+              label: 'angaben gemäß § 5 tmg',
+              lines: ['Alicia Frommann', 'PeakPlant', 'Otto-Löffler-Weg 10', '73207 Plochingen'],
+            },
+            {
+              label: 'kontakt',
+              lines: ['Telefon: +49 163 9076331', 'E-Mail: hello@peak-plant.com'],
+            },
+            {
+              label: 'vertreten durch',
+              lines: ['Alicia Frommann'],
+            },
+            {
+              label: 'handelsregister',
+              lines: ['wird nach Gewerbeanmeldung ergänzt'],
+            },
+            {
+              label: 'umsatzsteuer',
+              lines: ['Umsatzsteuer-ID: wird nach Gewerbeanmeldung ergänzt'],
+            },
           ].map(({ label, lines }) => (
             <div key={label} style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.75rem' }}>{label}</p>
@@ -42,7 +54,7 @@ export default function ImpressumPage() {
 
           <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem', marginTop: '1rem' }}>
             <p style={{ fontSize: '0.75rem', color: '#999', lineHeight: 1.7, fontStyle: 'italic' }}>
-              placeholder — wird vor launch durch rechtssichere fassung von händlerbund.de ersetzt (inkl. medizinprodukt-paragraph für kondome).
+              vollständiges Impressum wird vor Launch durch eine rechtssichere Fassung ergänzt.
             </p>
           </div>
         </motion.div>
