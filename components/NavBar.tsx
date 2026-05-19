@@ -15,7 +15,7 @@ const NAV_ITEMS = [
   { label: 'About', href: '/about' },
 ]
 
-export default function NavBar({ activePath }: { activePath?: string }) {
+export function NavBar({ activePath }: { activePath?: string }) {
   const [scrolled, setScrolled] = useState(false)
   const [visible, setVisible] = useState(true)
   const idleRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -111,3 +111,5 @@ export default function NavBar({ activePath }: { activePath?: string }) {
     </nav>
   )
 }
+
+export default NavBar
