@@ -98,6 +98,14 @@ const pricingRows = [
   { label: 'cancel anytime', founders: '—',                      sub: '✓' },
 ]
 
+const digitalWorldItems = [
+  'curated spotify playlists',
+  'templates to download and fill out',
+  'podcast and founder insights',
+  'community events',
+  'one free workshop per edition',
+]
+
 export default function ShopPage() {
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -166,6 +174,20 @@ export default function ShopPage() {
                 </div>
               ))}
             </div>
+
+            {/* Digital world */}
+            <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem' }}>
+              <p style={{ fontSize: '0.6rem', letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.75rem' }}>the digital world</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                {digitalWorldItems.map((item, i) => (
+                  <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline' }}>
+                    <span style={{ fontSize: '0.6rem', opacity: 0.25, minWidth: 8 }}>·</span>
+                    <p style={{ fontSize: '0.85rem', color: '#666', fontWeight: 300, lineHeight: 1.55 }}>{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
               <p style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>14,90€</p>
               <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
@@ -193,7 +215,7 @@ export default function ShopPage() {
             style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>
-                subscription · monatlich kündbar
+                subscription · cancel anytime
               </p>
               <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
                 the ritual, monthly
