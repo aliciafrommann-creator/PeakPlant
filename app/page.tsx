@@ -8,7 +8,7 @@ import NavBar from '../components/NavBar'
 const C = 'var(--font-cormorant), Georgia, serif'
 const R = 'var(--font-raleway), "Helvetica Neue", sans-serif'
 
-// ─── Grain overlay ────────────────────────────────────────────────────────────
+// ─── Grain overlay ─────────────────────────────────────────────────────────────────────────────
 function Grain() {
   return (
     <svg aria-hidden style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9998, pointerEvents: 'none', opacity: 0.04 }}>
@@ -18,13 +18,13 @@ function Grain() {
   )
 }
 
-// ─── Scroll progress bar ──────────────────────────────────────────────────────
+// ─── Scroll progress bar ───────────────────────────────────────────────────────────────────────────────
 function ScrollBar() {
   const { scrollYProgress } = useScroll()
   return <motion.div style={{ position: 'fixed', top: 0, left: 0, height: '2px', background: 'var(--edition-pink)', zIndex: 9997, scaleX: scrollYProgress, transformOrigin: '0 0', width: '100%' }} />
 }
 
-// ─── 1. Hero ──────────────────────────────────────────────────────────────────
+// ─── 1. Hero ──────────────────────────────────────────────────────────────────────────────────────
 function Hero() {
   const ref = useRef<HTMLVideoElement>(null)
   useEffect(() => { if (ref.current) ref.current.playbackRate = 0.75 }, [])
@@ -36,9 +36,7 @@ function Hero() {
         <source src="/film-shadows.mp4" type="video/mp4" />
       </video>
 
-      {/* gradient overlay */}
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.12) 0%, transparent 30%, rgba(26,26,26,0.55) 100%)', pointerEvents: 'none' }} />
-      {/* warm pink tint */}
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(232,56,122,0.12) 0%, transparent 60%)', pointerEvents: 'none' }} />
 
       <motion.div
@@ -65,7 +63,7 @@ function Hero() {
   )
 }
 
-// ─── 2+3. Box opening → horizontal questions ──────────────────────────────────
+// ─── 2+3. Box opening → horizontal questions ─────────────────────────────────────────────────────────────
 const QUESTIONS = [
   { text: 'when did you last feel truly present with someone?', card: '/edition-01/card-01.png' },
   { text: 'what are you afraid to ask for?', card: '/edition-01/card-02.png' },
@@ -89,34 +87,27 @@ function Questions() {
 
   return (
     <section style={{ position: 'relative', background: 'var(--edition-cream)', overflow: 'hidden' }}>
-      {/* box-opening: pink melts into cream */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '8%', background: 'linear-gradient(to bottom, var(--edition-pink), var(--edition-cream))', pointerEvents: 'none', zIndex: 2 }} />
 
-      {/* progress bar */}
       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'rgba(26,26,26,0.1)', zIndex: 3 }}>
         <div style={{ height: '100%', background: 'var(--edition-pink)', width: `${((current + 1) / QUESTIONS.length) * 100}%`, transition: 'width 0.4s ease' }} />
       </div>
 
-      {/* counter */}
       <div style={{ position: 'absolute', top: '3rem', right: '3rem', fontFamily: R, fontSize: '0.65rem', fontWeight: 200, letterSpacing: '0.2em', color: 'var(--edition-dark)', opacity: 0.45, zIndex: 3 }}>
         {String(current + 1).padStart(2, '0')} / {String(QUESTIONS.length).padStart(2, '0')}
       </div>
 
-      {/* pulsing logo watermark */}
       <motion.div animate={{ opacity: [0.06, 0.1, 0.06] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
         style={{ position: 'absolute', top: '50%', right: '4vw', transform: 'translateY(-50%)', width: 'clamp(60px, 10vw, 140px)', pointerEvents: 'none', zIndex: 1 }}>
         <Image src="/edition-01/logo-edition-01.png" alt="" width={140} height={140} style={{ width: '100%', height: 'auto' }} />
       </motion.div>
 
-      {/* horizontal scroll */}
       <div ref={scrollRef} className="h-scroll" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', position: 'relative', zIndex: 2 }}>
         {QUESTIONS.map((q, i) => (
           <div key={i} style={{ flexShrink: 0, width: '100vw', height: '100vh', scrollSnapAlign: 'start', display: 'flex', alignItems: 'center', padding: '0 8vw', position: 'relative', overflow: 'hidden' }}>
-            {/* full-bleed card artwork — blurred background atmosphere */}
             <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
               <Image src={q.card} alt="" fill style={{ objectFit: 'cover', filter: 'blur(32px) saturate(1.3)', opacity: 0.2, transform: 'scale(1.08)' }} />
             </div>
-            {/* floating card — drifts right side */}
             <motion.div
               animate={{ y: [0, -14, 0], rotate: [0, 2, 0] }}
               transition={{ duration: 14 + i * 2, repeat: Infinity, ease: 'easeInOut' }}
@@ -124,7 +115,6 @@ function Questions() {
             >
               <Image src={q.card} alt="" width={240} height={336} style={{ width: '100%', height: 'auto', borderRadius: '3px' }} />
             </motion.div>
-            {/* question text */}
             <motion.p
               initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -140,7 +130,42 @@ function Questions() {
   )
 }
 
-// ─── 4. Safe. Soft. Wild. ─────────────────────────────────────────────────────
+// ─── Testimonials ───────────────────────────────────────────────────────────────────────────────────
+function Testimonials() {
+  const quotes = [
+    {
+      text: 'for the first time in years, we actually talked. not about logistics. about us.',
+      author: '— early tester, berlin',
+    },
+    {
+      text: "i didn't expect a question on a wrapper to make me cry. it did.",
+      author: '— early tester, münchen',
+    },
+  ]
+  return (
+    <section style={{ padding: '14vh 8vw', background: 'var(--edition-white)' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6vw' }}>
+        {quotes.map((q, i) => (
+          <motion.div key={i}
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: i * 0.15 }}
+            style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
+          >
+            <span style={{ fontFamily: C, fontWeight: 300, fontStyle: 'italic', fontSize: 'clamp(1.6rem, 2.5vw, 2.2rem)', color: 'var(--edition-gold)', lineHeight: 1, opacity: 0.7 }}>∧</span>
+            <p style={{ fontFamily: C, fontWeight: 300, fontStyle: 'italic', fontSize: 'clamp(1.25rem, 2.2vw, 1.75rem)', lineHeight: 1.55, color: 'var(--edition-dark)' }}>
+              “{q.text}”
+            </p>
+            <p style={{ fontFamily: R, fontWeight: 100, fontSize: '0.65rem', letterSpacing: '0.18em', color: 'var(--edition-dark)', opacity: 0.45 }}>
+              {q.author}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+// ─── 4. Safe. Soft. Wild. ──────────────────────────────────────────────────────────────────────────────
 function SafeSoftWild() {
   const drifters = [
     { src: '/edition-01/card-02.png', top: '8%', left: '3%', w: 130, delay: 0 },
@@ -174,7 +199,7 @@ function SafeSoftWild() {
   )
 }
 
-// ─── 5. Four videos ───────────────────────────────────────────────────────────
+// ─── 5. Four videos ───────────────────────────────────────────────────────────────────────────────────
 const PHASES = [
   {
     number: '01',
@@ -236,7 +261,6 @@ function FourVideos() {
             borderTop: '1px solid rgba(26,26,26,0.08)',
           }}
         >
-          {/* video — alternates left/right */}
           <div style={{ order: i % 2 === 0 ? 0 : 1, aspectRatio: '4/3', overflow: 'hidden', background: 'var(--edition-dark)' }}>
             <video autoPlay muted loop playsInline
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
@@ -245,7 +269,6 @@ function FourVideos() {
             </video>
           </div>
 
-          {/* text */}
           <div style={{ order: i % 2 === 0 ? 1 : 0, display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem' }}>
               <span style={{ fontFamily: R, fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--edition-dark)', opacity: 0.3 }}>{phase.number}</span>
@@ -264,7 +287,7 @@ function FourVideos() {
   )
 }
 
-// ─── 6. Product ───────────────────────────────────────────────────────────────
+// ─── 6. Product ───────────────────────────────────────────────────────────────────────────────────────
 function Product() {
   return (
     <section style={{ padding: '14vh 8vw', background: 'var(--edition-cream)' }}>
@@ -292,7 +315,6 @@ function Product() {
           </Link>
         </div>
 
-        {/* floating card stack */}
         <div style={{ flex: '0 0 auto', position: 'relative', width: 'clamp(200px, 28vw, 360px)', height: 'clamp(260px, 36vw, 480px)' }}>
           {['/edition-01/card-01.png', '/edition-01/card-03.png', '/edition-01/card-06.png'].map((src, i) => (
             <motion.div key={src}
@@ -309,7 +331,7 @@ function Product() {
   )
 }
 
-// ─── 7. Founder ───────────────────────────────────────────────────────────────
+// ─── 7. Founder ──────────────────────────────────────────────────────────────────────────────────────
 function Founder() {
   return (
     <section style={{ position: 'relative', padding: '14vh 8vw', background: 'var(--edition-white)', overflow: 'hidden' }}>
@@ -323,7 +345,7 @@ function Founder() {
       >
         <p style={{ fontFamily: R, fontWeight: 100, fontSize: '0.65rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--edition-dark)', opacity: 0.45, marginBottom: '2rem' }}>a note from the founder</p>
         <p style={{ fontFamily: C, fontWeight: 300, fontStyle: 'italic', fontSize: 'clamp(1.4rem, 2.8vw, 2.4rem)', lineHeight: 1.5, color: 'var(--edition-dark)', marginBottom: '2.5rem' }}>
-          "i built this because i kept buying things that promised connection — and they all felt hollow. peakplant is the thing i actually wanted to find."
+          “i built this because i kept buying things that promised connection — and they all felt hollow. peakplant is the thing i actually wanted to find.”
         </p>
         <p style={{ fontFamily: R, fontWeight: 200, fontSize: '0.75rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--edition-dark)', opacity: 0.5 }}>— Alicia, founder</p>
       </motion.div>
@@ -331,12 +353,13 @@ function Founder() {
   )
 }
 
-// ─── 8. Edition system ────────────────────────────────────────────────────────
-function EditionSystem() {
+// ─── 8. Edition cards ──────────────────────────────────────────────────────────────────────────────────
+function EditionCards() {
+  const [hovered, setHovered] = useState<string | null>(null)
   const editions = [
-    { number: '01', label: 'founders edition — sommer 2026', active: true },
-    { number: '02', label: 'edition 02 — herbst 2026', active: false },
-    { number: '03', label: 'edition 03 — winter 2026', active: false },
+    { number: '01', label: 'founders edition', sublabel: 'sommer 2026', active: true, card: '/edition-01/card-01.png' },
+    { number: '02', label: 'edition 02', sublabel: 'herbst 2026', active: false, card: null },
+    { number: '03', label: 'edition 03', sublabel: 'winter 2026', active: false, card: null },
   ]
   return (
     <section style={{ background: 'var(--edition-dark)', padding: '14vh 8vw' }}>
@@ -348,22 +371,51 @@ function EditionSystem() {
         >
           every edition.<br />a different world.
         </motion.h2>
-        <div style={{ borderTop: '1px solid rgba(250,250,248,0.1)', marginBottom: '4rem' }}>
-          {editions.map(({ number, label, active }, i) => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+          {editions.map(({ number, label, sublabel, active, card }, i) => (
             <motion.div key={number}
-              initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '1.75rem 0', borderBottom: '1px solid rgba(250,250,248,0.1)' }}
+              initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              onMouseEnter={() => active && setHovered(number)}
+              onMouseLeave={() => setHovered(null)}
+              style={{
+                position: 'relative',
+                aspectRatio: '3/4',
+                overflow: 'hidden',
+                background: active ? 'rgba(250,250,248,0.06)' : 'rgba(250,250,248,0.03)',
+                border: active ? '1px solid rgba(250,250,248,0.2)' : '1px solid rgba(250,250,248,0.08)',
+              }}
             >
-              <span style={{ fontFamily: R, fontSize: '0.6rem', letterSpacing: '0.18em', color: 'var(--edition-gold)', opacity: active ? 1 : 0.4 }}>∧</span>
-              <span style={{ fontFamily: R, fontWeight: active ? 300 : 200, fontSize: 'clamp(0.9rem, 1.8vw, 1.15rem)', color: 'var(--edition-white)', opacity: active ? 1 : 0.4, letterSpacing: '-0.01em' }}>{label}</span>
-              {active && <span style={{ fontFamily: R, fontWeight: 100, fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--edition-pink)', marginLeft: 'auto' }}>open</span>}
+              {active && card && (
+                <div style={{
+                  position: 'absolute', inset: 0, zIndex: 0,
+                  opacity: hovered === number ? 1 : 0,
+                  transition: 'opacity 0.4s ease',
+                }}>
+                  <Image src={card} alt="" fill style={{ objectFit: 'cover', objectPosition: 'center' }} />
+                  <div style={{ position: 'absolute', inset: 0, background: 'rgba(26,26,26,0.5)' }} />
+                </div>
+              )}
+              <div style={{ position: 'relative', zIndex: 1, padding: '2rem', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <p style={{ fontFamily: R, fontWeight: 100, fontSize: '0.6rem', letterSpacing: '0.2em', color: 'var(--edition-gold)', opacity: active ? 1 : 0.35, marginBottom: '0.75rem' }}>∧ {number}</p>
+                  <p style={{ fontFamily: C, fontWeight: 300, fontStyle: 'italic', fontSize: 'clamp(1.2rem, 2vw, 1.6rem)', color: 'var(--edition-white)', opacity: active ? 1 : 0.3, lineHeight: 1.2 }}>{label}</p>
+                </div>
+                <div>
+                  <p style={{ fontFamily: R, fontWeight: 100, fontSize: '0.62rem', letterSpacing: '0.14em', color: 'var(--edition-white)', opacity: active ? 0.6 : 0.2, marginBottom: '0.5rem' }}>{sublabel}</p>
+                  {active ? (
+                    <span style={{ fontFamily: R, fontWeight: 100, fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--edition-pink)' }}>open</span>
+                  ) : (
+                    <span style={{ fontFamily: R, fontWeight: 100, fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--edition-white)', opacity: 0.2 }}>coming soon</span>
+                  )}
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
         <motion.p
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-          style={{ fontFamily: R, fontWeight: 200, fontSize: '0.85rem', color: 'var(--edition-white)', opacity: 0.4, lineHeight: 1.8, maxWidth: '44ch' }}
+          style={{ fontFamily: R, fontWeight: 200, fontSize: '0.85rem', color: 'var(--edition-white)', opacity: 0.4, lineHeight: 1.8, maxWidth: '44ch', marginTop: '4rem' }}
         >
           same box outside. different world inside.<br />
           each edition: new cards, new questions, new experience.
@@ -373,7 +425,7 @@ function EditionSystem() {
   )
 }
 
-// ─── 9. Waitlist ──────────────────────────────────────────────────────────────
+// ─── 9. Waitlist ─────────────────────────────────────────────────────────────────────────────────────
 function Waitlist() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle')
@@ -430,11 +482,10 @@ function Waitlist() {
   )
 }
 
-// ─── 10. Footer ───────────────────────────────────────────────────────────────
+// ─── 10. Footer ─────────────────────────────────────────────────────────────────────────────────────
 function Footer() {
   return (
     <footer style={{ padding: '8vh 8vw 4vh', background: 'var(--edition-dark)', borderTop: '1px solid rgba(250,250,248,0.06)', position: 'relative', overflow: 'hidden' }}>
-      {/* ghosted watermark */}
       <div aria-hidden style={{ position: 'absolute', bottom: '3vh', left: '8vw', fontFamily: C, fontWeight: 300, fontStyle: 'italic', fontSize: 'clamp(3rem, 8vw, 9rem)', color: 'var(--edition-white)', opacity: 0.06, pointerEvents: 'none', userSelect: 'none', lineHeight: 1, whiteSpace: 'nowrap' }}>
         ∧ peakplant
       </div>
@@ -466,7 +517,7 @@ function Footer() {
   )
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Page ────────────────────────────────────────────────────────────────────────────────────────────
 export default function Home() {
   return (
     <>
@@ -476,11 +527,12 @@ export default function Home() {
       <main>
         <Hero />
         <Questions />
+        <Testimonials />
         <SafeSoftWild />
         <FourVideos />
         <Product />
         <Founder />
-        <EditionSystem />
+        <EditionCards />
         <Waitlist />
         <Footer />
       </main>
