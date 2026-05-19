@@ -98,14 +98,6 @@ const pricingRows = [
   { label: 'cancel anytime', founders: '—',                      sub: '✓' },
 ]
 
-const digitalWorldItems = [
-  'curated spotify playlists',
-  'templates to download and fill out',
-  'podcast and founder insights',
-  'community events',
-  'one free workshop per edition',
-]
-
 export default function ShopPage() {
   const [modalOpen, setModalOpen] = useState(false)
 
@@ -126,11 +118,8 @@ export default function ShopPage() {
           transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
           style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}
         >
-          <p style={{ fontFamily: PP, fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 600, marginBottom: '1rem' }}>
+          <p style={{ fontFamily: PP, fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 600, marginBottom: '2.5rem' }}>
             Not just a product.<br />A decision to feel.
-          </p>
-          <p style={{ fontFamily: PP, fontSize: '0.8rem', color: 'rgba(255,255,255,0.55)', marginBottom: '2rem', letterSpacing: '0.04em' }}>
-            14,90€ · includes shipping · launches august 2026
           </p>
           <button
             style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
@@ -153,14 +142,11 @@ export default function ShopPage() {
             style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingTop: '0.5rem' }}>
             <div>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>
-                edition 01 — sommer 2026 · einmalig
+                edition 01 — sommer 2026
               </p>
               <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
                 founders edition
               </h2>
-              <p style={{ fontFamily: PP, fontSize: '0.9rem', color: '#1A1A1A', opacity: 0.5, marginTop: '0.5rem', fontWeight: 300 }}>
-                14,90€ · includes shipping · launches august 2026
-              </p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {[
@@ -174,20 +160,12 @@ export default function ShopPage() {
                 </div>
               ))}
             </div>
-
-            {/* Digital world */}
-            <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem' }}>
-              <p style={{ fontSize: '0.6rem', letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.75rem' }}>the digital world</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                {digitalWorldItems.map((item, i) => (
-                  <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline' }}>
-                    <span style={{ fontSize: '0.6rem', opacity: 0.25, minWidth: 8 }}>·</span>
-                    <p style={{ fontSize: '0.85rem', color: '#666', fontWeight: 300, lineHeight: 1.55 }}>{item}</p>
-                  </div>
-                ))}
-              </div>
+            <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1rem' }}>
+              <p style={{ fontSize: '0.6rem', letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '0.6rem', fontFamily: PP }}>the digital world</p>
+              <p style={{ fontSize: '0.82rem', color: '#777', fontWeight: 300, lineHeight: 1.7, fontFamily: PP }}>
+                curated spotify playlists · templates to download · podcast and founder insights · community events · one free workshop per edition
+              </p>
             </div>
-
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
               <p style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>14,90€</p>
               <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
@@ -201,11 +179,6 @@ export default function ShopPage() {
             </button>
           </motion.div>
         </div>
-        <motion.p
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }}
-          style={{ fontFamily: PP, fontSize: '0.78rem', color: '#1A1A1A', opacity: 0.35, marginTop: '3rem', fontStyle: 'italic' }}>
-          edition 01 is limited to 1.000 boxes.
-        </motion.p>
       </section>
 
       {/* Product 2 — Subscription */}
@@ -284,7 +257,7 @@ export default function ShopPage() {
             <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>founders edition</p>
             <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>subscription</p>
           </div>
-          {pricingRows.map(({ label, founders, sub }) => (
+          {pricingRows.map(({ label, founders, sub }, i) => (
             <div key={label} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '1.1rem 0', borderBottom: '1px solid #ebebeb' }}>
               <p style={{ fontSize: '0.8rem', letterSpacing: '0.06em', opacity: 0.5, textTransform: 'lowercase' }}>{label}</p>
               <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{founders}</p>
@@ -314,7 +287,7 @@ export default function ShopPage() {
               transition={{ duration: 0.6, delay: i * 0.06 }}
               style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', borderRight: i % 3 !== 2 ? '1px solid #e8e8e8' : 'none' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem' }}>0{i + 1}</p>
-              <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{q}"</p>
+              <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{ q}"</p>
             </motion.div>
           ))}
         </div>
