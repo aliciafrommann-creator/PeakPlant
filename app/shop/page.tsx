@@ -118,8 +118,11 @@ export default function ShopPage() {
           transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
           style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}
         >
-          <p style={{ fontFamily: PP, fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 600, marginBottom: '2.5rem' }}>
+          <p style={{ fontFamily: PP, fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 600, marginBottom: '1rem' }}>
             Not just a product.<br />A decision to feel.
+          </p>
+          <p style={{ fontFamily: PP, fontSize: '0.8rem', color: 'rgba(255,255,255,0.55)', marginBottom: '2rem', letterSpacing: '0.04em' }}>
+            14,90€ · includes shipping · launches august 2026
           </p>
           <button
             style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
@@ -147,6 +150,9 @@ export default function ShopPage() {
               <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
                 founders edition
               </h2>
+              <p style={{ fontFamily: PP, fontSize: '0.9rem', color: '#1A1A1A', opacity: 0.5, marginTop: '0.5rem', fontWeight: 300 }}>
+                14,90€ · includes shipping · launches august 2026
+              </p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {[
@@ -173,6 +179,11 @@ export default function ShopPage() {
             </button>
           </motion.div>
         </div>
+        <motion.p
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }}
+          style={{ fontFamily: PP, fontSize: '0.78rem', color: '#1A1A1A', opacity: 0.35, marginTop: '3rem', fontStyle: 'italic' }}>
+          edition 01 is limited to 1.000 boxes.
+        </motion.p>
       </section>
 
       {/* Product 2 — Subscription */}
@@ -251,7 +262,7 @@ export default function ShopPage() {
             <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>founders edition</p>
             <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>subscription</p>
           </div>
-          {pricingRows.map(({ label, founders, sub }, i) => (
+          {pricingRows.map(({ label, founders, sub }) => (
             <div key={label} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '1.1rem 0', borderBottom: '1px solid #ebebeb' }}>
               <p style={{ fontSize: '0.8rem', letterSpacing: '0.06em', opacity: 0.5, textTransform: 'lowercase' }}>{label}</p>
               <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{founders}</p>
@@ -281,7 +292,7 @@ export default function ShopPage() {
               transition={{ duration: 0.6, delay: i * 0.06 }}
               style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', borderRight: i % 3 !== 2 ? '1px solid #e8e8e8' : 'none' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem' }}>0{i + 1}</p>
-              <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{ q}"</p>
+              <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{q}"</p>
             </motion.div>
           ))}
         </div>

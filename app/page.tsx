@@ -49,6 +49,40 @@ function CouplesHero() {
   )
 }
 
+function ProductMoment() {
+  return (
+    <section style={{ padding: '8rem 2.5rem', textAlign: 'center', borderTop: '1px solid #ebebeb' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2.5rem' }}
+      >
+        <div style={{
+          width: '100%', maxWidth: 360, aspectRatio: '4/3',
+          background: '#F5F5F3',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <p style={{ fontFamily: PP, fontSize: '0.6rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: '#1A1A1A', opacity: 0.35 }}>
+            edition 01 — sommer 2026
+          </p>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <p style={{ fontFamily: PP, fontSize: '0.85rem', color: '#1A1A1A', opacity: 0.5, letterSpacing: '0.01em', fontWeight: 300 }}>6 condoms. 6 questions. 1 seed card.</p>
+          <p style={{ fontFamily: PP, fontSize: '0.85rem', color: '#1A1A1A', opacity: 0.5, letterSpacing: '0.01em', fontWeight: 300 }}>14,90€ including shipping.</p>
+          <p style={{ fontFamily: PP, fontSize: '0.85rem', color: '#1A1A1A', opacity: 0.5, letterSpacing: '0.01em', fontWeight: 300 }}>launching august 2026.</p>
+        </div>
+        <Link href="/shop" style={{
+          fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase',
+          padding: '0.9rem 2.25rem', border: '1px solid rgba(26,26,26,0.35)',
+          color: '#1A1A1A', textDecoration: 'none', display: 'inline-block',
+        }}>
+          reserve your box
+        </Link>
+      </motion.div>
+    </section>
+  )
+}
+
 function Product() {
   return (
     <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '80vh', backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb', borderBottom: '1px solid #ebebeb' }}>
@@ -76,6 +110,55 @@ function Product() {
         initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }}
         transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
         <img src="/couples-joy.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+      </motion.div>
+    </section>
+  )
+}
+
+function Founder() {
+  return (
+    <section style={{ padding: '8rem 2.5rem', textAlign: 'center', borderTop: '1px solid #ebebeb' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        style={{ maxWidth: 440, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}
+      >
+        <span style={{ color: '#C9A96E', fontSize: '1.25rem', lineHeight: 1, display: 'block' }}>∧</span>
+        <p style={{ fontFamily: PP, fontSize: '0.6rem', letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.35 }}>founded by</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.75, color: '#1A1A1A' }}>alicia frommann.</p>
+          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.75, color: '#777' }}>msc candidate. former bosch.</p>
+          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.75, color: '#777' }}>trail runner. innsbruck.</p>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginTop: '0.75rem' }}>
+          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.9, color: '#555' }}>i built peakplant because i noticed</p>
+          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.9, color: '#555' }}>the faster life got,</p>
+          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.9, color: '#555' }}>the harder it became to actually</p>
+          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.9, color: '#555' }}>feel close to someone.</p>
+          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.9, color: '#555', marginTop: '1rem' }}>this is my attempt to slow that down.</p>
+        </div>
+      </motion.div>
+    </section>
+  )
+}
+
+function SocialProof() {
+  return (
+    <section style={{ padding: '8rem 2.5rem', textAlign: 'center', borderTop: '1px solid #ebebeb' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        style={{ maxWidth: 520, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2.5rem' }}
+      >
+        <p style={{ fontFamily: PP, fontSize: '0.6rem', letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.35 }}>early readers say</p>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.25rem' }}>
+          <span style={{ color: '#C9A96E', fontSize: '1.1rem', lineHeight: 1 }}>∧</span>
+          {/* TODO: Replace with real testimonial when available */}
+          <p style={{ fontFamily: PP, fontSize: 'clamp(1rem, 2vw, 1.2rem)', fontWeight: 300, fontStyle: 'italic', lineHeight: 1.75, color: '#1A1A1A', letterSpacing: '-0.01em' }}>
+            ‘this made us talk for two hours.<br />we hadn’t done that in months.’
+          </p>
+          <p style={{ fontFamily: PP, fontSize: '0.75rem', color: '#1A1A1A', opacity: 0.35, letterSpacing: '0.06em' }}>— beta tester, munich</p>
+        </div>
       </motion.div>
     </section>
   )
@@ -169,7 +252,7 @@ function SixQuestions() {
               style={{ display: 'flex', alignItems: 'baseline', gap: '2.5rem', padding: '2rem 0', borderBottom: '1px solid #ebebeb' }}>
               <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24 }}>{n}</span>
               <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', fontStyle: 'italic', color: '#1A1A1A', fontFamily: PP }}>
-                "{q}"
+                “{q}”
               </p>
             </motion.div>
           ))}
@@ -245,7 +328,10 @@ export default function Home() {
       <ScrollBar />
       <NavBar activePath="/" />
       <CouplesHero />
+      <ProductMoment />
       <Product />
+      <Founder />
+      <SocialProof />
       <SixQuestions />
       <Waitlist />
       <EditionSystem />
