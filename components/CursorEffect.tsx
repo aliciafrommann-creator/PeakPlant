@@ -3,21 +3,27 @@ import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { useEffect, useState } from 'react'
 
 export function CursorEffect() {
-  const mx = useMotionValue(-100)
-  const my = useMotionValue(-100)
+  const mx = useMotionValue(-200)
+  const my = useMotionValue(-200)
   const [hovered, setHovered] = useState(false)
+  const [isPointer, setIsPointer] = useState(false)
 
-  const dotX = useSpring(mx, { stiffness: 700, damping: 40 })
-  const dotY = useSpring(my, { stiffness: 700, damping: 40 })
-  const ringX = useSpring(mx, { stiffness: 100, damping: 22 })
-  const ringY = useSpring(my, { stiffness: 100, damping: 22 })
+  const x = useSpring(mx, { stiffness: 80, damping: 20 })
+  const y = useSpring(my, { stiffness: 80, damping: 20 })
 
   useEffect(() => {
-    const move = (e: MouseEvent) => { mx.set(e.clientX); my.set(e.clientY) }
+    if (!window.matchMedia('(pointer: fine)').matches) return
+    setIsPointer(true)
+
+    const move = (e: MouseEvent) => {
+      mx.set(e.clientX)
+      my.set(e.clientY)
+    }
     const over = (e: MouseEvent) => {
       const el = e.target as HTMLElement
       setHovered(!!(el.closest('a') || el.closest('button') || el.closest('input')))
     }
+
     window.addEventListener('mousemove', move)
     window.addEventListener('mouseover', over)
     return () => {
@@ -26,18 +32,34 @@ export function CursorEffect() {
     }
   }, [mx, my])
 
+  if (!isPointer) return null
+
   return (
-    <>
-      <motion.div
-        style={{ position: 'fixed', top: 0, left: 0, zIndex: 9999, width: 7, height: 7, borderRadius: '50%', backgroundColor: '#1A1A1A', pointerEvents: 'none', x: dotX, y: dotY, translateX: '-50%', translateY: '-50%' }}
-        animate={{ scale: hovered ? 0 : 1 }}
-        transition={{ duration: 0.15 }}
-      />
-      <motion.div
-        style={{ position: 'fixed', top: 0, left: 0, zIndex: 9998, borderRadius: '50%', border: '1px solid #1A1A1A', pointerEvents: 'none', x: ringX, y: ringY, translateX: '-50%', translateY: '-50%' }}
-        animate={{ width: hovered ? 52 : 30, height: hovered ? 52 : 30, opacity: hovered ? 0.7 : 0.25 }}
-        transition={{ duration: 0.3 }}
-      />
-    </>
+    <motion.div
+      aria-hidden
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        zIndex: 9999,
+        pointerEvents: 'none',
+        x,
+        y,
+        translateX: '-50%',
+        translateY: '-60%',
+        lineHeight: 1,
+        userSelect: 'none',
+        fontFamily: 'sans-serif',
+      }}
+      animate={{
+        fontSize: hovered ? '26px' : '13px',
+        color: hovered ? 'var(--edition-pink)' : '#1A1A1A',
+        rotate: hovered ? 15 : 0,
+        opacity: hovered ? 1 : 0.75,
+      }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+    >
+      ∧
+    </motion.div>
   )
 }
