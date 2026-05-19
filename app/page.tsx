@@ -41,6 +41,12 @@ function CouplesHero() {
         <h1 style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, margin: '0 auto 0.75rem' }}>
           when did life start feeling this fast?
         </h1>
+        <p style={{ fontFamily: PP, fontSize: 'clamp(0.9rem, 1.6vw, 1.15rem)', fontWeight: 300, fontStyle: 'italic', color: 'rgba(255,255,255,0.75)', maxWidth: 480, lineHeight: 1.5, margin: '0 auto 0.75rem' }}>
+          not just a product. a decision to feel.
+        </p>
+        <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.45)', marginBottom: '2rem' }}>
+          14,90€ · includes shipping · launches august 2026
+        </p>
         <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
           Scroll to explore
         </p>
@@ -201,11 +207,30 @@ function Testimonials() {
   )
 }
 
-const editions = [
-  { sym: '∧', label: 'edition 01 — sommer 2026' },
-  { sym: '∧', label: 'edition 02 — herbst 2026' },
-  { sym: '∧', label: 'edition 03 — winter 2026' },
-]
+function EditionCard01() {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+      transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ position: 'relative', overflow: 'hidden', minHeight: 280, border: '1px solid rgba(255,255,255,0.12)', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+    >
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/edition-01/card-01.png)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: hovered ? 1 : 0, transition: 'opacity 0.4s ease' }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)', opacity: hovered ? 1 : 0, transition: 'opacity 0.4s ease' }} />
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <span style={{ color: '#C9A96E', fontSize: '1rem', lineHeight: 1 }}>∧</span>
+      </div>
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <p style={{ fontFamily: PP, fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)', fontWeight: 300, color: '#ffffff', fontStyle: 'italic', lineHeight: 1.6, marginBottom: '1rem', opacity: hovered ? 1 : 0, transition: 'opacity 0.4s ease' }}>
+          "when did you know?"
+        </p>
+        <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.01em' }}>edition 01 — sommer 2026</span>
+      </div>
+    </motion.div>
+  )
+}
 
 function EditionSystem() {
   return (
@@ -215,14 +240,21 @@ function EditionSystem() {
           style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '4rem', maxWidth: 560, fontFamily: PP }}>
           every edition. a different world.
         </motion.h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '4rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          {editions.map(({ sym, label }, i) => (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '4rem' }}>
+          <EditionCard01 />
+          {[{ label: 'edition 02 — herbst 2026' }, { label: 'edition 03 — winter 2026' }].map(({ label }, i) => (
             <motion.div key={label}
-              initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-              <span style={{ color: '#C9A96E', fontSize: '1rem', lineHeight: 1 }}>{sym}</span>
-              <span style={{ fontSize: 'clamp(0.95rem, 1.8vw, 1.2rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.01em' }}>{label}</span>
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ duration: 0.9, delay: (i + 1) * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              style={{ position: 'relative', overflow: 'hidden', minHeight: 280, border: '1px solid rgba(255,255,255,0.07)', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', opacity: 0.35 }}
+            >
+              <div>
+                <span style={{ color: '#C9A96E', fontSize: '1rem', lineHeight: 1 }}>∧</span>
+              </div>
+              <div>
+                <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.2em', color: '#ffffff', opacity: 0.5, marginBottom: '0.75rem', textTransform: 'uppercase' }}>coming soon</p>
+                <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.01em' }}>{label}</span>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -243,7 +275,7 @@ function Footer() {
         <span style={{ color: '#ffffff', fontSize: 10, letterSpacing: '0.4em', fontFamily: PP, opacity: 0.55 }}>PEAKPLANT</span>
       </div>
       <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
-        {['Intimacy', 'Philosophy', 'Shop', 'Journal', 'Community'].map(item => (
+        {['Intimacy', 'Philosophy', 'Shop', 'Community'].map(item => (
           <Link key={item} href={`/${item.toLowerCase()}`} style={{ color: '#ffffff', fontSize: 9, letterSpacing: '0.35em', fontFamily: PP, textDecoration: 'none', opacity: 0.35 }}>
             {item.toUpperCase()}
           </Link>
