@@ -38,15 +38,9 @@ function CouplesHero() {
           style={{ marginBottom: '1.5rem' }}>
           <Logo color="#ffffff" size={36} />
         </motion.div>
-        <h1 style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, margin: '0 auto 0.75rem' }}>
+        <h1 style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, margin: '0 auto 2rem' }}>
           when did life start feeling this fast?
         </h1>
-        <p style={{ fontFamily: PP, fontSize: 'clamp(0.9rem, 1.6vw, 1.15rem)', fontWeight: 300, fontStyle: 'italic', color: 'rgba(255,255,255,0.75)', maxWidth: 480, lineHeight: 1.5, margin: '0 auto 0.75rem' }}>
-          not just a product. a decision to feel.
-        </p>
-        <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.45)', marginBottom: '2rem' }}>
-          14,90€ · includes shipping · launches august 2026
-        </p>
         <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
           Scroll to explore
         </p>
