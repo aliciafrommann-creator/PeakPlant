@@ -18,7 +18,6 @@ const items = [
   { label: 'Philosophy', href: '/philosophy' },
   { label: 'Ethics', href: '/ethics' },
   { label: 'Shop', href: '/shop' },
-  { label: 'Journal', href: '/journal' },
   { label: 'Community', href: '/community' },
   { label: 'About', href: '/about' },
 ]
