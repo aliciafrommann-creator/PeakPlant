@@ -2,48 +2,22 @@
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { useEffect, useState } from 'react'
 
-function getBgLuminance(x: number, y: number): 'dark' | 'light' {
-  const el = document.elementFromPoint(x, y)
-  if (!el) return 'light'
-  let current: Element | null = el
-  while (current && current !== document.documentElement) {
-    const bg = window.getComputedStyle(current).backgroundColor
-    const m = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
-    if (m) {
-      const r = +m[1], g = +m[2], b = +m[3]
-      const lum = 0.299 * r + 0.587 * g + 0.114 * b
-      if (lum < 80) return 'dark'
-      if (lum > 180) return 'light'
-    }
-    current = current.parentElement
-  }
-  return 'light'
-}
-
 export function CursorEffect() {
-  const mx = useMotionValue(-200)
-  const my = useMotionValue(-200)
+  const mx = useMotionValue(-100)
+  const my = useMotionValue(-100)
   const [hovered, setHovered] = useState(false)
-  const [isPointer, setIsPointer] = useState(false)
-  const [onDark, setOnDark] = useState(false)
 
-  const x = useSpring(mx, { stiffness: 80, damping: 20 })
-  const y = useSpring(my, { stiffness: 80, damping: 20 })
+  const dotX = useSpring(mx, { stiffness: 700, damping: 40 })
+  const dotY = useSpring(my, { stiffness: 700, damping: 40 })
+  const ringX = useSpring(mx, { stiffness: 100, damping: 22 })
+  const ringY = useSpring(my, { stiffness: 100, damping: 22 })
 
   useEffect(() => {
-    if (!window.matchMedia('(pointer: fine)').matches) return
-    setIsPointer(true)
-
-    const move = (e: MouseEvent) => {
-      mx.set(e.clientX)
-      my.set(e.clientY)
-      setOnDark(getBgLuminance(e.clientX, e.clientY) === 'dark')
-    }
+    const move = (e: MouseEvent) => { mx.set(e.clientX); my.set(e.clientY) }
     const over = (e: MouseEvent) => {
       const el = e.target as HTMLElement
       setHovered(!!(el.closest('a') || el.closest('button') || el.closest('input')))
     }
-
     window.addEventListener('mousemove', move)
     window.addEventListener('mouseover', over)
     return () => {
@@ -52,36 +26,18 @@ export function CursorEffect() {
     }
   }, [mx, my])
 
-  if (!isPointer) return null
-
-  const baseColor = onDark ? 'var(--edition-white)' : '#1A1A1A'
-
   return (
-    <motion.div
-      aria-hidden
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        zIndex: 9999,
-        pointerEvents: 'none',
-        x,
-        y,
-        translateX: '-50%',
-        translateY: '-60%',
-        lineHeight: 1,
-        userSelect: 'none',
-        fontFamily: 'sans-serif',
-      }}
-      animate={{
-        fontSize: hovered ? '26px' : '13px',
-        color: hovered ? 'var(--edition-pink)' : baseColor,
-        rotate: hovered ? 15 : 0,
-        opacity: hovered ? 1 : 0.75,
-      }}
-      transition={{ duration: 0.2, ease: 'easeOut' }}
-    >
-      ∧
-    </motion.div>
+    <>
+      <motion.div
+        style={{ position: 'fixed', top: 0, left: 0, zIndex: 9999, width: 7, height: 7, borderRadius: '50%', backgroundColor: '#1A1A1A', pointerEvents: 'none', x: dotX, y: dotY, translateX: '-50%', translateY: '-50%' }}
+        animate={{ scale: hovered ? 0 : 1 }}
+        transition={{ duration: 0.15 }}
+      />
+      <motion.div
+        style={{ position: 'fixed', top: 0, left: 0, zIndex: 9998, borderRadius: '50%', border: '1px solid #1A1A1A', pointerEvents: 'none', x: ringX, y: ringY, translateX: '-50%', translateY: '-50%' }}
+        animate={{ width: hovered ? 52 : 30, height: hovered ? 52 : 30, opacity: hovered ? 0.7 : 0.25 }}
+        transition={{ duration: 0.3 }}
+      />
+    </>
   )
 }

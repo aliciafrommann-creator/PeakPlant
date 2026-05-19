@@ -1,10 +1,18 @@
 'use client'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { useEffect, useRef, useState } from 'react'
 
-const RALEWAY = 'var(--font-raleway), "Helvetica Neue", sans-serif'
+const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
-const NAV_ITEMS = [
+function Logo({ color = '#1A1A1A', size = 32 }: { color?: string; size?: number }) {
+  return (
+    <svg width={size} height={size * 0.75} viewBox="0 0 48 38" fill="none">
+      <path d="M4 34 L24 4 L44 34" stroke={color} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
+const items = [
   { label: 'Home', href: '/' },
   { label: 'Intimacy', href: '/intimacy' },
   { label: 'Philosophy', href: '/philosophy' },
@@ -17,94 +25,42 @@ const NAV_ITEMS = [
 
 export function NavBar({ activePath }: { activePath?: string }) {
   const [scrolled, setScrolled] = useState(false)
-  const [visible, setVisible] = useState(true)
-  const idleRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const lastScrollY = useRef(0)
 
   useEffect(() => {
-    function startIdle() {
-      if (idleRef.current) clearTimeout(idleRef.current)
-      idleRef.current = setTimeout(() => setVisible(false), 2000)
-    }
-    function show() {
-      setVisible(true)
-      startIdle()
-    }
-    function onScroll() {
-      const y = window.scrollY
-      setScrolled(y > 80)
-      if (y < lastScrollY.current) show()
-      lastScrollY.current = y
-      startIdle()
-    }
-    function onMouse(e: MouseEvent) {
-      if (e.clientY < window.innerHeight * 0.12) show()
-    }
-
-    startIdle()
+    const onScroll = () => setScrolled(window.scrollY > 80)
     window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('mousemove', onMouse)
-    return () => {
-      if (idleRef.current) clearTimeout(idleRef.current)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('mousemove', onMouse)
-    }
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  const bg = scrolled ? 'rgba(26,26,26,0.93)' : 'rgba(255,255,255,0.90)'
+  const color = scrolled ? '#ffffff' : '#1A1A1A'
+
   return (
-    <nav
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '1.25rem 2.5rem',
-        background: scrolled ? 'rgba(26,26,26,0.92)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        transition: 'background 0.4s ease, opacity 0.4s ease',
-        opacity: visible ? 1 : 0,
-        pointerEvents: visible ? 'auto' : 'none',
-      }}
-    >
-      <Link
-        href="/"
-        style={{
-          fontFamily: RALEWAY,
-          fontSize: '0.75rem',
-          fontWeight: 200,
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color: scrolled ? '#FAFAF8' : '#1A1A1A',
-          textDecoration: 'none',
-          transition: 'color 0.4s ease',
-        }}
-      >
-        ∧ peakplant
+    <nav style={{
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+      padding: '1.5rem 2.5rem',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      background: bg,
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
+      transition: 'background 0.4s ease',
+    }}>
+      <Link href="/" style={{ textDecoration: 'none' }}>
+        <Logo color={color} size={32} />
       </Link>
-      <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-        {NAV_ITEMS.filter(i => i.href !== '/').map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            style={{
-              fontFamily: RALEWAY,
-              fontSize: '0.7rem',
-              fontWeight: 200,
-              letterSpacing: '0.14em',
-              textTransform: 'uppercase',
-              color: activePath === item.href
-                ? 'var(--edition-pink)'
-                : scrolled ? '#FAFAF8' : '#1A1A1A',
-              textDecoration: 'none',
-              opacity: activePath === item.href ? 1 : 0.75,
-              transition: 'color 0.4s ease, opacity 0.2s ease',
-            }}
-          >
-            {item.label}
+      <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
+        {items.map(({ label, href }) => (
+          <Link key={href} href={href} style={{
+            fontFamily: PP,
+            fontSize: '0.75rem',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            textDecoration: 'none',
+            color,
+            opacity: activePath === href ? 1 : 0.5,
+            transition: 'color 0.4s ease',
+          }}>
+            {label}
           </Link>
         ))}
       </div>
