@@ -70,6 +70,14 @@ export default function JournalPage() {
 
       <NavBar activePath="/journal" />
 
+      {/* Coming soon banner */}
+      <div style={{ background: '#faf9f7', borderBottom: '1px solid #e8e8e8', padding: '1rem 2.5rem', textAlign: 'center' }}>
+        <p style={{ fontFamily: PP, fontSize: '0.72rem', letterSpacing: '0.12em', color: '#1A1A1A', opacity: 0.5, lineHeight: 1.6 }}>
+          the digital world is coming soon.{' '}
+          <span style={{ opacity: 0.7 }}>for now — the journal lives here.</span>
+        </p>
+      </div>
+
       <section style={{ paddingTop: '9rem', paddingBottom: '4rem', maxWidth: 1100, margin: '0 auto', padding: '9rem 2.5rem 4rem' }}>
         <motion.p
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}

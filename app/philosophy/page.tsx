@@ -94,7 +94,7 @@ export default function PhilosophyPage() {
                 style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', borderTop: '1px solid #e8e8e8', paddingTop: '2rem' }}
               >
                 <p style={{ fontSize: '0.6rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45 }}>{r.name}</p>
-                <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#444', fontStyle: 'italic', fontWeight: 300 }}>“{r.quote}”</p>
+                <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#444', fontStyle: 'italic', fontWeight: 300 }}>"{r.quote}"</p>
               </motion.div>
             ))}
           </div>
@@ -128,6 +128,49 @@ export default function PhilosophyPage() {
         </motion.div>
       </section>
 
+      {/* Section 03b — It requires courage */}
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', maxWidth: 680, margin: '0 auto' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}
+        >
+          {[
+            { text: 'vulnerability requires courage.', indent: false, small: false },
+            { text: 'courage requires safety.', indent: false, small: false },
+            { text: 'and safety — real safety —', indent: false, small: false },
+            { text: 'is built in connection.', indent: false, small: false },
+            { text: '', indent: false, small: false },
+            { text: 'we can heal alone.', indent: false, small: false },
+            { text: '', indent: false, small: false },
+            { text: 'but we can also heal together —', indent: false, small: false },
+            { text: 'as partners.', indent: true, small: true },
+            { text: 'as friends.', indent: true, small: true },
+            { text: 'as families.', indent: true, small: true },
+            { text: 'as society.', indent: true, small: true },
+            { text: '', indent: false, small: false },
+            { text: 'peakplant is one small place', indent: false, small: false },
+            { text: 'where that starts.', indent: false, small: false },
+          ].map((line, i) =>
+            line.text === '' ? (
+              <div key={i} style={{ height: '1.2rem' }} />
+            ) : (
+              <p key={i} style={{
+                fontSize: line.small ? '0.95rem' : '1.15rem',
+                lineHeight: 1.7,
+                color: '#1A1A1A',
+                fontWeight: 300,
+                fontStyle: 'italic',
+                paddingLeft: line.indent ? '2.5rem' : 0,
+                opacity: line.indent ? 0.65 : 1,
+              }}>
+                {line.text}
+              </p>
+            )
+          )}
+        </motion.div>
+      </section>
+
       {/* Section 4 — Mechanic */}
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', maxWidth: 680, margin: '0 auto' }}>
         <motion.p
@@ -149,8 +192,54 @@ export default function PhilosophyPage() {
           <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444', fontWeight: 300 }}>one person picks up the card. reads the question out loud. goes first.</p>
           <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444', fontWeight: 300 }}>that is the vulnerability loop. that is the circle of safety. that is connection — practiced.</p>
           <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#1A1A1A', fontStyle: 'italic' }}>
-            ‘safe. soft. wild.’<br />is not a tagline.<br />it is a research finding.
+            'safe. soft. wild.'<br />is not a tagline.<br />it is a research finding.
           </p>
+        </motion.div>
+      </section>
+
+      {/* Section 05b — poem, no label */}
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', maxWidth: 680, margin: '0 auto' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}
+        >
+          {[
+            { text: 'we only get it into our bones', indent: false },
+            { text: 'through practice.', indent: false },
+            { text: '', indent: false },
+            { text: 'not every conversation is easy.', indent: false },
+            { text: 'not every question will feel safe.', indent: false },
+            { text: 'not every silence will be comfortable.', indent: false },
+            { text: '', indent: false },
+            { text: 'but that is where the skill lives.', indent: false },
+            { text: 'in the discomfort.', indent: true },
+            { text: 'in the choosing to stay.', indent: true },
+            { text: 'in the trying again.', indent: true },
+            { text: '', indent: false },
+            { text: 'intimacy is not a destination.', indent: false },
+            { text: 'it is a practice.', indent: false },
+            { text: '', indent: false },
+            { text: 'and like all practice —', indent: false },
+            { text: 'it shows up', indent: false },
+            { text: 'everywhere.', indent: false },
+          ].map((line, i) =>
+            line.text === '' ? (
+              <div key={i} style={{ height: '1.2rem' }} />
+            ) : (
+              <p key={i} style={{
+                fontSize: '1.1rem',
+                lineHeight: 1.75,
+                color: '#1A1A1A',
+                fontWeight: 300,
+                fontStyle: 'italic',
+                paddingLeft: line.indent ? '2.5rem' : 0,
+                opacity: line.indent ? 0.6 : 1,
+              }}>
+                {line.text}
+              </p>
+            )
+          )}
         </motion.div>
       </section>
 
