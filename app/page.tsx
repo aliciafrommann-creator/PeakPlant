@@ -21,121 +21,121 @@ function ScrollBar() {
   )
 }
 
-function CouplesHero() {
+function Hero() {
   return (
     <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
       <video autoPlay muted playsInline loop
         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
         <source src="/film-shadows.mp4" type="video/mp4" />
       </video>
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 35%, rgba(0,0,0,0.45) 100%)' }} />
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 35%, rgba(0,0,0,0.5) 100%)' }} />
       <motion.div
         initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
         style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}
       >
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, delay: 0.2 }}
-          style={{ marginBottom: '1.5rem' }}>
+          style={{ marginBottom: '2rem' }}>
           <Logo color="#ffffff" size={36} />
         </motion.div>
-        <p style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, marginBottom: '0.75rem' }}>
-          Grow where you feel most alive.
+        <p style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 560, marginBottom: '1rem' }}>
+          when did life start feeling this fast?
         </p>
-        <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
-          Scroll to explore
+        <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>
+          a new intimacy brand. august 2026.
         </p>
       </motion.div>
     </section>
   )
 }
 
-function ProductMoment() {
+const questions = [
+  "what's your favorite memory of us?",
+  'when did you know?',
+  'what do you want to remember about tonight?',
+  'go for a walk. no destination. just talk.',
+  'who would you be without me?',
+  'how would you describe me — without age, job, family or hobbies?',
+]
+
+function Questions() {
   return (
-    <section style={{ padding: '8rem 2.5rem', textAlign: 'center', borderTop: '1px solid #ebebeb' }}>
-      <motion.div
-        initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2.5rem' }}
-      >
-        <div style={{
-          width: '100%', maxWidth: 360, aspectRatio: '4/3',
-          background: '#F5F5F3',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <p style={{ fontFamily: PP, fontSize: '0.6rem', letterSpacing: '0.22em', textTransform: 'uppercase', color: '#1A1A1A', opacity: 0.35 }}>
-            edition 01 — sommer 2026
-          </p>
-        </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <p style={{ fontFamily: PP, fontSize: '0.85rem', color: '#1A1A1A', opacity: 0.5, letterSpacing: '0.01em', fontWeight: 300 }}>6 condoms. 6 questions. 1 seed card.</p>
-          <p style={{ fontFamily: PP, fontSize: '0.85rem', color: '#1A1A1A', opacity: 0.5, letterSpacing: '0.01em', fontWeight: 300 }}>14,90€ including shipping.</p>
-          <p style={{ fontFamily: PP, fontSize: '0.85rem', color: '#1A1A1A', opacity: 0.5, letterSpacing: '0.01em', fontWeight: 300 }}>launching august 2026.</p>
-        </div>
-        <Link href="/shop" style={{
-          fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase',
-          padding: '0.9rem 2.25rem', border: '1px solid rgba(26,26,26,0.35)',
-          color: '#1A1A1A', textDecoration: 'none', display: 'inline-block',
-        }}>
-          reserve your box
-        </Link>
-      </motion.div>
+    <section style={{ padding: '10rem 2.5rem 8rem', maxWidth: 960, margin: '0 auto' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '5rem' }}>
+        {questions.map((q, i) => (
+          <motion.p
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-60px' }}
+            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              fontFamily: PP,
+              fontSize: 'clamp(1.75rem, 3.5vw, 3rem)',
+              fontWeight: 200,
+              lineHeight: 1.2,
+              letterSpacing: '-0.025em',
+              color: '#1A1A1A',
+            }}
+          >
+            {q}
+          </motion.p>
+        ))}
+      </div>
     </section>
   )
 }
 
 function Product() {
   return (
-    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '80vh', backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb', borderBottom: '1px solid #ebebeb' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '120px 80px' }}>
-        <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
-          style={{ fontSize: 10, letterSpacing: '0.55em', color: '#1A1A1A', opacity: 0.35, marginBottom: 36, fontFamily: PP }}>
-          WHAT WE MADE
-        </motion.p>
-        <motion.h2 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-          style={{ fontSize: 'clamp(32px, 3.8vw, 54px)', fontWeight: 200, color: '#1A1A1A', lineHeight: 1.12, marginBottom: 36, letterSpacing: '-0.03em', fontFamily: PP, whiteSpace: 'pre-line' }}>
-          {'Made for the moments\nthat stay with you.'}
+    <section style={{ borderTop: '1px solid #ebebeb', padding: '7rem 2.5rem' }}>
+      <div style={{ maxWidth: 640, margin: '0 auto' }}>
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#1A1A1A', lineHeight: 1.15, letterSpacing: '-0.025em', fontFamily: PP, marginBottom: '1.5rem' }}
+        >
+          six condoms. six questions. one ritual.
         </motion.h2>
-        <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
-          style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
-          6 condoms. 6 reflection cards. 1 seed paper card.<br />
-          vegan · fair rubber latex · launching august 2026.
+        <motion.p
+          initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+          style={{ fontFamily: PP, fontSize: '0.9rem', color: '#1A1A1A', opacity: 0.45, fontWeight: 300, marginBottom: '2.5rem', letterSpacing: '0.01em' }}
+        >
+          14,90€ · free shipping · august 2026
         </motion.p>
-        <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}>
-          <Link href="/shop" style={{ display: 'inline-block', marginTop: 36, fontSize: 10, letterSpacing: '0.45em', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.25)', paddingBottom: 4 }}>
-            SEE IT →
+        <motion.div
+          initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <Link href="/shop" style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#1A1A1A', opacity: 0.55, textDecoration: 'none', borderBottom: '1px solid rgba(26,26,26,0.3)', paddingBottom: 4 }}>
+            reserve your box →
           </Link>
         </motion.div>
       </div>
-      <motion.div
-        initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }}
-        transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
-        <img src="/couples-joy.jpg" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
-      </motion.div>
     </section>
   )
 }
 
 function Founder() {
   return (
-    <section style={{ padding: '8rem 2.5rem', textAlign: 'center', borderTop: '1px solid #ebebeb' }}>
+    <section style={{ padding: '7rem 2.5rem', borderTop: '1px solid #ebebeb' }}>
       <motion.div
-        initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+        initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        style={{ maxWidth: 440, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem' }}
+        style={{ maxWidth: 400, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.5rem', textAlign: 'center' }}
       >
-        <span style={{ color: '#C9A96E', fontSize: '1.25rem', lineHeight: 1, display: 'block' }}>∧</span>
+        <span style={{ color: '#C9A96E', fontSize: '1.1rem', lineHeight: 1 }}>∧</span>
         <p style={{ fontFamily: PP, fontSize: '0.6rem', letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.35 }}>founded by</p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.75, color: '#1A1A1A' }}>alicia frommann.</p>
-          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.75, color: '#777' }}>msc candidate. former bosch.</p>
-          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.75, color: '#777' }}>trail runner. innsbruck.</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.7, color: '#1A1A1A' }}>alicia.</p>
+          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.7, color: '#777' }}>msc candidate. former bosch. trail runner.</p>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginTop: '0.75rem' }}>
+        <div style={{ marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0' }}>
           <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.9, color: '#555' }}>i built peakplant because i noticed</p>
           <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.9, color: '#555' }}>the faster life got,</p>
           <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.9, color: '#555' }}>the harder it became to actually</p>
           <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.9, color: '#555' }}>feel close to someone.</p>
-          <p style={{ fontFamily: PP, fontSize: '1rem', fontWeight: 300, lineHeight: 1.9, color: '#555', marginTop: '1rem' }}>this is my attempt to slow that down.</p>
         </div>
       </motion.div>
     </section>
@@ -182,13 +182,13 @@ function Waitlist() {
     <section style={{ padding: '160px 40px', backgroundColor: '#1A1A1A', textAlign: 'center' }}>
       <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
         <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
-          <Logo color="#ffffff" size={44} />
+          <Logo color="#ffffff" size={40} />
         </motion.div>
-        <h2 style={{ marginTop: 36, fontSize: 'clamp(26px, 4vw, 48px)', fontWeight: 300, color: '#ffffff', lineHeight: 1.15, maxWidth: 560, margin: '36px auto 20px', fontFamily: PP, letterSpacing: '-0.02em' }}>
-          be part of the founding edition.
+        <h2 style={{ fontSize: 'clamp(1.6rem, 3.5vw, 2.8rem)', fontWeight: 200, color: '#ffffff', lineHeight: 1.2, maxWidth: 480, margin: '2.5rem auto 1rem', fontFamily: PP, letterSpacing: '-0.025em' }}>
+          stay a little longer.
         </h2>
-        <p style={{ fontSize: 15, color: '#ffffff', opacity: 0.4, maxWidth: 400, margin: '0 auto 56px', lineHeight: 1.85, fontWeight: 300, fontFamily: PP }}>
-          edition 01 drops august 2026. leave your email and we'll reach out personally.
+        <p style={{ fontSize: 14, color: '#ffffff', opacity: 0.4, maxWidth: 320, margin: '0 auto 56px', lineHeight: 1.8, fontWeight: 300, fontFamily: PP }}>
+          we'll find you when it's time.
         </p>
         {status === 'success' ? (
           <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
@@ -201,63 +201,24 @@ function Waitlist() {
             you're already on the list.
           </motion.p>
         ) : (
-          <form onSubmit={submit} style={{ display: 'inline-flex', maxWidth: 460, width: '100%', border: '1px solid rgba(255,255,255,0.22)' }}>
+          <form onSubmit={submit} style={{ display: 'inline-flex', maxWidth: 440, width: '100%', border: '1px solid rgba(255,255,255,0.2)' }}>
             <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" required
               style={{ flex: 1, padding: '16px 24px', background: 'transparent', border: 'none', outline: 'none', fontSize: 13, fontFamily: PP, color: '#ffffff' }} />
             <button type="submit" disabled={status === 'loading'}
-              style={{ padding: '16px 28px', backgroundColor: '#ffffff', color: '#1A1A1A', border: 'none', cursor: 'pointer', fontSize: 10, letterSpacing: '0.4em', fontFamily: PP, fontWeight: 500 }}>
-              {status === 'loading' ? '...' : 'JOIN'}
+              style={{ padding: '16px 28px', backgroundColor: '#ffffff', color: '#1A1A1A', border: 'none', cursor: 'pointer', fontSize: 9, letterSpacing: '0.35em', fontFamily: PP, fontWeight: 500, whiteSpace: 'nowrap' }}>
+              {status === 'loading' ? '...' : 'stay close'}
             </button>
           </form>
         )}
         {status === 'error' && <p style={{ marginTop: 12, fontSize: 11, color: '#e74c3c', fontFamily: PP }}>Something went wrong. Try again.</p>}
         {status !== 'success' && status !== 'duplicate' && (
-          <p style={{ marginTop: 16, fontSize: 11, color: '#ffffff', opacity: 0.35, fontFamily: PP, lineHeight: 1.65 }}>
+          <p style={{ marginTop: 16, fontSize: 11, color: '#ffffff', opacity: 0.3, fontFamily: PP, lineHeight: 1.65 }}>
             mit der anmeldung stimmst du unserer{' '}
-            <Link href="/datenschutz" style={{ color: '#ffffff', opacity: 0.6, textDecoration: 'underline' }}>datenschutzerklärung</Link>
+            <Link href="/datenschutz" style={{ color: '#ffffff', opacity: 0.5, textDecoration: 'underline' }}>datenschutzerklärung</Link>
             {' '}zu.
           </p>
         )}
       </motion.div>
-    </section>
-  )
-}
-
-const questions = [
-  { n: '01', q: "what's your favorite memory of us?" },
-  { n: '02', q: 'when did you know?' },
-  { n: '03', q: 'what do you want to remember about tonight?' },
-  { n: '04', q: 'go for a walk. no destination. just talk.' },
-  { n: '05', q: 'who would you be without me?' },
-  { n: '06', q: 'how would you describe me — without age, job, family or hobbies?' },
-]
-
-function SixQuestions() {
-  return (
-    <section style={{ backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb', padding: '8rem 2.5rem' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
-          style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.5rem', fontFamily: PP }}>
-          edition 01
-        </motion.p>
-        <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '5rem', fontFamily: PP }}>
-          six questions. one box.
-        </motion.h2>
-        <div style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #ebebeb' }}>
-          {questions.map(({ n, q }, i) => (
-            <motion.div key={n}
-              initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
-              style={{ display: 'flex', alignItems: 'baseline', gap: '2.5rem', padding: '2rem 0', borderBottom: '1px solid #ebebeb' }}>
-              <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24 }}>{n}</span>
-              <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', fontStyle: 'italic', color: '#1A1A1A', fontFamily: PP }}>
-                “{q}”
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
     </section>
   )
 }
@@ -276,7 +237,7 @@ function EditionSystem() {
           style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '4rem', maxWidth: 560, fontFamily: PP }}>
           every edition. a different world.
         </motion.h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '4rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '3.5rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
           {editions.map(({ sym, label }, i) => (
             <motion.div key={label}
               initial={{ opacity: 0, x: -16 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
@@ -288,8 +249,8 @@ function EditionSystem() {
           ))}
         </div>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }}
-          style={{ fontSize: '0.95rem', color: '#ffffff', opacity: 0.45, lineHeight: 1.75, fontWeight: 300, maxWidth: 480, fontFamily: PP, whiteSpace: 'pre-line' }}>
-          {'same box outside. different world inside.\neach edition: new cards, new questions, new digital world.'}
+          style={{ fontSize: '0.9rem', color: '#ffffff', opacity: 0.35, lineHeight: 1.75, fontWeight: 300, fontFamily: PP }}>
+          same outside. different world inside.
         </motion.p>
       </div>
     </section>
@@ -327,12 +288,11 @@ export default function Home() {
     <main style={{ backgroundColor: '#ffffff', fontFamily: PP }}>
       <ScrollBar />
       <NavBar activePath="/" />
-      <CouplesHero />
-      <ProductMoment />
+      <Hero />
+      <Questions />
       <Product />
       <Founder />
       <SocialProof />
-      <SixQuestions />
       <Waitlist />
       <EditionSystem />
       <Footer />
