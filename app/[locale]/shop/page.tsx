@@ -7,6 +7,15 @@ import { NavBar } from '../../../components/NavBar'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
+const CARD_IMAGES = [
+  '/edition-01/8.png',
+  '/edition-01/9.png',
+  '/edition-01/10.png',
+  '/edition-01/11.png',
+  '/edition-01/12.png',
+  '/edition-01/13.png',
+]
+
 function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; alt: string; objectPosition?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
@@ -27,7 +36,7 @@ function WaitlistModal({ onClose, locale }: { onClose: () => void; locale: strin
     e.preventDefault()
     setStatus('loading')
     try {
-      const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, source: 'shop' }) })
+      const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, source: 'shop', locale }) })
       const data = await res.json()
       if (data.duplicate) setStatus('duplicate')
       else if (res.ok) setStatus('success')
@@ -88,6 +97,35 @@ function WaitlistModal({ onClose, locale }: { onClose: () => void; locale: strin
           </>
         )}
       </motion.div>
+    </motion.div>
+  )
+}
+
+function QuestionCell({ q, i, cardSrc }: { q: string; i: number; cardSrc: string }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+      transition={{ duration: 0.6, delay: i * 0.06 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ position: 'relative', padding: '2rem', borderBottom: '1px solid #e8e8e8', borderRight: i % 3 !== 2 ? '1px solid #e8e8e8' : 'none', overflow: 'hidden', cursor: 'default' }}
+    >
+      <motion.div
+        animate={{ opacity: hovered ? 0.08 : 0 }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: `url(${cardSrc})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(2px)',
+          transform: 'scale(1.04)',
+          pointerEvents: 'none',
+        }}
+      />
+      <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem', position: 'relative', zIndex: 1 }}>0{i + 1}</p>
+      <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A', position: 'relative', zIndex: 1 }}>"{q}"</p>
     </motion.div>
   )
 }
@@ -307,13 +345,7 @@ export default function ShopPage({ params }: { params: { locale: string } }) {
         </motion.p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0' }}>
           {questionsLocale.map((q, i) => (
-            <motion.div key={i}
-              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.06 }}
-              style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', borderRight: i % 3 !== 2 ? '1px solid #e8e8e8' : 'none' }}>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem' }}>0{i + 1}</p>
-              <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{q}"</p>
-            </motion.div>
+            <QuestionCell key={i} q={q} i={i} cardSrc={CARD_IMAGES[i]} />
           ))}
         </div>
       </section>

@@ -6,6 +6,15 @@ import { NavBar } from '../../components/NavBar'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
+const CARD_IMAGES = [
+  '/edition-01/8.png',
+  '/edition-01/9.png',
+  '/edition-01/10.png',
+  '/edition-01/11.png',
+  '/edition-01/12.png',
+  '/edition-01/13.png',
+]
+
 function Logo({ color = '#1A1A1A', size = 28 }: { color?: string; size?: number }) {
   return (
     <svg width={size} height={size * 0.75} viewBox="0 0 48 38" fill="none">
@@ -90,7 +99,7 @@ function Waitlist({ locale }: { locale: string }) {
     e.preventDefault()
     setStatus('loading')
     try {
-      const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) })
+      const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, locale }) })
       const data = await res.json()
       if (data.duplicate) setStatus('duplicate')
       else if (res.ok) setStatus('success')
@@ -160,6 +169,37 @@ const questionsDE = [
   { n: '06', q: 'wie würdest du mich beschreiben – ohne alter, beruf, familie oder hobbys?' },
 ]
 
+function QuestionRow({ n, q, cardSrc, i }: { n: string; q: string; cardSrc: string; i: number }) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+      transition={{ duration: 0.7, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{ position: 'relative', display: 'flex', alignItems: 'baseline', gap: '2.5rem', padding: '2rem 0', borderBottom: '1px solid #ebebeb', overflow: 'hidden', cursor: 'default' }}
+    >
+      <motion.div
+        animate={{ opacity: hovered ? 0.07 : 0 }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          position: 'absolute', inset: 0,
+          backgroundImage: `url(${cardSrc})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(2px)',
+          transform: 'scale(1.04)',
+          pointerEvents: 'none',
+        }}
+      />
+      <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24, position: 'relative', zIndex: 1 }}>{n}</span>
+      <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', fontStyle: 'italic', color: '#1A1A1A', fontFamily: PP, position: 'relative', zIndex: 1 }}>
+        "{q}"
+      </p>
+    </motion.div>
+  )
+}
+
 function SixQuestions({ locale }: { locale: string }) {
   const isDE = locale === 'de'
   const questions = isDE ? questionsDE : questionsEN
@@ -176,15 +216,7 @@ function SixQuestions({ locale }: { locale: string }) {
         </motion.h2>
         <div style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #ebebeb' }}>
           {questions.map(({ n, q }, i) => (
-            <motion.div key={n}
-              initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
-              style={{ display: 'flex', alignItems: 'baseline', gap: '2.5rem', padding: '2rem 0', borderBottom: '1px solid #ebebeb' }}>
-              <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24 }}>{n}</span>
-              <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', fontStyle: 'italic', color: '#1A1A1A', fontFamily: PP }}>
-                "{q}"
-              </p>
-            </motion.div>
+            <QuestionRow key={n} n={n} q={q} cardSrc={CARD_IMAGES[i]} i={i} />
           ))}
         </div>
       </div>
@@ -227,17 +259,28 @@ function EditionCard01({ locale }: { locale: string }) {
       transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      style={{ position: 'relative', overflow: 'hidden', minHeight: 280, border: '1px solid rgba(255,255,255,0.12)', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}
+      style={{ position: 'relative', overflow: 'hidden', minHeight: 280, border: '1px solid rgba(255,255,255,0.12)', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'default' }}
     >
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/edition-01/card-01.png)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: hovered ? 1 : 0, transition: 'opacity 0.4s ease' }} />
-      <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)', opacity: hovered ? 1 : 0, transition: 'opacity 0.4s ease' }} />
+      <motion.div
+        animate={{ opacity: hovered ? 1 : 0 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/edition-01/1.png)', backgroundSize: 'cover', backgroundPosition: 'center', pointerEvents: 'none' }}
+      />
+      <motion.div
+        animate={{ opacity: hovered ? 0.6 : 0 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', pointerEvents: 'none' }}
+      />
       <div style={{ position: 'relative', zIndex: 1 }}>
         <span style={{ color: '#C9A96E', fontSize: '1rem', lineHeight: 1 }}>∧</span>
       </div>
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <p style={{ fontFamily: PP, fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)', fontWeight: 300, color: '#ffffff', fontStyle: 'italic', lineHeight: 1.6, marginBottom: '1rem', opacity: hovered ? 1 : 0, transition: 'opacity 0.4s ease' }}>
+        <motion.p
+          animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 8 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          style={{ fontFamily: PP, fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)', fontWeight: 300, color: '#ffffff', fontStyle: 'italic', lineHeight: 1.6, marginBottom: '1rem' }}>
           {isDE ? '"wann hast du es gewusst?"' : '"when did you know?"'}
-        </p>
+        </motion.p>
         <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.01em' }}>edition 01 — sommer 2026</span>
       </div>
     </motion.div>
