@@ -11,10 +11,10 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
   const localHref = (path: string) => `/${locale}${path}`
 
   const researchParas = isDE ? [
-    'im jahr 2012 startete google das projekt aristotle. ziel: verstehen, was ein team leistungsfähig macht. sie untersuchten 180 teams. sie maßen fähigkeiten, erfahrungen, persönlichkeitstypen, arbeitsstile. alles.',
-    'die daten zeigten immer wieder dasselbe. nicht die klügsten menschen. nicht die effizientesten prozesse. nicht die besten manager.',
-    'psychologische sicherheit. die gemeinsame überzeugung, dass das team sicher ist für zwischenmenschliche risiken. dass man sprechen, scheitern und gesehen werden kann — ohne bestrafung.',
-    'teams, in denen sich menschen sicher fühlten ehrlich zu sein, übertrafen alles andere. nicht manchmal. konsistent.',
+    'im jahr 2012 startete google projekt aristotle. ziel: verstehen, was ein team leistungsfähig macht. sie untersuchten 180 teams. sie maßen fähigkeiten, erfahrungen, persönlichkeitstypen, arbeitsstile. alles.',
+    'die daten wiesen immer wieder auf dasselbe hin. nicht die klügsten menschen. nicht die effizientesten prozesse. nicht die besten manager.',
+    'psychologische sicherheit. die gemeinsame überzeugung, dass der raum sicher ist für zwischenmenschliche risiken. dass man sprechen, scheitern und gesehen werden kann — ohne bestrafung.',
+    'teams, in denen sich menschen sicher fühlten ehrlich zu sein, übertrafen alle anderen. nicht manchmal. konsistent.',
     'google nannte es den wichtigsten faktor für teamleistung. aber es ist nicht nur ein arbeitsbefund. es ist ein menschlicher.',
   ] : [
     'in 2012, google launched project aristotle. their goal: understand what makes a team perform. they studied 180 teams across the company. they measured skills, experience levels, personality types, work styles. everything.',
@@ -28,17 +28,17 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
     {
       name: 'Amy Edmondson',
       role: 'Harvard Business School',
-      body: 'prägte 1999 den Begriff psychologische Sicherheit. ihre Forschung zeigte: leistungsstarke Teams machen mehr Fehler — nicht weniger. weil sie sich sicher genug fühlen, sie zuzugeben. sicherheit verhindert keine Fehler. sie schafft die Bedingungen, um daraus zu lernen.',
+      body: 'prägte 1999 den begriff der psychologischen sicherheit. ihre forschung zeigte: leistungsstarke teams machen mehr fehler — nicht weniger. weil sie sich sicher genug fühlen, sie zuzugeben. sicherheit verhindert keine fehler. sie schafft die bedingungen, um daraus zu lernen.',
     },
     {
       name: 'Simon Sinek',
       role: 'The Infinite Game',
-      body: 'beschrieb den Sicherheitskreis. wenn Menschen sich geschützt fühlen — nicht bedroht — von denen, die ihnen am nächsten stehen, verschwenden sie weniger Energie auf selbstschutz. und mehr auf einander. vertrauen ist kein Gefühl. es ist eine Struktur.',
+      body: 'beschrieb den sicherheitskreis. wenn menschen sich geschützt fühlen — nicht bedroht — von denen, die ihnen am nächsten stehen, verschwenden sie weniger energie auf selbstschutz. und mehr aufeinander. vertrauen ist kein gefühl. es ist eine struktur.',
     },
     {
       name: 'Brené Brown',
       role: 'The Gifts of Imperfection',
-      body: 'verbrachte 20 jahre damit, Scham, Verletzlichkeit und Zugehörigkeit zu erforschen. ihr Befund: verletzlichkeit ist keine Schwäche. sie ist der Geburtsort von Liebe, Zugehörigkeit, Freude, Mut und Kreativität. die Bereitschaft, gesehen zu werden, ist der Beginn von Verbindung.',
+      body: 'verbrachte 20 jahre damit, scham, verletzlichkeit und zugehörigkeit zu erforschen. ihr befund: verletzlichkeit ist keine schwäche. sie ist der geburtsort von liebe, zugehörigkeit, freude, mut und kreativität. die bereitschaft, gesehen zu werden, ist der beginn von verbindung.',
     },
   ] : [
     {
@@ -86,7 +86,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
 
   const connectionParas = isDE ? [
     'peakplant existiert an der schnittstelle von all dem.',
-    'wir haben die forschung betrachtet. wir haben unser eigenes leben betrachtet. und wir sahen dasselbe muster: menschen sind nicht deshalb nicht verbunden, weil sie es nicht wollen. sie sind nicht verbunden, weil ihnen nie eine struktur gegeben wurde, um verbindung zu üben.',
+    'wir haben die forschung betrachtet. wir haben unser eigenes leben betrachtet. und wir sahen dasselbe muster: menschen sind nicht voneinander getrennt, weil sie es nicht wollen. sie bekamen nie eine struktur, um verbindung zu üben.',
     'ein ritual. ein impuls. ein moment der erlaubnis, echt zu sein.',
     'die box ist nicht das produkt. das gespräch ist das produkt.',
     'und das gespräch beginnt mit einer frage.',
@@ -135,10 +135,10 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
   const mechanicLines = isDE ? [
     'eine person hebt die karte auf. liest die frage vor. macht den ersten schritt.',
     'das ist die verletzlichkeitsschleife. das ist der sicherheitskreis. das ist verbindung — geübt.',
-    '\'safe. soft. wild.\' ist kein slogan. es ist ein forschungsergebnis.',
+    "'safe. soft. wild.' ist kein slogan. es ist ein forschungsergebnis.",
     'wir bekommen es nur durch übung in unser mark.',
-    'nicht jedes gespräch ist einfach.',
-    'das ist eine illusion, die es wert ist, loszulassen.',
+    'nicht jedes gespräch ist leicht.',
+    'diese illusion dürfen wir loslassen.',
     'aber jeder ehrliche moment — wie unbeholfen, wie unangenehm auch immer — macht uns ein wenig mutiger.',
     'ein wenig mehr wir selbst.',
     'ein wenig mehr verbunden mit den menschen, die wir gewählt haben, und mit der person, die wir werden.',
@@ -304,7 +304,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', fontWeight: 300, lineHeight: 1.45, maxWidth: 640, margin: '0 auto 3rem', letterSpacing: '-0.015em', fontFamily: PP }}
         >
-          {isDE ? 'üben wollen?' : 'want to practice?'}
+          {isDE ? 'lust zu üben?' : 'want to practice?'}
         </motion.p>
         <Link href={localHref('/shop')} style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', borderBottom: '1px solid rgba(26,26,26,0.3)', paddingBottom: 3 }}>
           {isDE ? 'edition 01 entdecken →' : 'explore edition 01 →'}

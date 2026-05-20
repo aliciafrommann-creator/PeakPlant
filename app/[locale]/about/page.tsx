@@ -12,15 +12,15 @@ export default function AboutPage({ params }: { params: { locale: string } }) {
 
   const paragraphs = isDE ? [
     'lange zeit habe ich mich an äußerer leistung gemessen. errungenschaft. ehrgeiz. genug sein.',
-    'ich war nach außen hin erfolgreich. innen nicht vollständig frei.',
-    'ich studierte systemdenken — wie feedback-schleifen, mentale modelle und kulturelle architektur verhalten im großen maßstab prägen.',
+    'nach außen war ich erfolgreich. innen noch nicht frei.',
+    'ich studierte systemdenken — wie rückkopplungsschleifen, mentale modelle und kulturelle architektur verhalten im großen maßstab prägen.',
     'was ich herausfand: einsamkeit und emotionale distanz sind keine persönlichen versagen. sie sind systemische ergebnisse.',
     'die systeme, in denen wir leben — social media, produktivitätskultur, leistungsnormen — wurden nicht entworfen, damit wir uns sicher fühlen. sie wurden entworfen, um uns das gefühl zu geben, nicht genug zu sein.',
-    'je mehr ich an meinen eigenen mustern arbeitete, desto mehr veränderte sich auch intimity. sie wurde sicher. tief. wachsend. etwas, das zwischen zwei menschen aufgebaut wurde, anstatt füreinander gespielt zu werden.',
+    'je mehr ich an meinen eigenen mustern arbeitete, desto mehr veränderte sich auch die intimität. sie wurde sicher. tief. wachsend. etwas, das zwischen zwei menschen entsteht — statt gespielt zu werden.',
     'diese veränderung beeinflusste nicht nur romantische beziehungen. sie veränderte freundschaften, kommunikation und die art, wie ich mich durch die welt bewegte.',
     'peakplant existiert, weil mehr menschen diese art von verbindung verdienen. nicht ihre performance. die wirkliche sache.',
     'du musst nicht performen, um liebenswert zu sein.',
-    'das ist kein slogan. es ist das zentrum von allem, was wir aufbauen.',
+    'das ist kein slogan. es ist der kern von allem, was wir aufbauen.',
   ] : [
     'for a long time, i measured myself by external performance. achievement. ambition. being enough.',
     'i was successful on the outside. not fully free on the inside.',
