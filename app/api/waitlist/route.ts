@@ -21,7 +21,6 @@ export async function POST(req: Request) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-    // Log env var presence for debugging
     console.log('[Waitlist] env check — url:', !!supabaseUrl, 'key:', !!supabaseKey)
 
     if (supabaseUrl && supabaseKey) {
@@ -58,7 +57,7 @@ export async function POST(req: Request) {
       try {
         const resend = new Resend(process.env.RESEND_API_KEY)
         await resend.emails.send({
-          from: 'hello@peakplant.com',
+          from: 'hello@peak-plant.com',
           to: sanitized,
           subject: "you're in.",
           text: CONFIRMATION,
