@@ -44,9 +44,9 @@ export default function IntimacyPage({ params }: { params: { locale: string } })
 
   const quadPanels = isDE ? [
     { bgPosition: '0% 0%',     title: 'Sanftheit ist Stärke.',                        body: 'Verletzlichkeit macht dich nicht schwach. Sie macht dich echt. Und Echtheit ist das, was echte Verbindung schafft — die Art, die bleibt.' },
-    { bgPosition: '100% 0%',   title: 'Präsenz statt Leistung.',                      body: 'Intimity ist nichts, das man richtig machen muss. Es ist ein ort, an dem du ankommst, wenn sich beide sicher genug fühlen aufzuhören zu spielen und wirklich da zu sein.' },
+    { bgPosition: '100% 0%',   title: 'Präsenz statt Leistung.',                      body: 'Intimität ist nichts, das man richtig machen muss. Es ist ein ort, an dem du ankommst — wenn sich beide sicher genug fühlen aufzuhören zu spielen und wirklich da zu sein.' },
     { bgPosition: '0% 100%',   title: 'Wildheit ohne Sicherheit ist keine Freiheit.', body: 'Echte Wildheit — die Art, die sich lebendig anfühlt, nicht leichtsinnig — wird nur möglich, wenn psychologische Sicherheit bereits im Raum ist.' },
-    { bgPosition: '100% 100%', title: 'Dein Wert wird nicht verdient.',                body: 'Du musst nicht performen, um liebenswert zu sein. Du bist bereits genug — und Intimity sollte sich so anfühlen.' },
+    { bgPosition: '100% 100%', title: 'Dein Wert wird nicht verdient.',                body: 'Du musst nicht performen, um liebenswert zu sein. Du bist bereits genug — und Intimität sollte sich so anfühlen.' },
   ] : [
     { bgPosition: '0% 0%',     title: 'Softness is strength.',                      body: "Vulnerability does not make you weak. It makes you real. And realness is what creates actual connection — the kind that stays with you." },
     { bgPosition: '100% 0%',   title: 'Presence over performance.',                 body: "Intimacy is not something to get right. It is a place you arrive at when both people feel safe enough to stop performing and start actually being there." },
@@ -58,7 +58,7 @@ export default function IntimacyPage({ params }: { params: { locale: string } })
     {
       number: '01', name: 'Wahrnehmung',
       headline: 'Der Raum zwischen zwei Menschen ist nicht leer.',
-      body: 'Er hält alles, was noch nicht gesagt wurde. Sehnsucht. Neugier. Das stille Bewusstsein, dass jemand anderes im Raum ist — und dass sie dir wichtig sind. Hier beginnt Intimity: in der Stille, bevor irgendetwas passiert.',
+      body: 'Er hält alles, was noch nicht gesagt wurde. Sehnsucht. Neugier. Das stille Bewusstsein, dass jemand anderes im Raum ist — und dass sie dir wichtig sind. Hier beginnt Intimität: in der Stille, bevor irgendetwas passiert.',
       video: '/film-distance.mp4',
     },
     {
@@ -68,9 +68,9 @@ export default function IntimacyPage({ params }: { params: { locale: string } })
       video: '/film-presence.mp4',
     },
     {
-      number: '03', name: 'Intimity',
+      number: '03', name: 'Intimität',
       headline: 'Nähe ist etwas, das ihr gemeinsam aufbaut.',
-      body: 'Nicht ein Ziel, sondern ein Gefühl — warm, ungehetzt, ehrlich. Intimity geschieht, wenn Sicherheit und Offenheit gleichzeitig im selben Raum ankommen. Wenn Verletzlichkeit keine Schwäche ist, sondern das, was der Freiheit am nächsten kommt.',
+      body: 'Nicht ein Ziel, sondern ein Gefühl — warm, ungehetzt, ehrlich. Intimität geschieht, wenn Sicherheit und Offenheit gleichzeitig im selben Raum ankommen. Wenn Verletzlichkeit keine Schwäche mehr ist, sondern das, was der Freiheit am nächsten kommt.',
       video: '/film-intimacy.mp4',
     },
     {
@@ -100,10 +100,10 @@ export default function IntimacyPage({ params }: { params: { locale: string } })
           transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
           style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}>
           <p style={{ fontFamily: PP, fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 600, marginBottom: '0.75rem' }}>
-            {isDE ? 'Intimity ist kein einzelner Moment.' : 'Intimacy is not a single moment.'}
+            {isDE ? 'Intimität ist kein einzelner Moment.' : 'Intimacy is not a single moment.'}
           </p>
           <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase' }}>
-            {isDE ? 'Scrollen zum Entdecken' : 'Scroll to explore'}
+            {isDE ? 'weiterscrollen' : 'Scroll to explore'}
           </p>
         </motion.div>
       </section>
@@ -115,12 +115,12 @@ export default function IntimacyPage({ params }: { params: { locale: string } })
         </motion.p>
         <motion.h1 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '2.5rem' }}>
-          {isDE ? 'Intimity ist kein einzelner Moment.' : 'Intimacy is not a single moment.'}
+          {isDE ? 'Intimität ist kein einzelner Moment.' : 'Intimacy is not a single moment.'}
         </motion.h1>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
           style={{ fontSize: '1.1rem', lineHeight: 1.8, color: '#555', maxWidth: 580 }}>
           {isDE
-            ? 'Es ist eine Landschaft. Du bewegst dich in deinem eigenen Tempo durch sie — von der stillen Elektrizität, einander wahrzunehmen, über den Mut der Präsenz, in Verbindung und hinaus in Freiheit. Jede Phase ist es wert, darin zu sein.'
+            ? 'Es ist eine Landschaft. Du bewegst dich in deinem eigenen Tempo durch sie — von der stillen Elektrizität des Wahrnehmens, über den Mut der Präsenz, in Verbindung und hinaus in Freiheit. Jede Phase ist es wert, darin zu sein.'
             : 'It is a landscape. You move through it at your own pace — from the quiet electricity of becoming aware of each other, through the courage of presence, into connection, and out into freedom. Every phase is worth being in.'}
         </motion.p>
       </section>

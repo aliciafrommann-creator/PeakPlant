@@ -66,7 +66,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
     },
     {
       icon: <IconSeedling />,
-      headline: 'pflanzen. wachsen sehen.',
+      headline: 'pflanzen. wachsen. sehen.',
       text: 'die saatpapierkarte in jeder box ist 100% pflanzbar. kein müll. sie wird zu wildblumen.',
     },
   ] : [
@@ -113,7 +113,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
     'wir haben peakplant nicht aufgebaut, um eine nachhaltige marke zu sein.',
     'wir haben es aufgebaut, um eine marke zu sein, die zufällig die dinge richtig macht.',
     'weil wir glauben, das nachhaltigste, was wir tun können, ist etwas zu schaffen, das die menschen wirklich behalten.',
-    'eine box, die auf einem nachttisch bleibt.\nkarten, die in brieftaschen getragen werden.\nein ritual, das alles verlangsamt.',
+    'eine box, die auf einem nachttisch bleibt.\nkarten, die in brieftaschen wandern.\nein ritual, das alles verlangsamt.',
     'emotionale langlebigkeit ist auch nachhaltigkeit.',
   ] : [
     "we didn't build peakplant to be a sustainable brand.",

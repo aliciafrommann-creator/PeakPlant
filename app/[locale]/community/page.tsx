@@ -73,7 +73,7 @@ function JoinModal({ onClose, locale }: { onClose: () => void; locale: string })
         onClick={e => e.stopPropagation()}>
         {status === 'success' ? (
           <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, textAlign: 'center' }}>
-            {isDE ? 'wir melden uns, wenn es soweit ist.' : "we'll find you when it's time."}
+            {isDE ? 'wir melden uns, wenn die zeit kommt.' : "we'll find you when it's time."}
           </p>
         ) : status === 'duplicate' ? (
           <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, textAlign: 'center', opacity: 0.6 }}>
@@ -86,8 +86,8 @@ function JoinModal({ onClose, locale }: { onClose: () => void; locale: string })
             </p>
             <p style={{ fontFamily: PP, fontSize: '1rem', color: '#555', lineHeight: 1.7, marginBottom: '2rem' }}>
               {isDE
-                ? 'Events, frühe drops und die menschen, die das mit uns aufbauen. hinterlass deine e-mail — wir melden uns.'
-                : 'Events, early drops, and the people building this with us. Leave your email — we’ll take it from there.'}
+                ? 'events, frühe drops und die menschen, die das mit uns aufbauen. hinterlass deine e-mail — wir melden uns.'
+                : 'Events, early drops, and the people building this with us. Leave your email — we\'ll take it from there.'}
             </p>
             <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder={isDE ? 'deine@email.com' : 'your@email.com'}
@@ -127,10 +127,10 @@ export default function CommunityPage({ params }: { params: { locale: string } }
   ]
 
   const whatYouGet = isDE ? [
-    { label: 'Workshops & Treffen', body: 'Echte events in echten räumen — intime workshops in cafés, abendgespräche und treffen mit menschen, die gemeinsam an verbindung und liebe arbeiten. kleine gruppen. keine bühne, keine performance.' },
-    { label: 'Live Talks', body: 'Wir gehen live zu den themen, die wirklich zählen — intimity, emotionale sicherheit, verbindung, die systeme hinter der art, wie wir lieben. manchmal ein gespräch, manchmal ein tiefer einblick. immer etwas wert.' },
-    { label: 'Das Journal — zuerst', body: 'Community-mitglieder erhalten jede neue journalausgabe, bevor sie veröffentlicht wird. jede ausgabe kommt mit einem QR-code, der zu einem kuratierten podcast oder TED-talk führt — ein begleiter für den spaziergang, den pendelweg oder die stille stunde.' },
-    { label: 'Partner-Communities', body: 'Wir kooperieren mit laufclubs, cafés und lokalen gruppen, denen dasselbe wichtig ist. der workshop folgt manchmal dem lauf. das gespräch beginnt bei kaffee. alles verbindet sich.' },
+    { label: 'Workshops & Treffen', body: 'echte events in echten räumen — intime workshops in cafés, abendgespräche und treffen mit menschen, die gemeinsam an verbindung und liebe arbeiten. kleine gruppen. keine bühne, keine performance.' },
+    { label: 'Live Talks', body: 'wir gehen live zu den themen, die wirklich zählen — intimität, emotionale sicherheit, verbindung, die systeme hinter der art, wie wir lieben. manchmal ein gespräch, manchmal ein tiefer einblick. immer etwas, das bleibt.' },
+    { label: 'Das Journal — zuerst', body: 'community-mitglieder erhalten jede neue journalausgabe, bevor sie veröffentlicht wird. jede ausgabe kommt mit einem QR-code, der zu einem kuratierten podcast oder TED-talk führt — ein begleiter für den spaziergang, den pendelweg oder die stille stunde.' },
+    { label: 'Partner-Communities', body: 'wir kooperieren mit laufclubs, cafés und lokalen gruppen, denen dasselbe wichtig ist. der workshop folgt manchmal dem lauf. das gespräch beginnt bei kaffee. alles verbindet sich.' },
   ] : [
     { label: 'Workshops & gatherings', body: 'Real events in real spaces — intimate workshops in cafes, evening talks, and gatherings with people building something together around how we love and connect. Small groups. No stage, no performance.' },
     { label: 'Live talks', body: 'We go live on the topics that matter — intimacy, emotional safety, connection, the systems behind how we love. Sometimes a conversation, sometimes a deep dive. Always something worth staying for.' },
@@ -139,10 +139,10 @@ export default function CommunityPage({ params }: { params: { locale: string } }
   ]
 
   const communityValues = isDE ? [
-    { label: 'Emotionale Ehrlichkeit statt Leistung', body: 'Das ist ein raum für menschen, die aufgehört haben zu spielen. die gespräche hier sind echt — über beziehungen, verletzlichkeit und was verbindung wirklich bedeutet.' },
-    { label: 'Tiefe statt Content', body: 'Wir bauen keinen feed. wir bauen langsame, bewusste berührungspunkte — events, briefe, fragen — die etwas hinterlassen.' },
-    { label: 'Wärme statt Exklusivität', body: 'Die community ist bewusst klein. nicht weil sie exklusiv ist. weil intimity nicht skaliert. du kannst keine tiefe in großer zahl haben.' },
-    { label: 'Wachsen statt Performen', body: 'Niemand hier hat es herausgefunden. wir erkunden das gemeinsam — was sich sicherheit anfühlt, was wildheit bedeutet, welche art von liebe wir aufbauen wollen.' },
+    { label: 'Emotionale Ehrlichkeit statt Leistung', body: 'das ist ein raum für menschen, die aufgehört haben zu spielen. die gespräche hier sind echt — über beziehungen, verletzlichkeit und was verbindung wirklich bedeutet.' },
+    { label: 'Tiefe statt Content', body: 'wir bauen keinen feed. wir bauen langsame, bewusste berührungspunkte — events, briefe, fragen — die etwas hinterlassen.' },
+    { label: 'Wärme statt Exklusivität', body: 'die community ist bewusst klein. nicht weil sie exklusiv ist. weil intimität nicht skaliert. du kannst keine tiefe in großer zahl haben.' },
+    { label: 'Werden statt Performen', body: 'niemand hier hat es herausgefunden. wir erkunden das gemeinsam — was sich sicherheit anfühlt, was wildheit bedeutet, welche art von liebe wir aufbauen wollen.' },
   ] : [
     { label: 'Emotional honesty over performance', body: 'This is a space for people who are done pretending. The conversations here are real — about relationships, vulnerability, and what it actually takes to feel connected.' },
     { label: 'Depth, not content', body: 'We are not building a feed. We are building slow, intentional touchpoints — events, letters, questions — that leave something behind.' },
@@ -166,7 +166,7 @@ export default function CommunityPage({ params }: { params: { locale: string } }
             style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem' }}>Community</motion.p>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             style={{ fontSize: 'clamp(2rem, 3.5vw, 3.2rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '2.5rem' }}>
-            {isDE ? 'Für Menschen, die Verbindung ernst nehmen.' : 'For people who take connection seriously.'}
+            {isDE ? 'Für Menschen, denen Verbindung wichtig ist.' : 'For people who take connection seriously.'}
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
             style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', marginBottom: '3rem' }}>
@@ -203,7 +203,7 @@ export default function CommunityPage({ params }: { params: { locale: string } }
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '5rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '1rem' }}>
-          {isDE ? 'Was diese Community transformiert' : 'What this community transforms'}
+          {isDE ? 'Was sich verändert' : 'What this community transforms'}
         </motion.p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 60px 1fr', padding: '0 1rem 1rem', marginBottom: '0.25rem' }}>
           <p style={{ fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.3, fontFamily: PP }}>{isDE ? 'Vorher' : 'Before'}</p>
@@ -216,7 +216,7 @@ export default function CommunityPage({ params }: { params: { locale: string } }
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '4rem' }}>
-          {isDE ? 'Was diese Community glaubt' : 'What this community believes'}
+          {isDE ? 'Woran wir glauben' : 'What this community believes'}
         </motion.p>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '3rem 5rem' }}>
           {communityValues.map((v, i) => (
@@ -237,7 +237,7 @@ export default function CommunityPage({ params }: { params: { locale: string } }
           <Logo size={40} color="#ffffff" />
           <p style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 300, lineHeight: 1.45, letterSpacing: '-0.015em', color: '#ffffff' }}>
             {isDE
-              ? 'Die community ist bewusst klein. keine werbung, kein algorithmus, kein lärm. nur menschen, die das anders machen wollen.'
+              ? 'die community ist bewusst klein. keine werbung, kein algorithmus, kein lärm. nur menschen, die das anders machen wollen.'
               : 'The community is small on purpose. There are no ads, no algorithm, no noise. Just people who want to do this differently.'}
           </p>
           <button onClick={() => setModalOpen(true)}
