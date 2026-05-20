@@ -41,7 +41,7 @@ function CouplesHero({ locale }: { locale: string }) {
           {isDE ? 'wann hat das leben begonnen, sich so schnell anzufühlen?' : 'when did life start feeling this fast?'}
         </h1>
         <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
-          {isDE ? 'Zum Entdecken scrollen' : 'Scroll to explore'}
+          {isDE ? 'weiterscrollen' : 'Scroll to explore'}
         </p>
       </motion.div>
     </section>
@@ -56,7 +56,7 @@ function Product({ locale }: { locale: string }) {
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '120px 80px' }}>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
           style={{ fontSize: 10, letterSpacing: '0.55em', color: '#1A1A1A', opacity: 0.35, marginBottom: 36, fontFamily: PP }}>
-          {isDE ? 'WAS WIR ERSCHAFFEN HABEN' : 'WHAT WE MADE'}
+          {isDE ? 'WAS WIR GEMACHT HABEN' : 'WHAT WE MADE'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
           style={{ fontSize: 'clamp(32px, 3.8vw, 54px)', fontWeight: 200, color: '#1A1A1A', lineHeight: 1.12, marginBottom: 36, letterSpacing: '-0.03em', fontFamily: PP, whiteSpace: 'pre-line' }}>
@@ -64,7 +64,7 @@ function Product({ locale }: { locale: string }) {
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
           style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
-          {isDE ? '6 Kondome. 6 Reflexionskarten. 1 Saatpapierkarte.\nvegan · fair rubber latex · startet august 2026.' : '6 condoms. 6 reflection cards. 1 seed paper card.\nvegan · fair rubber latex · launching august 2026.'}
+          {isDE ? '6 Kondome. 6 Reflexionskarten. 1 Saatpapierkarte.\nvegan · fair rubber latex · ab august 2026.' : '6 condoms. 6 reflection cards. 1 seed paper card.\nvegan · fair rubber latex · launching august 2026.'}
         </motion.p>
         <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}>
           <Link href={localHref('/shop')} style={{ display: 'inline-block', marginTop: 36, fontSize: 10, letterSpacing: '0.45em', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.25)', paddingBottom: 4 }}>
@@ -108,12 +108,12 @@ function Waitlist({ locale }: { locale: string }) {
           {isDE ? 'bleib noch etwas.' : 'stay a little longer.'}
         </h2>
         <p style={{ fontSize: 15, color: '#ffffff', opacity: 0.4, maxWidth: 400, margin: '0 auto 56px', lineHeight: 1.85, fontWeight: 300, fontFamily: PP }}>
-          {isDE ? 'wir melden uns, wenn es soweit ist. kein lärm davor.' : "we'll find you when it's time. no noise before then."}
+          {isDE ? 'wir melden uns, wenn die zeit kommt. kein lärm davor.' : "we'll find you when it's time. no noise before then."}
         </p>
         {status === 'success' ? (
           <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
             style={{ fontSize: 13, letterSpacing: '0.08em', color: '#ffffff', opacity: 0.7, fontFamily: PP, fontWeight: 300 }}>
-            {isDE ? 'wir melden uns, wenn es soweit ist.' : "we'll find you when it's time."}
+            {isDE ? 'wir melden uns, wenn die zeit kommt.' : "we'll find you when it's time."}
           </motion.p>
         ) : status === 'duplicate' ? (
           <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
@@ -154,8 +154,8 @@ const questionsEN = [
 const questionsDE = [
   { n: '01', q: 'was ist deine liebste erinnerung an uns?' },
   { n: '02', q: 'wann hast du es gewusst?' },
-  { n: '03', q: 'was willst du von heute abend in erinnerung behalten?' },
-  { n: '04', q: 'macht einen spaziergang. kein ziel. einfach reden.' },
+  { n: '03', q: 'was soll von heute abend bleiben?' },
+  { n: '04', q: 'geht spazieren. kein ziel. einfach reden.' },
   { n: '05', q: 'wer wärst du ohne mich?' },
   { n: '06', q: 'wie würdest du mich beschreiben – ohne alter, beruf, familie oder hobbys?' },
 ]

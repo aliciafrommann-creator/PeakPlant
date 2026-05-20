@@ -50,7 +50,7 @@ function WaitlistModal({ onClose, locale }: { onClose: () => void; locale: strin
         {status === 'success' ? (
           <div style={{ textAlign: 'center' }}>
             <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7 }}>
-              {isDE ? 'wir melden uns, wenn es soweit ist.' : "we'll find you when it's time."}
+              {isDE ? 'wir melden uns, wenn die zeit kommt.' : "we'll find you when it's time."}
             </p>
           </div>
         ) : status === 'duplicate' ? (
@@ -62,12 +62,12 @@ function WaitlistModal({ onClose, locale }: { onClose: () => void; locale: strin
         ) : (
           <>
             <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>
-              {isDE ? 'warteliste beitreten' : 'join waitlist'}
+              {isDE ? 'zur warteliste' : 'join waitlist'}
             </p>
             <p style={{ fontFamily: PP, fontSize: '1rem', color: '#555', lineHeight: 1.7, marginBottom: '2rem' }}>
               {isDE
-                ? 'edition 01 startet august 2026. hinterlass deine e-mail und du hörst als erstes von uns.'
-                : 'edition 01 drops august 2026. leave your email and you’ll hear from us first — personally.'}
+                ? 'edition 01 kommt im august 2026. trag dich ein — du hörst als erste von uns.'
+                : 'edition 01 drops august 2026. leave your email and you\'ll hear from us first — personally.'}
             </p>
             <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <input
@@ -77,7 +77,7 @@ function WaitlistModal({ onClose, locale }: { onClose: () => void; locale: strin
               />
               <button type="submit" disabled={status === 'loading'}
                 style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem 1rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-                {status === 'loading' ? '...' : (isDE ? 'beitreten' : 'join waitlist')}
+                {status === 'loading' ? '...' : (isDE ? 'eintragen' : 'join waitlist')}
               </button>
             </form>
             <p style={{ marginTop: '1rem', fontSize: '0.7rem', color: '#1A1A1A', opacity: 0.4, lineHeight: 1.6, fontFamily: PP }}>
@@ -109,8 +109,8 @@ export default function ShopPage({ params }: { params: { locale: string } }) {
   const questionsLocale = isDE ? [
     'was ist deine liebste erinnerung an uns?',
     'wann hast du es gewusst?',
-    'was willst du von heute abend in erinnerung behalten?',
-    'macht einen spaziergang. kein ziel. einfach reden.',
+    'was soll von heute abend bleiben?',
+    'geht spazieren. kein ziel. einfach reden.',
     'wer wärst du ohne mich?',
     'wie würdest du mich beschreiben – ohne alter, beruf, familie oder hobbys?',
   ] : [
@@ -138,17 +138,17 @@ export default function ShopPage({ params }: { params: { locale: string } }) {
           style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}
         >
           <p style={{ fontFamily: PP, fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 600, marginBottom: '1rem' }}>
-            {isDE ? 'Nicht nur ein Produkt.\nEine Entscheidung zu fühlen.' : 'Not just a product.\nA decision to feel.'}
+            {isDE ? 'Nicht nur ein Produkt.\nEine Entscheidung, zu fühlen.' : 'Not just a product.\nA decision to feel.'}
           </p>
           <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.45)', marginBottom: '2.5rem' }}>
-            {isDE ? '14,90€ · inkl. Versand · startet august 2026' : '14,90€ · includes shipping · launches august 2026'}
+            {isDE ? '14,90€ · inkl. Versand · ab august 2026' : '14,90€ · includes shipping · launches august 2026'}
           </p>
           <button
             style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             onClick={() => setModalOpen(true)}>
-            {isDE ? 'warteliste beitreten →' : 'join waitlist →'}
+            {isDE ? 'zur warteliste →' : 'join waitlist →'}
           </button>
         </motion.div>
       </section>
@@ -196,11 +196,11 @@ export default function ShopPage({ params }: { params: { locale: string } }) {
               <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>{isDE ? 'inkl. Versand' : 'incl. shipping'}</p>
             </div>
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
-              {isDE ? 'startet august 2026' : 'launching august 2026'}
+              {isDE ? 'ab august 2026' : 'launching august 2026'}
             </p>
             <button onClick={() => setModalOpen(true)}
               style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
-              {isDE ? 'warteliste beitreten' : 'join waitlist'}
+              {isDE ? 'zur warteliste' : 'join waitlist'}
             </button>
           </motion.div>
         </div>
@@ -212,13 +212,13 @@ export default function ShopPage({ params }: { params: { locale: string } }) {
             style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>
-                {isDE ? 'abonnement · jederzeit kündbar' : 'subscription · cancel anytime'}
+                {isDE ? 'abo · jederzeit kündbar' : 'subscription · cancel anytime'}
               </p>
               <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
-                {isDE ? 'das ritual, monatlich' : 'the ritual, monthly'}
+                {isDE ? 'das ritual. jeden monat.' : 'the ritual, monthly'}
               </h2>
               <p style={{ fontSize: '1rem', color: '#666', fontWeight: 300, marginTop: '0.5rem' }}>
-                {isDE ? 'eine neue edition jeden monat' : 'a new edition every month'}
+                {isDE ? 'jeden monat eine neue edition.' : 'a new edition every month'}
               </p>
             </div>
             <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
@@ -265,11 +265,11 @@ export default function ShopPage({ params }: { params: { locale: string } }) {
               </p>
             </div>
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
-              {isDE ? 'startet august 2026' : 'launching august 2026'}
+              {isDE ? 'ab august 2026' : 'launching august 2026'}
             </p>
             <button onClick={() => setModalOpen(true)}
               style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'pointer', alignSelf: 'flex-start' }}>
-              {isDE ? 'warteliste beitreten' : 'join waitlist'}
+              {isDE ? 'zur warteliste' : 'join waitlist'}
             </button>
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
@@ -288,7 +288,7 @@ export default function ShopPage({ params }: { params: { locale: string } }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', borderBottom: '1px solid #1A1A1A', paddingBottom: '1rem' }}>
             <div />
             <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>founders edition</p>
-            <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>{isDE ? 'abonnement' : 'subscription'}</p>
+            <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>{isDE ? 'abo' : 'subscription'}</p>
           </div>
           {pricingRows.map(({ label, founders, sub }) => (
             <div key={label} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '1.1rem 0', borderBottom: '1px solid #ebebeb' }}>
@@ -322,11 +322,11 @@ export default function ShopPage({ params }: { params: { locale: string } }) {
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           style={{ maxWidth: 560, margin: '0 auto' }}>
           <p style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', fontWeight: 300, lineHeight: 1.4, marginBottom: '2.5rem', letterSpacing: '-0.01em' }}>
-            {isDE ? 'edition 01 ist limitiert. sei dabei, wenn es losgeht.' : 'edition 01 is limited. be there when it opens.'}
+            {isDE ? 'edition 01 ist limitiert. sei dabei.' : 'edition 01 is limited. be there when it opens.'}
           </p>
           <button onClick={() => setModalOpen(true)}
             style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'pointer' }}>
-            {isDE ? 'warteliste beitreten' : 'join waitlist'}
+            {isDE ? 'zur warteliste' : 'join waitlist'}
           </button>
         </motion.div>
       </section>
