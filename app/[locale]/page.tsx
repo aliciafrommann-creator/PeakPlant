@@ -261,13 +261,11 @@ function EditionCard01({ locale }: { locale: string }) {
       onMouseLeave={() => setHovered(false)}
       style={{ position: 'relative', overflow: 'hidden', minHeight: 280, border: '1px solid rgba(255,255,255,0.12)', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'default' }}
     >
-      <motion.div
-        animate={{ opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/edition-01/1.png)', backgroundSize: 'cover', backgroundPosition: 'center', pointerEvents: 'none' }}
+      <div
+        style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/010826.png)', backgroundSize: 'cover', backgroundPosition: 'center', pointerEvents: 'none' }}
       />
       <motion.div
-        animate={{ opacity: hovered ? 0.6 : 0 }}
+        animate={{ opacity: hovered ? 0.5 : 0.15 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', pointerEvents: 'none' }}
       />
@@ -275,12 +273,9 @@ function EditionCard01({ locale }: { locale: string }) {
         <span style={{ color: '#C9A96E', fontSize: '1rem', lineHeight: 1 }}>∧</span>
       </div>
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <motion.p
-          animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 8 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontFamily: PP, fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)', fontWeight: 300, color: '#ffffff', fontStyle: 'italic', lineHeight: 1.6, marginBottom: '1rem' }}>
+        <p style={{ fontFamily: PP, fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)', fontWeight: 300, color: '#ffffff', fontStyle: 'italic', lineHeight: 1.6, marginBottom: '1rem' }}>
           {isDE ? '"wann hast du es gewusst?"' : '"when did you know?"'}
-        </motion.p>
+        </p>
         <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.01em' }}>edition 01 — sommer 2026</span>
       </div>
     </motion.div>
