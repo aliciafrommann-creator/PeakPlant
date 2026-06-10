@@ -1,7 +1,16 @@
 import type { Metadata } from 'next'
+import { Cormorant_Garamond } from 'next/font/google'
 import './globals.css'
 import { CursorEffect } from '../components/CursorEffect'
 import CookieBanner from '../components/CookieBanner'
+
+const cormorant = Cormorant_Garamond({
+  subsets: ['latin'],
+  weight: ['300', '400', '500'],
+  style: ['normal', 'italic'],
+  variable: '--font-display',
+  display: 'swap',
+})
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -27,7 +36,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={cormorant.variable}>
       <head>
         <script
           dangerouslySetInnerHTML={{
