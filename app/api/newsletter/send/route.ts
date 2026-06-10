@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { createHmac } from 'crypto'
 
 function supabaseHeaders(useServiceKey = false) {
   const key = useServiceKey
@@ -12,8 +13,15 @@ function supabaseHeaders(useServiceKey = false) {
   }
 }
 
+function makeUnsubToken(email: string): string {
+  const secret = process.env.NEWSLETTER_SECRET ?? process.env.CRON_SECRET ?? 'dev-secret'
+  return createHmac('sha256', secret).update(email).digest('base64url')
+}
+
 function newsletterBody(month: string, year: number, edition: string, recipientEmail: string): string {
-  const unsubUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peakplant.com'}/api/unsubscribe?email=${encodeURIComponent(recipientEmail)}`
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peak-plant.com'
+  const token = makeUnsubToken(recipientEmail)
+  const unsubUrl = `${siteUrl}/api/unsubscribe?email=${encodeURIComponent(recipientEmail)}&token=${encodeURIComponent(token)}`
   return `this is the peakplant monthly.
 ${edition} drops soon.
 
@@ -24,14 +32,7 @@ safe. soft. wild.
 unsubscribe: ${unsubUrl}`
 }
 
-export async function POST(req: Request) {
-  // Protect with secret key
-  const auth = req.headers.get('authorization') ?? ''
-  const secret = process.env.NEWSLETTER_SECRET
-  if (!secret || auth !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
+async function sendNewsletter(): Promise<NextResponse> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const resendKey = process.env.RESEND_API_KEY
 
@@ -39,7 +40,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Missing env vars' }, { status: 500 })
   }
 
-  // Fetch active subscribers (use service role key if available, else anon)
   const subsRes = await fetch(
     `${supabaseUrl}/rest/v1/subscribers?status=eq.active&select=email`,
     { headers: supabaseHeaders(!!process.env.SUPABASE_SERVICE_ROLE_KEY) }
@@ -62,11 +62,10 @@ export async function POST(req: Request) {
   let sent = 0
   const errors: string[] = []
 
-  // Send individually so each gets a personalised unsubscribe link
   for (const { email } of subscribers) {
     try {
       await resend.emails.send({
-        from: 'hello@peakplant.com',
+        from: 'alicia@peak-plant.com',
         to: email,
         subject,
         text: newsletterBody(month, year, edition, email),
@@ -78,7 +77,6 @@ export async function POST(req: Request) {
     }
   }
 
-  // Log the send
   await fetch(`${supabaseUrl}/rest/v1/newsletter_sends`, {
     method: 'POST',
     headers: {
@@ -91,14 +89,18 @@ export async function POST(req: Request) {
   return NextResponse.json({ sent, errors: errors.length > 0 ? errors : undefined })
 }
 
-// Allow Vercel cron (GET with Authorization header isn't standard — cron hits GET)
-export async function GET(req: Request) {
-  // Vercel cron sends Authorization: Bearer <CRON_SECRET>
-  // We reuse NEWSLETTER_SECRET for simplicity
+function isAuthorized(req: Request): boolean {
   const auth = req.headers.get('authorization') ?? ''
-  const secret = process.env.NEWSLETTER_SECRET
-  if (!secret || auth !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-  return POST(req)
+  const secret = process.env.NEWSLETTER_SECRET ?? process.env.CRON_SECRET
+  return !!secret && auth === `Bearer ${secret}`
+}
+
+export async function POST(req: Request) {
+  if (!isAuthorized(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  return sendNewsletter()
+}
+
+export async function GET(req: Request) {
+  if (!isAuthorized(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  return sendNewsletter()
 }

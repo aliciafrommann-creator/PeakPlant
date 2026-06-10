@@ -29,9 +29,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var p=location.pathname;document.documentElement.lang=p.startsWith('/de')?'de':'en';})();`,
+          }}
+        />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body style={{ margin: 0, padding: 0, overflowX: 'hidden', cursor: 'none' }}>
+      <body style={{ margin: 0, padding: 0, overflowX: 'hidden' }}>
         <CursorEffect />
         {children}
         <CookieBanner />

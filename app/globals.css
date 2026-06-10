@@ -55,3 +55,8 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+@media (pointer: coarse) {
+  body { cursor: auto !important; }
+  a, button, [role="button"] { cursor: pointer !important; }
+}
