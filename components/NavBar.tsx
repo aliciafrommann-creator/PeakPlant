@@ -3,8 +3,12 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { navItems } from '../lib/translations'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+
+// Pages that live at root level, not under /[locale]/
+const GLOBAL_PATHS = ['/shop', '/community', '/intimacy', '/philosophy', '/ethics', '/about', '/journal', '/unsubscribe']
 
 function Logo({ color = '#1A1A1A', size = 32 }: { color?: string; size?: number }) {
   return (
@@ -17,6 +21,7 @@ function Logo({ color = '#1A1A1A', size = 32 }: { color?: string; size?: number 
 export function NavBar({ activePath }: { activePath?: string }) {
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
+  const isMobile = useIsMobile()
 
   const locale = pathname?.startsWith('/de') ? 'de' : 'en'
   const altLocale = locale === 'de' ? 'en' : 'de'
@@ -26,8 +31,11 @@ export function NavBar({ activePath }: { activePath?: string }) {
     ? `/${altLocale}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`
     : `/${altLocale}`
 
-  const localHref = (href: string) =>
-    isLocaleRoute ? (href === '/' ? `/${locale}` : `/${locale}${href}`) : href
+  const localHref = (href: string) => {
+    if (href === '/') return `/${locale}`
+    if (GLOBAL_PATHS.some(g => href === g || href.startsWith(`${g}/`))) return href
+    return isLocaleRoute ? `/${locale}${href}` : href
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80)
@@ -42,7 +50,7 @@ export function NavBar({ activePath }: { activePath?: string }) {
   return (
     <nav style={{
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
-      padding: '1.5rem 2.5rem',
+      padding: isMobile ? '1.1rem 1.25rem' : '1.5rem 2.5rem',
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       background: bg,
       backdropFilter: 'blur(12px)',
@@ -50,13 +58,13 @@ export function NavBar({ activePath }: { activePath?: string }) {
       transition: 'background 0.4s ease',
     }}>
       <Link href={localHref('/')} style={{ textDecoration: 'none' }}>
-        <Logo color={color} size={32} />
+        <Logo color={color} size={isMobile ? 26 : 32} />
       </Link>
-      <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: isMobile ? '1.1rem' : '2.5rem', alignItems: 'center' }}>
         {navItems.map(({ en, de, href }) => (
           <Link key={href} href={localHref(href)} style={{
             fontFamily: PP,
-            fontSize: '0.75rem',
+            fontSize: isMobile ? '0.6rem' : '0.75rem',
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
             textDecoration: 'none',
@@ -75,7 +83,7 @@ export function NavBar({ activePath }: { activePath?: string }) {
           color,
           opacity: 0.38,
           borderLeft: `1px solid ${dividerColor}`,
-          paddingLeft: '1.25rem',
+          paddingLeft: isMobile ? '0.75rem' : '1.25rem',
           transition: 'opacity 0.3s ease',
         }}>
           {altLocale.toUpperCase()}

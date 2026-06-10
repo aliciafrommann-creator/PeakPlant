@@ -2,7 +2,11 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const LOCALES = ['en', 'de']
-const SKIP = ['/impressum', '/datenschutz', '/agb', '/api', '/_next', '/favicon', '/sitemap', '/robots']
+// Global pages that live at root level (not locale-prefixed)
+const SKIP = [
+  '/impressum', '/datenschutz', '/agb', '/api', '/_next', '/favicon', '/sitemap', '/robots',
+  '/shop', '/community', '/intimacy', '/philosophy', '/ethics', '/about', '/journal', '/unsubscribe',
+]
 
 function preferredLocale(req: NextRequest): string {
   const al = req.headers.get('Accept-Language') ?? ''

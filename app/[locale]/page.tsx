@@ -7,6 +7,9 @@ import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
+// Global pages — no locale prefix
+const GLOBAL_PAGES = ['/shop', '/community', '/intimacy', '/philosophy', '/ethics', '/about']
+
 const CARD_IMAGES = [
   '/edition-01/8.png',
   '/edition-01/9.png',
@@ -50,7 +53,7 @@ function CouplesHero({ locale }: { locale: string }) {
         <h1 style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, margin: '0 auto 2rem' }}>
           {isDE ? 'wann hat das leben begonnen, sich so schnell anzufühlen?' : 'when did life start feeling this fast?'}
         </h1>
-        <Link href={`/${locale}/shop`}
+        <Link href="/shop"
           style={{ display: 'inline-block', marginBottom: '2rem', padding: '0.85rem 2.2rem', border: '1px solid rgba(255,255,255,0.5)', fontSize: '0.65rem', letterSpacing: '0.28em', color: '#ffffff', textDecoration: 'none', fontFamily: PP, textTransform: 'uppercase' }}>
           edition 01 &mdash; 14,90€
         </Link>
@@ -64,7 +67,7 @@ function CouplesHero({ locale }: { locale: string }) {
 
 function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
   const isDE = locale === 'de'
-  const localHref = (path: string) => `/${locale}${path}`
+  const localHref = (path: string) => GLOBAL_PAGES.includes(path) ? path : `/${locale}${path}`
   return (
     <section style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', minHeight: '80vh', backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb', borderBottom: '1px solid #ebebeb' }}>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: isMobile ? '80px 32px' : '120px 80px' }}>
@@ -109,13 +112,14 @@ function Waitlist({ locale }: { locale: string }) {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus('loading')
+    let finalStatus: typeof status = 'error'
     try {
       const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, locale }) })
       const data = await res.json()
-      if (data.duplicate) setStatus('duplicate')
-      else if (res.ok) setStatus('success')
-      else setStatus('error')
-    } catch { setStatus('error') }
+      if (data.duplicate) finalStatus = 'duplicate'
+      else if (res.ok) finalStatus = 'success'
+    } catch { finalStatus = 'error' }
+    finally { setStatus(finalStatus) }
   }
 
   return (
@@ -324,7 +328,7 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
 
 function Footer({ locale }: { locale: string }) {
   const isDE = locale === 'de'
-  const localHref = (path: string) => `/${locale}${path}`
+  const localHref = (path: string) => GLOBAL_PAGES.includes(path) ? path : `/${locale}${path}`
   const footerNav = isDE
     ? [['INTIMITÄT', '/intimacy'], ['PHILOSOPHIE', '/philosophy'], ['SHOP', '/shop'], ['COMMUNITY', '/community']]
     : [['INTIMACY', '/intimacy'], ['PHILOSOPHY', '/philosophy'], ['SHOP', '/shop'], ['COMMUNITY', '/community']]
@@ -362,8 +366,8 @@ export default function Home({ params }: { params: { locale: string } }) {
       <NavBar activePath="/" />
       <CouplesHero locale={locale} />
       <Product locale={locale} isMobile={isMobile} />
-      <SixQuestions locale={locale} />
       <Testimonials locale={locale} isMobile={isMobile} />
+      <SixQuestions locale={locale} />
       <Waitlist locale={locale} />
       <EditionSystem locale={locale} isMobile={isMobile} />
       <Footer locale={locale} />

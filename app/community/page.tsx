@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { NavBar } from '../../components/NavBar'
+import { useIsMobile } from '../../hooks/useIsMobile'
 
 const pairs = [
   ['Performance', 'Presence'],
@@ -63,6 +64,7 @@ function JoinModal({ onClose }: { onClose: () => void }) {
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setStatus('loading')
+    let finalStatus: typeof status = 'error'
     try {
       const res = await fetch('/api/waitlist', {
         method: 'POST',
@@ -70,10 +72,10 @@ function JoinModal({ onClose }: { onClose: () => void }) {
         body: JSON.stringify({ email, source: 'community' }),
       })
       const data = await res.json()
-      if (data.duplicate) setStatus('duplicate')
-      else if (res.ok) setStatus('success')
-      else setStatus('error')
-    } catch { setStatus('error') }
+      if (data.duplicate) finalStatus = 'duplicate'
+      else if (res.ok) finalStatus = 'success'
+    } catch { finalStatus = 'error' }
+    finally { setStatus(finalStatus) }
   }
 
   return (
@@ -82,16 +84,22 @@ function JoinModal({ onClose }: { onClose: () => void }) {
       onClick={onClose}>
       <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        style={{ background: '#ffffff', border: '1px solid #1A1A1A', padding: '3rem', maxWidth: 440, width: '100%' }}
+        style={{ position: 'relative', background: '#ffffff', border: '1px solid #1A1A1A', padding: '3rem', maxWidth: 440, width: '100%' }}
         onClick={e => e.stopPropagation()}>
         {status === 'success' ? (
-          <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, textAlign: 'center' }}>
-            we'll find you when it's time.
-          </p>
+          <div style={{ textAlign: 'center' }}>
+            <button onClick={onClose} aria-label="close" style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.4rem', opacity: 0.35, color: '#1A1A1A', lineHeight: 1 }}>×</button>
+            <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7 }}>
+              we'll find you when it's time.
+            </p>
+          </div>
         ) : status === 'duplicate' ? (
-          <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, textAlign: 'center', opacity: 0.6 }}>
-            you're already on the list.
-          </p>
+          <div style={{ textAlign: 'center' }}>
+            <button onClick={onClose} aria-label="close" style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.4rem', opacity: 0.35, color: '#1A1A1A', lineHeight: 1 }}>×</button>
+            <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, opacity: 0.6 }}>
+              you're already on the list.
+            </p>
+          </div>
         ) : (
           <>
             <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>Join the inner circle</p>
@@ -146,6 +154,7 @@ const whatYouGet = [
 
 export default function CommunityPage() {
   const [modalOpen, setModalOpen] = useState(false)
+  const isMobile = useIsMobile()
 
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
@@ -153,11 +162,11 @@ export default function CommunityPage() {
       <NavBar activePath="/community" />
 
       {/* Hero */}
-      <section style={{ padding: '8rem 5rem 6rem', maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
+      <section style={{ padding: isMobile ? '6rem 1.5rem 4rem' : '8rem 5rem 6rem', maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'center' }}>
         <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <video autoPlay muted playsInline loop
-            style={{ width: '100%', maxWidth: 480, objectFit: 'contain', display: 'block' }}>
+            style={{ width: '100%', maxWidth: isMobile ? 280 : 480, objectFit: 'contain', display: 'block' }}>
             <source src="/film-logo-transform.mp4" type="video/mp4" />
           </video>
         </motion.div>
@@ -188,7 +197,7 @@ export default function CommunityPage() {
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '4rem' }}>
           What you become part of
         </motion.p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '3rem 5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: isMobile ? '2.5rem' : '3rem 5rem' }}>
           {whatYouGet.map((item, i) => (
             <motion.div key={item.label}
               initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -224,7 +233,7 @@ export default function CommunityPage() {
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '4rem' }}>
           What this community believes
         </motion.p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '3rem 5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: isMobile ? '2.5rem' : '3rem 5rem' }}>
           {communityValues.map((v, i) => (
             <motion.div key={i}
               initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
