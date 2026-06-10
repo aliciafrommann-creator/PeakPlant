@@ -25,14 +25,20 @@ function makeUnsubToken(email: string): string {
   return createHmac('sha256', secret).update(email).digest('base64url')
 }
 
-const CONFIRMATION_EN = (unsubUrl: string) => `∧ peakplant
+const BODY_EN = (unsubUrl: string) => `∧ peakplant
 
-thank you for being here.
-we'll reach out when edition 01 drops in august 2026.
-until then — slow down a little.
+you're in.
+edition 01 drops in august 2026.
 
-one question while you wait:
-when did you last feel truly close to someone?
+while you wait — these are your six questions.
+use them tonight.
+
+01. "what's your favorite memory of us?"
+02. "when did you know?"
+03. "what do you want to remember about tonight?"
+04. "go for a walk. no destination. just talk."
+05. "who would you be without me?"
+06. "how would you describe me — without age, job, family or hobbies?"
 
 safe. soft. wild.
 ∧ peakplant
@@ -40,14 +46,20 @@ safe. soft. wild.
 —
 unsubscribe: ${unsubUrl}`
 
-const CONFIRMATION_DE = (unsubUrl: string) => `∧ peakplant
+const BODY_DE = (unsubUrl: string) => `∧ peakplant
 
-danke, dass du dabei bist.
-wir melden uns, wenn edition 01 im august 2026 startet.
-bis dahin — nimm dir ein bisschen zeit.
+du bist dabei.
+edition 01 startet im august 2026.
 
-eine frage für die zwischenzeit:
-wann hast du das letzte mal wirklich gespürt, dass du jemandem nahe bist?
+für die zwischenzeit — das sind deine sechs fragen.
+für heute abend.
+
+01. „was ist deine liebste erinnerung an uns?“
+02. „wann hast du es gewusst?“
+03. „was soll von heute abend bleiben?“
+04. „geht spazieren. kein ziel. einfach reden.“
+05. „wer wärst du ohne mich?“
+06. „wie würdest du mich beschreiben – ohne alter, beruf, familie oder hobbys?“
 
 safe. soft. wild.
 ∧ peakplant
@@ -89,12 +101,9 @@ export async function POST(req: Request) {
         headers: supabaseHeaders(supabaseKey),
         body: JSON.stringify({ email: sanitized, source: source ?? 'homepage', edition: 'edition_01' }),
       })
-
       if (res.status === 409) return NextResponse.json({ duplicate: true })
-
       if (!res.ok) {
-        const body = await res.text()
-        console.error(`[Waitlist] Supabase ${res.status}:`, body)
+        console.error(`[Waitlist] Supabase ${res.status}:`, await res.text())
         return NextResponse.json({ error: 'Server error' }, { status: 500 })
       }
     }
@@ -109,7 +118,7 @@ export async function POST(req: Request) {
           from: 'alicia@peak-plant.com',
           to: sanitized,
           subject: isDE ? 'du bist dabei.' : "you're in.",
-          text: isDE ? CONFIRMATION_DE(unsubUrl) : CONFIRMATION_EN(unsubUrl),
+          text: isDE ? BODY_DE(unsubUrl) : BODY_EN(unsubUrl),
         })
       } catch (err) {
         console.error('[Waitlist] Resend error:', err)

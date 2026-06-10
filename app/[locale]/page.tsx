@@ -3,6 +3,7 @@ import { motion, useScroll } from 'framer-motion'
 import { useState } from 'react'
 import Link from 'next/link'
 import { NavBar } from '../../components/NavBar'
+import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -34,7 +35,7 @@ function CouplesHero({ locale }: { locale: string }) {
     <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
       <video autoPlay muted playsInline loop
         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
-        <source src="/film-shadows.mp4" type="video/mp4" />
+        <source src="/film-intimacy.mp4" type="video/mp4" />
       </video>
       <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 35%, rgba(0,0,0,0.45) 100%)' }} />
       <motion.div
@@ -49,20 +50,24 @@ function CouplesHero({ locale }: { locale: string }) {
         <h1 style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, margin: '0 auto 2rem' }}>
           {isDE ? 'wann hat das leben begonnen, sich so schnell anzufühlen?' : 'when did life start feeling this fast?'}
         </h1>
+        <Link href={`/${locale}/shop`}
+          style={{ display: 'inline-block', marginBottom: '2rem', padding: '0.85rem 2.2rem', border: '1px solid rgba(255,255,255,0.5)', fontSize: '0.65rem', letterSpacing: '0.28em', color: '#ffffff', textDecoration: 'none', fontFamily: PP, textTransform: 'uppercase' }}>
+          edition 01 &mdash; 14,90€
+        </Link>
         <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
-          {isDE ? 'weiterscrollen' : 'Scroll to explore'}
+          {isDE ? 'weiterscrollen' : 'scroll to explore'}
         </p>
       </motion.div>
     </section>
   )
 }
 
-function Product({ locale }: { locale: string }) {
+function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
   const isDE = locale === 'de'
   const localHref = (path: string) => `/${locale}${path}`
   return (
-    <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', minHeight: '80vh', backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb', borderBottom: '1px solid #ebebeb' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '120px 80px' }}>
+    <section style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', minHeight: '80vh', backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb', borderBottom: '1px solid #ebebeb' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: isMobile ? '80px 32px' : '120px 80px' }}>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
           style={{ fontSize: 10, letterSpacing: '0.55em', color: '#1A1A1A', opacity: 0.35, marginBottom: 36, fontFamily: PP }}>
           {isDE ? 'WAS WIR GEMACHT HABEN' : 'WHAT WE MADE'}
@@ -75,15 +80,21 @@ function Product({ locale }: { locale: string }) {
           style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
           {isDE ? '6 Kondome. 6 Reflexionskarten. 1 Saatpapierkarte.\nvegan · fair rubber latex · ab august 2026.' : '6 condoms. 6 reflection cards. 1 seed paper card.\nvegan · fair rubber latex · launching august 2026.'}
         </motion.p>
+        <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }}
+          style={{ marginTop: 36, display: 'flex', alignItems: 'baseline', gap: 14 }}>
+          <span style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em', color: '#1A1A1A', fontFamily: PP }}>14,90€</span>
+          <span style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.4, fontFamily: PP }}>{isDE ? 'inkl. versand' : 'incl. shipping'}</span>
+        </motion.div>
         <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}>
-          <Link href={localHref('/shop')} style={{ display: 'inline-block', marginTop: 36, fontSize: 10, letterSpacing: '0.45em', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.25)', paddingBottom: 4 }}>
+          <Link href={localHref('/shop')} style={{ display: 'inline-block', marginTop: 16, fontSize: 10, letterSpacing: '0.45em', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.25)', paddingBottom: 4 }}>
             {isDE ? 'ENTDECKEN →' : 'SEE IT →'}
           </Link>
         </motion.div>
       </div>
       <motion.div
         initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }}
-        transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
+        transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
+        style={{ minHeight: isMobile ? '60vw' : 'auto' }}>
         <img src="/couples-joy.jpg" alt="couple sharing a tender moment together" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
       </motion.div>
     </section>
@@ -120,10 +131,11 @@ function Waitlist({ locale }: { locale: string }) {
           {isDE ? 'wir melden uns, wenn die zeit kommt. kein lärm davor.' : "we'll find you when it's time. no noise before then."}
         </p>
         {status === 'success' ? (
-          <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
-            style={{ fontSize: 13, letterSpacing: '0.08em', color: '#ffffff', opacity: 0.7, fontFamily: PP, fontWeight: 300 }}>
-            {isDE ? 'wir melden uns, wenn die zeit kommt.' : "we'll find you when it's time."}
-          </motion.p>
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+            <p style={{ fontSize: 15, color: '#ffffff', opacity: 0.75, fontFamily: PP, fontWeight: 300, lineHeight: 1.7 }}>
+              {isDE ? 'gut. schau in dein postfach —\nwir haben dir die sechs fragen gelassen.' : 'good. check your inbox —\nwe left you the six questions.'}
+            </p>
+          </motion.div>
         ) : status === 'duplicate' ? (
           <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
             style={{ fontSize: 13, letterSpacing: '0.08em', color: '#ffffff', opacity: 0.5, fontFamily: PP, fontWeight: 300 }}>
@@ -182,15 +194,7 @@ function QuestionRow({ n, q, cardSrc, i }: { n: string; q: string; cardSrc: stri
       <motion.div
         animate={{ opacity: hovered ? 0.07 : 0 }}
         transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: `url(${cardSrc})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          filter: 'blur(2px)',
-          transform: 'scale(1.04)',
-          pointerEvents: 'none',
-        }}
+        style={{ position: 'absolute', inset: 0, backgroundImage: `url(${cardSrc})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(2px)', transform: 'scale(1.04)', pointerEvents: 'none' }}
       />
       <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24, position: 'relative', zIndex: 1 }}>{n}</span>
       <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', fontStyle: 'italic', color: '#1A1A1A', fontFamily: PP, position: 'relative', zIndex: 1 }}>
@@ -224,7 +228,7 @@ function SixQuestions({ locale }: { locale: string }) {
   )
 }
 
-function Testimonials({ locale }: { locale: string }) {
+function Testimonials({ locale, isMobile }: { locale: string; isMobile: boolean }) {
   const isDE = locale === 'de'
   const quotes = isDE ? [
     { text: 'wir hatten seit jahren nicht mehr so geredet. nicht weil wir nicht wollten – wir wussten einfach nicht, wie wir anfangen sollten.', author: '— beta tester, stuttgart' },
@@ -235,7 +239,7 @@ function Testimonials({ locale }: { locale: string }) {
   ]
   return (
     <section style={{ backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb', padding: '8rem 2.5rem' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '5rem' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '5rem' }}>
         {quotes.map((q, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: i * 0.15 }}
@@ -261,9 +265,7 @@ function EditionCard01({ locale }: { locale: string }) {
       onMouseLeave={() => setHovered(false)}
       style={{ position: 'relative', overflow: 'hidden', minHeight: 280, border: '1px solid rgba(255,255,255,0.12)', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'default' }}
     >
-      <div
-        style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/010826.png)', backgroundSize: 'cover', backgroundPosition: 'center', pointerEvents: 'none' }}
-      />
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/010826.png)', backgroundSize: 'cover', backgroundPosition: 'center', pointerEvents: 'none' }} />
       <motion.div
         animate={{ opacity: hovered ? 0.5 : 0.15 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -282,7 +284,7 @@ function EditionCard01({ locale }: { locale: string }) {
   )
 }
 
-function EditionSystem({ locale }: { locale: string }) {
+function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean }) {
   const isDE = locale === 'de'
   return (
     <section style={{ backgroundColor: '#1A1A1A', padding: '8rem 2.5rem' }}>
@@ -291,7 +293,7 @@ function EditionSystem({ locale }: { locale: string }) {
           style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '4rem', maxWidth: 560, fontFamily: PP }}>
           {isDE ? 'jede edition. eine andere welt.' : 'every edition. a different world.'}
         </motion.h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '4rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '4rem' }}>
           <EditionCard01 locale={locale} />
           {['edition 02 — herbst 2026', 'edition 03 — winter 2026'].map((label, i) => (
             <motion.div key={label}
@@ -353,16 +355,17 @@ function Footer({ locale }: { locale: string }) {
 
 export default function Home({ params }: { params: { locale: string } }) {
   const { locale } = params
+  const isMobile = useIsMobile()
   return (
     <main style={{ backgroundColor: '#ffffff', fontFamily: PP }}>
       <ScrollBar />
       <NavBar activePath="/" />
       <CouplesHero locale={locale} />
-      <Product locale={locale} />
+      <Product locale={locale} isMobile={isMobile} />
       <SixQuestions locale={locale} />
-      <Testimonials locale={locale} />
+      <Testimonials locale={locale} isMobile={isMobile} />
       <Waitlist locale={locale} />
-      <EditionSystem locale={locale} />
+      <EditionSystem locale={locale} isMobile={isMobile} />
       <Footer locale={locale} />
     </main>
   )
