@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { useScroll, useTransform } from 'framer-motion'
 import { NavBar } from '../../components/NavBar'
+import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -25,14 +26,17 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setStatus('loading')
+    let finalStatus: typeof status = 'error'
     try {
       const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, source: 'shop' }) })
       const data = await res.json()
-      if (data.duplicate) setStatus('duplicate')
-      else if (res.ok) setStatus('success')
-      else setStatus('error')
+      if (data.duplicate) finalStatus = 'duplicate'
+      else if (res.ok) finalStatus = 'success'
+      else finalStatus = 'error'
+    } catch {
+      finalStatus = 'error'
     } finally {
-      if (status === 'loading') setStatus('error')
+      setStatus(finalStatus)
     }
   }
 
@@ -45,17 +49,19 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
       <motion.div
         initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        style={{ background: '#ffffff', border: '1px solid #1A1A1A', padding: '3rem', maxWidth: 440, width: '100%' }}
+        style={{ position: 'relative', background: '#ffffff', border: '1px solid #1A1A1A', padding: '3rem', maxWidth: 440, width: '100%' }}
         onClick={e => e.stopPropagation()}
       >
         {status === 'success' ? (
           <div style={{ textAlign: 'center' }}>
+            <button onClick={onClose} aria-label="close" style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.4rem', opacity: 0.35, color: '#1A1A1A', lineHeight: 1 }}>×</button>
             <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7 }}>
-              we'll find you when it's time.
+              check your inbox. we left you the six questions.
             </p>
           </div>
         ) : status === 'duplicate' ? (
           <div style={{ textAlign: 'center' }}>
+            <button onClick={onClose} aria-label="close" style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.4rem', opacity: 0.35, color: '#1A1A1A', lineHeight: 1 }}>×</button>
             <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, opacity: 0.6 }}>
               you're already on the list.
             </p>
@@ -100,6 +106,7 @@ const pricingRows = [
 
 export default function ShopPage() {
   const [modalOpen, setModalOpen] = useState(false)
+  const isMobile = useIsMobile()
 
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
@@ -136,7 +143,7 @@ export default function ShopPage() {
 
       {/* Product 1 — Founders Edition */}
       <section style={{ borderTop: '1px solid #e8e8e8', maxWidth: 1100, margin: '0 auto', padding: '7rem 2.5rem' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'start' }}>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             style={{ aspectRatio: '1/1', background: '#f5f5f5', overflow: 'hidden' }}>
             <ParallaxImage src="/product-box.jpg" alt="PeakPlant founders edition" />
@@ -186,7 +193,7 @@ export default function ShopPage() {
 
       {/* Product 2 — Subscription */}
       <section style={{ borderTop: '1px solid #e8e8e8', background: '#faf9f7', padding: '7rem 2.5rem' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'start' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'start' }}>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div>
@@ -198,35 +205,24 @@ export default function ShopPage() {
               </h2>
               <p style={{ fontSize: '1rem', color: '#666', fontWeight: 300, marginTop: '0.5rem' }}>a new edition every month</p>
             </div>
-
             <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>welcome box — once</p>
-              {[
-                'premium unboxing experience',
-                'personal letter from alicia',
-                'edition 01 box',
-              ].map((item, i) => (
+              {['premium unboxing experience', 'personal letter from alicia', 'edition 01 box'].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline', marginBottom: '0.4rem' }}>
                   <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>—</span>
                   <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300 }}>{item}</p>
                 </div>
               ))}
             </div>
-
             <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>then monthly</p>
-              {[
-                'new edition every month',
-                'new cards, new questions, new digital world',
-                'month 3: the archive booklet',
-              ].map((item, i) => (
+              {['new edition every month', 'new cards, new questions, new digital world', 'month 3: the archive booklet'].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline', marginBottom: '0.4rem' }}>
                   <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>—</span>
                   <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300 }}>{item}</p>
                 </div>
               ))}
             </div>
-
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
               <p style={{ fontSize: 'clamp(1rem, 1.5vw, 1.2rem)', fontWeight: 300, color: '#1A1A1A', letterSpacing: '-0.01em' }}>
                 27€ to start · then 12,90€/month · cancel anytime
@@ -240,7 +236,6 @@ export default function ShopPage() {
               join waitlist
             </button>
           </motion.div>
-
           <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             style={{ aspectRatio: '1/1', background: '#f0f0f0', overflow: 'hidden' }}>
             <ParallaxImage src="/couples-rain.jpg" alt="the ritual" />
@@ -254,29 +249,32 @@ export default function ShopPage() {
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '3rem' }}>
           compare
         </motion.p>
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', borderBottom: '1px solid #1A1A1A', paddingBottom: '1rem', marginBottom: '0' }}>
-            <div />
-            <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>founders edition</p>
-            <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>subscription</p>
-          </div>
-          {pricingRows.map(({ label, founders, sub }, i) => (
-            <div key={label} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '1.1rem 0', borderBottom: '1px solid #ebebeb' }}>
-              <p style={{ fontSize: '0.8rem', letterSpacing: '0.06em', opacity: 0.5, textTransform: 'lowercase' }}>{label}</p>
-              <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{founders}</p>
-              <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{sub}</p>
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+          style={{ overflowX: 'auto' }}>
+          <div style={{ minWidth: 480 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', borderBottom: '1px solid #1A1A1A', paddingBottom: '1rem' }}>
+              <div />
+              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>founders edition</p>
+              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>subscription</p>
             </div>
-          ))}
+            {pricingRows.map(({ label, founders, sub }) => (
+              <div key={label} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '1.1rem 0', borderBottom: '1px solid #ebebeb' }}>
+                <p style={{ fontSize: '0.8rem', letterSpacing: '0.06em', opacity: 0.5, textTransform: 'lowercase' }}>{label}</p>
+                <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{founders}</p>
+                <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{sub}</p>
+              </div>
+            ))}
+          </div>
         </motion.div>
       </section>
 
-      {/* Wrapper Questions */}
+      {/* Questions */}
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '1.5rem' }}>
           edition 01 — the questions
         </motion.p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, 1fr)', gap: '0' }}>
           {[
             "what's your favorite memory of us?",
             'when did you know?',
@@ -288,9 +286,9 @@ export default function ShopPage() {
             <motion.div key={i}
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.06 }}
-              style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', borderRight: i % 3 !== 2 ? '1px solid #e8e8e8' : 'none' }}>
+              style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', borderRight: isMobile ? (i % 2 !== 1 ? '1px solid #e8e8e8' : 'none') : (i % 3 !== 2 ? '1px solid #e8e8e8' : 'none') }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem' }}>0{i + 1}</p>
-              <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{ q}"</p>
+              <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{q}"</p>
             </motion.div>
           ))}
         </div>
@@ -313,6 +311,16 @@ export default function ShopPage() {
       <AnimatePresence>
         {modalOpen && <WaitlistModal onClose={() => setModalOpen(false)} />}
       </AnimatePresence>
+
+      <footer style={{ padding: '48px 40px', backgroundColor: '#1A1A1A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+        <span style={{ color: '#ffffff', fontSize: 10, letterSpacing: '0.4em', fontFamily: PP, opacity: 0.55 }}>PEAKPLANT</span>
+        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
+          {[['impressum', '/impressum'], ['datenschutz', '/datenschutz'], ['agb', '/agb']].map(([label, href]) => (
+            <Link key={href} href={href} style={{ color: '#ffffff', fontSize: 9, letterSpacing: '0.25em', fontFamily: PP, textDecoration: 'none', opacity: 0.22 }}>{label}</Link>
+          ))}
+          <p style={{ fontSize: 9, letterSpacing: '0.3em', color: '#ffffff', opacity: 0.18, fontFamily: PP }}>© 2026 PEAKPLANT</p>
+        </div>
+      </footer>
     </div>
   )
 }
