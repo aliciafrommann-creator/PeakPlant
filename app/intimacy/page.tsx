@@ -1,21 +1,9 @@
 'use client'
-import Link from 'next/link'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useState } from 'react'
 import { NavBar } from '../../components/NavBar'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
-
-function ParallaxImage({ src, alt }: { src: string; alt: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['-8%', '8%'])
-  return (
-    <div ref={ref} style={{ overflow: 'hidden', width: '100%', height: '100%' }}>
-      <motion.img src={src} alt={alt} style={{ width: '100%', height: '115%', objectFit: 'cover', y }} />
-    </div>
-  )
-}
 
 function QuadPanel({ bgPosition, title, body }: { bgPosition: string; title: string; body: string }) {
   const [hovered, setHovered] = useState(false)
@@ -60,55 +48,6 @@ function QuadPanel({ bgPosition, title, body }: { bgPosition: string; title: str
   )
 }
 
-function PhaseMedia({ image, video, name }: { image: string; video?: string; name: string }) {
-  if (video) {
-    return (
-      <video
-        autoPlay muted playsInline loop
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-      >
-        <source src={video} type="video/mp4" />
-      </video>
-    )
-  }
-  return <ParallaxImage src={image} alt={name} />
-}
-
-const phases: { number: string; name: string; headline: string; body: string; image: string; video?: string }[] = [
-  {
-    number: '01',
-    name: 'Awareness',
-    headline: 'The space between two people is not empty.',
-    body: 'It holds everything that hasn\'t been said yet. Longing. Curiosity. The quiet awareness that someone else is in the room — and that they matter to you. This is where intimacy begins: in the silence before anything happens.',
-    image: '/bw-grid-2.png',
-    video: '/film-distance.mp4',
-  },
-  {
-    number: '02',
-    name: 'Presence',
-    headline: 'To be seen is already an act of courage.',
-    body: 'Presence is the moment you stop performing and start actually being there. Breath slowing. Shoulders softening. No script, no right answer. Just two people paying attention to each other — and choosing to stay.',
-    image: '/scenery-1.jpg',
-    video: '/film-presence.mp4',
-  },
-  {
-    number: '03',
-    name: 'Intimacy',
-    headline: 'Closeness is something you build together.',
-    body: 'Not a destination but a feeling — warm, unhurried, honest. Intimacy happens when safety and openness arrive in the same room at the same time. When vulnerability is not weakness, but the closest thing to freedom.',
-    image: '/scenery-2.jpg',
-    video: '/film-intimacy.mp4',
-  },
-  {
-    number: '04',
-    name: 'Wildness',
-    headline: 'Joy is allowed to be big.',
-    body: 'Wildness is not chaos. It is full permission — to feel, to laugh, to cry, to move freely, to express what is alive in you. The best moments of connection are the ones where nothing had to be held back.',
-    image: '/scenery-3.jpg',
-    video: '/film-wildness.mp4',
-  },
-]
-
 export default function IntimacyPage() {
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
@@ -136,7 +75,7 @@ export default function IntimacyPage() {
         </motion.div>
       </section>
 
-      <section style={{ paddingTop: '10rem', paddingBottom: '5rem', maxWidth: 800, margin: '0 auto', padding: '10rem 2.5rem 5rem' }}>
+      <section style={{ maxWidth: 800, margin: '0 auto', padding: '10rem 2.5rem 5rem' }}>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem' }}

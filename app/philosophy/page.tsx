@@ -1,17 +1,20 @@
 'use client'
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../components/NavBar'
+import { useIsMobile } from '../../hooks/useIsMobile'
+import Link from 'next/link'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function PhilosophyPage() {
+  const isMobile = useIsMobile()
+
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
       <NavBar activePath="/philosophy" />
 
       {/* Hero */}
-      <section style={{ padding: '10rem 2.5rem 6rem', maxWidth: 800, margin: '0 auto' }}>
+      <section style={{ padding: isMobile ? '7rem 1.5rem 4rem' : '10rem 2.5rem 6rem', maxWidth: 800, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem', fontFamily: PP }}>
           philosophy
@@ -23,7 +26,7 @@ export default function PhilosophyPage() {
       </section>
 
       {/* 01 — The Research */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: isMobile ? '4rem 1.5rem' : '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '2rem', fontFamily: PP }}>
           01 — the research
@@ -48,7 +51,7 @@ export default function PhilosophyPage() {
       </section>
 
       {/* 02 — The Science */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: isMobile ? '4rem 1.5rem' : '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '2rem', fontFamily: PP }}>
           02 — the science
@@ -57,7 +60,7 @@ export default function PhilosophyPage() {
           style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '4rem', fontFamily: PP }}>
           three researchers. one finding.
         </motion.h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: isMobile ? '2.5rem' : '4rem' }}>
           {[
             {
               name: 'Amy Edmondson',
@@ -87,7 +90,7 @@ export default function PhilosophyPage() {
       </section>
 
       {/* 02b — Trust */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: isMobile ? '4rem 1.5rem' : '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '2rem', fontFamily: PP }}>
           02b — trust
@@ -104,7 +107,7 @@ export default function PhilosophyPage() {
           'it is built in small moments.',
           'a question asked and answered honestly.',
           'a silence held without panic.',
-          'a confession that didn\'t get punished.',
+          "a confession that didn't get punished.",
           '',
           'it grows in the spaces between people',
           'who keep choosing to show up.',
@@ -122,7 +125,7 @@ export default function PhilosophyPage() {
       </section>
 
       {/* 03 — The Connection */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: isMobile ? '4rem 1.5rem' : '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '2rem', fontFamily: PP }}>
           03 — the connection
@@ -133,7 +136,7 @@ export default function PhilosophyPage() {
         </motion.h2>
         {[
           'peakplant exists at the intersection of all of this.',
-          'we looked at the research. we looked at our own lives. and we saw the same pattern: people are not disconnected because they don\'t care. they are disconnected because they were never given a structure to practice connection.',
+          "we looked at the research. we looked at our own lives. and we saw the same pattern: people are not disconnected because they don't care. they are disconnected because they were never given a structure to practice connection.",
           'a ritual. a prompt. a moment of permission to be real.',
           'the box is not the product. the conversation is the product.',
           'and the conversation starts with a question.',
@@ -147,7 +150,7 @@ export default function PhilosophyPage() {
       </section>
 
       {/* 03b — Courage */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: isMobile ? '4rem 1.5rem' : '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '3rem', fontFamily: PP }}>
           it requires courage.
@@ -192,7 +195,7 @@ export default function PhilosophyPage() {
       </section>
 
       {/* 04 — The Mechanic */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: isMobile ? '4rem 1.5rem' : '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '2rem', fontFamily: PP }}>
           04 — the mechanic
@@ -205,7 +208,7 @@ export default function PhilosophyPage() {
           {[
             'one person picks up the card. reads the question out loud. goes first.',
             'that is the vulnerability loop. that is the circle of safety. that is connection — practiced.',
-            '\'safe. soft. wild.\' is not a tagline. it is a research finding.',
+            "'safe. soft. wild.' is not a tagline. it is a research finding.",
             'we only get it into our bones through practice.',
             'not every conversation is easy.',
             'that is an illusion worth letting go of.',
