@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../components/NavBar'
+import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -19,11 +20,13 @@ const paragraphs = [
 ]
 
 export default function AboutPage() {
+  const isMobile = useIsMobile()
+
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
       <NavBar activePath="/about" />
 
-      <section style={{ padding: '10rem 2.5rem 5rem', maxWidth: 800, margin: '0 auto' }}>
+      <section style={{ padding: isMobile ? '7rem 1.5rem 4rem' : '10rem 2.5rem 5rem', maxWidth: 800, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem', fontFamily: PP }}>
           Our story
@@ -38,11 +41,19 @@ export default function AboutPage() {
         </motion.p>
       </section>
 
-      <section style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2.5rem 7rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '7rem', alignItems: 'start', borderTop: '1px solid #e8e8e8' }}>
+      <section style={{
+        maxWidth: 1100, margin: '0 auto',
+        padding: isMobile ? '0 1.5rem 5rem' : '0 2.5rem 7rem',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? '3rem' : '7rem',
+        alignItems: 'start',
+        borderTop: '1px solid #e8e8e8',
+      }}>
         <motion.div
           initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }} whileInView={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }} viewport={{ once: true }}
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-          style={{ position: 'sticky', top: '8rem', paddingTop: '5rem' }}
+          style={{ position: isMobile ? 'static' : 'sticky', top: '8rem', paddingTop: isMobile ? '3rem' : '5rem' }}
         >
           <div style={{ aspectRatio: '3/4', overflow: 'hidden', background: '#f0f0f0' }}>
             <img src="/alicia.jpg" alt="Alicia Frommann, founder of PeakPlant" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', filter: 'grayscale(100%)' }} />
@@ -53,18 +64,18 @@ export default function AboutPage() {
           </div>
         </motion.div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem', paddingTop: '5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.8rem', paddingTop: isMobile ? '0' : '5rem' }}>
           {paragraphs.map((text, i) => (
             <motion.p key={i}
               initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-              transition={{ duration: 0.9, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.9, delay: Math.min(i * 0.07, 0.5), ease: [0.16, 1, 0.3, 1] }}
               style={{ fontSize: '1.05rem', lineHeight: 1.85, color: i >= 8 ? '#1A1A1A' : '#444', fontWeight: i >= 8 ? 400 : 300, fontFamily: PP }}>
               {text}
             </motion.p>
           ))}
 
           <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 0.9, delay: paragraphs.length * 0.1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             style={{ marginTop: '2rem', paddingTop: '2rem', borderTop: '1px solid #e8e8e8' }}>
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.25rem', fontFamily: PP }}>
               what changed my thinking
@@ -82,7 +93,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', textAlign: 'center' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: isMobile ? '4rem 1.5rem' : '7rem 2.5rem', textAlign: 'center' }}>
         <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', fontWeight: 300, lineHeight: 1.45, maxWidth: 640, margin: '0 auto 3rem', letterSpacing: '-0.015em', fontFamily: PP }}>
           you do not have to perform to be worthy of love.

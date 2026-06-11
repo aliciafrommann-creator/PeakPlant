@@ -1,6 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../components/NavBar'
+import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -87,13 +88,15 @@ const certifications = [
 ]
 
 export default function EthicsPage() {
+  const isMobile = useIsMobile()
+
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
 
       <NavBar activePath="/ethics" />
 
       {/* Hero */}
-      <section style={{ padding: '14rem 2.5rem 8rem', maxWidth: 780, margin: '0 auto' }}>
+      <section style={{ padding: isMobile ? '8rem 1.5rem 5rem' : '14rem 2.5rem 8rem', maxWidth: 780, margin: '0 auto' }}>
         <motion.p
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '2rem' }}
@@ -110,12 +113,12 @@ export default function EthicsPage() {
           initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
           style={{ fontSize: '1.15rem', lineHeight: 1.75, color: '#555', maxWidth: 520 }}
         >
-          here is exactly what we do —<br />and what we don't do yet.
+          here is exactly what we do —<br />and what we don&apos;t do yet.
         </motion.p>
       </section>
 
       {/* Section 1 — Commitments */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: isMobile ? '4rem 1.5rem' : '7rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.5rem' }}
@@ -124,11 +127,11 @@ export default function EthicsPage() {
         </motion.p>
         <motion.h2
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '5rem' }}
+          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: isMobile ? '3rem' : '5rem' }}
         >
           what we commit to.
         </motion.h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4rem 6rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: isMobile ? '3rem' : '4rem 6rem' }}>
           {commitments.map((c, i) => (
             <motion.div
               key={c.headline}
@@ -145,7 +148,7 @@ export default function EthicsPage() {
       </section>
 
       {/* Section 2 — Limits */}
-      <section style={{ background: '#F5F5F3', padding: '7rem 2.5rem' }}>
+      <section style={{ background: '#F5F5F3', padding: isMobile ? '4rem 1.5rem' : '7rem 2.5rem' }}>
         <div style={{ maxWidth: 700, margin: '0 auto' }}>
           <motion.p
             initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
@@ -157,19 +160,19 @@ export default function EthicsPage() {
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
             style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '3.5rem' }}
           >
-            what we don't do yet.
+            what we don&apos;t do yet.
           </motion.h2>
           <motion.div
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           >
             <p style={{ fontSize: '1rem', lineHeight: 1.85, color: '#555', marginBottom: '2.5rem' }}>
-              we believe in telling you what we haven't figured out yet.
+              we believe in telling you what we haven&apos;t figured out yet.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
               {[
                 'our condom supplier is not yet b corp certified. we are actively looking for a fair rubber, vegan latex manufacturer who meets b corp standards. this is our biggest open challenge.',
                 'our packaging is not yet 100% plastic-free. the individual condom wrappers require a protective foil. we are researching alternatives.',
-                'we are a young brand. we don\'t have all the answers. but we commit to sharing our progress — honestly.',
+                "we are a young brand. we don't have all the answers. but we commit to sharing our progress — honestly.",
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1.5rem', alignItems: 'baseline' }}>
                   <span style={{ fontSize: '0.75rem', opacity: 0.3, flexShrink: 0, marginTop: '0.15rem' }}>—</span>
@@ -182,7 +185,7 @@ export default function EthicsPage() {
       </section>
 
       {/* Section 3 — Certifications */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: isMobile ? '4rem 1.5rem' : '7rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p
           initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.5rem' }}
@@ -191,11 +194,11 @@ export default function EthicsPage() {
         </motion.p>
         <motion.h2
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '4rem' }}
+          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: isMobile ? '2.5rem' : '4rem' }}
         >
           certified.
         </motion.h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '1.5rem' }}>
           {certifications.map((cert, i) => (
             <motion.div
               key={cert.name}
@@ -203,7 +206,7 @@ export default function EthicsPage() {
               transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 border: '1px solid #1A1A1A',
-                padding: '2rem 1.75rem',
+                padding: isMobile ? '1.5rem 1.25rem' : '2rem 1.75rem',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '1rem',
@@ -217,7 +220,7 @@ export default function EthicsPage() {
       </section>
 
       {/* Section 4 — Philosophy */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: isMobile ? '4rem 1.5rem' : '7rem 2.5rem' }}>
         <div style={{ maxWidth: 680, margin: '0 auto' }}>
           <motion.p
             initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
@@ -236,7 +239,7 @@ export default function EthicsPage() {
             style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}
           >
             <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
-              we didn't build peakplant to be a sustainable brand.
+              we didn&apos;t build peakplant to be a sustainable brand.
             </p>
             <p style={{ fontSize: '1.05rem', lineHeight: 1.85, color: '#444' }}>
               we built it to be a brand that happens to do things right.
@@ -257,7 +260,7 @@ export default function EthicsPage() {
       </section>
 
       {/* Section 5 — Contact */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', textAlign: 'center' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: isMobile ? '4rem 1.5rem' : '7rem 2.5rem', textAlign: 'center' }}>
         <motion.div
           initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.75rem' }}
