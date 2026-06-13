@@ -28,6 +28,9 @@ async function supabase(path: string, method: string, body?: object) {
 
 function editionLabel(product: string) {
   if (product === 'founders') return 'founders edition'
+  if (product === 'sub_6')  return 'the ritual — 6 condoms / month'
+  if (product === 'sub_9')  return 'the ritual — 9 condoms / month'
+  if (product === 'sub_12') return 'the ritual — 12 condoms / month'
   if (product === 'subscription') return 'the ritual — monthly subscription'
   return product
 }

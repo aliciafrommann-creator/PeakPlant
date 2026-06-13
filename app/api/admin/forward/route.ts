@@ -34,6 +34,13 @@ export async function POST(req: NextRequest) {
   const address = formatAddress(order)
   const orderDate = new Date(order.created_at).toLocaleDateString('de-AT', { timeZone: 'Europe/Vienna' })
 
+  // condom quantity by product (founders = 6, subscription tiers = 6/9/12)
+  const QTY: Record<string, number> = { founders: 6, sub_6: 6, sub_9: 9, sub_12: 12 }
+  const qty = QTY[order.product] ?? 6
+  const productLabel = order.product === 'founders'
+    ? 'Founders Edition (1×)'
+    : `Abo-Lieferung — ${qty} Stück`
+
   const resend = new Resend(process.env.RESEND_API_KEY)
   await resend.emails.send({
     from: 'peakplant <hello@peakplant.com>',
@@ -51,11 +58,11 @@ export async function POST(req: NextRequest) {
     </tr>
     <tr style="border-bottom:1px solid #f0f0f0">
       <td style="padding:10px 0;color:#888">Produkt</td>
-      <td style="padding:10px 0">${order.product === 'founders' ? 'Founders Edition (1×)' : 'Subscription Welcome Box (1×)'}</td>
+      <td style="padding:10px 0">${productLabel}</td>
     </tr>
     <tr style="border-bottom:1px solid #f0f0f0">
       <td style="padding:10px 0;color:#888">Inhalt</td>
-      <td style="padding:10px 0;line-height:1.6">6 Kondome (vegan, fair rubber latex)<br>1 Fragenkarte (6 Fragen, Blauer Engel)<br>QR-Code zur digitalen Welt</td>
+      <td style="padding:10px 0;line-height:1.6">${qty} Kondome (vegan, fair rubber latex)<br>1 Fragenkarte (6 Fragen, Blauer Engel)<br>QR-Code zur digitalen Welt</td>
     </tr>
     <tr>
       <td style="padding:10px 0;color:#888;vertical-align:top">Lieferadresse</td>

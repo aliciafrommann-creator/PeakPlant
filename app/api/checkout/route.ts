@@ -36,13 +36,6 @@ export async function POST(req: NextRequest) {
       metadata: { product },
     }
 
-    if (plan.mode === 'subscription' && process.env.STRIPE_PRICE_SUB_SETUP) {
-      baseParams.line_items = [
-        { price: process.env.STRIPE_PRICE_SUB_SETUP, quantity: 1 },
-        { price: plan.priceId, quantity: 1 },
-      ]
-    }
-
     const session = await stripe.checkout.sessions.create(baseParams)
     return NextResponse.json({ url: session.url })
   } catch (err: any) {

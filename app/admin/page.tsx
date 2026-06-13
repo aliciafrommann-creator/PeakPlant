@@ -34,6 +34,13 @@ const STATUS_LABEL: Record<string, { label: string; color: string }> = {
   cancelled: { label: 'storniert',      color: '#e74c3c' },
 }
 
+const PRODUCT_LABEL: Record<string, string> = {
+  founders: 'Founders Edition',
+  sub_6:    'Abo · 6 Stück/Monat',
+  sub_9:    'Abo · 9 Stück/Monat',
+  sub_12:   'Abo · 12 Stück/Monat',
+}
+
 export default function AdminPage() {
   const [secret, setSecret]   = useState('')
   const [authed, setAuthed]   = useState(false)
@@ -182,8 +189,8 @@ export default function AdminPage() {
                   </div>
 
                   <div>
-                    <p style={{ fontSize: 13 }}>{o.product === 'founders' ? 'Founders Edition' : 'Subscription'}</p>
-                    <p style={{ fontSize: 13, color: '#16a34a', marginTop: 2 }}>{fmtAmount(o)}</p>
+                    <p style={{ fontSize: 13 }}>{PRODUCT_LABEL[o.product] ?? o.product}</p>
+                    <p style={{ fontSize: 13, color: o.payment_status === 'invoice' ? '#C9A96E' : '#16a34a', marginTop: 2 }}>{fmtAmount(o)}</p>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
                       {(() => { const p = PAYMENT_LABEL[o.payment_status] ?? { label: o.payment_status, color: '#888' }; return (
                         <span style={{ display: 'inline-block', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: p.color, border: `1px solid ${p.color}`, padding: '2px 8px', borderRadius: 2 }}>{p.label}</span>
