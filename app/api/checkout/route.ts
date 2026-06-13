@@ -8,14 +8,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-06
 const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peakplant.com'
 
 const PRICES: Record<string, { mode: 'payment' | 'subscription'; priceId: string }> = {
-  founders: {
-    mode: 'payment',
-    priceId: process.env.STRIPE_PRICE_FOUNDERS!,
-  },
-  subscription: {
-    mode: 'subscription',
-    priceId: process.env.STRIPE_PRICE_SUB_MONTHLY!,
-  },
+  founders: { mode: 'payment',      priceId: process.env.STRIPE_PRICE_FOUNDERS! },
+  sub_6:    { mode: 'subscription', priceId: process.env.STRIPE_PRICE_SUB_6! },
+  sub_9:    { mode: 'subscription', priceId: process.env.STRIPE_PRICE_SUB_9! },
+  sub_12:   { mode: 'subscription', priceId: process.env.STRIPE_PRICE_SUB_12! },
 }
 
 export async function POST(req: NextRequest) {

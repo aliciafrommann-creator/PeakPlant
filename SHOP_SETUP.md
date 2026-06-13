@@ -23,8 +23,13 @@ Im Stripe Dashboard → **Produkte**:
 | Produkt | Typ | Preis | Env-Variable |
 |---|---|---|---|
 | Founders Edition (Preorder) | Einmalzahlung | 7,99 € | `STRIPE_PRICE_FOUNDERS` |
-| Abo — monatlich | Wiederkehrend / Monat | 12,90 € | `STRIPE_PRICE_SUB_MONTHLY` |
-| Abo — Welcome Box | Einmalzahlung (optional) | 27,00 € | `STRIPE_PRICE_SUB_SETUP` |
+| Abo — 6 Stück/Monat | Wiederkehrend / Monat | 7,40 € | `STRIPE_PRICE_SUB_6` |
+| Abo — 9 Stück/Monat | Wiederkehrend / Monat | 10,40 € | `STRIPE_PRICE_SUB_9` |
+| Abo — 12 Stück/Monat | Wiederkehrend / Monat | 13,40 € | `STRIPE_PRICE_SUB_12` |
+
+> **Versand beim Abo:** 6-Stück-Abo schließt keinen Gratisversand ein (Stripe Shipping Rate
+> für ~1,99 € ergänzen oder direkt im Preis einrechnen). Ab 9 Stück ist der Versand frei
+> — auf der Website so kommuniziert.
 
 Jeweils die **Price-ID** (`price_…`) kopieren — nicht die Produkt-ID.
 
@@ -55,8 +60,9 @@ Stripe Dashboard → **Entwickler → Webhooks → Endpoint hinzufügen**
 STRIPE_SECRET_KEY=sk_live_…
 STRIPE_WEBHOOK_SECRET=whsec_…
 STRIPE_PRICE_FOUNDERS=price_…
-STRIPE_PRICE_SUB_MONTHLY=price_…
-STRIPE_PRICE_SUB_SETUP=price_…          # optional (Welcome Box)
+STRIPE_PRICE_SUB_6=price_…              # 6 Stück/Monat · 7,40 €
+STRIPE_PRICE_SUB_9=price_…              # 9 Stück/Monat · 10,40 € (free shipping)
+STRIPE_PRICE_SUB_12=price_…             # 12 Stück/Monat · 13,40 € (free shipping)
 
 # ── Supabase ─────────────────────────────────────────────
 NEXT_PUBLIC_SUPABASE_URL=https://….supabase.co

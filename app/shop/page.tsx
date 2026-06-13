@@ -90,12 +90,18 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
   )
 }
 
+const SUB_TIERS = {
+  6:  { product: 'sub_6',  price: '7,40€',  shipping: '+ 1,99€ shipping' },
+  9:  { product: 'sub_9',  price: '10,40€', shipping: 'free shipping' },
+  12: { product: 'sub_12', price: '13,40€', shipping: 'free shipping' },
+} as const
+
 const pricingRows = [
-  { label: 'price',          founders: '7,99€ incl. shipping', sub: '27€ + 12,90€/mo' },
-  { label: 'condoms',        founders: '6',                     sub: '6 / month' },
+  { label: 'price',          founders: '7,99€ incl. shipping', sub: 'from 7,40€/month' },
+  { label: 'condoms',        founders: '6',                     sub: '6, 9 or 12 / month' },
   { label: 'question card',  founders: '1 card · 6 questions',  sub: '1 / month' },
   { label: 'digital world',  founders: '✓ (sneak peek)',        sub: '✓' },
-  { label: 'archive booklet',founders: '—',                     sub: 'month 3' },
+  { label: 'shipping',       founders: 'included',              sub: 'free from 9 pcs.' },
   { label: 'cancel anytime', founders: 'full refund',           sub: '✓' },
 ]
 
@@ -159,8 +165,9 @@ export default function ShopPage() {
   const [modalOpen, setModalOpen] = useState(false)
   const [reserveOpen, setReserveOpen] = useState(false)
   const [checkingOut, setCheckingOut] = useState<string | null>(null)
+  const [subQty, setSubQty] = useState<6 | 9 | 12>(6)
 
-  async function startCheckout(product: 'founders' | 'subscription') {
+  async function startCheckout(product: 'founders' | 'sub_6' | 'sub_9' | 'sub_12') {
     setCheckingOut(product)
     try {
       const res = await fetch('/api/checkout', {
@@ -283,54 +290,80 @@ export default function ShopPage() {
             style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>
-                subscription · monatlich kündbar
+                subscription · monthly · cancel anytime
               </p>
               <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
                 the ritual, monthly
               </h2>
-              <p style={{ fontSize: '1rem', color: '#666', fontWeight: 300, marginTop: '0.5rem' }}>a new edition every month</p>
+              <p style={{ fontSize: '1rem', color: '#666', fontWeight: 300, marginTop: '0.5rem' }}>a new edition every month — choose your quantity</p>
             </div>
 
-            <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>welcome box — once</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
+              {([6, 9, 12] as const).map(qty => {
+                const tier = SUB_TIERS[qty]
+                const active = subQty === qty
+                return (
+                  <button key={qty} onClick={() => setSubQty(qty)}
+                    style={{
+                      fontFamily: PP, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      padding: '1.1rem 1.25rem', border: active ? '1px solid #1A1A1A' : '1px solid #e0e0e0',
+                      background: active ? '#1A1A1A' : 'transparent', cursor: 'pointer', transition: 'all 0.2s ease',
+                    }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <span style={{
+                        width: 16, height: 16, borderRadius: '50%', border: active ? '5px solid #fff' : '1px solid #999',
+                        background: active ? '#1A1A1A' : 'transparent', display: 'inline-block', flexShrink: 0,
+                      }} />
+                      <span style={{ fontSize: '0.9rem', fontWeight: 300, color: active ? '#fff' : '#1A1A1A' }}>
+                        {qty} condoms / month
+                      </span>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: '1rem', fontWeight: 300, color: active ? '#fff' : '#1A1A1A' }}>{tier.price}/mo</span>
+                      <span style={{
+                        display: 'block', fontSize: '0.65rem', letterSpacing: '0.08em', textTransform: 'uppercase',
+                        color: qty >= 9 ? (active ? '#a8d5a2' : '#16a34a') : (active ? 'rgba(255,255,255,0.5)' : '#999'),
+                        marginTop: 2,
+                      }}>
+                        {tier.shipping}
+                      </span>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
               {[
-                'premium unboxing experience',
-                'personal letter from alicia',
-                'edition 01 box',
+                'new condoms every month — vegan, sustainably produced',
+                'new question card each edition',
+                'new digital world chapter each month',
               ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline', marginBottom: '0.4rem' }}>
-                  <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>—</span>
-                  <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300 }}>{item}</p>
+                <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline' }}>
+                  <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
+                  <p style={{ fontSize: '0.9rem', color: '#555', fontWeight: 300, lineHeight: 1.6 }}>{item}</p>
                 </div>
               ))}
             </div>
 
-            <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>then monthly</p>
-              {[
-                'new edition every month',
-                'new cards, new questions, new digital world',
-                'month 3: the archive booklet',
-              ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline', marginBottom: '0.4rem' }}>
-                  <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>—</span>
-                  <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300 }}>{item}</p>
-                </div>
-              ))}
-            </div>
-
-            <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
-              <p style={{ fontSize: 'clamp(1rem, 1.5vw, 1.2rem)', fontWeight: 300, color: '#1A1A1A', letterSpacing: '-0.01em' }}>
-                27€ to start · then 12,90€/month · cancel anytime
+            <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+              <p style={{ fontSize: 'clamp(1.2rem, 1.8vw, 1.6rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>
+                {SUB_TIERS[subQty].price}/month
+              </p>
+              <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>
+                {SUB_TIERS[subQty].shipping}
               </p>
             </div>
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
-              preorder now · ships mid-august 2026
+              preorder now · first delivery mid-august 2026
             </p>
-            <button onClick={() => startCheckout('subscription')} disabled={checkingOut === 'subscription'}
+            <button
+              onClick={() => startCheckout(SUB_TIERS[subQty].product)}
+              disabled={checkingOut === SUB_TIERS[subQty].product}
               style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'pointer', alignSelf: 'flex-start' }}>
-              {checkingOut === 'subscription' ? '...' : 'abo starten — 27€'}
+              {checkingOut === SUB_TIERS[subQty].product ? '...' : `abo starten — ${SUB_TIERS[subQty].price}/mo →`}
             </button>
+            <p style={{ fontSize: '0.7rem', opacity: 0.4, fontWeight: 300 }}>cancel anytime, no commitment</p>
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
