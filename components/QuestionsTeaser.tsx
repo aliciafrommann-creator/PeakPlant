@@ -15,14 +15,15 @@ const QUESTIONS = [
   'how would you describe me — without age, job, family or hobbies?',
 ]
 
-// A different warm gradient per card — the "colorful side" of intimacy.
-const GRADIENTS = [
-  'linear-gradient(135deg, #F4C9B8 0%, #E8A598 50%, #D98777 100%)',
-  'linear-gradient(135deg, #E9C8D8 0%, #D6A0BE 50%, #C27FA3 100%)',
-  'linear-gradient(135deg, #F3D9A8 0%, #E8C079 50%, #C9A96E 100%)',
-  'linear-gradient(135deg, #C9D6C2 0%, #A6BE9E 50%, #87A37C 100%)',
-  'linear-gradient(135deg, #C3CCE0 0%, #9FAACB 50%, #7E8BB3 100%)',
-  'linear-gradient(135deg, #E5C2C2 0%, #CC9E9E 50%, #B37E7E 100%)',
+// A photo behind every card — the warm, human side of intimacy. Ordered so no
+// two neighbouring cards share the same image.
+const IMAGES = [
+  '/couples-joy.jpg',
+  '/couples-rain.jpg',
+  '/couples-bw.jpg',
+  '/couples-rain.jpg',
+  '/couples-joy.jpg',
+  '/couples-bw.jpg',
 ]
 
 const REVEALED_INDEX = 0
@@ -75,14 +76,27 @@ function Card({ q, i }: { q: string; i: number }) {
         {/* ── Back ──────────────────────────────────────────────── */}
         <div style={{
           position: 'absolute', inset: 0, backfaceVisibility: 'hidden',
-          transform: 'rotateY(180deg)', background: GRADIENTS[i % GRADIENTS.length],
+          transform: 'rotateY(180deg)', overflow: 'hidden',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           padding: '1.5rem', textAlign: 'center',
         }}>
+          {/* photo */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: `url(${IMAGES[i % IMAGES.length]})`,
+            backgroundSize: 'cover', backgroundPosition: 'center',
+            filter: revealed ? 'none' : 'blur(4px)', transform: 'scale(1.06)',
+          }} />
+          {/* legibility overlay */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.45) 100%)',
+          }} />
           <p style={{
+            position: 'relative',
             fontSize: 'clamp(0.95rem, 1.6vw, 1.15rem)', fontWeight: 300, lineHeight: 1.4,
             letterSpacing: '-0.01em', fontStyle: 'italic', color: '#fff',
-            textShadow: '0 1px 12px rgba(0,0,0,0.18)',
+            textShadow: '0 1px 16px rgba(0,0,0,0.55)',
             filter: revealed ? 'none' : 'blur(7px)',
             userSelect: revealed ? 'auto' : 'none',
           }}>
@@ -92,7 +106,7 @@ function Card({ q, i }: { q: string; i: number }) {
             <span style={{
               position: 'absolute', bottom: '1rem', left: 0, right: 0,
               fontSize: '0.55rem', letterSpacing: '0.2em', textTransform: 'uppercase',
-              color: 'rgba(255,255,255,0.8)',
+              color: 'rgba(255,255,255,0.85)', textShadow: '0 1px 8px rgba(0,0,0,0.5)',
             }}>
               inside the box
             </span>
