@@ -121,6 +121,13 @@ Klick "an supplier →"  ──►  /api/admin/forward
 > Im Admin-Panel siehst du pro Bestellung den Zahlungsstatus (bezahlt /
 > rechnung offen / erstattet) zusätzlich zum Versandstatus.
 
+**Rechnung per Klick senden:** Bei Bestellungen mit `payment_status = invoice`
+erscheint im Admin ein Button **„rechnung senden →"**. Ein Klick legt in Stripe
+einen Kunden + eine Rechnung an und verschickt automatisch einen gehosteten
+Zahllink per E-Mail (14 Tage Zahlungsziel). Sobald der Kunde zahlt, kommt das
+`invoice.paid`-Event — Betrag und Status kannst du in Stripe verfolgen. Nach dem
+Senden zeigt das Panel „✓ rechnung gesendet" mit Zeitstempel.
+
 ### Digitaler Zugang (`/01`)
 - **Per E-Mail-Link:** `/01?token=…` entsperrt automatisch und merkt sich das
   Gerät per Cookie (1 Jahr).

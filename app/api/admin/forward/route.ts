@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     </tr>
     <tr style="border-bottom:1px solid #f0f0f0">
       <td style="padding:10px 0;color:#888">Inhalt</td>
-      <td style="padding:10px 0;line-height:1.6">6 Kondome (vegan, fair rubber latex)<br>6 Reflexionskarten<br>1 Saatgutkarte mit QR-Code</td>
+      <td style="padding:10px 0;line-height:1.6">6 Kondome (vegan, fair rubber latex)<br>1 Fragenkarte (6 Fragen, Blauer Engel)<br>QR-Code zur digitalen Welt</td>
     </tr>
     <tr>
       <td style="padding:10px 0;color:#888;vertical-align:top">Lieferadresse</td>

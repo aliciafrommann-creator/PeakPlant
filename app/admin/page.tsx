@@ -19,6 +19,7 @@ type Order = {
   payment_status: string
   status: string
   supplier_forwarded_at: string | null
+  invoice_sent_at: string | null
 }
 
 const PAYMENT_LABEL: Record<string, { label: string; color: string }> = {
@@ -40,6 +41,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState('')
   const [forwarding, setForwarding] = useState<string | null>(null)
+  const [invoicing, setInvoicing]   = useState<string | null>(null)
   const [filter, setFilter]   = useState<'all' | 'pending' | 'forwarded'>('all')
 
   const load = useCallback(async (s: string) => {
@@ -78,6 +80,21 @@ export default function AdminPage() {
       if (!res.ok) { alert(data.error ?? 'Fehler'); return }
       await load(secret)
     } finally { setForwarding(null) }
+  }
+
+  async function sendInvoice(orderId: string) {
+    if (!confirm('Rechnung an den Kunden senden? Stripe verschickt einen Zahllink per E-Mail.')) return
+    setInvoicing(orderId)
+    try {
+      const res = await fetch('/api/admin/invoice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-secret': secret },
+        body: JSON.stringify({ orderId }),
+      })
+      const data = await res.json()
+      if (!res.ok) { alert(data.error ?? 'Fehler'); return }
+      await load(secret)
+    } finally { setInvoicing(null) }
   }
 
   const fmtAmount = (o: Order) =>
@@ -175,6 +192,16 @@ export default function AdminPage() {
                         {st.label}
                       </span>
                     </div>
+                    {o.payment_status === 'invoice' && (
+                      o.invoice_sent_at ? (
+                        <p style={{ fontSize: 11, opacity: 0.4, marginTop: 8 }}>✓ rechnung gesendet · {fmtDate(o.invoice_sent_at)}</p>
+                      ) : (
+                        <button onClick={() => sendInvoice(o.id)} disabled={invoicing === o.id}
+                          style={{ fontFamily: PP, fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: 8, padding: '6px 12px', background: 'transparent', color: '#C9A96E', border: '1px solid #C9A96E', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                          {invoicing === o.id ? '...' : 'rechnung senden →'}
+                        </button>
+                      )
+                    )}
                   </div>
 
                   <div>

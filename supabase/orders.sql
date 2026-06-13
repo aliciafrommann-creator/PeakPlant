@@ -33,13 +33,19 @@ create table if not exists public.orders (
   -- digital access
   access_token            text unique not null,
 
+  -- invoicing (for reserve / pay-by-invoice orders)
+  stripe_invoice_id       text,
+  invoice_sent_at         timestamptz,
+
   -- fulfilment
   status                  text not null default 'pending',  -- pending | forwarded | cancelled
   supplier_forwarded_at   timestamptz
 );
 
--- If the table already exists from an earlier version, add the new column:
-alter table public.orders add column if not exists payment_status text not null default 'paid';
+-- If the table already exists from an earlier version, add the new columns:
+alter table public.orders add column if not exists payment_status    text not null default 'paid';
+alter table public.orders add column if not exists stripe_invoice_id text;
+alter table public.orders add column if not exists invoice_sent_at   timestamptz;
 
 -- fast lookups for the digital-world gate
 create index if not exists orders_access_token_idx on public.orders (access_token);
