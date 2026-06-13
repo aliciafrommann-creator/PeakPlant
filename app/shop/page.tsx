@@ -100,6 +100,26 @@ const pricingRows = [
 
 export default function ShopPage() {
   const [modalOpen, setModalOpen] = useState(false)
+  const [checkingOut, setCheckingOut] = useState<string | null>(null)
+
+  async function startCheckout(product: 'founders' | 'subscription') {
+    setCheckingOut(product)
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product }),
+      })
+      const data = await res.json()
+      if (data.url) { window.location.href = data.url; return }
+      // checkout not configured yet → fall back to waitlist
+      setModalOpen(true)
+    } catch {
+      setModalOpen(true)
+    } finally {
+      setCheckingOut(null)
+    }
+  }
 
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
@@ -173,9 +193,9 @@ export default function ShopPage() {
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
               launching august 2026
             </p>
-            <button onClick={() => setModalOpen(true)}
+            <button onClick={() => startCheckout('founders')} disabled={checkingOut === 'founders'}
               style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
-              join waitlist
+              {checkingOut === 'founders' ? '...' : 'vorbestellen — 14,90€'}
             </button>
           </motion.div>
         </div>
@@ -237,9 +257,9 @@ export default function ShopPage() {
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
               launching august 2026
             </p>
-            <button onClick={() => setModalOpen(true)}
+            <button onClick={() => startCheckout('subscription')} disabled={checkingOut === 'subscription'}
               style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'pointer', alignSelf: 'flex-start' }}>
-              join waitlist
+              {checkingOut === 'subscription' ? '...' : 'abo starten — 27€'}
             </button>
           </motion.div>
 

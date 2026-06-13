@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import Link from 'next/link'
+import { AccessGate } from '../../components/AccessGate'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 const GOLD = '#C9A96E'
@@ -70,6 +71,7 @@ function NewsletterForm({ source }: { source: string }) {
 
 export default function Edition01Page() {
   return (
+    <AccessGate>
     <div style={{ fontFamily: PP, background: '#faf9f7', color: '#1A1A1A', minHeight: '100vh' }}>
 
       {/* Hero */}
@@ -254,5 +256,6 @@ export default function Edition01Page() {
       </footer>
 
     </div>
+    </AccessGate>
   )
 }
