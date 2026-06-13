@@ -16,8 +16,15 @@ type Order = {
   shipping_country: string | null
   amount_total_cents: number | null
   currency: string
+  payment_status: string
   status: string
   supplier_forwarded_at: string | null
+}
+
+const PAYMENT_LABEL: Record<string, { label: string; color: string }> = {
+  paid:     { label: 'bezahlt',         color: '#16a34a' },
+  invoice:  { label: 'rechnung offen',  color: '#C9A96E' },
+  refunded: { label: 'erstattet',       color: '#888' },
 }
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
@@ -160,9 +167,14 @@ export default function AdminPage() {
                   <div>
                     <p style={{ fontSize: 13 }}>{o.product === 'founders' ? 'Founders Edition' : 'Subscription'}</p>
                     <p style={{ fontSize: 13, color: '#16a34a', marginTop: 2 }}>{fmtAmount(o)}</p>
-                    <span style={{ display: 'inline-block', marginTop: 6, fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: st.color, border: `1px solid ${st.color}`, padding: '2px 8px', borderRadius: 2 }}>
-                      {st.label}
-                    </span>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+                      {(() => { const p = PAYMENT_LABEL[o.payment_status] ?? { label: o.payment_status, color: '#888' }; return (
+                        <span style={{ display: 'inline-block', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: p.color, border: `1px solid ${p.color}`, padding: '2px 8px', borderRadius: 2 }}>{p.label}</span>
+                      ) })()}
+                      <span style={{ display: 'inline-block', fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase', color: st.color, border: `1px solid ${st.color}`, padding: '2px 8px', borderRadius: 2 }}>
+                        {st.label}
+                      </span>
+                    </div>
                   </div>
 
                   <div>

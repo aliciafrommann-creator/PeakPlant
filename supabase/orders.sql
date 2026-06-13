@@ -28,6 +28,7 @@ create table if not exists public.orders (
   -- payment
   amount_total_cents      integer,
   currency                text default 'eur',
+  payment_status          text not null default 'paid',     -- paid | invoice | refunded
 
   -- digital access
   access_token            text unique not null,
@@ -36,6 +37,9 @@ create table if not exists public.orders (
   status                  text not null default 'pending',  -- pending | forwarded | cancelled
   supplier_forwarded_at   timestamptz
 );
+
+-- If the table already exists from an earlier version, add the new column:
+alter table public.orders add column if not exists payment_status text not null default 'paid';
 
 -- fast lookups for the digital-world gate
 create index if not exists orders_access_token_idx on public.orders (access_token);

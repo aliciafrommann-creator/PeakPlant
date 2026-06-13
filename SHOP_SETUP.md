@@ -104,6 +104,17 @@ Klick "an supplier →"  ──►  /api/admin/forward
         └──►  Bestellung-Status wird auf "forwarded" gesetzt
 ```
 
+### Zwei Wege zu bestellen
+- **Jetzt zahlen** (Stripe): gibt dir sofort Cashflow, Kunde bekommt Sneak-Peek.
+  Bestellung landet mit `payment_status = paid`.
+- **Reservieren & auf Rechnung zahlen** (`/api/reserve`): keine Zahlung nötig,
+  Kunde bekommt trotzdem den Sneak-Peek + Hinweis auf spätere Rechnung.
+  Bestellung landet mit `payment_status = invoice` (im Admin gelb „rechnung offen").
+  Die Rechnung/den Zahllink schickst du später manuell (z. B. Stripe Payment Link).
+
+> Im Admin-Panel siehst du pro Bestellung den Zahlungsstatus (bezahlt /
+> rechnung offen / erstattet) zusätzlich zum Versandstatus.
+
 ### Digitaler Zugang (`/01`)
 - **Per E-Mail-Link:** `/01?token=…` entsperrt automatisch und merkt sich das
   Gerät per Cookie (1 Jahr).

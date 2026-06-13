@@ -70,6 +70,7 @@ export async function POST(req: NextRequest) {
       shipping_country:        shipping?.address?.country ?? null,
       amount_total_cents:      session.amount_total ?? null,
       currency:                session.currency ?? 'eur',
+      payment_status:          'paid',
       access_token:            accessToken,
       status:                  'pending',
     }

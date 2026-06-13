@@ -99,8 +99,65 @@ const pricingRows = [
   { label: 'cancel anytime', founders: 'full refund',           sub: '✓' },
 ]
 
+function ReserveModal({ onClose }: { onClose: () => void }) {
+  const [email, setEmail]   = useState('')
+  const [name, setName]     = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault()
+    setStatus('loading')
+    try {
+      const res = await fetch('/api/reserve', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name, product: 'founders' }),
+      })
+      setStatus(res.ok ? 'success' : 'error')
+    } catch { setStatus('error') }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}
+      onClick={onClose}>
+      <motion.div
+        initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 24 }}
+        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        style={{ background: '#fff', border: '1px solid #1A1A1A', padding: '3rem', maxWidth: 440, width: '100%' }}
+        onClick={e => e.stopPropagation()}>
+        {status === 'success' ? (
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, marginBottom: '0.75rem' }}>your spot is reserved.</p>
+            <p style={{ fontFamily: PP, fontSize: '0.9rem', color: '#777', lineHeight: 1.7 }}>no payment needed yet — check your inbox for your sneak peek and your invoice link.</p>
+          </div>
+        ) : (
+          <>
+            <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>reserve & pay later</p>
+            <p style={{ fontFamily: PP, fontSize: '1rem', color: '#555', lineHeight: 1.7, marginBottom: '2rem' }}>
+              reserve your edition 01 box now, pay by invoice anytime before it ships in mid-august. no card needed today.
+            </p>
+            <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="your name"
+                style={{ fontFamily: PP, fontSize: '1rem', padding: '0.85rem 1rem', border: '1px solid #1A1A1A', background: 'transparent', outline: 'none', color: '#1A1A1A' }} />
+              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com"
+                style={{ fontFamily: PP, fontSize: '1rem', padding: '0.85rem 1rem', border: '1px solid #1A1A1A', background: 'transparent', outline: 'none', color: '#1A1A1A' }} />
+              <button type="submit" disabled={status === 'loading'}
+                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem 1rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                {status === 'loading' ? '...' : 'reserve my box'}
+              </button>
+            </form>
+            {status === 'error' && <p style={{ marginTop: 8, fontSize: 11, color: '#e74c3c', fontFamily: PP }}>something went wrong. try again.</p>}
+          </>
+        )}
+      </motion.div>
+    </motion.div>
+  )
+}
+
 export default function ShopPage() {
   const [modalOpen, setModalOpen] = useState(false)
+  const [reserveOpen, setReserveOpen] = useState(false)
   const [checkingOut, setCheckingOut] = useState<string | null>(null)
 
   async function startCheckout(product: 'founders' | 'subscription') {
@@ -153,6 +210,10 @@ export default function ShopPage() {
             onClick={() => startCheckout('founders')}>
             {checkingOut === 'founders' ? '...' : 'preorder — 7,99€ →'}
           </button>
+          <button onClick={() => setReserveOpen(true)}
+            style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.1em', background: 'transparent', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.7)', textDecoration: 'underline', marginTop: '1rem' }}>
+            oder reservieren & später zahlen
+          </button>
         </motion.div>
       </section>
 
@@ -195,10 +256,16 @@ export default function ShopPage() {
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
               preorder now · ships mid-august 2026
             </p>
-            <button onClick={() => startCheckout('founders')} disabled={checkingOut === 'founders'}
-              style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
-              {checkingOut === 'founders' ? '...' : 'vorbestellen — 7,99€'}
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <button onClick={() => startCheckout('founders')} disabled={checkingOut === 'founders'}
+                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                {checkingOut === 'founders' ? '...' : 'jetzt zahlen — 7,99€'}
+              </button>
+              <button onClick={() => setReserveOpen(true)}
+                style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.1em', background: 'transparent', border: 'none', cursor: 'pointer', color: '#1A1A1A', opacity: 0.55, textDecoration: 'underline', padding: 0 }}>
+                oder reservieren & auf rechnung zahlen →
+              </button>
+            </div>
           </motion.div>
         </div>
         <motion.p
@@ -295,6 +362,46 @@ export default function ShopPage() {
         </motion.div>
       </section>
 
+      {/* Transparency — how the preorder works */}
+      <section style={{ borderTop: '1px solid #e8e8e8', background: '#faf9f7', padding: '7rem 2.5rem' }}>
+        <div style={{ maxWidth: 760, margin: '0 auto' }}>
+          <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+            style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '1.5rem' }}>
+            how the preorder works
+          </motion.p>
+          <motion.h2 initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
+            style={{ fontSize: 'clamp(1.5rem, 3vw, 2.2rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.25, marginBottom: '1.5rem' }}>
+            you're not buying a finished product.<br />you're helping make it real.
+          </motion.h2>
+          <motion.p initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.1 }}
+            style={{ fontSize: '1rem', lineHeight: 1.85, color: '#555', fontWeight: 300, marginBottom: '3rem', maxWidth: 620 }}>
+            edition 01 is in preorder while it's still in development. preorders fund the
+            first production run — so we can produce properly, in europe, to the highest
+            safety and sustainability standards. you can pay now to support that, or reserve
+            and pay by invoice later. either way, you're fully refundable until your box ships.
+            and the more of us there are, the more becomes possible — enough orders unlock
+            individually printed wrappers. we'll keep you in the loop, openly, the whole way.
+          </motion.p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+            {[
+              { h: 'made in europe', t: 'produced in europe — never offshored. closer supply chains, real accountability.' },
+              { h: 'safety first', t: 'every condom meets all applicable european safety standards before anything ships.' },
+              { h: 'sustainable by default', t: 'vegan fair-rubber latex, blauer engel card, climate-neutral shipping. priority over packaging design.' },
+              { h: 'full transparency', t: "still in development — and you're part of it. we share what we know, when we know it." },
+            ].map((c, i) => (
+              <motion.div key={i}
+                initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.08 }}
+                style={{ borderTop: '1px solid #d9d6cf', paddingTop: '1.25rem' }}>
+                <p style={{ fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 500, marginBottom: '0.6rem' }}>{c.h}</p>
+                <p style={{ fontSize: '0.85rem', lineHeight: 1.65, color: '#777', fontWeight: 300 }}>{c.t}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Wrapper Questions */}
       <div style={{ borderTop: '1px solid #e8e8e8' }}>
         <QuestionsTeaser intro="edition 01 — the questions" />
@@ -315,11 +422,18 @@ export default function ShopPage() {
             style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: '#1A1A1A', color: '#fff', border: '1px solid #1A1A1A', cursor: 'pointer' }}>
             {checkingOut === 'founders' ? '...' : 'preorder — 7,99€'}
           </button>
+          <div>
+            <button onClick={() => setReserveOpen(true)}
+              style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.1em', background: 'transparent', border: 'none', cursor: 'pointer', color: '#1A1A1A', opacity: 0.55, textDecoration: 'underline', marginTop: '1rem' }}>
+              oder reservieren & auf rechnung zahlen
+            </button>
+          </div>
         </motion.div>
       </section>
 
       <AnimatePresence>
         {modalOpen && <WaitlistModal onClose={() => setModalOpen(false)} />}
+        {reserveOpen && <ReserveModal onClose={() => setReserveOpen(false)} />}
       </AnimatePresence>
     </div>
   )
