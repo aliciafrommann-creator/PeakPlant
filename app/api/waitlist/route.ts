@@ -4,7 +4,7 @@ import { Resend } from 'resend'
 const CONFIRMATION = `∧ peakplant
 
 thank you for being here.
-we'll reach out when edition 01 drops in august 2026.
+we'll reach out when edition 01 drops in mid-august 2026.
 until then — slow down a little.
 
 safe. soft. wild.

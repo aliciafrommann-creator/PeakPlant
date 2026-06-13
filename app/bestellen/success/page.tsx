@@ -18,10 +18,11 @@ function SuccessContent() {
         </h1>
 
         <p style={{ fontSize: 15, lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '2.5rem' }}>
-          your order is confirmed. we've sent a confirmation to your inbox —
-          including the link to your digital world.
+          your preorder is confirmed. we've sent a confirmation to your inbox —
+          including your sneak peek into the digital world, as a thank you.
           <br /><br />
-          edition 01 ships in august 2026. we'll be in touch before it does.
+          edition 01 ships mid-august 2026. your card is charged now to reserve
+          your box, and you're fully refundable anytime until it ships.
         </p>
 
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>

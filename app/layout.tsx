@@ -5,10 +5,10 @@ import CookieBanner from '../components/CookieBanner'
 
 export const metadata: Metadata = {
   title: 'peakplant — safe. soft. wild.',
-  description: 'a new intimacy brand. launching august 2026.',
+  description: 'a new intimacy brand. launching mid-august 2026.',
   openGraph: {
     title: 'peakplant — safe. soft. wild.',
-    description: '6 condoms. 6 questions. one ritual.',
+    description: '6 condoms. 1 card. 6 questions. one ritual.',
     type: 'website',
   },
 }

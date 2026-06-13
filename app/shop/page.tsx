@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { useScroll, useTransform } from 'framer-motion'
 import { NavBar } from '../../components/NavBar'
+import { QuestionsTeaser } from '../../components/QuestionsTeaser'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -64,7 +65,7 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
           <>
             <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>join waitlist</p>
             <p style={{ fontFamily: PP, fontSize: '1rem', color: '#555', lineHeight: 1.7, marginBottom: '2rem' }}>
-              edition 01 drops august 2026. leave your email and you'll hear from us first — personally.
+              edition 01 ships mid-august 2026. leave your email and you'll hear from us first — personally.
             </p>
             <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <input
@@ -90,12 +91,12 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
 }
 
 const pricingRows = [
-  { label: 'price',          founders: '14,90€ incl. shipping', sub: '27€ + 12,90€/mo' },
-  { label: 'condoms',        founders: '6',                      sub: '6 / month' },
-  { label: 'cards',          founders: '6 reflection cards',     sub: '6 / month' },
-  { label: 'digital world',  founders: '✓',                      sub: '✓' },
-  { label: 'archive booklet',founders: '—',                      sub: 'month 3' },
-  { label: 'cancel anytime', founders: '—',                      sub: '✓' },
+  { label: 'price',          founders: '7,99€ incl. shipping', sub: '27€ + 12,90€/mo' },
+  { label: 'condoms',        founders: '6',                     sub: '6 / month' },
+  { label: 'question card',  founders: '1 card · 6 questions',  sub: '1 / month' },
+  { label: 'digital world',  founders: '✓ (sneak peek)',        sub: '✓' },
+  { label: 'archive booklet',founders: '—',                     sub: 'month 3' },
+  { label: 'cancel anytime', founders: 'full refund',           sub: '✓' },
 ]
 
 export default function ShopPage() {
@@ -142,14 +143,15 @@ export default function ShopPage() {
             Not just a product.<br />A decision to feel.
           </p>
           <p style={{ fontFamily: PP, fontSize: '0.8rem', color: 'rgba(255,255,255,0.55)', marginBottom: '2rem', letterSpacing: '0.04em' }}>
-            14,90€ · includes shipping · launches august 2026
+            7,99€ · includes shipping · preorder · launches mid-august 2026
           </p>
           <button
+            disabled={checkingOut === 'founders'}
             style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            onClick={() => setModalOpen(true)}>
-            join waitlist →
+            onClick={() => startCheckout('founders')}>
+            {checkingOut === 'founders' ? '...' : 'preorder — 7,99€ →'}
           </button>
         </motion.div>
       </section>
@@ -171,14 +173,14 @@ export default function ShopPage() {
                 founders edition
               </h2>
               <p style={{ fontFamily: PP, fontSize: '0.9rem', color: '#1A1A1A', opacity: 0.5, marginTop: '0.5rem', fontWeight: 300 }}>
-                14,90€ · includes shipping · launches august 2026
+                7,99€ · includes shipping · preorder · launches mid-august 2026
               </p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {[
-                '6 condoms — vegan, fair rubber latex',
-                '6 reflection cards — blauer engel certified, writable',
-                '1 seed paper card with QR to digital world',
+                '6 condoms — vegan, fair rubber latex, sustainably produced',
+                '1 question card — 6 questions to open up, blauer engel certified',
+                'digital world — a sneak peek sent to your inbox after ordering',
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline' }}>
                   <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
@@ -187,22 +189,23 @@ export default function ShopPage() {
               ))}
             </div>
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-              <p style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>14,90€</p>
+              <p style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>7,99€</p>
               <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
             </div>
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
-              launching august 2026
+              preorder now · ships mid-august 2026
             </p>
             <button onClick={() => startCheckout('founders')} disabled={checkingOut === 'founders'}
               style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
-              {checkingOut === 'founders' ? '...' : 'vorbestellen — 14,90€'}
+              {checkingOut === 'founders' ? '...' : 'vorbestellen — 7,99€'}
             </button>
           </motion.div>
         </div>
         <motion.p
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.2 }}
           style={{ fontFamily: PP, fontSize: '0.78rem', color: '#1A1A1A', opacity: 0.35, marginTop: '3rem', fontStyle: 'italic' }}>
-          edition 01 is limited to 1.000 boxes.
+          edition 01 is a preorder. your card is charged now to reserve your box —
+          and you're fully refunded, anytime, if anything's not right.
         </motion.p>
       </section>
 
@@ -255,7 +258,7 @@ export default function ShopPage() {
               </p>
             </div>
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
-              launching august 2026
+              preorder now · ships mid-august 2026
             </p>
             <button onClick={() => startCheckout('subscription')} disabled={checkingOut === 'subscription'}
               style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'pointer', alignSelf: 'flex-start' }}>
@@ -293,41 +296,24 @@ export default function ShopPage() {
       </section>
 
       {/* Wrapper Questions */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
-        <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
-          style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '1.5rem' }}>
-          edition 01 — the questions
-        </motion.p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0' }}>
-          {[
-            "what's your favorite memory of us?",
-            'when did you know?',
-            'what do you want to remember about tonight?',
-            'go for a walk. no destination. just talk.',
-            'who would you be without me?',
-            'how would you describe me — without age, job, family or hobbies?',
-          ].map((q, i) => (
-            <motion.div key={i}
-              initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: i * 0.06 }}
-              style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', borderRight: i % 3 !== 2 ? '1px solid #e8e8e8' : 'none' }}>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem' }}>0{i + 1}</p>
-              <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{q}"</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+      <div style={{ borderTop: '1px solid #e8e8e8' }}>
+        <QuestionsTeaser intro="edition 01 — the questions" />
+      </div>
 
       {/* CTA */}
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', textAlign: 'center' }}>
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           style={{ maxWidth: 560, margin: '0 auto' }}>
-          <p style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', fontWeight: 300, lineHeight: 1.4, marginBottom: '2.5rem', letterSpacing: '-0.01em' }}>
-            edition 01 is limited. be there when it opens.
+          <p style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', fontWeight: 300, lineHeight: 1.4, marginBottom: '1rem', letterSpacing: '-0.01em' }}>
+            preorder edition 01. step into the digital world today.
           </p>
-          <button onClick={() => setModalOpen(true)}
-            style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'pointer' }}>
-            join waitlist
+          <p style={{ fontSize: '0.85rem', fontWeight: 300, lineHeight: 1.7, color: '#777', marginBottom: '2.5rem', maxWidth: 460, marginLeft: 'auto', marginRight: 'auto' }}>
+            we collect preorders through the year, then produce to the highest
+            sustainability standard. fully refundable, anytime — no risk to you.
+          </p>
+          <button onClick={() => startCheckout('founders')} disabled={checkingOut === 'founders'}
+            style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: '#1A1A1A', color: '#fff', border: '1px solid #1A1A1A', cursor: 'pointer' }}>
+            {checkingOut === 'founders' ? '...' : 'preorder — 7,99€'}
           </button>
         </motion.div>
       </section>

@@ -85,19 +85,20 @@ export async function POST(req: NextRequest) {
       email && resend.emails.send({
         from: 'peakplant <hello@peakplant.com>',
         to: email,
-        subject: 'your order is confirmed.',
+        subject: 'your preorder is confirmed — and your sneak peek is inside.',
         html: `
 <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;padding:40px 32px;background:#fff;color:#1A1A1A">
   <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;opacity:0.4;margin-bottom:40px">∧ peakplant</p>
 
   <h1 style="font-size:28px;font-weight:200;letter-spacing:-0.03em;line-height:1.2;margin-bottom:24px">
-    your order is confirmed.
+    your preorder is confirmed.
   </h1>
 
   <p style="font-size:15px;line-height:1.8;color:#555;font-weight:300;margin-bottom:32px">
     thank you — we're glad you're here.<br>
-    <strong style="color:#1A1A1A;font-weight:400">${edition}</strong> ships in august 2026.
-    we'll let you know as soon as your box is on its way.
+    <strong style="color:#1A1A1A;font-weight:400">${edition}</strong> ships mid-august 2026.
+    we collect preorders through the year so we can produce to the highest
+    sustainability standard — and you're <strong style="color:#1A1A1A;font-weight:400">fully refundable anytime</strong> until it ships.
   </p>
 
   <div style="border:1px solid #e8e8e8;padding:24px;margin-bottom:32px">
@@ -110,10 +111,10 @@ export async function POST(req: NextRequest) {
   </div>
 
   <div style="background:#faf9f7;border:1px solid #e8e8e8;padding:24px;margin-bottom:40px">
-    <p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">your digital world</p>
+    <p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">a sneak peek, just for you</p>
     <p style="font-size:14px;line-height:1.7;font-weight:300;color:#555;margin-bottom:20px">
-      the QR code on the seed paper card in your box also leads here.
-      save this link — it's yours.
+      while you wait, step into the digital world of edition 01 — early.
+      it's our thank you for believing in this before it ships. save this link, it's yours.
     </p>
     <a href="${accessLink}" style="display:inline-block;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;padding:14px 28px;background:#1A1A1A;color:#fff;text-decoration:none">
       enter the digital world →

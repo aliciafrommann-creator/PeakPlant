@@ -3,6 +3,7 @@ import { motion, useScroll } from 'framer-motion'
 import { useState } from 'react'
 import Link from 'next/link'
 import { NavBar } from '../components/NavBar'
+import { QuestionsTeaser } from '../components/QuestionsTeaser'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -42,48 +43,15 @@ function Hero() {
           when did life start feeling this fast?
         </p>
         <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.22em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' }}>
-          a new intimacy brand. august 2026.
+          a new intimacy brand. mid-august 2026.
         </p>
       </motion.div>
     </section>
   )
 }
 
-const questions = [
-  "what's your favorite memory of us?",
-  'when did you know?',
-  'what do you want to remember about tonight?',
-  'go for a walk. no destination. just talk.',
-  'who would you be without me?',
-  'how would you describe me — without age, job, family or hobbies?',
-]
-
 function Questions() {
-  return (
-    <section style={{ padding: '10rem 2.5rem 8rem', maxWidth: 960, margin: '0 auto' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '5rem' }}>
-        {questions.map((q, i) => (
-          <motion.p
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              fontFamily: PP,
-              fontSize: 'clamp(1.75rem, 3.5vw, 3rem)',
-              fontWeight: 200,
-              lineHeight: 1.2,
-              letterSpacing: '-0.025em',
-              color: '#1A1A1A',
-            }}
-          >
-            {q}
-          </motion.p>
-        ))}
-      </div>
-    </section>
-  )
+  return <QuestionsTeaser intro="the questions" />
 }
 
 function Product() {
@@ -102,7 +70,7 @@ function Product() {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           style={{ fontFamily: PP, fontSize: '0.9rem', color: '#1A1A1A', opacity: 0.45, fontWeight: 300, marginBottom: '2.5rem', letterSpacing: '0.01em' }}
         >
-          14,90€ · free shipping · august 2026
+          7,99€ · free shipping · preorder · mid-august 2026
         </motion.p>
         <motion.div
           initial={{ opacity: 0, y: 8 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}

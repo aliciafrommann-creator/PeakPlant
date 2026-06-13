@@ -22,7 +22,7 @@ Im Stripe Dashboard → **Produkte**:
 
 | Produkt | Typ | Preis | Env-Variable |
 |---|---|---|---|
-| Founders Edition | Einmalzahlung | 14,90 € | `STRIPE_PRICE_FOUNDERS` |
+| Founders Edition (Preorder) | Einmalzahlung | 7,99 € | `STRIPE_PRICE_FOUNDERS` |
 | Abo — monatlich | Wiederkehrend / Monat | 12,90 € | `STRIPE_PRICE_SUB_MONTHLY` |
 | Abo — Welcome Box | Einmalzahlung (optional) | 27,00 € | `STRIPE_PRICE_SUB_SETUP` |
 
@@ -30,6 +30,15 @@ Jeweils die **Price-ID** (`price_…`) kopieren — nicht die Produkt-ID.
 
 > Versandkosten sind im Founders-Preis enthalten. Die Lieferadresse wird im
 > Checkout für AT, DE, CH, LU, BE, NL automatisch abgefragt.
+>
+> **Preorder-Modell:** Edition 01 läuft das ganze Jahr als Vorbestellung. Die
+> Karte wird bei Bestellung sofort belastet, Versand Mitte August 2026. Kunden
+> sind jederzeit bis zum Versand zu 100 % erstattbar — der digitale Zugang
+> kommt sofort nach der Bestellung als Sneak-Peek per Mail.
+>
+> **Produktinhalt:** 6 Kondome (vegan, nachhaltig) + 1 Fragenkarte (6 Fragen) +
+> digitaler Zugang. Die 6 Fragen sind auf EINER Karte (nicht 6 Karten). Druck
+> der Fragen direkt auf die Verpackung folgt in einer späteren Edition.
 
 ### Webhook einrichten
 Stripe Dashboard → **Entwickler → Webhooks → Endpoint hinzufügen**
@@ -127,5 +136,6 @@ Klick "an supplier →"  ──►  /api/admin/forward
 - [ ] `orders.sql` in Supabase ausführen
 - [ ] Supplier-E-Mail final festlegen (`SUPPLIER_EMAIL`)
 - [ ] Domain `peakplant.com` in Resend verifizieren (für Absender `hello@peakplant.com`)
-- [ ] Kärtchen-Design mit QR auf `https://peakplant.com/01` finalisieren & drucken
+- [ ] Kärtchen-Design (1 Karte, 6 Fragen) mit QR auf `https://peakplant.com/01` finalisieren & drucken
 - [ ] Test-Bestellung im Stripe-Testmodus durchspielen (Karte `4242 4242 4242 4242`)
+- [ ] Entscheiden: Abo-Modell (27€ + 12,90€/mo) im Preorder-Jahr behalten oder pausieren?
