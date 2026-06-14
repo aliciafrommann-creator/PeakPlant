@@ -4,8 +4,8 @@ import { motion } from 'framer-motion'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
-// The six questions of edition 01 — all on a single card inside the box.
-// Every one is fully readable here.
+// The six questions of edition 01. Only the first is revealed here —
+// the other five are blurred until you have the box.
 const QUESTIONS = [
   "what's your favorite memory of us?",
   'when did you know?',
@@ -25,9 +25,11 @@ const GRADIENTS = [
   'linear-gradient(135deg, #E5C2C2 0%, #CC9E9E 50%, #B37E7E 100%)',
 ]
 
+const REVEALED_INDEX = 0
+
 function Card({ q, i }: { q: string; i: number }) {
   const [flipped, setFlipped] = useState(false)
-  const revealed = true
+  const revealed = i === REVEALED_INDEX
 
   return (
     <motion.button
@@ -115,12 +117,12 @@ export function QuestionsTeaser({
       <motion.p
         initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.05 }}
         style={{ fontSize: 'clamp(1.2rem, 2.4vw, 1.7rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.3, color: '#1A1A1A', marginBottom: '0.75rem', maxWidth: 520 }}>
-        six questions. all on one card in the box.
+        one question, revealed. five waiting inside the box.
       </motion.p>
       <motion.p
         initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.1 }}
         style={{ fontSize: '0.85rem', fontWeight: 300, lineHeight: 1.7, color: '#777', marginBottom: '3rem', maxWidth: 460 }}>
-        tap each one to turn it over and read.
+        tap a card to turn it over.
       </motion.p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
