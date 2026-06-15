@@ -114,6 +114,15 @@ export async function POST(req: NextRequest) {
     </table>
   </div>
 
+  <div style="border:1px solid #e8e8e8;padding:24px;margin-bottom:32px">
+    <p style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">your card · one of ten</p>
+    <p style="font-size:14px;line-height:1.7;font-weight:300;color:#555">
+      inside: one question card — the first of ten in edition 01. collect the set over the three months it runs.
+      and somewhere across the edition, twenty boxes hide a special card — a free workshop, a little goodie,
+      or your next box on us. you'll know the moment you open it.
+    </p>
+  </div>
+
   <div style="background:#faf9f7;border:1px solid #e8e8e8;padding:24px;margin-bottom:40px">
     <p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">a sneak peek, just for you</p>
     <p style="font-size:14px;line-height:1.7;font-weight:300;color:#555;margin-bottom:20px">
