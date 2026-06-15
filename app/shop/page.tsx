@@ -99,7 +99,8 @@ function ReserveModal({ onClose, product }: { onClose: () => void; product: Prod
 const pricingRows = [
   { label: 'price',          founders: '7,99€ incl. shipping', sub: 'from 7,40€/mo' },
   { label: 'condoms',        founders: '6',                    sub: '6 / 9 / 12 per month' },
-  { label: 'question card',  founders: '1 card · one question', sub: 'a new one monthly' },
+  { label: 'question card',  founders: '1 card · one of ten', sub: 'a new one each box' },
+  { label: 'surprise card',  founders: 'a chance',            sub: 'a chance' },
   { label: 'digital world',  founders: '✓',                    sub: '✓' },
   { label: 'free shipping',  founders: '✓',                    sub: 'from 9 pieces' },
   { label: 'cancel anytime', founders: '—',                    sub: '✓' },
@@ -177,7 +178,7 @@ export default function ShopPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {[
                 '6 condoms — vegan, fair rubber latex',
-                '1 question card — one question, blauer engel certified, writable',
+                '1 question card — one of ten to collect this edition, blauer engel certified',
                 '1 seed paper card with QR to digital world',
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline' }}>
@@ -225,7 +226,7 @@ export default function ShopPage() {
               <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
                 the ritual, monthly
               </h2>
-              <p style={{ fontSize: '1rem', color: '#666', fontWeight: 300, marginTop: '0.5rem' }}>a new edition every month</p>
+              <p style={{ fontSize: '1rem', color: '#666', fontWeight: 300, marginTop: '0.5rem' }}>a box every month · a new edition every three months</p>
             </div>
 
             {/* Tier selector */}
@@ -256,7 +257,7 @@ export default function ShopPage() {
 
             <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>every month</p>
-              {['one new question every month', 'new digital world each edition', 'free shipping from 9 pieces'].map((item, i) => (
+              {['one new question card every box', 'ten questions to collect each edition', 'free shipping from 9 pieces'].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline', marginBottom: '0.4rem' }}>
                   <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>—</span>
                   <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300 }}>{item}</p>
@@ -313,7 +314,7 @@ export default function ShopPage() {
         </motion.p>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.05 }}
           style={{ fontSize: '0.95rem', fontWeight: 300, color: '#777', lineHeight: 1.7, marginBottom: '3rem', maxWidth: 460 }}>
-          one question per pack. six make edition 01 — the rest unfold with every delivery, and live forever in the digital world.
+          ten questions per edition, one in every box. here&apos;s a taste of edition 01 — the rest unfold as you collect, and live forever in the digital world.
         </motion.p>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, 1fr)', gap: '0' }}>
           {[
@@ -332,6 +333,32 @@ export default function ShopPage() {
               <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{q}"</p>
             </motion.div>
           ))}
+        </div>
+      </section>
+
+      {/* Collect + the surprise card */}
+      <section style={{ borderTop: '1px solid #e8e8e8', background: '#faf9f7', padding: '7rem 2.5rem' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'start' }}>
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
+            <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.25rem' }}>collect them</p>
+            <h2 style={{ fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem' }}>
+              ten questions. one per box.
+            </h2>
+            <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8 }}>
+              every edition runs three months and holds ten questions — a new card in every box.
+              collect the set, then a new edition begins with ten you&apos;ve never seen.
+            </p>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}>
+            <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.9, marginBottom: '1.25rem' }}>the surprise</p>
+            <h2 style={{ fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem' }}>
+              twenty boxes hide more.
+            </h2>
+            <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8 }}>
+              twenty boxes per edition carry a special card. behind it: a free workshop, a little goodie,
+              or your next box on us. you&apos;ll know the moment you open it.
+            </p>
+          </motion.div>
         </div>
       </section>
 

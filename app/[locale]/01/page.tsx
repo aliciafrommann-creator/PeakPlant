@@ -289,7 +289,7 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
       {/* Six Questions */}
       <section style={{ padding: '60px 40px 100px', maxWidth: 640, margin: '0 auto', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
         <p style={{ ...label(isDE), marginBottom: 48 }}>
-          {isDE ? 'die sechs fragen — edition 01' : 'the six questions — edition 01'}
+          {isDE ? 'die fragen — edition 01' : 'the questions — edition 01'}
         </p>
         <div>
           {questions.map(({ n, q }, i) => (
@@ -303,7 +303,7 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
           ))}
         </div>
         <p style={{ marginTop: 32, fontSize: '0.75rem', color: 'rgba(255,255,255,0.25)', fontWeight: 300, lineHeight: 1.7 }}>
-          {isDE ? 'jede edition bringt sechs neue. die alten bleiben hier — das archiv wächst.' : 'every edition brings six new ones. the old ones stay here — the archive grows.'}
+          {isDE ? 'zehn fragen pro edition, eine pro box — eine neue edition alle drei monate. das sind die ersten von edition 01, der rest kommt nach und nach. die alten bleiben hier, das archiv wächst.' : 'ten questions per edition, one per box — a new edition every three months. these are the first of edition 01; the rest unfold as it runs. the old ones stay here — the archive grows.'}
         </p>
       </section>
 
