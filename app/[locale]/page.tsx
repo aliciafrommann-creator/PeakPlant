@@ -55,7 +55,7 @@ function CouplesHero({ locale }: { locale: string }) {
         </h1>
         <Link href="/shop"
           style={{ display: 'inline-block', marginBottom: '2rem', padding: '0.85rem 2.2rem', border: '1px solid rgba(255,255,255,0.5)', fontSize: '0.65rem', letterSpacing: '0.28em', color: '#ffffff', textDecoration: 'none', fontFamily: PP, textTransform: 'uppercase' }}>
-          edition 01 &mdash; 7,99€
+          edition 01 &mdash; 7,90€
         </Link>
         <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
           {isDE ? 'weiterscrollen' : 'scroll to explore'}
@@ -85,7 +85,7 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }}
           style={{ marginTop: 36, display: 'flex', alignItems: 'baseline', gap: 14 }}>
-          <span style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em', color: '#1A1A1A', fontFamily: PP }}>7,99€</span>
+          <span style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em', color: '#1A1A1A', fontFamily: PP }}>7,90€</span>
           <span style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.4, fontFamily: PP }}>{isDE ? 'inkl. versand' : 'incl. shipping'}</span>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}>

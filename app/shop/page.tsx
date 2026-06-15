@@ -89,7 +89,7 @@ function ReserveModal({ onClose, product }: { onClose: () => void; product: Prod
 }
 
 const pricingRows = [
-  { label: 'price',         pack3: '5€',        founders: '7,99€',    pack12: '11,90€'  },
+  { label: 'price',         pack3: '5€',        founders: '7,90€',    pack12: '11,90€'  },
   { label: 'condoms',       pack3: '3',          founders: '6',        pack12: '12'       },
   { label: 'question card', pack3: '1 of ten',   founders: '1 of ten', pack12: '2 of ten' },
   { label: 'surprise card', pack3: 'a chance',   founders: 'a chance', pack12: 'a chance' },
@@ -182,7 +182,7 @@ export default function ShopPage() {
               </p>
             </div>
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-              <p style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>7,99€</p>
+              <p style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>7,90€</p>
               <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
             </div>
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
@@ -191,7 +191,7 @@ export default function ShopPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'flex-start' }}>
               <button onClick={() => startCheckout('founders')} disabled={loading === 'founders'}
                 style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
-                {loading === 'founders' ? '...' : 'preorder now — 7,99€'}
+                {loading === 'founders' ? '...' : 'preorder now — 7,90€'}
               </button>
               <button onClick={() => setReserveProduct('founders')}
                 style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.08em', background: 'none', border: 'none', color: '#1A1A1A', opacity: 0.5, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
@@ -383,7 +383,7 @@ export default function ShopPage() {
           </p>
           <button onClick={() => startCheckout('founders')} disabled={loading === 'founders'}
             style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-            {loading === 'founders' ? '...' : 'preorder now — 7,99€'}
+            {loading === 'founders' ? '...' : 'preorder now — 7,90€'}
           </button>
         </motion.div>
       </section>
