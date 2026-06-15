@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     </tr>
     <tr style="border-bottom:1px solid #f0f0f0">
       <td style="padding:10px 0;color:#888">Inhalt</td>
-      <td style="padding:10px 0;line-height:1.6">${qty} Kondome (vegan, fair rubber latex)<br>1 Fragenkarte (6 Fragen, Blauer Engel)<br>QR-Code zur digitalen Welt</td>
+      <td style="padding:10px 0;line-height:1.6">${qty} Kondome (vegan, fair rubber latex)<br>1 Fragenkarte (1 Frage, Blauer Engel)<br>QR-Code zur digitalen Welt</td>
     </tr>
     <tr>
       <td style="padding:10px 0;color:#888;vertical-align:top">Lieferadresse</td>

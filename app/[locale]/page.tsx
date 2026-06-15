@@ -81,7 +81,7 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
           style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
-          {isDE ? '6 Kondome. 1 Fragenkarte mit 6 Fragen. 1 Saatpapierkarte.\nvegan · fair rubber latex · ab august 2026.' : '6 condoms. 1 question card with 6 questions. 1 seed paper card.\nvegan · fair rubber latex · launching august 2026.'}
+          {isDE ? '6 Kondome. 1 Fragenkarte. 1 Saatpapierkarte.\nvegan · fair rubber latex · ab august 2026.' : '6 condoms. 1 question card. 1 seed paper card.\nvegan · fair rubber latex · launching august 2026.'}
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }}
           style={{ marginTop: 36, display: 'flex', alignItems: 'baseline', gap: 14 }}>

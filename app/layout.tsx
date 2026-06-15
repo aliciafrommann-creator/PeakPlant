@@ -16,10 +16,10 @@ const jsonLd = {
 
 export const metadata: Metadata = {
   title: 'peakplant — safe. soft. wild.',
-  description: 'peakplant is a new intimacy brand for couples who want to feel closer. 6 condoms, 1 question card with 6 questions, 1 seed paper card. vegan, fair rubber. launching august 2026.',
+  description: 'peakplant is a new intimacy brand for couples who want to feel closer. 6 condoms, 1 question card, 1 seed paper card. vegan, fair rubber. launching august 2026.',
   openGraph: {
     title: 'peakplant — safe. soft. wild.',
-    description: '6 condoms. 6 questions. one ritual.',
+    description: '6 condoms. one question. one ritual.',
     type: 'website',
   },
   icons: [{ rel: 'icon', url: '/favicon.svg', type: 'image/svg+xml' }],

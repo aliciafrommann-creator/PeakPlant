@@ -63,7 +63,7 @@ function Product() {
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
           style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
-          6 condoms. 1 question card with 6 questions. 1 seed paper card.<br />
+          6 condoms. 1 question card. 1 seed paper card.<br />
           vegan · fair rubber latex · launching august 2026.
         </motion.p>
         <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}>
