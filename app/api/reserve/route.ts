@@ -10,8 +10,9 @@ const SITE    = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peakplant.com'
 const ADMIN_EMAIL = process.env.OWNER_EMAIL ?? 'hello@peakplant.com'
 
 function editionLabel(product: string) {
-  if (product === 'founders') return 'founders edition'
-  if (product === 'subscription') return 'the ritual — monthly subscription'
+  if (product === 'pack_3')   return '3er pack'
+  if (product === 'founders') return '6er pack — founders edition'
+  if (product === 'pack_12')  return '12er pack'
   return product
 }
 

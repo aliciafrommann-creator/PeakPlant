@@ -8,14 +8,7 @@ import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
-// ── Subscription tiers ───────────────────────────────────────────────
-const SUB_TIERS = [
-  { key: 'sub_6',  qty: 6,  price: '7,40€',  shipping: '+ shipping',     freeShip: false },
-  { key: 'sub_9',  qty: 9,  price: '10,40€', shipping: 'free shipping',  freeShip: true  },
-  { key: 'sub_12', qty: 12, price: '13,40€', shipping: 'free shipping',  freeShip: true  },
-] as const
-
-type Product = 'founders' | 'sub_6' | 'sub_9' | 'sub_12'
+type Product = 'pack_3' | 'founders' | 'pack_12'
 
 function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; alt: string; objectPosition?: string }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -28,7 +21,6 @@ function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; a
   )
 }
 
-// Reserve now, pay by invoice later — both give immediate digital-world access.
 function ReserveModal({ onClose, product }: { onClose: () => void; product: Product }) {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
@@ -97,19 +89,17 @@ function ReserveModal({ onClose, product }: { onClose: () => void; product: Prod
 }
 
 const pricingRows = [
-  { label: 'price',          founders: '7,99€ incl. shipping', sub: 'from 7,40€/mo' },
-  { label: 'condoms',        founders: '6',                    sub: '6 / 9 / 12 per month' },
-  { label: 'question card',  founders: '1 card · one of ten', sub: 'a new one each box' },
-  { label: 'surprise card',  founders: 'a chance',            sub: 'a chance' },
-  { label: 'digital world',  founders: '✓',                    sub: '✓' },
-  { label: 'free shipping',  founders: '✓',                    sub: 'from 9 pieces' },
-  { label: 'cancel anytime', founders: '—',                    sub: '✓' },
+  { label: 'price',         pack3: '5€',        founders: '7,99€',    pack12: '11,90€'  },
+  { label: 'condoms',       pack3: '3',          founders: '6',        pack12: '12'       },
+  { label: 'question card', pack3: '1 of ten',   founders: '1 of ten', pack12: '2 of ten' },
+  { label: 'surprise card', pack3: 'a chance',   founders: 'a chance', pack12: 'a chance' },
+  { label: 'shipping',      pack3: 'included',   founders: 'included', pack12: 'included' },
+  { label: 'digital world', pack3: '✓',          founders: '✓',        pack12: '✓'        },
 ]
 
 export default function ShopPage() {
   const [reserveProduct, setReserveProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState<Product | null>(null)
-  const [subQty, setSubQty] = useState<Product>('sub_9')
   const isMobile = useIsMobile()
 
   async function startCheckout(product: Product) {
@@ -121,8 +111,6 @@ export default function ShopPage() {
       else { setReserveProduct(product); setLoading(null) }
     } catch { setReserveProduct(product); setLoading(null) }
   }
-
-  const activeTier = SUB_TIERS.find(t => t.key === subQty) ?? SUB_TIERS[1]
 
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
@@ -145,7 +133,7 @@ export default function ShopPage() {
             Not just a product.<br />A decision to feel.
           </p>
           <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.45)', marginBottom: '2.5rem' }}>
-            7,99€ · includes shipping · ships mid-august 2026
+            from 5€ · includes shipping · ships mid-august 2026
           </p>
           <button
             disabled={loading === 'founders'}
@@ -158,7 +146,7 @@ export default function ShopPage() {
         </motion.div>
       </section>
 
-      {/* Product 1 — Founders Edition */}
+      {/* Product 1 — 6er / Founders Edition */}
       <section style={{ borderTop: '1px solid #e8e8e8', maxWidth: 1100, margin: '0 auto', padding: '7rem 2.5rem' }}>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'start' }}>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
@@ -214,70 +202,92 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* Product 2 — Subscription */}
+      {/* Products — 3er and 12er */}
       <section style={{ borderTop: '1px solid #e8e8e8', background: '#faf9f7', padding: '7rem 2.5rem' }}>
-        <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'start' }}>
-          <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>
-                subscription · cancel anytime
-              </p>
-              <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
-                the ritual, monthly
-              </h2>
-              <p style={{ fontSize: '1rem', color: '#666', fontWeight: 300, marginTop: '0.5rem' }}>a box every month · a new edition every three months</p>
-            </div>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
+            style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '3rem' }}>
+            also available
+          </motion.p>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '1.5rem' : '2.5rem' }}>
 
-            {/* Tier selector */}
-            <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>choose your monthly size</p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-                {SUB_TIERS.map(t => {
-                  const active = subQty === t.key
-                  return (
-                    <button key={t.key} onClick={() => setSubQty(t.key)}
-                      style={{
-                        fontFamily: PP, textAlign: 'left', cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                        padding: '0.9rem 1.1rem', background: active ? '#1A1A1A' : 'transparent',
-                        color: active ? '#fff' : '#1A1A1A', border: `1px solid ${active ? '#1A1A1A' : '#d8d6d1'}`,
-                        transition: 'all 0.25s ease',
-                      }}>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 300 }}>{t.qty} condoms / month</span>
-                      <span style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem' }}>
-                        <span style={{ fontSize: '0.95rem', fontWeight: 400 }}>{t.price}</span>
-                        <span style={{ fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', opacity: active ? 0.6 : 0.45, color: t.freeShip && !active ? '#16a34a' : 'inherit' }}>{t.shipping}</span>
-                      </span>
-                    </button>
-                  )
-                })}
+            {/* 3er pack */}
+            <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+              style={{ border: '1px solid #e8e8e8', padding: '2.5rem', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div>
+                <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>3er pack</p>
+                <h3 style={{ fontSize: 'clamp(1.3rem, 2.2vw, 1.8rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.2 }}>three condoms.<br />one card.</h3>
               </div>
-            </div>
-
-            <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>every month</p>
-              {['one new question card every box', 'ten questions to collect each edition', 'free shipping from 9 pieces'].map((item, i) => (
-                <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline', marginBottom: '0.4rem' }}>
-                  <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>—</span>
-                  <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300 }}>{item}</p>
-                </div>
-              ))}
-            </div>
-            <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
-              <p style={{ fontSize: 'clamp(1rem, 1.5vw, 1.2rem)', fontWeight: 300, color: '#1A1A1A', letterSpacing: '-0.01em' }}>
-                {activeTier.price}/month · {activeTier.qty} pieces · {activeTier.freeShip ? 'free shipping' : 'plus shipping'} · cancel anytime
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                {[
+                  '3 condoms — vegan, fair rubber latex',
+                  '1 question card — one of ten to collect',
+                  '1 seed paper card with QR to digital world',
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline' }}>
+                    <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
+                    <p style={{ fontSize: '0.88rem', color: '#555', fontWeight: 300, lineHeight: 1.6 }}>{item}</p>
+                  </div>
+                ))}
+              </div>
+              <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                <p style={{ fontSize: '1.5rem', fontWeight: 300, letterSpacing: '-0.01em' }}>5€</p>
+                <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
+              </div>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
+                preorder · ships mid-august 2026
               </p>
-            </div>
-            <button onClick={() => startCheckout(subQty)} disabled={loading === subQty}
-              style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
-              {loading === subQty ? '...' : `start subscription — ${activeTier.price}/mo`}
-            </button>
-          </motion.div>
-          <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-            style={{ aspectRatio: '1/1', background: '#f0f0f0', overflow: 'hidden' }}>
-            <ParallaxImage src="/couples-rain.jpg" alt="the ritual" />
-          </motion.div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', alignItems: 'flex-start' }}>
+                <button onClick={() => startCheckout('pack_3')} disabled={loading === 'pack_3'}
+                  style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.9rem 1.75rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                  {loading === 'pack_3' ? '...' : 'preorder — 5€'}
+                </button>
+                <button onClick={() => setReserveProduct('pack_3')}
+                  style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.08em', background: 'none', border: 'none', color: '#1A1A1A', opacity: 0.5, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+                  or pay by invoice
+                </button>
+              </div>
+            </motion.div>
+
+            {/* 12er pack */}
+            <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+              style={{ border: '1px solid #e8e8e8', padding: '2.5rem', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div>
+                <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>12er pack</p>
+                <h3 style={{ fontSize: 'clamp(1.3rem, 2.2vw, 1.8rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.2 }}>twelve condoms.<br />two cards.</h3>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                {[
+                  '12 condoms — vegan, fair rubber latex',
+                  '2 question cards — two of ten to collect',
+                  '1 seed paper card with QR to digital world',
+                ].map((item, i) => (
+                  <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline' }}>
+                    <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
+                    <p style={{ fontSize: '0.88rem', color: '#555', fontWeight: 300, lineHeight: 1.6 }}>{item}</p>
+                  </div>
+                ))}
+              </div>
+              <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
+                <p style={{ fontSize: '1.5rem', fontWeight: 300, letterSpacing: '-0.01em' }}>11,90€</p>
+                <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
+              </div>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
+                preorder · ships mid-august 2026
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', alignItems: 'flex-start' }}>
+                <button onClick={() => startCheckout('pack_12')} disabled={loading === 'pack_12'}
+                  style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.9rem 1.75rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                  {loading === 'pack_12' ? '...' : 'preorder — 11,90€'}
+                </button>
+                <button onClick={() => setReserveProduct('pack_12')}
+                  style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.08em', background: 'none', border: 'none', color: '#1A1A1A', opacity: 0.5, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+                  or pay by invoice
+                </button>
+              </div>
+            </motion.div>
+
+          </div>
         </div>
       </section>
 
@@ -289,17 +299,19 @@ export default function ShopPage() {
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }}
           style={{ overflowX: 'auto' }}>
-          <div style={{ minWidth: 480 }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', borderBottom: '1px solid #1A1A1A', paddingBottom: '1rem' }}>
+          <div style={{ minWidth: 520 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', borderBottom: '1px solid #1A1A1A', paddingBottom: '1rem' }}>
               <div />
-              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>founders edition</p>
-              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>subscription</p>
+              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>3er pack</p>
+              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>6er · founders</p>
+              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>12er pack</p>
             </div>
-            {pricingRows.map(({ label, founders, sub }) => (
-              <div key={label} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', padding: '1.1rem 0', borderBottom: '1px solid #ebebeb' }}>
+            {pricingRows.map(({ label, pack3, founders, pack12 }) => (
+              <div key={label} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', padding: '1.1rem 0', borderBottom: '1px solid #ebebeb' }}>
                 <p style={{ fontSize: '0.8rem', letterSpacing: '0.06em', opacity: 0.5, textTransform: 'lowercase' }}>{label}</p>
+                <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{pack3}</p>
                 <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{founders}</p>
-                <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{sub}</p>
+                <p style={{ fontSize: '0.9rem', fontWeight: 300 }}>{pack12}</p>
               </div>
             ))}
           </div>

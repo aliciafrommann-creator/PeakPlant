@@ -27,11 +27,9 @@ async function supabase(path: string, method: string, body?: object) {
 }
 
 function editionLabel(product: string) {
-  if (product === 'founders') return 'founders edition'
-  if (product === 'sub_6')  return 'the ritual — 6 condoms / month'
-  if (product === 'sub_9')  return 'the ritual — 9 condoms / month'
-  if (product === 'sub_12') return 'the ritual — 12 condoms / month'
-  if (product === 'subscription') return 'the ritual — monthly subscription'
+  if (product === 'pack_3')   return '3er pack'
+  if (product === 'founders') return '6er pack — founders edition'
+  if (product === 'pack_12')  return '12er pack'
   return product
 }
 
@@ -168,11 +166,6 @@ export async function POST(req: NextRequest) {
 </div>`,
       }),
     ])
-  }
-
-  if (event.type === 'customer.subscription.deleted') {
-    const sub = event.data.object as Stripe.Subscription
-    await supabase(`/orders?stripe_subscription_id=eq.${sub.id}`, 'PATCH', { status: 'cancelled' })
   }
 
   return NextResponse.json({ received: true })
