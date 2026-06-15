@@ -89,7 +89,7 @@ function ReserveModal({ onClose, product }: { onClose: () => void; product: Prod
 }
 
 const pricingRows = [
-  { label: 'price',         pack3: '5€',        founders: '7,90€',    pack12: '11,90€'  },
+  { label: 'price',         pack3: '5€',        founders: '7,90€',    pack12: '13,90€'  },
   { label: 'condoms',       pack3: '3',          founders: '6',        pack12: '12'       },
   { label: 'question card', pack3: '1 of ten',   founders: '1 of ten', pack12: '2 of ten' },
   { label: 'surprise card', pack3: 'a chance',   founders: 'a chance', pack12: 'a chance' },
@@ -269,7 +269,7 @@ export default function ShopPage() {
                 ))}
               </div>
               <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                <p style={{ fontSize: '1.5rem', fontWeight: 300, letterSpacing: '-0.01em' }}>11,90€</p>
+                <p style={{ fontSize: '1.5rem', fontWeight: 300, letterSpacing: '-0.01em' }}>13,90€</p>
                 <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
               </div>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
@@ -278,7 +278,7 @@ export default function ShopPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', alignItems: 'flex-start' }}>
                 <button onClick={() => startCheckout('pack_12')} disabled={loading === 'pack_12'}
                   style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.9rem 1.75rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-                  {loading === 'pack_12' ? '...' : 'preorder — 11,90€'}
+                  {loading === 'pack_12' ? '...' : 'preorder — 13,90€'}
                 </button>
                 <button onClick={() => setReserveProduct('pack_12')}
                   style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.08em', background: 'none', border: 'none', color: '#1A1A1A', opacity: 0.5, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
