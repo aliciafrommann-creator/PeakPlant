@@ -83,7 +83,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
     {
       icon: <IconDocument />,
       headline: 'blauer engel cards',
-      text: "the six reflection cards in your box are printed on circle offset premium white — 300g recycled paper, certified with the blauer engel. printed by dieumweltdruckerei, germany's most sustainable print shop.",
+      text: "the question card in your box is printed on circle offset premium white — 300g recycled paper, certified with the blauer engel. printed by dieumweltdruckerei, germany's most sustainable print shop.",
     },
     {
       icon: <IconSeedling />,

@@ -8,6 +8,15 @@ import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
+// ── Subscription tiers ───────────────────────────────────────────────
+const SUB_TIERS = [
+  { key: 'sub_6',  qty: 6,  price: '7,40€',  shipping: '+ shipping',     freeShip: false },
+  { key: 'sub_9',  qty: 9,  price: '10,40€', shipping: 'free shipping',  freeShip: true  },
+  { key: 'sub_12', qty: 12, price: '13,40€', shipping: 'free shipping',  freeShip: true  },
+] as const
+
+type Product = 'founders' | 'sub_6' | 'sub_9' | 'sub_12'
+
 function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; alt: string; objectPosition?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
@@ -19,25 +28,19 @@ function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; a
   )
 }
 
-function WaitlistModal({ onClose }: { onClose: () => void }) {
+// Reserve now, pay by invoice later — both give immediate digital-world access.
+function ReserveModal({ onClose, product }: { onClose: () => void; product: Product }) {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle')
+  const [name, setName] = useState('')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setStatus('loading')
-    let finalStatus: typeof status = 'error'
     try {
-      const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, source: 'shop' }) })
-      const data = await res.json()
-      if (data.duplicate) finalStatus = 'duplicate'
-      else if (res.ok) finalStatus = 'success'
-      else finalStatus = 'error'
-    } catch {
-      finalStatus = 'error'
-    } finally {
-      setStatus(finalStatus)
-    }
+      const res = await fetch('/api/reserve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, product }) })
+      setStatus(res.ok ? 'success' : 'error')
+    } catch { setStatus('error') }
   }
 
   return (
@@ -52,27 +55,25 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
         style={{ position: 'relative', background: '#ffffff', border: '1px solid #1A1A1A', padding: '3rem', maxWidth: 440, width: '100%' }}
         onClick={e => e.stopPropagation()}
       >
+        <button onClick={onClose} aria-label="close" style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.4rem', opacity: 0.35, color: '#1A1A1A', lineHeight: 1 }}>×</button>
         {status === 'success' ? (
           <div style={{ textAlign: 'center' }}>
-            <button onClick={onClose} aria-label="close" style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.4rem', opacity: 0.35, color: '#1A1A1A', lineHeight: 1 }}>×</button>
             <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7 }}>
-              check your inbox. we left you the six questions.
-            </p>
-          </div>
-        ) : status === 'duplicate' ? (
-          <div style={{ textAlign: 'center' }}>
-            <button onClick={onClose} aria-label="close" style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.4rem', opacity: 0.35, color: '#1A1A1A', lineHeight: 1 }}>×</button>
-            <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7, opacity: 0.6 }}>
-              you're already on the list.
+              your spot is reserved. check your inbox — your sneak peek into the digital world is waiting, and the invoice follows.
             </p>
           </div>
         ) : (
           <>
-            <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>join waitlist</p>
+            <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>reserve &amp; pay by invoice</p>
             <p style={{ fontFamily: PP, fontSize: '1rem', color: '#555', lineHeight: 1.7, marginBottom: '2rem' }}>
-              edition 01 drops august 2026. leave your email and you'll hear from us first — personally.
+              no payment now. we&apos;ll send you an invoice you can settle anytime before edition 01 ships — and you get into the digital world immediately.
             </p>
             <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <input
+                type="text" required value={name} onChange={e => setName(e.target.value)}
+                placeholder="your name"
+                style={{ fontFamily: PP, fontSize: '1rem', padding: '0.85rem 1rem', border: '1px solid #1A1A1A', background: 'transparent', outline: 'none', color: '#1A1A1A' }}
+              />
               <input
                 type="email" required value={email} onChange={e => setEmail(e.target.value)}
                 placeholder="your@email.com"
@@ -80,12 +81,12 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
               />
               <button type="submit" disabled={status === 'loading'}
                 style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem 1rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-                {status === 'loading' ? '...' : 'join waitlist'}
+                {status === 'loading' ? '...' : 'reserve my spot'}
               </button>
             </form>
             <p style={{ marginTop: '1rem', fontSize: '0.7rem', color: '#1A1A1A', opacity: 0.4, lineHeight: 1.6, fontFamily: PP }}>
-              mit der anmeldung stimmst du unserer{' '}
-              <Link href="/datenschutz" style={{ color: 'inherit', textDecoration: 'underline' }}>datenschutzerklärung</Link>{' '}zu.
+              by reserving you agree to our{' '}
+              <Link href="/datenschutz" style={{ color: 'inherit', textDecoration: 'underline' }}>privacy policy</Link>.
             </p>
             {status === 'error' && <p style={{ marginTop: 8, fontSize: 11, color: '#e74c3c', fontFamily: PP }}>Something went wrong. Try again.</p>}
           </>
@@ -96,17 +97,31 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
 }
 
 const pricingRows = [
-  { label: 'price',          founders: '14,90€ incl. shipping', sub: '27€ + 12,90€/mo' },
-  { label: 'condoms',        founders: '6',                      sub: '6 / month' },
-  { label: 'cards',          founders: '6 reflection cards',     sub: '6 / month' },
-  { label: 'digital world',  founders: '✓',                      sub: '✓' },
-  { label: 'archive booklet',founders: '—',                      sub: 'month 3' },
-  { label: 'cancel anytime', founders: '—',                      sub: '✓' },
+  { label: 'price',          founders: '7,99€ incl. shipping', sub: 'from 7,40€/mo' },
+  { label: 'condoms',        founders: '6',                    sub: '6 / 9 / 12 per month' },
+  { label: 'question card',  founders: '1 card · 6 questions', sub: 'new one monthly' },
+  { label: 'digital world',  founders: '✓',                    sub: '✓' },
+  { label: 'free shipping',  founders: '✓',                    sub: 'from 9 pieces' },
+  { label: 'cancel anytime', founders: '—',                    sub: '✓' },
 ]
 
 export default function ShopPage() {
-  const [modalOpen, setModalOpen] = useState(false)
+  const [reserveProduct, setReserveProduct] = useState<Product | null>(null)
+  const [loading, setLoading] = useState<Product | null>(null)
+  const [subQty, setSubQty] = useState<Product>('sub_9')
   const isMobile = useIsMobile()
+
+  async function startCheckout(product: Product) {
+    setLoading(product)
+    try {
+      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product }) })
+      const data = await res.json()
+      if (data.url) { window.location.href = data.url }
+      else { setReserveProduct(product); setLoading(null) }
+    } catch { setReserveProduct(product); setLoading(null) }
+  }
+
+  const activeTier = SUB_TIERS.find(t => t.key === subQty) ?? SUB_TIERS[1]
 
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
@@ -129,14 +144,15 @@ export default function ShopPage() {
             Not just a product.<br />A decision to feel.
           </p>
           <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.45)', marginBottom: '2.5rem' }}>
-            14,90€ · includes shipping · launches august 2026
+            7,99€ · includes shipping · ships mid-august 2026
           </p>
           <button
+            disabled={loading === 'founders'}
             style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            onClick={() => setModalOpen(true)}>
-            join waitlist →
+            onClick={() => startCheckout('founders')}>
+            {loading === 'founders' ? '...' : 'preorder now →'}
           </button>
         </motion.div>
       </section>
@@ -161,7 +177,7 @@ export default function ShopPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {[
                 '6 condoms — vegan, fair rubber latex',
-                '6 reflection cards — blauer engel certified, writable',
+                '1 question card with 6 questions — blauer engel certified, writable',
                 '1 seed paper card with QR to digital world',
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline' }}>
@@ -177,16 +193,22 @@ export default function ShopPage() {
               </p>
             </div>
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-              <p style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>14,90€</p>
+              <p style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>7,99€</p>
               <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
             </div>
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
-              launching august 2026
+              preorder · ships mid-august 2026 · refundable anytime
             </p>
-            <button onClick={() => setModalOpen(true)}
-              style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
-              join waitlist
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'flex-start' }}>
+              <button onClick={() => startCheckout('founders')} disabled={loading === 'founders'}
+                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
+                {loading === 'founders' ? '...' : 'preorder now — 7,99€'}
+              </button>
+              <button onClick={() => setReserveProduct('founders')}
+                style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.08em', background: 'none', border: 'none', color: '#1A1A1A', opacity: 0.5, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
+                or reserve &amp; pay by invoice later
+              </button>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -205,18 +227,36 @@ export default function ShopPage() {
               </h2>
               <p style={{ fontSize: '1rem', color: '#666', fontWeight: 300, marginTop: '0.5rem' }}>a new edition every month</p>
             </div>
+
+            {/* Tier selector */}
             <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>welcome box — once</p>
-              {['premium unboxing experience', 'personal letter from alicia', 'edition 01 box'].map((item, i) => (
-                <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline', marginBottom: '0.4rem' }}>
-                  <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>—</span>
-                  <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300 }}>{item}</p>
-                </div>
-              ))}
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>choose your monthly size</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                {SUB_TIERS.map(t => {
+                  const active = subQty === t.key
+                  return (
+                    <button key={t.key} onClick={() => setSubQty(t.key)}
+                      style={{
+                        fontFamily: PP, textAlign: 'left', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        padding: '0.9rem 1.1rem', background: active ? '#1A1A1A' : 'transparent',
+                        color: active ? '#fff' : '#1A1A1A', border: `1px solid ${active ? '#1A1A1A' : '#d8d6d1'}`,
+                        transition: 'all 0.25s ease',
+                      }}>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 300 }}>{t.qty} condoms / month</span>
+                      <span style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem' }}>
+                        <span style={{ fontSize: '0.95rem', fontWeight: 400 }}>{t.price}</span>
+                        <span style={{ fontSize: '0.6rem', letterSpacing: '0.08em', textTransform: 'uppercase', opacity: active ? 0.6 : 0.45, color: t.freeShip && !active ? '#16a34a' : 'inherit' }}>{t.shipping}</span>
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
+
             <div style={{ borderTop: '1px solid #e0e0e0', paddingTop: '1.5rem' }}>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>then monthly</p>
-              {['new edition every month', 'new cards, new questions, new digital world', 'month 3: the archive booklet'].map((item, i) => (
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1rem' }}>every month</p>
+              {['new edition every month', 'new card, new questions, new digital world', 'free shipping from 9 pieces'].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline', marginBottom: '0.4rem' }}>
                   <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>—</span>
                   <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300 }}>{item}</p>
@@ -225,15 +265,12 @@ export default function ShopPage() {
             </div>
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
               <p style={{ fontSize: 'clamp(1rem, 1.5vw, 1.2rem)', fontWeight: 300, color: '#1A1A1A', letterSpacing: '-0.01em' }}>
-                27€ to start · then 12,90€/month · cancel anytime
+                {activeTier.price}/month · {activeTier.qty} pieces · {activeTier.freeShip ? 'free shipping' : 'plus shipping'} · cancel anytime
               </p>
             </div>
-            <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
-              launching august 2026
-            </p>
-            <button onClick={() => setModalOpen(true)}
-              style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'pointer', alignSelf: 'flex-start' }}>
-              join waitlist
+            <button onClick={() => startCheckout(subQty)} disabled={loading === subQty}
+              style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
+              {loading === subQty ? '...' : `start subscription — ${activeTier.price}/mo`}
             </button>
           </motion.div>
           <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
@@ -299,17 +336,17 @@ export default function ShopPage() {
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           style={{ maxWidth: 560, margin: '0 auto' }}>
           <p style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', fontWeight: 300, lineHeight: 1.4, marginBottom: '2.5rem', letterSpacing: '-0.01em' }}>
-            edition 01 is limited. be there when it opens.
+            edition 01 is a preorder. be part of the first run.
           </p>
-          <button onClick={() => setModalOpen(true)}
-            style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#1A1A1A', border: '1px solid #1A1A1A', cursor: 'pointer' }}>
-            join waitlist
+          <button onClick={() => startCheckout('founders')} disabled={loading === 'founders'}
+            style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
+            {loading === 'founders' ? '...' : 'preorder now — 7,99€'}
           </button>
         </motion.div>
       </section>
 
       <AnimatePresence>
-        {modalOpen && <WaitlistModal onClose={() => setModalOpen(false)} />}
+        {reserveProduct && <ReserveModal onClose={() => setReserveProduct(null)} product={reserveProduct} />}
       </AnimatePresence>
 
       <footer style={{ padding: '48px 40px', backgroundColor: '#1A1A1A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24, borderTop: '1px solid rgba(255,255,255,0.07)' }}>

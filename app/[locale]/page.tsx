@@ -55,7 +55,7 @@ function CouplesHero({ locale }: { locale: string }) {
         </h1>
         <Link href="/shop"
           style={{ display: 'inline-block', marginBottom: '2rem', padding: '0.85rem 2.2rem', border: '1px solid rgba(255,255,255,0.5)', fontSize: '0.65rem', letterSpacing: '0.28em', color: '#ffffff', textDecoration: 'none', fontFamily: PP, textTransform: 'uppercase' }}>
-          edition 01 &mdash; 14,90€
+          edition 01 &mdash; 7,99€
         </Link>
         <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
           {isDE ? 'weiterscrollen' : 'scroll to explore'}
@@ -81,11 +81,11 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
           style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
-          {isDE ? '6 Kondome. 6 Reflexionskarten. 1 Saatpapierkarte.\nvegan · fair rubber latex · ab august 2026.' : '6 condoms. 6 reflection cards. 1 seed paper card.\nvegan · fair rubber latex · launching august 2026.'}
+          {isDE ? '6 Kondome. 1 Fragenkarte mit 6 Fragen. 1 Saatpapierkarte.\nvegan · fair rubber latex · ab august 2026.' : '6 condoms. 1 question card with 6 questions. 1 seed paper card.\nvegan · fair rubber latex · launching august 2026.'}
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }}
           style={{ marginTop: 36, display: 'flex', alignItems: 'baseline', gap: 14 }}>
-          <span style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em', color: '#1A1A1A', fontFamily: PP }}>14,90€</span>
+          <span style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em', color: '#1A1A1A', fontFamily: PP }}>7,99€</span>
           <span style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.4, fontFamily: PP }}>{isDE ? 'inkl. versand' : 'incl. shipping'}</span>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}>

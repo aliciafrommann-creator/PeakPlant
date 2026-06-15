@@ -16,7 +16,7 @@ const jsonLd = {
 
 export const metadata: Metadata = {
   title: 'peakplant — safe. soft. wild.',
-  description: 'peakplant is a new intimacy brand for couples who want to feel closer. 6 condoms, 6 reflection cards, 1 seed paper card. vegan, fair rubber. launching august 2026.',
+  description: 'peakplant is a new intimacy brand for couples who want to feel closer. 6 condoms, 1 question card with 6 questions, 1 seed paper card. vegan, fair rubber. launching august 2026.',
   openGraph: {
     title: 'peakplant — safe. soft. wild.',
     description: '6 condoms. 6 questions. one ritual.',
