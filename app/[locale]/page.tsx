@@ -137,7 +137,7 @@ function Waitlist({ locale }: { locale: string }) {
         {status === 'success' ? (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <p style={{ fontSize: 15, color: '#ffffff', opacity: 0.75, fontFamily: PP, fontWeight: 300, lineHeight: 1.7 }}>
-              {isDE ? 'gut. schau in dein postfach —\nwir haben dir die sechs fragen gelassen.' : 'good. check your inbox —\nwe left you the six questions.'}
+              {isDE ? 'gut. schau in dein postfach —\nwir haben dir einen vorgeschmack auf edition 01 gelassen.' : 'good. check your inbox —\nwe left you a first taste of edition 01.'}
             </p>
           </motion.div>
         ) : status === 'duplicate' ? (
@@ -220,7 +220,7 @@ function SixQuestions({ locale }: { locale: string }) {
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '5rem', fontFamily: PP }}>
-          {isDE ? 'sechs fragen. eine box.' : 'six questions. one box.'}
+          {isDE ? 'zehn fragen. eine edition.' : 'ten questions. one edition.'}
         </motion.h2>
         <div style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #ebebeb' }}>
           {questions.map(({ n, q }, i) => (

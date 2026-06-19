@@ -219,7 +219,7 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
       {/* Intro */}
       <section style={{ padding: '160px 40px 80px', textAlign: 'center', maxWidth: 640, margin: '0 auto' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}>
-          <span style={label(isDE)}>edition 01 — the digital world</span>
+          <span style={label(isDE)}>{isDE ? 'edition 01 — die digitale welt' : 'edition 01 — the digital world'}</span>
           <h1 style={{ marginTop: 32, fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 200, letterSpacing: '-0.03em', lineHeight: 1.2 }}>
             {isDE ? 'du bist nicht allein hier.' : 'you are not alone in here.'}
           </h1>
