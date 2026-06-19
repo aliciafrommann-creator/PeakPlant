@@ -55,7 +55,7 @@ function CouplesHero({ locale }: { locale: string }) {
         </h1>
         <Link href="/shop"
           style={{ display: 'inline-block', marginBottom: '2rem', padding: '0.85rem 2.2rem', border: '1px solid rgba(255,255,255,0.5)', fontSize: '0.65rem', letterSpacing: '0.28em', color: '#ffffff', textDecoration: 'none', fontFamily: PP, textTransform: 'uppercase' }}>
-          edition 01 &mdash; 7,90€
+          {isDE ? 'edition 01 — die sonnenblume' : 'edition 01 — the sunflower'}
         </Link>
         <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
           {isDE ? 'weiterscrollen' : 'scroll to explore'}
@@ -81,12 +81,11 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
           style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
-          {isDE ? '6 Kondome. 1 Fragenkarte. 1 Saatpapierkarte.\nvegan · fair rubber latex · ab august 2026.' : '6 condoms. 1 question card. 1 seed paper card.\nvegan · fair rubber latex · launching august 2026.'}
+          {isDE ? '6 Kondome. 1 Fragenkarte. 1 Saatpapierkarte mit Sonnenblumensamen.\nvegan · fair rubber latex · ab august 2026.' : '6 condoms. 1 question card. 1 seed paper card with sunflower seeds.\nvegan · fair rubber latex · launching august 2026.'}
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }}
           style={{ marginTop: 36, display: 'flex', alignItems: 'baseline', gap: 14 }}>
-          <span style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em', color: '#1A1A1A', fontFamily: PP }}>7,90€</span>
-          <span style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.4, fontFamily: PP }}>{isDE ? 'inkl. versand' : 'incl. shipping'}</span>
+          <span style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#C9A96E', fontFamily: PP }}>{isDE ? 'vorbestellung folgt bald' : 'preorder opens soon'}</span>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}>
           <Link href={localHref('/shop')} style={{ display: 'inline-block', marginTop: 16, fontSize: 10, letterSpacing: '0.45em', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.25)', paddingBottom: 4 }}>
@@ -98,7 +97,7 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }}
         transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
         style={{ minHeight: isMobile ? '60vw' : 'auto' }}>
-        <img src="/couples-joy.jpg" alt="couple sharing a tender moment together" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+        <img src="/product-hero.png" alt="PeakPlant edition 01 — condoms and the sunflower question card" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
       </motion.div>
     </section>
   )
@@ -282,7 +281,7 @@ function EditionCard01({ locale }: { locale: string }) {
         <p style={{ fontFamily: PP, fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)', fontWeight: 300, color: '#ffffff', fontStyle: 'italic', lineHeight: 1.6, marginBottom: '1rem' }}>
           {isDE ? '"wann hast du es gewusst?"' : '"when did you know?"'}
         </p>
-        <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.01em' }}>edition 01 — sommer 2026</span>
+        <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.01em' }}>{isDE ? 'edition 01 — die sonnenblume' : 'edition 01 — the sunflower'}</span>
       </div>
     </motion.div>
   )
@@ -299,7 +298,7 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
         </motion.h2>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '4rem' }}>
           <EditionCard01 locale={locale} />
-          {['edition 02 — herbst 2026', 'edition 03 — winter 2026'].map((label, i) => (
+          {(isDE ? ['edition 02 — herbst 2026', 'edition 03 — winter 2026'] : ['edition 02 — autumn 2026', 'edition 03 — winter 2026']).map((label, i) => (
             <motion.div key={label}
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.9, delay: (i + 1) * 0.1, ease: [0.16, 1, 0.3, 1] }}
@@ -318,8 +317,8 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }}
           style={{ fontSize: '0.95rem', color: '#ffffff', opacity: 0.45, lineHeight: 1.75, fontWeight: 300, maxWidth: 480, fontFamily: PP, whiteSpace: 'pre-line' }}>
           {isDE
-            ? 'außen dieselbe box. innen eine andere welt.\njede edition: neue karten, neue fragen, neue digitale welt.'
-            : 'same box outside. different world inside.\neach edition: new cards, new questions, new digital world.'}
+            ? 'jede edition eine pflanze, drei monate lang. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deiner box.\nneue edition: neue pflanze, neue karten, neue fragen, neue digitale welt.'
+            : 'every edition is a plant, for three months. edition 01 is the sunflower — its seeds are pressed into the seed paper in your box.\nnew edition: new plant, new cards, new questions, new digital world.'}
         </motion.p>
       </div>
     </section>

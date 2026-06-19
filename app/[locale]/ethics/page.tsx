@@ -67,7 +67,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
     {
       icon: <IconSeedling />,
       headline: 'pflanzen. wachsen. sehen.',
-      text: 'die saatpapierkarte in jeder box ist 100% pflanzbar. kein müll. sie wird zu wildblumen.',
+      text: 'die saatpapierkarte in jeder box ist 100% pflanzbar. kein müll. edition 01 wird zu sonnenblumen.',
     },
   ] : [
     {
@@ -88,7 +88,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
     {
       icon: <IconSeedling />,
       headline: 'plant it. watch it grow.',
-      text: 'the seed paper card in every box is 100% plantable. no waste. it becomes wildflowers.',
+      text: 'the seed paper card in every box is 100% plantable. no waste. edition 01 becomes sunflowers.',
     },
   ]
 

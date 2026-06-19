@@ -8,30 +8,21 @@ import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
-type Product = 'pack_3' | 'founders' | 'pack_12'
-
-function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; alt: string; objectPosition?: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const y = useTransform(scrollYProgress, [0, 1], ['-8%', '8%'])
-  return (
-    <div ref={ref} style={{ overflow: 'hidden', width: '100%', height: '100%' }}>
-      <motion.img src={src} alt={alt} style={{ width: '100%', height: '120%', objectFit: 'cover', objectPosition, y }} />
-    </div>
-  )
-}
-
-function ReserveModal({ onClose, product }: { onClose: () => void; product: Product }) {
+// Waitlist mode: no checkout, no committed prices yet — collect emails only.
+// The checkout/reserve API routes stay in place to switch back on once the
+// supplier and final pricing are locked.
+function WaitlistModal({ onClose, source }: { onClose: () => void; source: string }) {
   const [email, setEmail] = useState('')
-  const [name, setName] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle')
 
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setStatus('loading')
     try {
-      const res = await fetch('/api/reserve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, name, product }) })
-      setStatus(res.ok ? 'success' : 'error')
+      const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, source }) })
+      const data = await res.json()
+      if (data.duplicate) setStatus('duplicate')
+      else setStatus(res.ok ? 'success' : 'error')
     } catch { setStatus('error') }
   }
 
@@ -48,24 +39,21 @@ function ReserveModal({ onClose, product }: { onClose: () => void; product: Prod
         onClick={e => e.stopPropagation()}
       >
         <button onClick={onClose} aria-label="close" style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.4rem', opacity: 0.35, color: '#1A1A1A', lineHeight: 1 }}>×</button>
-        {status === 'success' ? (
+        {status === 'success' || status === 'duplicate' ? (
           <div style={{ textAlign: 'center' }}>
             <p style={{ fontFamily: PP, fontSize: '1.05rem', color: '#1A1A1A', lineHeight: 1.7 }}>
-              your spot is reserved. check your inbox — your sneak peek into the digital world is waiting, and the invoice follows.
+              {status === 'duplicate'
+                ? "you're already on the list. we'll find you when edition 01 is ready."
+                : "you're in. check your inbox — your first taste of edition 01 is waiting, and we'll reach out the moment it ships."}
             </p>
           </div>
         ) : (
           <>
-            <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>reserve &amp; pay by invoice</p>
+            <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>join the waitlist</p>
             <p style={{ fontFamily: PP, fontSize: '1rem', color: '#555', lineHeight: 1.7, marginBottom: '2rem' }}>
-              no payment now. we&apos;ll send you an invoice you can settle anytime before edition 01 ships — and you get into the digital world immediately.
+              edition 01 — the sunflower — ships mid-august 2026. leave your email and you&apos;ll be first to know when it&apos;s ready. no payment, no noise.
             </p>
             <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <input
-                type="text" required value={name} onChange={e => setName(e.target.value)}
-                placeholder="your name"
-                style={{ fontFamily: PP, fontSize: '1rem', padding: '0.85rem 1rem', border: '1px solid #1A1A1A', background: 'transparent', outline: 'none', color: '#1A1A1A' }}
-              />
               <input
                 type="email" required value={email} onChange={e => setEmail(e.target.value)}
                 placeholder="your@email.com"
@@ -73,11 +61,11 @@ function ReserveModal({ onClose, product }: { onClose: () => void; product: Prod
               />
               <button type="submit" disabled={status === 'loading'}
                 style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem 1rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-                {status === 'loading' ? '...' : 'reserve my spot'}
+                {status === 'loading' ? '...' : 'keep me posted'}
               </button>
             </form>
             <p style={{ marginTop: '1rem', fontSize: '0.7rem', color: '#1A1A1A', opacity: 0.4, lineHeight: 1.6, fontFamily: PP }}>
-              by reserving you agree to our{' '}
+              by joining you agree to our{' '}
               <Link href="/datenschutz" style={{ color: 'inherit', textDecoration: 'underline' }}>privacy policy</Link>.
             </p>
             {status === 'error' && <p style={{ marginTop: 8, fontSize: 11, color: '#e74c3c', fontFamily: PP }}>Something went wrong. Try again.</p>}
@@ -88,29 +76,29 @@ function ReserveModal({ onClose, product }: { onClose: () => void; product: Prod
   )
 }
 
+function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; alt: string; objectPosition?: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
+  const y = useTransform(scrollYProgress, [0, 1], ['-8%', '8%'])
+  return (
+    <div ref={ref} style={{ overflow: 'hidden', width: '100%', height: '100%' }}>
+      <motion.img src={src} alt={alt} style={{ width: '100%', height: '120%', objectFit: 'cover', objectPosition, y }} />
+    </div>
+  )
+}
+
 const pricingRows = [
-  { label: 'price',         pack3: '5€',        founders: '7,90€',    pack12: '13,90€'  },
   { label: 'condoms',       pack3: '3',          founders: '6',        pack12: '12'       },
   { label: 'question card', pack3: '1 of ten',   founders: '1 of ten', pack12: '2 of ten' },
+  { label: 'seed paper',    pack3: 'sunflower',  founders: 'sunflower', pack12: 'sunflower' },
   { label: 'surprise card', pack3: 'a chance',   founders: 'a chance', pack12: 'a chance' },
   { label: 'shipping',      pack3: 'included',   founders: 'included', pack12: 'included' },
   { label: 'digital world', pack3: '✓',          founders: '✓',        pack12: '✓'        },
 ]
 
 export default function ShopPage() {
-  const [reserveProduct, setReserveProduct] = useState<Product | null>(null)
-  const [loading, setLoading] = useState<Product | null>(null)
+  const [waitlistOpen, setWaitlistOpen] = useState(false)
   const isMobile = useIsMobile()
-
-  async function startCheckout(product: Product) {
-    setLoading(product)
-    try {
-      const res = await fetch('/api/checkout', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ product }) })
-      const data = await res.json()
-      if (data.url) { window.location.href = data.url }
-      else { setReserveProduct(product); setLoading(null) }
-    } catch { setReserveProduct(product); setLoading(null) }
-  }
 
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
@@ -133,15 +121,14 @@ export default function ShopPage() {
             Not just a product.<br />A decision to feel.
           </p>
           <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.45)', marginBottom: '2.5rem' }}>
-            from 5€ · includes shipping · ships mid-august 2026
+            edition 01 · the sunflower · ships mid-august 2026
           </p>
           <button
-            disabled={loading === 'founders'}
             style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            onClick={() => startCheckout('founders')}>
-            {loading === 'founders' ? '...' : 'preorder now →'}
+            onClick={() => setWaitlistOpen(true)}>
+            join the waitlist →
           </button>
         </motion.div>
       </section>
@@ -151,13 +138,13 @@ export default function ShopPage() {
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'start' }}>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             style={{ aspectRatio: '1/1', background: '#f5f5f5', overflow: 'hidden' }}>
-            <ParallaxImage src="/product-box.jpg" alt="PeakPlant founders edition" />
+            <ParallaxImage src="/product-hero.png" alt="PeakPlant edition 01 — condoms and the sunflower question card" />
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingTop: '0.5rem' }}>
             <div>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>
-                edition 01 — sommer 2026
+                edition 01 — the sunflower
               </p>
               <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15 }}>
                 founders edition
@@ -167,7 +154,7 @@ export default function ShopPage() {
               {[
                 '6 condoms — vegan, fair rubber latex',
                 '1 question card — one of ten to collect this edition, blauer engel certified',
-                '1 seed paper card with QR to digital world',
+                '1 seed paper card — plant it, it grows into sunflowers · QR to the digital world',
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline' }}>
                   <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
@@ -178,24 +165,18 @@ export default function ShopPage() {
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1rem' }}>
               <p style={{ fontSize: '0.6rem', letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '0.6rem', fontFamily: PP }}>the digital world</p>
               <p style={{ fontSize: '0.82rem', color: '#777', fontWeight: 300, lineHeight: 1.7, fontFamily: PP }}>
-                curated spotify playlists · templates to download · podcast and founder insights · community events · one free workshop per edition
+                a sunflower playlist · how to grow your seed paper · templates to download · date ideas · founder insights · one free workshop per edition
               </p>
             </div>
-            <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-              <p style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)', fontWeight: 300, letterSpacing: '-0.01em' }}>7,90€</p>
-              <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
+            <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
+                preorder opens soon · ships mid-august 2026
+              </p>
             </div>
-            <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
-              preorder · ships mid-august 2026 · refundable anytime
-            </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'flex-start' }}>
-              <button onClick={() => startCheckout('founders')} disabled={loading === 'founders'}
+              <button onClick={() => setWaitlistOpen(true)}
                 style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
-                {loading === 'founders' ? '...' : 'preorder now — 7,90€'}
-              </button>
-              <button onClick={() => setReserveProduct('founders')}
-                style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.08em', background: 'none', border: 'none', color: '#1A1A1A', opacity: 0.5, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
-                or reserve &amp; pay by invoice later
+                join the waitlist
               </button>
             </div>
           </motion.div>
@@ -207,7 +188,7 @@ export default function ShopPage() {
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
             style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '3rem' }}>
-            also available
+            also coming
           </motion.p>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '1.5rem' : '2.5rem' }}>
 
@@ -222,7 +203,7 @@ export default function ShopPage() {
                 {[
                   '3 condoms — vegan, fair rubber latex',
                   '1 question card — one of ten to collect',
-                  '1 seed paper card with QR to digital world',
+                  '1 seed paper card — grows into sunflowers · QR to digital world',
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline' }}>
                     <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
@@ -230,23 +211,15 @@ export default function ShopPage() {
                   </div>
                 ))}
               </div>
-              <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                <p style={{ fontSize: '1.5rem', fontWeight: 300, letterSpacing: '-0.01em' }}>5€</p>
-                <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
+              <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem' }}>
+                <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
+                  preorder opens soon
+                </p>
               </div>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
-                preorder · ships mid-august 2026
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', alignItems: 'flex-start' }}>
-                <button onClick={() => startCheckout('pack_3')} disabled={loading === 'pack_3'}
-                  style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.9rem 1.75rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-                  {loading === 'pack_3' ? '...' : 'preorder — 5€'}
-                </button>
-                <button onClick={() => setReserveProduct('pack_3')}
-                  style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.08em', background: 'none', border: 'none', color: '#1A1A1A', opacity: 0.5, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
-                  or pay by invoice
-                </button>
-              </div>
+              <button onClick={() => setWaitlistOpen(true)}
+                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.9rem 1.75rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
+                join the waitlist
+              </button>
             </motion.div>
 
             {/* 12er pack */}
@@ -260,7 +233,7 @@ export default function ShopPage() {
                 {[
                   '12 condoms — vegan, fair rubber latex',
                   '2 question cards — two of ten to collect',
-                  '1 seed paper card with QR to digital world',
+                  '1 seed paper card — grows into sunflowers · QR to digital world',
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline' }}>
                     <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
@@ -268,30 +241,22 @@ export default function ShopPage() {
                   </div>
                 ))}
               </div>
-              <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem', display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-                <p style={{ fontSize: '1.5rem', fontWeight: 300, letterSpacing: '-0.01em' }}>13,90€</p>
-                <p style={{ fontSize: '0.7rem', letterSpacing: '0.1em', opacity: 0.4 }}>incl. shipping</p>
+              <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem' }}>
+                <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
+                  preorder opens soon
+                </p>
               </div>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
-                preorder · ships mid-august 2026
-              </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', alignItems: 'flex-start' }}>
-                <button onClick={() => startCheckout('pack_12')} disabled={loading === 'pack_12'}
-                  style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.9rem 1.75rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-                  {loading === 'pack_12' ? '...' : 'preorder — 13,90€'}
-                </button>
-                <button onClick={() => setReserveProduct('pack_12')}
-                  style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.08em', background: 'none', border: 'none', color: '#1A1A1A', opacity: 0.5, cursor: 'pointer', textDecoration: 'underline', padding: 0 }}>
-                  or pay by invoice
-                </button>
-              </div>
+              <button onClick={() => setWaitlistOpen(true)}
+                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.9rem 1.75rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
+                join the waitlist
+              </button>
             </motion.div>
 
           </div>
         </div>
       </section>
 
-      {/* Pricing Comparison */}
+      {/* Comparison */}
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '3rem' }}>
@@ -348,21 +313,21 @@ export default function ShopPage() {
         </div>
       </section>
 
-      {/* Collect + the surprise card */}
-      <section style={{ borderTop: '1px solid #e8e8e8', background: '#faf9f7', padding: '7rem 2.5rem' }}>
+      {/* The edition is a plant */}
+      <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'start' }}>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
-            <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.25rem' }}>collect them</p>
+            <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.9, marginBottom: '1.25rem' }}>every edition, a plant</p>
             <h2 style={{ fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem' }}>
-              ten questions. one per box.
+              edition 01 is the sunflower.
             </h2>
             <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8 }}>
-              every edition runs three months and holds ten questions — a new card in every box.
-              collect the set, then a new edition begins with ten you&apos;ve never seen.
+              every edition is built around one plant — its colour, its card, and the seeds pressed into the paper you find in your box.
+              plant the card, water it, and it becomes the real thing. edition 01 grows sunflowers.
             </p>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}>
-            <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.9, marginBottom: '1.25rem' }}>the surprise</p>
+            <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.25rem' }}>the surprise</p>
             <h2 style={{ fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem' }}>
               twenty boxes hide more.
             </h2>
@@ -375,21 +340,21 @@ export default function ShopPage() {
       </section>
 
       {/* CTA */}
-      <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', textAlign: 'center' }}>
+      <section style={{ borderTop: '1px solid #e8e8e8', background: '#faf9f7', padding: '7rem 2.5rem', textAlign: 'center' }}>
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           style={{ maxWidth: 560, margin: '0 auto' }}>
           <p style={{ fontSize: 'clamp(1.4rem, 2.5vw, 2rem)', fontWeight: 300, lineHeight: 1.4, marginBottom: '2.5rem', letterSpacing: '-0.01em' }}>
-            edition 01 is a preorder. be part of the first run.
+            edition 01 ships mid-august. be the first to know.
           </p>
-          <button onClick={() => startCheckout('founders')} disabled={loading === 'founders'}
+          <button onClick={() => setWaitlistOpen(true)}
             style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-            {loading === 'founders' ? '...' : 'preorder now — 7,90€'}
+            join the waitlist
           </button>
         </motion.div>
       </section>
 
       <AnimatePresence>
-        {reserveProduct && <ReserveModal onClose={() => setReserveProduct(null)} product={reserveProduct} />}
+        {waitlistOpen && <WaitlistModal onClose={() => setWaitlistOpen(false)} source="shop" />}
       </AnimatePresence>
 
       <footer style={{ padding: '48px 40px', backgroundColor: '#1A1A1A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24, borderTop: '1px solid rgba(255,255,255,0.07)' }}>

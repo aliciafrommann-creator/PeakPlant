@@ -64,7 +64,7 @@ const commitments = [
   {
     icon: <IconSeedling />,
     headline: 'plant it. watch it grow.',
-    text: 'the seed paper card in every box is 100% plantable. no waste. it becomes wildflowers.',
+    text: 'the seed paper card in every box is 100% plantable. no waste. edition 01 becomes sunflowers.',
   },
 ]
 

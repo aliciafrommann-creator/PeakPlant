@@ -263,6 +263,32 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
         )}
       </section>
 
+      {/* The plant of this edition — sunflower */}
+      <section style={{ padding: '60px 40px 100px', maxWidth: 640, margin: '0 auto', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+        <p style={{ ...label(isDE), marginBottom: 20 }}>{isDE ? 'die pflanze dieser edition' : 'the plant of this edition'}</p>
+        <h2 style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.25, marginBottom: 28 }}>
+          {isDE ? 'die sonnenblume.' : 'the sunflower.'}
+        </h2>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {(isDE
+            ? [
+                'jede edition ist eine pflanze. edition 01 ist die sonnenblume — sie dreht sich dem licht zu, den ganzen tag. ein guter anfang.',
+                'die saatpapierkarte in deiner box trägt echte sonnenblumensamen. leg sie auf erde, halt sie feucht, stell sie ins licht. in ein paar wochen wächst sie.',
+                'so aussäen: ende april bis mai, sonniger platz, regelmäßig gießen. wenn sie blüht, schick uns ein foto — wir sammeln den garten dieser edition.',
+              ]
+            : [
+                'every edition is a plant. edition 01 is the sunflower — it turns toward the light, all day long. a good place to start.',
+                'the seed paper card in your box carries real sunflower seeds. lay it on soil, keep it moist, give it light. in a few weeks it grows.',
+                'how to sow: late april through may, a sunny spot, water often. when it blooms, send us a photo — we are collecting this edition’s garden.',
+              ]
+          ).map((line, i) => (
+            <p key={i} style={{ fontSize: '0.95rem', lineHeight: 1.85, color: 'rgba(255,255,255,0.55)', fontWeight: 300, whiteSpace: 'pre-line' }}>
+              {line}
+            </p>
+          ))}
+        </div>
+      </section>
+
       {/* The letters */}
       <section style={{ padding: '60px 40px 100px', maxWidth: 640, margin: '0 auto', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
         <p style={{ ...label(isDE), marginBottom: 48 }}>{isDE ? 'die briefe' : 'the letters'}</p>
