@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../../components/NavBar'
 
@@ -25,8 +26,8 @@ export default function Article() {
         </motion.h1>
 
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2 }}
-          style={{ width: '100%', aspectRatio: '16/9', background: '#f5f5f5', overflow: 'hidden', marginBottom: '3.5rem' }}>
-          <img src="/bw-grid-2.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          style={{ position: 'relative', width: '100%', aspectRatio: '16/9', background: '#f5f5f5', overflow: 'hidden', marginBottom: '3.5rem' }}>
+          <Image src="/couples-bw.jpg" alt="" fill sizes="(max-width: 768px) 100vw, 680px" style={{ objectFit: 'cover' }} />
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.35 }}
