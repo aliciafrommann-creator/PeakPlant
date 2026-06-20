@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { useScroll, useTransform } from 'framer-motion'
@@ -81,8 +82,10 @@ function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; a
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   const y = useTransform(scrollYProgress, [0, 1], ['-8%', '8%'])
   return (
-    <div ref={ref} style={{ overflow: 'hidden', width: '100%', height: '100%' }}>
-      <motion.img src={src} alt={alt} style={{ width: '100%', height: '120%', objectFit: 'cover', objectPosition, y }} />
+    <div ref={ref} style={{ overflow: 'hidden', width: '100%', height: '100%', position: 'relative' }}>
+      <motion.div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '120%', y }}>
+        <Image src={src} alt={alt} fill sizes="(max-width: 768px) 100vw, 550px" style={{ objectFit: 'cover', objectPosition }} />
+      </motion.div>
     </div>
   )
 }

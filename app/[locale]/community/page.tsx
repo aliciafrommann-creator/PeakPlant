@@ -1,6 +1,7 @@
 'use client'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
+import Image from 'next/image'
 import { NavBar } from '../../../components/NavBar'
 import { useIsMobile } from '../../../hooks/useIsMobile'
 
@@ -159,9 +160,9 @@ export default function CommunityPage({ params }: { params: { locale: string } }
       <section style={{ padding: isMobile ? '7rem 1.5rem 4rem' : '8rem 5rem 6rem', maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'center' }}>
         <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <img src="/couples-yosemite.png" alt={isDE ? 'zwei menschen, die zusammen zur ruhe kommen' : 'two people resting together in nature'}
-            decoding="async"
-            style={{ width: '100%', maxWidth: isMobile ? 360 : 460, display: 'block', borderRadius: 2 }} />
+          <Image src="/couples-yosemite.png" alt={isDE ? 'zwei menschen, die zusammen zur ruhe kommen' : 'two people resting together in nature'}
+            width={1122} height={1402} priority sizes="(max-width: 768px) 360px, 460px"
+            style={{ width: '100%', maxWidth: isMobile ? 360 : 460, height: 'auto', display: 'block', borderRadius: 2 }} />
         </motion.div>
         <div>
           <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}

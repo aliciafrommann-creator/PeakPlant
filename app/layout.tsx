@@ -15,6 +15,7 @@ const jsonLd = {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://peak-plant.com'),
   title: 'peakplant — mind the moment. max the love.',
   description: 'peakplant — a new intimacy brand for couples. mind the moment. max the love. edition 01: the sunflower. 6 condoms, 1 question card, 1 seed paper card. vegan, fair rubber. launching august 2026.',
   openGraph: {

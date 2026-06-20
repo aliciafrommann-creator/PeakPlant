@@ -2,6 +2,7 @@
 import { motion, useScroll } from 'framer-motion'
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { NavBar } from '../../components/NavBar'
 import { useIsMobile } from '../../hooks/useIsMobile'
 
@@ -100,8 +101,8 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
       <motion.div
         initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }}
         transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-        style={{ minHeight: isMobile ? '60vw' : 'auto' }}>
-        <img src="/product-hero.png" alt="PeakPlant edition 01 — condoms and the sunflower question card" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }} />
+        style={{ position: 'relative', minHeight: isMobile ? '60vw' : 'auto' }}>
+        <Image src="/product-hero.png" alt="PeakPlant edition 01 — condoms and the sunflower question card" fill priority sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover', objectPosition: 'center' }} />
       </motion.div>
     </section>
   )
@@ -416,14 +417,18 @@ function Manifesto({ locale }: { locale: string }) {
 function LifestyleMoment() {
   return (
     <section style={{ padding: '5rem 2.5rem', background: '#f9f6ef', display: 'flex', justifyContent: 'center' }}>
-      <motion.img
+      <motion.div
         initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        src="/couples-card.png"
-        alt="a couple reading the peakplant sunflower question card in the alps"
-        loading="lazy" decoding="async"
-        style={{ width: '100%', maxWidth: 520, display: 'block', borderRadius: 2 }}
-      />
+        style={{ width: '100%', maxWidth: 520 }}
+      >
+        <Image
+          src="/couples-card.png"
+          alt="a couple reading the peakplant sunflower question card in the alps"
+          width={1122} height={1402} sizes="(max-width: 768px) 100vw, 520px"
+          style={{ width: '100%', height: 'auto', display: 'block', borderRadius: 2 }}
+        />
+      </motion.div>
     </section>
   )
 }
