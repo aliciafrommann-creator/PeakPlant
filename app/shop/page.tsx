@@ -295,9 +295,9 @@ export default function ShopPage() {
         </motion.p>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, 1fr)', gap: '0' }}>
           {[
-            "what's your favorite memory of us?",
-            'when did you know?',
-            'what do you want to remember about tonight?',
+            'what makes you feel seen by me?',
+            'when do you feel most alive with me?',
+            'what helps you open up to me?',
           ].map((q, i) => (
             <motion.div key={i}
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
@@ -328,6 +328,10 @@ export default function ShopPage() {
             <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8 }}>
               every edition is built around one plant — its colour, its card, and the seeds pressed into the paper you find in your box.
               plant the card, water it, and it becomes the real thing. edition 01 grows sunflowers.
+            </p>
+            <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8, marginTop: '1.25rem' }}>
+              in love, the sunflower means warmth, loyalty and growing together. but love isn&apos;t always about shining —
+              it&apos;s about giving each other light, without taking the other&apos;s. that&apos;s what edition 01&apos;s questions are about.
             </p>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}>

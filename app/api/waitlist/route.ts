@@ -30,17 +30,15 @@ const BODY_EN = (unsubUrl: string) => `∧ peakplant
 you're in.
 edition 01 drops in august 2026.
 
-while you wait — a first taste. ten questions per edition, one in every box.
-use one tonight.
+while you wait — a first taste. edition 01 is the sunflower:
+warmth, growing together, giving each other light without taking the other's.
+ten questions per edition, one in every box. use one tonight.
 
-01. “what's your favorite memory of us?”
-02. “when did you know?”
-03. “what do you want to remember about tonight?”
-04. “go for a walk. no destination. just talk.”
-05. “who would you be without me?”
-06. “how would you describe me — without age, job, family or hobbies?”
+01. “what makes you feel seen by me?”
+02. “when do you feel most alive with me?”
+03. “what helps you open up to me?”
 
-the rest unfold as the edition runs.
+the other seven unfold inside the box.
 
 safe. soft. wild.
 ∧ peakplant
@@ -53,17 +51,15 @@ const BODY_DE = (unsubUrl: string) => `∧ peakplant
 du bist dabei.
 edition 01 startet im august 2026.
 
-für die zwischenzeit — ein vorgeschmack. zehn fragen pro edition, eine in jeder box.
-nimm eine davon heute abend.
+für die zwischenzeit — ein vorgeschmack. edition 01 ist die sonnenblume:
+wärme, gemeinsames wachsen, einander licht geben, ohne dem anderen das eigene zu nehmen.
+zehn fragen pro edition, eine in jeder box. nimm eine davon heute abend.
 
-01. „was ist deine liebste erinnerung an uns?”
-02. „wann hast du es gewusst?”
-03. „was soll von heute abend bleiben?”
-04. „geht spazieren. kein ziel. einfach reden.”
-05. „wer wärst du ohne mich?”
-06. „wie würdest du mich beschreiben – ohne alter, beruf, familie oder hobbys?”
+01. „was lässt dich von mir gesehen fühlen?”
+02. „wann fühlst du dich mit mir am lebendigsten?”
+03. „was hilft dir, dich mir zu öffnen?”
 
-der rest entfaltet sich, wenn die edition läuft.
+die übrigen sieben entfalten sich in der box.
 
 safe. soft. wild.
 ∧ peakplant

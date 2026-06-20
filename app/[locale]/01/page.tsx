@@ -7,20 +7,28 @@ import { NavBar } from '../../../components/NavBar'
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 const QUESTIONS_EN = [
-  { n: '01', q: "what's your favorite memory of us?" },
-  { n: '02', q: 'when did you know?' },
-  { n: '03', q: 'what do you want to remember about tonight?' },
-  { n: '04', q: 'go for a walk. no destination. just talk.' },
-  { n: '05', q: 'who would you be without me?' },
-  { n: '06', q: 'how would you describe me — without age, job, family or hobbies?' },
+  { n: '01', q: 'what makes you feel seen by me?' },
+  { n: '02', q: 'when do you feel most alive with me?' },
+  { n: '03', q: 'what helps you open up to me?' },
+  { n: '04', q: 'what makes our relationship feel warm?' },
+  { n: '05', q: 'where do you need more light from me?' },
+  { n: '06', q: 'when do you feel safe enough to fully bloom?' },
+  { n: '07', q: 'where do you need space to grow on your own?' },
+  { n: '08', q: 'what are we still growing into together?' },
+  { n: '09', q: 'how do we find our way back to each other?' },
+  { n: '10', q: 'what have we helped each other become?' },
 ]
 const QUESTIONS_DE = [
-  { n: '01', q: 'was ist deine liebste erinnerung an uns?' },
-  { n: '02', q: 'wann hast du es gewusst?' },
-  { n: '03', q: 'was soll von heute abend bleiben?' },
-  { n: '04', q: 'geht spazieren. kein ziel. einfach reden.' },
-  { n: '05', q: 'wer wärst du ohne mich?' },
-  { n: '06', q: 'wie würdest du mich beschreiben – ohne alter, beruf, familie oder hobbys?' },
+  { n: '01', q: 'was lässt dich von mir gesehen fühlen?' },
+  { n: '02', q: 'wann fühlst du dich mit mir am lebendigsten?' },
+  { n: '03', q: 'was hilft dir, dich mir zu öffnen?' },
+  { n: '04', q: 'was macht unsere beziehung warm?' },
+  { n: '05', q: 'wo brauchst du mehr licht von mir?' },
+  { n: '06', q: 'wann fühlst du dich sicher genug, ganz aufzublühen?' },
+  { n: '07', q: 'wo brauchst du raum, um für dich zu wachsen?' },
+  { n: '08', q: 'worin wachsen wir noch gemeinsam hinein?' },
+  { n: '09', q: 'wie finden wir wieder zueinander?' },
+  { n: '10', q: 'wozu haben wir einander werden lassen?' },
 ]
 
 // one of these surfaces each month — rotates automatically, no deploy needed
@@ -273,11 +281,13 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
           {(isDE
             ? [
                 'jede edition ist eine pflanze. edition 01 ist die sonnenblume — sie dreht sich dem licht zu, den ganzen tag. ein guter anfang.',
+                'in der liebe steht die sonnenblume für wärme, treue, bewunderung und gemeinsames wachsen. doch liebe heißt nicht, immer zu strahlen. es heißt, einander licht zu geben — ohne dem anderen das eigene zu nehmen. genau darum drehen sich die fragen dieser edition.',
                 'die saatpapierkarte in deiner box trägt echte sonnenblumensamen. leg sie auf erde, halt sie feucht, stell sie ins licht. in ein paar wochen wächst sie.',
                 'so aussäen: ende april bis mai, sonniger platz, regelmäßig gießen. wenn sie blüht, schick uns ein foto — wir sammeln den garten dieser edition.',
               ]
             : [
                 'every edition is a plant. edition 01 is the sunflower — it turns toward the light, all day long. a good place to start.',
+                'in love, the sunflower stands for warmth, loyalty, admiration and growing together. but love is not always about shining. it is about giving each other light — without taking the other’s. that is what this edition’s questions are about.',
                 'the seed paper card in your box carries real sunflower seeds. lay it on soil, keep it moist, give it light. in a few weeks it grows.',
                 'how to sow: late april through may, a sunny spot, water often. when it blooms, send us a photo — we are collecting this edition’s garden.',
               ]
@@ -329,7 +339,7 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
           ))}
         </div>
         <p style={{ marginTop: 32, fontSize: '0.75rem', color: 'rgba(255,255,255,0.25)', fontWeight: 300, lineHeight: 1.7 }}>
-          {isDE ? 'zehn fragen pro edition, eine pro box — eine neue edition alle drei monate. das sind die ersten von edition 01, der rest kommt nach und nach. die alten bleiben hier, das archiv wächst.' : 'ten questions per edition, one per box — a new edition every three months. these are the first of edition 01; the rest unfold as it runs. the old ones stay here — the archive grows.'}
+          {isDE ? 'zehn fragen, eine in jeder box. sammle sie über die drei monate von edition 01 — und finde sie alle hier, in deiner digitalen welt. das archiv wächst mit jeder edition.' : 'ten questions, one in every box. collect them over the three months edition 01 runs — and find them all here, in your digital world. the archive grows with every edition.'}
         </p>
       </section>
 

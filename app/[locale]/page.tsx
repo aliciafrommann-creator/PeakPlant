@@ -168,20 +168,28 @@ function Waitlist({ locale }: { locale: string }) {
 }
 
 const questionsEN = [
-  { n: '01', q: "what's your favorite memory of us?" },
-  { n: '02', q: 'when did you know?' },
-  { n: '03', q: 'what do you want to remember about tonight?' },
-  { n: '04', q: 'go for a walk. no destination. just talk.' },
-  { n: '05', q: 'who would you be without me?' },
-  { n: '06', q: 'how would you describe me — without age, job, family or hobbies?' },
+  { n: '01', q: 'what makes you feel seen by me?' },
+  { n: '02', q: 'when do you feel most alive with me?' },
+  { n: '03', q: 'what helps you open up to me?' },
+  { n: '04', q: 'what makes our relationship feel warm?' },
+  { n: '05', q: 'where do you need more light from me?' },
+  { n: '06', q: 'when do you feel safe enough to fully bloom?' },
+  { n: '07', q: 'where do you need space to grow on your own?' },
+  { n: '08', q: 'what are we still growing into together?' },
+  { n: '09', q: 'how do we find our way back to each other?' },
+  { n: '10', q: 'what have we helped each other become?' },
 ]
 const questionsDE = [
-  { n: '01', q: 'was ist deine liebste erinnerung an uns?' },
-  { n: '02', q: 'wann hast du es gewusst?' },
-  { n: '03', q: 'was soll von heute abend bleiben?' },
-  { n: '04', q: 'geht spazieren. kein ziel. einfach reden.' },
-  { n: '05', q: 'wer wärst du ohne mich?' },
-  { n: '06', q: 'wie würdest du mich beschreiben – ohne alter, beruf, familie oder hobbys?' },
+  { n: '01', q: 'was lässt dich von mir gesehen fühlen?' },
+  { n: '02', q: 'wann fühlst du dich mit mir am lebendigsten?' },
+  { n: '03', q: 'was hilft dir, dich mir zu öffnen?' },
+  { n: '04', q: 'was macht unsere beziehung warm?' },
+  { n: '05', q: 'wo brauchst du mehr licht von mir?' },
+  { n: '06', q: 'wann fühlst du dich sicher genug, ganz aufzublühen?' },
+  { n: '07', q: 'wo brauchst du raum, um für dich zu wachsen?' },
+  { n: '08', q: 'worin wachsen wir noch gemeinsam hinein?' },
+  { n: '09', q: 'wie finden wir wieder zueinander?' },
+  { n: '10', q: 'wozu haben wir einander werden lassen?' },
 ]
 
 function QuestionRow({ n, q, cardSrc, i }: { n: string; q: string; cardSrc: string; i: number }) {
