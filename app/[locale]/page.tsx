@@ -7,8 +7,8 @@ import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
-// Global pages — no locale prefix
-const GLOBAL_PAGES = ['/shop', '/community', '/intimacy', '/philosophy', '/ethics', '/about']
+// Global pages — no locale prefix (shop + journal only; rest are locale-routed)
+const GLOBAL_PAGES = ['/shop', '/journal']
 
 const CARD_IMAGES = [
   '/edition-01/8.png',
