@@ -5,7 +5,7 @@ export const runtime = 'nodejs'
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-06-20' })
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peakplant.com'
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peak-plant.com'
 
 const PRICES: Record<string, string> = {
   pack_3:   process.env.STRIPE_PRICE_PACK_3!,

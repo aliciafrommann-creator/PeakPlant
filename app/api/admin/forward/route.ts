@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
   const resend = new Resend(process.env.RESEND_API_KEY)
   await resend.emails.send({
-    from: 'peakplant <hello@peakplant.com>',
+    from: 'peakplant <hello@peak-plant.com>',
     to: supplierEmail,
     subject: `Versandauftrag #${order.id.slice(0, 8).toUpperCase()} — peakplant`,
     html: `
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
   </table>
 
   <div style="background:#f9f9f9;padding:16px;font-size:12px;color:#888;line-height:1.6">
-    Bitte den Versand zeitnah veranlassen und die Tracking-Nummer an hello@peakplant.com zurückmelden.<br>
+    Bitte den Versand zeitnah veranlassen und die Tracking-Nummer an hello@peak-plant.com zurückmelden.<br>
     Bestelldatum: ${orderDate}
   </div>
 </div>`,

@@ -29,8 +29,8 @@ function UnsubscribeContent() {
             </p>
             <p style={{ fontSize: '0.95rem', color: '#666', lineHeight: 1.7, fontWeight: 300 }}>
               write to us at{' '}
-              <a href="mailto:hello@peakplant.com" style={{ color: '#1A1A1A', opacity: 0.7 }}>
-                hello@peakplant.com
+              <a href="mailto:hello@peak-plant.com" style={{ color: '#1A1A1A', opacity: 0.7 }}>
+                hello@peak-plant.com
               </a>{' '}
               and we'll take care of it.
             </p>

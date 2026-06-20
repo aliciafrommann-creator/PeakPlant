@@ -3,7 +3,7 @@
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 // Physical insert card: 85 × 55 mm (credit-card footprint, fits the box).
-// The QR is a fixed target (peakplant.com/01) since cards are printed in bulk —
+// The QR is a fixed target (peak-plant.com/01) since cards are printed in bulk —
 // access is verified by the order email once the customer lands on /01.
 
 export default function CardPrintPage() {
@@ -67,7 +67,7 @@ export default function CardPrintPage() {
         }}>
           {/* QR */}
           <div style={{ width: '32mm', height: '32mm', flexShrink: 0, background: '#fff', padding: '2.5mm', boxSizing: 'border-box', border: '1px solid #ededed' }}>
-            <img src="/qr-01.svg" alt="scan to enter peakplant.com/01" style={{ width: '100%', height: '100%', display: 'block' }} />
+            <img src="/qr-01.svg" alt="scan to enter peak-plant.com/01" style={{ width: '100%', height: '100%', display: 'block' }} />
           </div>
           {/* instructions */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2mm' }}>
@@ -79,7 +79,7 @@ export default function CardPrintPage() {
               scan the code, then enter the email you ordered with. your world unlocks instantly.
             </p>
             <p style={{ fontSize: '7pt', letterSpacing: '0.06em', color: '#1A1A1A', opacity: 0.8, marginTop: '1mm' }}>
-              peakplant.com/01
+              peak-plant.com/01
             </p>
           </div>
         </div>

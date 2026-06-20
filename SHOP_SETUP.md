@@ -47,7 +47,7 @@ Jeweils die **Price-ID** (`price_…`) kopieren — nicht die Produkt-ID.
 
 ### Webhook einrichten
 Stripe Dashboard → **Entwickler → Webhooks → Endpoint hinzufügen**
-- URL: `https://peakplant.com/api/webhook/stripe`
+- URL: `https://peak-plant.com/api/webhook/stripe`
 - Events: `checkout.session.completed`, `customer.subscription.deleted`
 - Signing secret (`whsec_…`) kopieren → `STRIPE_WEBHOOK_SECRET`
 
@@ -75,10 +75,10 @@ RESEND_API_KEY=re_…
 # ── Admin & Supplier ─────────────────────────────────────
 ADMIN_SECRET=ein-langes-zufälliges-passwort
 SUPPLIER_EMAIL=supplier@beispiel.com    # wohin Versandaufträge gehen
-OWNER_EMAIL=hello@peakplant.com         # wohin Bestell-Benachrichtigungen gehen
+OWNER_EMAIL=hello@peak-plant.com         # wohin Bestell-Benachrichtigungen gehen
 
 # ── Allgemein ────────────────────────────────────────────
-NEXT_PUBLIC_SITE_URL=https://peakplant.com
+NEXT_PUBLIC_SITE_URL=https://peak-plant.com
 ```
 
 Nach dem Setzen: **Redeploy** auslösen, damit die Variablen greifen.
@@ -137,7 +137,7 @@ Senden zeigt das Panel „✓ rechnung gesendet" mit Zeitstempel.
 
 > **QR-Karten-Hinweis:** Da die Karten in Auflage gedruckt werden, trägt der
 > QR keinen individuellen Token, sondern zeigt schlicht auf
-> `https://peakplant.com/01`. Die Zugangskontrolle passiert dann über die
+> `https://peak-plant.com/01`. Die Zugangskontrolle passiert dann über die
 > E-Mail-Eingabe. Wer einen individuellen Link will, bekommt ihn per
 > Bestell-Mail.
 
@@ -145,7 +145,7 @@ Senden zeigt das Panel „✓ rechnung gesendet" mit Zeitstempel.
 
 ## 5. Admin-Panel
 
-`https://peakplant.com/admin` → mit `ADMIN_SECRET` einloggen.
+`https://peak-plant.com/admin` → mit `ADMIN_SECRET` einloggen.
 
 - Alle Bestellungen, filterbar nach offen / weitergeleitet
 - Pro Bestellung: Kunde, Lieferadresse, Produkt, Betrag, Status
@@ -159,7 +159,7 @@ Senden zeigt das Panel „✓ rechnung gesendet" mit Zeitstempel.
 - [ ] Stripe Live-Keys statt Test-Keys eintragen, sobald bereit
 - [ ] `orders.sql` in Supabase ausführen
 - [ ] Supplier-E-Mail final festlegen (`SUPPLIER_EMAIL`)
-- [ ] Domain `peakplant.com` in Resend verifizieren (für Absender `hello@peakplant.com`)
-- [ ] Kärtchen-Design (1 Karte, 6 Fragen) mit QR auf `https://peakplant.com/01` finalisieren & drucken
+- [ ] Domain `peak-plant.com` in Resend verifizieren (für Absender `hello@peak-plant.com`)
+- [ ] Kärtchen-Design (1 Karte, 6 Fragen) mit QR auf `https://peak-plant.com/01` finalisieren & drucken
 - [ ] Test-Bestellung im Stripe-Testmodus durchspielen (Karte `4242 4242 4242 4242`)
 - [ ] Entscheiden: Abo-Modell (27€ + 12,90€/mo) im Preorder-Jahr behalten oder pausieren?

@@ -9,8 +9,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-06
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peakplant.com'
-const ADMIN_EMAIL = process.env.OWNER_EMAIL ?? 'hello@peakplant.com'
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peak-plant.com'
+const ADMIN_EMAIL = process.env.OWNER_EMAIL ?? 'hello@peak-plant.com'
 
 async function supabase(path: string, method: string, body?: object) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1${path}`, {
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
     await Promise.all([
       // ── Kundenbestätigung ────────────────────────────────────────────
       email && resend.emails.send({
-        from: 'peakplant <hello@peakplant.com>',
+        from: 'peakplant <hello@peak-plant.com>',
         to: email,
         subject: 'your preorder is confirmed — and your sneak peek is inside.',
         html: `
@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
 
       // ── Admin-Benachrichtigung ───────────────────────────────────────
       resend.emails.send({
-        from: 'peakplant <hello@peakplant.com>',
+        from: 'peakplant <hello@peak-plant.com>',
         to: ADMIN_EMAIL,
         subject: `neue bestellung — ${edition} · ${email}`,
         html: `

@@ -6,8 +6,8 @@ export const dynamic = 'force-dynamic'
 
 const SUP_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUP_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
-const SITE    = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peakplant.com'
-const ADMIN_EMAIL = process.env.OWNER_EMAIL ?? 'hello@peakplant.com'
+const SITE    = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peak-plant.com'
+const ADMIN_EMAIL = process.env.OWNER_EMAIL ?? 'hello@peak-plant.com'
 
 function editionLabel(product: string) {
   if (product === 'pack_3')   return '3er pack'
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       const resend = new Resend(process.env.RESEND_API_KEY)
       await Promise.all([
         resend.emails.send({
-          from: 'peakplant <hello@peakplant.com>',
+          from: 'peakplant <hello@peak-plant.com>',
           to: sanitized,
           subject: 'your spot is reserved — pay whenever you\'re ready.',
           html: `
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
 </div>`,
         }),
         resend.emails.send({
-          from: 'peakplant <hello@peakplant.com>',
+          from: 'peakplant <hello@peak-plant.com>',
           to: ADMIN_EMAIL,
           subject: `reservierung (auf rechnung) — ${edition} · ${sanitized}`,
           html: `
