@@ -9,6 +9,10 @@
   --edition-gold: #C9A96E;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 * {
   margin: 0;
   padding: 0;

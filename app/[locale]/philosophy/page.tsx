@@ -217,17 +217,6 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
         </div>
       </section>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        style={{ padding: '4rem 2.5rem', display: 'flex', justifyContent: 'center', background: '#fafafa' }}>
-        <img
-          src="/couples-yosemite.png"
-          alt="two people resting in yosemite"
-          style={{ width: '100%', maxWidth: 520, display: 'block', borderRadius: 2 }}
-        />
-      </motion.div>
-
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '2rem', fontFamily: PP }}>

@@ -93,7 +93,7 @@ export default function IntimacyPage({ params }: { params: { locale: string } })
       <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
         <video autoPlay muted playsInline loop
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
-          <source src="/film-shadows.mp4" type="video/mp4" />
+          <source src="/film-presence.mp4" type="video/mp4" />
         </video>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55) 100%)' }} />
         <motion.div initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}

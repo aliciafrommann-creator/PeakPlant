@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState } from 'react'
 import { NavBar } from '../../../components/NavBar'
+import { useIsMobile } from '../../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -55,7 +56,7 @@ function JoinModal({ onClose, locale }: { onClose: () => void; locale: string })
     e.preventDefault()
     setStatus('loading')
     try {
-      const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, source: 'community' }) })
+      const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, source: 'community', locale }) })
       const data = await res.json()
       if (data.duplicate) setStatus('duplicate')
       else if (res.ok) setStatus('success')
@@ -109,6 +110,7 @@ export default function CommunityPage({ params }: { params: { locale: string } }
   const [modalOpen, setModalOpen] = useState(false)
   const { locale } = params
   const isDE = locale === 'de'
+  const isMobile = useIsMobile()
 
   const pairs = isDE ? [
     ['Leistung', 'Präsenz'],
@@ -154,12 +156,12 @@ export default function CommunityPage({ params }: { params: { locale: string } }
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
       <NavBar activePath="/community" />
 
-      <section style={{ padding: '8rem 5rem 6rem', maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6rem', alignItems: 'center' }}>
-        <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+      <section style={{ padding: isMobile ? '7rem 1.5rem 4rem' : '8rem 5rem 6rem', maxWidth: 1200, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'center' }}>
+        <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <video autoPlay muted playsInline loop style={{ width: '100%', maxWidth: 480, objectFit: 'contain', display: 'block' }}>
-            <source src="/film-logo-transform.mp4" type="video/mp4" />
-          </video>
+          <img src="/couples-yosemite.png" alt={isDE ? 'zwei menschen, die zusammen zur ruhe kommen' : 'two people resting together in nature'}
+            decoding="async"
+            style={{ width: '100%', maxWidth: isMobile ? 360 : 460, display: 'block', borderRadius: 2 }} />
         </motion.div>
         <div>
           <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
@@ -187,7 +189,7 @@ export default function CommunityPage({ params }: { params: { locale: string } }
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '4rem' }}>
           {isDE ? 'Woran du teilnimmst' : 'What you become part of'}
         </motion.p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '3rem 5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: isMobile ? '2.5rem' : '3rem 5rem' }}>
           {whatYouGet.map((item, i) => (
             <motion.div key={item.label} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
@@ -218,7 +220,7 @@ export default function CommunityPage({ params }: { params: { locale: string } }
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '4rem' }}>
           {isDE ? 'Woran wir glauben' : 'What this community believes'}
         </motion.p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '3rem 5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: isMobile ? '2.5rem' : '3rem 5rem' }}>
           {communityValues.map((v, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}

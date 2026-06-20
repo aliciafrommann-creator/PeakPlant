@@ -53,10 +53,10 @@ function CouplesHero({ locale }: { locale: string }) {
         <h1 style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, margin: '0 auto 2rem' }}>
           {isDE ? 'wann hat das leben begonnen, sich so schnell anzufühlen?' : 'when did life start feeling this fast?'}
         </h1>
-        <Link href="/shop"
+        <a href="#waitlist"
           style={{ display: 'inline-block', marginBottom: '2rem', padding: '0.85rem 2.2rem', border: '1px solid rgba(255,255,255,0.5)', fontSize: '0.65rem', letterSpacing: '0.28em', color: '#ffffff', textDecoration: 'none', fontFamily: PP, textTransform: 'uppercase' }}>
-          {isDE ? 'edition 01 — die sonnenblume' : 'edition 01 — the sunflower'}
-        </Link>
+          {isDE ? 'edition 01 — auf die warteliste' : 'edition 01 — join the waitlist'}
+        </a>
         <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
           {isDE ? 'weiterscrollen' : 'scroll to explore'}
         </p>
@@ -87,8 +87,12 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
           style={{ marginTop: 36, display: 'flex', alignItems: 'baseline', gap: 14 }}>
           <span style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#C9A96E', fontFamily: PP }}>{isDE ? 'vorbestellung folgt bald' : 'preorder opens soon'}</span>
         </motion.div>
-        <motion.div initial={{ opacity: 0, x: -12 }} whileInView={{ opacity: 1, x: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}>
-          <Link href={localHref('/shop')} style={{ display: 'inline-block', marginTop: 16, fontSize: 10, letterSpacing: '0.45em', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.25)', paddingBottom: 4 }}>
+        <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}
+          style={{ marginTop: 28, display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' }}>
+          <a href="#waitlist" style={{ display: 'inline-block', padding: '0.9rem 2rem', background: '#1A1A1A', color: '#ffffff', fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', textDecoration: 'none', fontFamily: PP }}>
+            {isDE ? 'auf die warteliste' : 'join the waitlist'}
+          </a>
+          <Link href={localHref('/shop')} style={{ fontSize: 10, letterSpacing: '0.35em', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.25)', paddingBottom: 4 }}>
             {isDE ? 'ENTDECKEN →' : 'SEE IT →'}
           </Link>
         </motion.div>
@@ -122,7 +126,7 @@ function Waitlist({ locale }: { locale: string }) {
   }
 
   return (
-    <section style={{ padding: '160px 40px', backgroundColor: '#1A1A1A', textAlign: 'center' }}>
+    <section id="waitlist" style={{ padding: '160px 40px', backgroundColor: '#1A1A1A', textAlign: 'center', scrollMarginTop: 80 }}>
       <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
         <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
           <Logo color="#ffffff" size={44} />
@@ -255,6 +259,42 @@ function SixQuestions({ locale }: { locale: string }) {
   )
 }
 
+function CollectAndSurprise({ locale, isMobile }: { locale: string; isMobile: boolean }) {
+  const isDE = locale === 'de'
+  return (
+    <section style={{ backgroundColor: '#faf9f7', borderTop: '1px solid #ebebeb', padding: '7rem 2.5rem' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem' }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
+          <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.9, marginBottom: '1.25rem', fontFamily: PP }}>
+            {isDE ? 'zum sammeln' : 'made to collect'}
+          </p>
+          <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: PP }}>
+            {isDE ? 'zehn karten. eine in jeder box.' : 'ten cards. one in every box.'}
+          </h2>
+          <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8, fontFamily: PP }}>
+            {isDE
+              ? 'jede box trägt eine der zehn fragenkarten dieser edition. nach und nach sammelst du das ganze set — und jede karte lebt für immer in deiner digitalen welt weiter.'
+              : 'every box carries one of this edition’s ten question cards. collect the full set over time — and each card lives on forever in your digital world.'}
+          </p>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}>
+          <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.25rem', fontFamily: PP }}>
+            {isDE ? 'die überraschung' : 'the surprise'}
+          </p>
+          <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: PP }}>
+            {isDE ? 'zwanzig boxen verbergen mehr.' : 'twenty boxes hide more.'}
+          </h2>
+          <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8, fontFamily: PP }}>
+            {isDE
+              ? 'zwanzig boxen pro edition tragen eine besondere karte. dahinter: ein kostenloser workshop, ein kleines goodie oder deine nächste box geschenkt. du weißt es in dem moment, in dem du sie öffnest.'
+              : 'twenty boxes per edition carry a special card. behind it: a free workshop, a little goodie, or your next box on us. you’ll know the moment you open it.'}
+          </p>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
 function Testimonials({ locale, isMobile }: { locale: string; isMobile: boolean }) {
   const isDE = locale === 'de'
   const quotes = isDE ? [
@@ -381,6 +421,7 @@ function LifestyleMoment() {
         viewport={{ once: true }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         src="/couples-card.png"
         alt="a couple reading the peakplant sunflower question card in the alps"
+        loading="lazy" decoding="async"
         style={{ width: '100%', maxWidth: 520, display: 'block', borderRadius: 2 }}
       />
     </section>
@@ -430,6 +471,7 @@ export default function Home({ params }: { params: { locale: string } }) {
       <LifestyleMoment />
       <Testimonials locale={locale} isMobile={isMobile} />
       <SixQuestions locale={locale} />
+      <CollectAndSurprise locale={locale} isMobile={isMobile} />
       <Manifesto locale={locale} />
       <Waitlist locale={locale} />
       <EditionSystem locale={locale} isMobile={isMobile} />

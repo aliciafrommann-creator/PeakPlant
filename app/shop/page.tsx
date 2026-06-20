@@ -155,6 +155,7 @@ export default function ShopPage() {
                 '6 condoms — vegan, fair rubber latex',
                 '1 question card — one of ten to collect this edition, blauer engel certified',
                 '1 seed paper card — plant it, it grows into sunflowers · QR to the digital world',
+                'a chance at a special card — twenty boxes per edition hide a free workshop, a goodie, or your next box on us',
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline' }}>
                   <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
