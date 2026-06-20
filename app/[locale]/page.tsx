@@ -325,6 +325,30 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
   )
 }
 
+function Manifesto({ locale }: { locale: string }) {
+  const isDE = locale === 'de'
+  return (
+    <section style={{ backgroundColor: '#1A1A1A', padding: '8rem 2.5rem', textAlign: 'center' }}>
+      <motion.div initial={{ opacity: 0, y: 32 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}>
+        <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.28em', textTransform: 'uppercase', color: '#ffffff', opacity: 0.3, marginBottom: '2.5rem' }}>
+          ∧ peakplant
+        </p>
+        <h2 style={{ fontFamily: PP, fontSize: 'clamp(2rem, 5vw, 4.5rem)', fontWeight: 200, color: '#ffffff', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 0 }}>
+          {isDE ? 'im moment bleiben.' : 'mind the moment.'}
+        </h2>
+        <h2 style={{ fontFamily: PP, fontSize: 'clamp(2rem, 5vw, 4.5rem)', fontWeight: 200, color: '#C9A96E', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '2.5rem' }}>
+          {isDE ? 'die liebe maximieren.' : 'max the love.'}
+        </h2>
+        <p style={{ fontFamily: PP, fontSize: '0.9rem', color: '#ffffff', opacity: 0.35, fontWeight: 300, maxWidth: 480, margin: '0 auto', lineHeight: 1.85 }}>
+          {isDE
+            ? 'die welt ist so wunderschön. lieben zu können, zu spüren, zu sehen — das ist alles, was wirklich zählt.'
+            : 'the world is so beautiful. to love, to feel, to be seen — that is everything that truly matters.'}
+        </p>
+      </motion.div>
+    </section>
+  )
+}
+
 function LifestyleMoment() {
   return (
     <section style={{ overflow: 'hidden', maxHeight: '90vh', lineHeight: 0 }}>
@@ -382,6 +406,7 @@ export default function Home({ params }: { params: { locale: string } }) {
       <LifestyleMoment />
       <Testimonials locale={locale} isMobile={isMobile} />
       <SixQuestions locale={locale} />
+      <Manifesto locale={locale} />
       <Waitlist locale={locale} />
       <EditionSystem locale={locale} isMobile={isMobile} />
       <Footer locale={locale} />

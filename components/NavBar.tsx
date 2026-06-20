@@ -8,7 +8,8 @@ import { useIsMobile } from '../hooks/useIsMobile'
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 // Pages that live at root level, not under /[locale]/
-const GLOBAL_PATHS = ['/shop', '/community', '/intimacy', '/philosophy', '/ethics', '/about', '/journal', '/unsubscribe']
+// /shop stays global (single checkout, no locale split needed)
+const GLOBAL_PATHS = ['/shop', '/unsubscribe']
 
 function Logo({ color = '#1A1A1A', size = 32 }: { color?: string; size?: number }) {
   return (

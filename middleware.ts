@@ -5,8 +5,7 @@ const LOCALES = ['en', 'de']
 // Global pages that live at root level (not locale-prefixed)
 const SKIP = [
   '/impressum', '/datenschutz', '/agb', '/api', '/_next', '/favicon', '/sitemap', '/robots',
-  '/shop', '/community', '/intimacy', '/philosophy', '/ethics', '/about', '/journal', '/unsubscribe',
-  '/admin', '/bestellen',
+  '/shop', '/unsubscribe', '/admin', '/bestellen',
 ]
 
 function preferredLocale(req: NextRequest): string {

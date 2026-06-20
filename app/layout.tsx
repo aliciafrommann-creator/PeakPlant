@@ -15,12 +15,21 @@ const jsonLd = {
 }
 
 export const metadata: Metadata = {
-  title: 'peakplant — safe. soft. wild.',
-  description: 'peakplant is a new intimacy brand for couples who want to feel closer. 6 condoms, 1 question card, 1 seed paper card. vegan, fair rubber. launching august 2026.',
+  title: 'peakplant — mind the moment. max the love.',
+  description: 'peakplant — a new intimacy brand for couples. mind the moment. max the love. edition 01: the sunflower. 6 condoms, 1 question card, 1 seed paper card. vegan, fair rubber. launching august 2026.',
   openGraph: {
-    title: 'peakplant — safe. soft. wild.',
-    description: '6 condoms. one question. one ritual.',
+    title: 'peakplant — mind the moment. max the love.',
+    description: '6 condoms. one question. one ritual. edition 01 — the sunflower.',
     type: 'website',
+    url: 'https://peak-plant.com',
+    siteName: 'PeakPlant',
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'PeakPlant — mind the moment. max the love.' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'peakplant — mind the moment. max the love.',
+    description: '6 condoms. one question. one ritual. edition 01 — the sunflower.',
+    images: ['/opengraph-image'],
   },
   icons: [{ rel: 'icon', url: '/favicon.svg', type: 'image/svg+xml' }],
 }
@@ -40,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <CursorEffect />
         {children}
         <CookieBanner />
+        <script defer src="/_vercel/insights/script.js" />
       </body>
     </html>
   )
