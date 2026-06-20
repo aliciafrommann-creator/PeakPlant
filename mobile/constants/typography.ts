@@ -1,0 +1,51 @@
+export const Typography = {
+  hero: {
+    fontSize: 42,
+    fontWeight: '200' as const,
+    letterSpacing: -0.5,
+    color: '#1A1A1A',
+    lineHeight: 50,
+  },
+  heading: {
+    fontSize: 28,
+    fontWeight: '300' as const,
+    letterSpacing: -0.3,
+    color: '#1A1A1A',
+    lineHeight: 34,
+  },
+  subheading: {
+    fontSize: 20,
+    fontWeight: '300' as const,
+    letterSpacing: -0.2,
+    color: '#1A1A1A',
+    lineHeight: 26,
+  },
+  body: {
+    fontSize: 15,
+    fontWeight: '300' as const,
+    letterSpacing: 0,
+    color: '#1A1A1A',
+    lineHeight: 22,
+  },
+  label: {
+    fontSize: 11,
+    fontWeight: '500' as const,
+    letterSpacing: 2,
+    color: '#777777',
+    textTransform: 'uppercase' as const,
+  },
+  caption: {
+    fontSize: 13,
+    fontWeight: '300' as const,
+    letterSpacing: 0.2,
+    color: '#777777',
+    lineHeight: 18,
+  },
+  mono: {
+    fontSize: 13,
+    fontWeight: '400' as const,
+    letterSpacing: 1,
+    color: '#555555',
+    fontFamily: 'monospace',
+  },
+};
