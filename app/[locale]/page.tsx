@@ -207,9 +207,11 @@ function QuestionRow({ n, q, cardSrc, i }: { n: string; q: string; cardSrc: stri
   )
 }
 
+const QUESTIONS_SHOWN = 3
+
 function SixQuestions({ locale }: { locale: string }) {
   const isDE = locale === 'de'
-  const questions = isDE ? questionsDE : questionsEN
+  const questions = (isDE ? questionsDE : questionsEN).slice(0, QUESTIONS_SHOWN)
   return (
     <section style={{ backgroundColor: '#ffffff', borderTop: '1px solid #ebebeb', padding: '8rem 2.5rem' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
@@ -218,13 +220,27 @@ function SixQuestions({ locale }: { locale: string }) {
           edition 01
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '5rem', fontFamily: PP }}>
+          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '2rem', fontFamily: PP }}>
           {isDE ? 'zehn fragen. eine edition.' : 'ten questions. one edition.'}
         </motion.h2>
+        <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.15 }}
+          style={{ fontSize: '0.95rem', color: '#777', fontWeight: 300, lineHeight: 1.8, maxWidth: 440, marginBottom: '4rem', fontFamily: PP }}>
+          {isDE ? 'ein vorgeschmack. die übrigen entfalten sich, eine nach der anderen, in deiner box.' : 'a first taste. the rest unfold, one at a time, inside your box.'}
+        </motion.p>
         <div style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #ebebeb' }}>
           {questions.map(({ n, q }, i) => (
             <QuestionRow key={n} n={n} q={q} cardSrc={CARD_IMAGES[i]} i={i} />
           ))}
+          <motion.div
+            initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: QUESTIONS_SHOWN * 0.07, ease: [0.16, 1, 0.3, 1] }}
+            style={{ display: 'flex', alignItems: 'baseline', gap: '2.5rem', padding: '2rem 0', borderBottom: '1px solid #ebebeb' }}
+          >
+            <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24 }}>∧</span>
+            <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', color: '#bbb', fontFamily: PP }}>
+              {isDE ? 'sieben weitere — zu entdecken in edition 01.' : 'seven more — to discover in edition 01.'}
+            </p>
+          </motion.div>
         </div>
       </div>
     </section>

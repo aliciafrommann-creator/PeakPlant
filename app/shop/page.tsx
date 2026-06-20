@@ -298,9 +298,6 @@ export default function ShopPage() {
             "what's your favorite memory of us?",
             'when did you know?',
             'what do you want to remember about tonight?',
-            'go for a walk. no destination. just talk.',
-            'who would you be without me?',
-            'how would you describe me — without age, job, family or hobbies?',
           ].map((q, i) => (
             <motion.div key={i}
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
@@ -310,6 +307,13 @@ export default function ShopPage() {
               <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{q}"</p>
             </motion.div>
           ))}
+          <motion.div
+            initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.18 }}
+            style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem' }}>∧</p>
+            <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, color: '#bbb' }}>seven more — to discover in your box.</p>
+          </motion.div>
         </div>
       </section>
 
