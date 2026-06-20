@@ -99,7 +99,7 @@ export async function POST(req: Request) {
       const res = await fetch(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/subscribers`, {
         method: 'POST',
         headers: supabaseHeaders(supabaseKey),
-        body: JSON.stringify({ email: sanitized, source: source ?? 'homepage', edition: 'edition_01' }),
+        body: JSON.stringify({ email: sanitized, source: source ?? 'homepage', edition: 'edition_01', status: 'active', locale: isDE ? 'de' : 'en' }),
       })
       if (res.status === 409) return NextResponse.json({ duplicate: true })
       if (!res.ok) {
