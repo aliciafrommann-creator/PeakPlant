@@ -4,9 +4,9 @@ const BASE = 'https://peak-plant.com'
 const LOCALES = ['en', 'de']
 
 // Pages that stay at root (no locale prefix)
-const GLOBAL_PAGES = ['/shop']
+const GLOBAL_PAGES = ['/shop', '/journal']
 // Pages that exist in both locales under /[locale]/
-const LOCALE_CONTENT_PAGES = ['/philosophy', '/intimacy', '/community', '/about', '/ethics', '/journal', '/01']
+const LOCALE_CONTENT_PAGES = ['/philosophy', '/intimacy', '/community', '/about', '/ethics', '/01']
 const LEGAL_PAGES = ['/impressum', '/datenschutz', '/agb']
 const JOURNAL_ARTICLES = [
   '/journal/why-the-wrapper-has-a-question',
