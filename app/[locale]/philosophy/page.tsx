@@ -218,13 +218,13 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
       </section>
 
       <motion.div
-        initial={{ opacity: 0, scale: 1.03 }} whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }} transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-        style={{ overflow: 'hidden', maxHeight: '80vh', lineHeight: 0 }}>
+        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        style={{ padding: '4rem 2.5rem', display: 'flex', justifyContent: 'center', background: '#fafafa' }}>
         <img
           src="/couples-yosemite.png"
           alt="two people resting in yosemite"
-          style={{ width: '100%', objectFit: 'cover', display: 'block' }}
+          style={{ width: '100%', maxWidth: 520, display: 'block', borderRadius: 2 }}
         />
       </motion.div>
 

@@ -35,7 +35,7 @@ export function NavBar({ activePath }: { activePath?: string }) {
   const localHref = (href: string) => {
     if (href === '/') return `/${locale}`
     if (GLOBAL_PATHS.some(g => href === g || href.startsWith(`${g}/`))) return href
-    return isLocaleRoute ? `/${locale}${href}` : href
+    return `/${locale}${href}`
   }
 
   useEffect(() => {

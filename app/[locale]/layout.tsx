@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 
 const SITE_URL = 'https://peak-plant.com'
 
@@ -20,6 +21,7 @@ export async function generateMetadata({ params }: { params: { locale: string } 
   }
 }
 
-export default function LocaleLayout({ children }: { children: React.ReactNode }) {
+export default function LocaleLayout({ children, params }: { children: React.ReactNode; params: { locale: string } }) {
+  if (!['en', 'de'].includes(params.locale)) notFound()
   return <>{children}</>
 }

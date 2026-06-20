@@ -375,13 +375,13 @@ function Manifesto({ locale }: { locale: string }) {
 
 function LifestyleMoment() {
   return (
-    <section style={{ overflow: 'hidden', maxHeight: '90vh', lineHeight: 0 }}>
+    <section style={{ padding: '5rem 2.5rem', background: '#f9f6ef', display: 'flex', justifyContent: 'center' }}>
       <motion.img
-        initial={{ scale: 1.04, opacity: 0 }} whileInView={{ scale: 1, opacity: 1 }}
-        viewport={{ once: true }} transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }} transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
         src="/couples-card.png"
         alt="a couple reading the peakplant sunflower question card in the alps"
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        style={{ width: '100%', maxWidth: 520, display: 'block', borderRadius: 2 }}
       />
     </section>
   )
