@@ -6,14 +6,19 @@ import type { MomentCard } from '../../lib/types';
 interface MomentCardItemProps {
   card: MomentCard;
   onPress?: (card: MomentCard) => void;
+  isSuggested?: boolean;
 }
 
-export function MomentCardItem({ card, onPress }: MomentCardItemProps) {
+export function MomentCardItem({ card, onPress, isSuggested = false }: MomentCardItemProps) {
   const isSealed = card.status === 'sealed';
 
   return (
     <TouchableOpacity
-      style={[styles.container, isSealed ? styles.sealed : styles.activated]}
+      style={[
+        styles.container,
+        isSealed ? styles.sealed : styles.activated,
+        isSuggested && styles.suggested,
+      ]}
       onPress={() => onPress?.(card)}
       activeOpacity={0.8}
     >
@@ -70,5 +75,9 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: Colors.border,
     marginTop: 'auto',
+  },
+  suggested: {
+    borderColor: Colors.accent,
+    borderWidth: 1.5,
   },
 });
