@@ -1,5 +1,5 @@
 /**
- * Supabase auth — email OTP (6-digit code). Only used when configured; the app
+ * Supabase auth — email OTP. Only used when configured; the app
  * falls back to mock auth otherwise. See docs/BACKEND.md.
  */
 
