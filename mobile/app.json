@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "PeakPlant",
+    "slug": "peakplant",
+    "owner": "aliciafrommann",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1A1A1A"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.peakplant.app",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1A1A1A"
+      },
+      "package": "com.peakplant.app"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow PeakPlant to use your camera to scan moment cards and capture memories."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow PeakPlant to access your photos to add them to your shared diary."
+        }
+      ]
+    ],
+    "scheme": "peakplant",
+    "web": {
+      "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d346781d-c0f6-4826-a8f3-381a52a6670d"
+      }
+    }
+  }
+}
+
