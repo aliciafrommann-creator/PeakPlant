@@ -75,10 +75,9 @@ export default function CreateMemoryScreen() {
         </View>
 
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          {/* Card prompt */}
+          {/* The prompt comes from the physical card — shown here to confirm the right card was scanned. */}
           {card && (
             <View style={styles.promptSection}>
-              <Text style={styles.cardLabel}>CARD {String(card.number).padStart(2, '0')}</Text>
               <Text style={styles.prompt}>{card.prompt}</Text>
             </View>
           )}
@@ -168,12 +167,6 @@ const styles = StyleSheet.create({
   },
   promptSection: {
     gap: Spacing.sm,
-  },
-  cardLabel: {
-    fontSize: 9,
-    fontWeight: '500',
-    letterSpacing: 3,
-    color: Colors.accent,
   },
   prompt: {
     fontSize: 22,

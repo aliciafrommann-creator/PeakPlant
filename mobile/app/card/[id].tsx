@@ -10,11 +10,12 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
-import { SEED_CARDS } from '../../lib/seed';
+import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
 
 export default function CardDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const card = SEED_CARDS.find((c) => c.id === id);
+  const edition = card ? (getEdition(card.edition) ?? SEED_EDITION) : SEED_EDITION;
 
   if (!card) {
     return (
@@ -45,7 +46,7 @@ export default function CardDetailScreen() {
         {/* Card visual */}
         <View style={styles.cardVisual}>
           <View style={styles.cardInner}>
-            <Text style={styles.cardEdition}>PEAKPLANT — GROW TOGETHER</Text>
+            <Text style={styles.cardEdition}>PEAKPLANT — {edition.name.toUpperCase()}</Text>
             <Text style={styles.cardTypeLabel}>
               {isAction ? 'MOMENT' : 'QUESTION'} — #{String(card.number).padStart(2, '0')}
             </Text>
