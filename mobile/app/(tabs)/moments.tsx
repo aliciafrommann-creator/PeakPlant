@@ -64,6 +64,8 @@ export default function MomentsScreen() {
         style={styles.fab}
         onPress={() => router.push('/memory/create')}
         activeOpacity={0.8}
+        accessibilityRole="button"
+        accessibilityLabel="Add a moment"
       >
         <Text style={styles.fabText}>+ MOMENT</Text>
       </TouchableOpacity>

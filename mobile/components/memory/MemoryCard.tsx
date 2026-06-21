@@ -17,9 +17,16 @@ function formatDate(iso: string): string {
 
 export function MemoryCard({ memory, card, onPress }: MemoryCardProps) {
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.85}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={onPress}
+      activeOpacity={0.85}
+      accessibilityRole="button"
+      accessibilityLabel={`Moment${card ? ` for card ${card.number}` : ''}, ${formatDate(memory.createdAt)}`}
+      accessibilityHint="Opens this moment"
+    >
       {memory.photoUri && (
-        <Image source={{ uri: memory.photoUri }} style={styles.photo} />
+        <Image source={{ uri: memory.photoUri }} style={styles.photo} accessibilityLabel="Moment photo" />
       )}
       <View style={styles.body}>
         {card && (

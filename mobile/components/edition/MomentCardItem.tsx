@@ -21,6 +21,13 @@ export function MomentCardItem({ card, onPress, isSuggested = false }: MomentCar
       ]}
       onPress={() => onPress?.(card)}
       activeOpacity={0.8}
+      accessibilityRole="button"
+      accessibilityLabel={
+        isSealed
+          ? `Card ${card.number}, not yet explored`
+          : `Card ${card.number}: ${card.prompt}`
+      }
+      accessibilityHint={isSuggested ? 'Suggested for you' : undefined}
     >
       <Text style={[styles.number, isSealed ? styles.numberSealed : styles.numberActivated]}>
         {String(card.number).padStart(2, '0')}

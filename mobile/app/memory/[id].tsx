@@ -60,7 +60,11 @@ export default function MemoryDetailScreen() {
       <SafeAreaView style={styles.container}>
         <View style={styles.notFound}>
           <Text style={styles.notFoundText}>moment not found.</Text>
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+          >
             <Text style={styles.backLink}>go back</Text>
           </TouchableOpacity>
         </View>
@@ -71,7 +75,11 @@ export default function MemoryDetailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+        >
           <Text style={styles.backText}>← BACK</Text>
         </TouchableOpacity>
         <Text style={styles.headerLabel}>MOMENT</Text>

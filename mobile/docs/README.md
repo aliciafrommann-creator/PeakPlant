@@ -10,6 +10,7 @@ what is DECIDED vs. OPEN before you build.
 | [ARCHITECTURE](./ARCHITECTURE.md) | App layers, repository pattern, Supabase-phase targets. |
 | [DATA_MODEL](./DATA_MODEL.md) | Entities and Supabase-phase modelling conventions. |
 | [DESIGN_SYSTEM](./DESIGN_SYSTEM.md) | Colors, type, spacing, components, rules. |
+| [UX_GUIDELINES](./UX_GUIDELINES.md) | Experience principles, state/recovery, accessibility, motion, voice, definition of done. |
 | [AI_SAFETY](./AI_SAFETY.md) | AI personalization policy, sensitive text, crisis route, authority boundary. |
 | [SECURITY](./SECURITY.md) | RLS, media privacy, age gating, retention, incident response. |
 | [PRIVACY](./PRIVACY.md) | User-facing privacy principles. |
