@@ -69,7 +69,11 @@ export interface Edition {
   /** Symbol/emoji used as the edition's visual marker (e.g. 🌻 for Sunflower). */
   symbol: string;
   status: EditionStatus;
-  /** Announced number of moment cards (used before cards are seeded). */
+  /**
+   * Number of cards in this edition's deck. A deck holds 15–20 cards
+   * (see DECK_SIZE_RANGE). 0 means the deck isn't finalized yet — cards are
+   * assigned to editions (and their QR codes generated) incrementally.
+   */
   cardCount: number;
   cards: MomentCard[];
   coverImage?: string;

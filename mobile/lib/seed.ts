@@ -74,11 +74,17 @@ export const SEED_ACTIVATIONS: Record<string, string[]> = {
 };
 
 /**
- * Couples editions roadmap. Only edition-01 ships with its 20 cards today
+ * A deck holds between 15 and 20 cards. Upcoming editions have cardCount 0
+ * until their cards are assigned and QR codes generated (done incrementally).
+ */
+export const DECK_SIZE_RANGE = { min: 15, max: 20 } as const;
+
+/**
+ * Couples editions roadmap. Only edition-01 has a finalized deck today
  * (status: available); the rest are on the public roadmap (status: upcoming)
- * so a space can see what's coming. Friends editions are intentionally not a
- * product line — friends still use the available couples-neutral editions in a
- * friends space (see PRODUCT.md / decision register).
+ * with cardCount 0 — their cards aren't assigned yet. Friends editions are
+ * intentionally not a product line — friends still use the available
+ * couples-neutral editions in a friends space (see PRODUCT.md / decision register).
  */
 export const SEED_EDITIONS: Edition[] = [
   {
@@ -100,7 +106,7 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'discover how each of you gives and receives love.',
     symbol: '💬',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -111,7 +117,7 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'phones away, fully here. moments of undivided attention.',
     symbol: '🌿',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -122,7 +128,7 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'playful heat and honest desire, just for the two of you.',
     symbol: '🌶️',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -133,7 +139,7 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'for the distance — staying close across the miles.',
     symbol: '✈️',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -144,7 +150,7 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'small daily acts that compound into closeness.',
     symbol: '✨',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -155,7 +161,7 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'grow as individuals, so you grow as a pair.',
     symbol: '🪞',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -166,7 +172,7 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'unexpected dares and spontaneous detours.',
     symbol: '🎲',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -177,7 +183,7 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'slow, cozy moments to retreat into together.',
     symbol: '🏕️',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   // Life-stage editions — for a specific season of a relationship.
@@ -189,7 +195,7 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'for the early days — getting to know each other, one moment at a time.',
     symbol: '🌱',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -200,7 +206,7 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'for busy lives — small moments that fit between everything else.',
     symbol: '🌙',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -211,7 +217,7 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'for parents — staying a couple, not just a team.',
     symbol: '🧸',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
 ];

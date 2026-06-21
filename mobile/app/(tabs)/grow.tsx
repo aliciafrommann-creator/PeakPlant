@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
-import { SEED_EDITIONS } from '../../lib/seed';
+import { SEED_EDITIONS, DECK_SIZE_RANGE } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { ShopLink } from '../../components/edition/ShopLink';
@@ -54,7 +54,7 @@ export default function GrowScreen() {
           <Text style={available ? styles.meta : styles.metaSoon}>
             {available
               ? `${done} of ${item.cardCount} preserved`
-              : 'coming soon'}
+              : `${DECK_SIZE_RANGE.min}–${DECK_SIZE_RANGE.max} cards · coming soon`}
           </Text>
         </View>
       </TouchableOpacity>

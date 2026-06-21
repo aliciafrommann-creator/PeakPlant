@@ -34,7 +34,7 @@ The first edition uses flowers, roots, and growth as symbols for relationships
 that develop through shared attention and experiences.
 
 Physical box:
-- 20 Moment Cards (questions, rituals, shared experiences, reflection prompts)
+- 20 Moment Cards (this edition's deck; decks range 15–20 cards)
 - sunflower seeds / seed paper
 - one small edition-specific extra
 - a QR code on every card
@@ -55,9 +55,14 @@ experience.
 ## Editions roadmap
 
 The **Grow** tab is the editions library. Opening an *available* edition shows
-its deck; you scan the QR of the card you finished to preserve that moment
+its diary; you scan the QR of the card you finished to preserve that moment
 (note + photo), then can share it to other apps. *Upcoming* editions are shown
 on the roadmap but not yet openable.
+
+**An edition is a deck of 15–20 cards.** Edition 01 ships with 20; the exact
+count of later editions is set as their cards are assigned and QR codes
+generated, one edition at a time. In the data model this is `cardCount`
+(`0` = deck not finalized yet) and `DECK_SIZE_RANGE` in `mobile/lib/seed.ts`.
 
 **Thematic editions:**
 01 Grow Together 🌻 *(available)* · 02 Love Languages 💬 · 03 In Presence 🌿 ·
