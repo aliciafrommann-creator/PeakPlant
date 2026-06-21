@@ -37,7 +37,7 @@ export default function SignInScreen() {
   };
 
   const verify = async () => {
-    if (!code.trim() || busy) return;
+    if (!code || busy) return;
     setBusy(true);
     setError(null);
     try {
@@ -80,15 +80,16 @@ export default function SignInScreen() {
           ) : (
             <View style={styles.center}>
               <Text style={styles.title}>enter your code</Text>
-              <Text style={styles.subtitle}>we sent a 6-digit code to {email.toLowerCase()}.</Text>
+              <Text style={styles.subtitle}>we sent a one-time code to {email.toLowerCase()}.</Text>
               <TextInput
                 style={[styles.input, styles.codeInput]}
-                placeholder="123456"
+                placeholder="12345678"
                 placeholderTextColor={Colors.textFaint}
                 value={code}
-                onChangeText={setCode}
+                onChangeText={(value) => setCode(value.replace(/\D/g, ''))}
                 keyboardType="number-pad"
-                maxLength={6}
+                autoComplete="one-time-code"
+                textContentType="oneTimeCode"
                 autoFocus
               />
               <TouchableOpacity onPress={() => setStage('email')} accessibilityRole="button" accessibilityLabel="Use a different email">
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     marginTop: Spacing.md,
   },
-  codeInput: { fontSize: 28, letterSpacing: 8 },
+  codeInput: { fontSize: 28, letterSpacing: 5 },
   link: { fontSize: 12, fontWeight: '300', color: Colors.accent, marginTop: Spacing.md },
   error: { fontSize: 13, fontWeight: '300', color: '#b42318', marginBottom: Spacing.md },
   bottom: { alignItems: 'flex-start' },
