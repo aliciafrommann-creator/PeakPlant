@@ -49,6 +49,10 @@ export default function RootLayout() {
             name="customize"
             options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
           />
+          <Stack.Screen
+            name="account"
+            options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+          />
         </Stack>
       </QueryClientProvider>
     </SafeAreaProvider>

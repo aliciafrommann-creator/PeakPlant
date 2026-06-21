@@ -66,6 +66,17 @@ export default function CustomizeScreen() {
           more arrives over time. each piece is optional and can be switched off again
           whenever you like.
         </Text>
+
+        <TouchableOpacity
+          style={styles.accountRow}
+          onPress={() => router.push('/account')}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Account and data"
+        >
+          <Text style={styles.accountLabel}>account &amp; data</Text>
+          <Text style={styles.accountArrow}>→</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -116,4 +127,15 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginTop: Spacing.md,
   },
+  accountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+    marginTop: Spacing.lg,
+  },
+  accountLabel: { fontSize: 15, fontWeight: '400', color: Colors.text },
+  accountArrow: { fontSize: 18, fontWeight: '200', color: Colors.textMuted },
 });

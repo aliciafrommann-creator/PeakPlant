@@ -59,3 +59,10 @@ export async function ensureProfile(name: string): Promise<void> {
 export async function signOut(): Promise<void> {
   await supabase?.auth.signOut();
 }
+
+/** Permanently delete the caller's account and data (delete_account RPC). */
+export async function deleteAccount(): Promise<void> {
+  const { error } = await client().rpc('delete_account');
+  if (error) throw error;
+  await signOut();
+}
