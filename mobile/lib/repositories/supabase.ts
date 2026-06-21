@@ -21,7 +21,12 @@ function db() {
 }
 
 function generateInviteCode(): string {
-  return `PEAK-${Math.floor(1000 + Math.random() * 9000)}`;
+  // 6 chars from an unambiguous alphabet (~1e9 combos) — a 4-digit code was
+  // brute-forceable to join a stranger's private space.
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) code += alphabet[Math.floor(Math.random() * alphabet.length)];
+  return `PEAK-${code}`;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

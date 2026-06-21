@@ -147,7 +147,7 @@ export default function NewSpaceScreen() {
               value={code}
               onChangeText={setCode}
               autoCapitalize="characters"
-              maxLength={9}
+              maxLength={11}
             />
           </View>
 
