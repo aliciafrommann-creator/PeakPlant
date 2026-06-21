@@ -11,6 +11,10 @@ describe('weekKey', () => {
     expect(weekKey(new Date(2026, 5, 23, 12))).toBe('2026-06-22');
     expect(weekKey(new Date(2026, 5, 22, 0))).toBe('2026-06-22');
   });
+
+  it('keeps the local calendar date instead of converting it through UTC', () => {
+    expect(weekKey(new Date(2026, 5, 21, 0, 30))).toBe('2026-06-15');
+  });
 });
 
 describe('computeWeeklyStreak', () => {

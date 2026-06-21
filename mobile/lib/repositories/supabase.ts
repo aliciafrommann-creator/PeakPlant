@@ -5,7 +5,7 @@
  */
 
 import { supabase } from '../supabase/client';
-import { uploadMemoryPhoto, signedPhotoUrl } from '../supabase/storage';
+import { deleteMemoryPhoto, uploadMemoryPhoto, signedPhotoUrl } from '../supabase/storage';
 import { SEED_CARDS } from '../seed';
 import type { Memory, MomentCard, Space, SpaceMember } from '../types';
 import type {
@@ -52,7 +52,7 @@ function mapMemory(r: any): Memory {
 /** Replace the stored photo path with a short-lived signed URL for display. */
 async function withSignedPhoto(m: Memory): Promise<Memory> {
   if (!m.photoUri) return m;
-  const url = await signedPhotoUrl(m.photoUri);
+  const url = await signedPhotoUrl(m.photoUri).catch(() => undefined);
   return { ...m, photoUri: url };
 }
 
@@ -91,7 +91,10 @@ export const supabaseMemoryRepository: IMemoryRepository = {
       })
       .select()
       .single();
-    if (error) throw error;
+    if (error) {
+      if (photoPath) await deleteMemoryPhoto(photoPath).catch(() => undefined);
+      throw error;
+    }
     return withSignedPhoto(mapMemory(row));
   },
 
@@ -105,8 +108,21 @@ export const supabaseMemoryRepository: IMemoryRepository = {
   },
 
   async delete(id: string): Promise<void> {
+    const { data: memory, error: readError } = await db()
+      .from('memories')
+      .select('photo_path')
+      .eq('id', id)
+      .maybeSingle();
+    if (readError) throw readError;
+
     const { error } = await db().from('memories').delete().eq('id', id);
     if (error) throw error;
+
+    if (memory?.photo_path) {
+      // The database row is already gone. A storage outage must not make the UI
+      // claim the moment still exists; storage cleanup remains best-effort here.
+      await deleteMemoryPhoto(memory.photo_path).catch(() => undefined);
+    }
   },
 };
 
