@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server'
 const LOCALES = ['en', 'de']
 // Global pages that live at root level (not locale-prefixed)
 const SKIP = [
-  '/impressum', '/datenschutz', '/agb', '/api', '/_next', '/favicon', '/sitemap', '/robots',
+  '/impressum', '/datenschutz', '/app-datenschutz', '/agb', '/api', '/_next', '/favicon', '/sitemap', '/robots',
   '/shop', '/journal', '/unsubscribe', '/admin', '/bestellen',
 ]
 
