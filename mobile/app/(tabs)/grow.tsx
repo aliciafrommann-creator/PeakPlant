@@ -6,6 +6,7 @@ import { Spacing } from '../../constants/spacing';
 import { SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { ShopLink } from '../../components/edition/ShopLink';
 import type { Edition } from '../../lib/types';
 
 export default function GrowScreen() {
@@ -76,6 +77,7 @@ export default function GrowScreen() {
             </Text>
           </View>
         }
+        ListFooterComponent={<ShopLink variant="inline" />}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
       />

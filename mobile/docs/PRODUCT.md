@@ -59,11 +59,27 @@ its deck; you scan the QR of the card you finished to preserve that moment
 (note + photo), then can share it to other apps. *Upcoming* editions are shown
 on the roadmap but not yet openable.
 
+**Thematic editions:**
 01 Grow Together 🌻 *(available)* · 02 Love Languages 💬 · 03 In Presence 🌿 ·
 04 Deep Spice 🌶️ · 05 Far Away ✈️ · 06 Lovemaxing ✨ · 07 Self Worth 🪞 ·
 08 Wild Cards 🎲 · 09 Hideout 🏕️
 
+**Life-stage editions** (for a specific season of a relationship):
+10 Just Started 🌱 *(dating / the beginning)* · 11 After Hours 🌙 *(busy couples)* ·
+12 After Bedtime 🧸 *(parents)*
+
 These are all **couples** editions (catalog: `mobile/lib/seed.ts → SEED_EDITIONS`).
+Names/symbols/order are easy to adjust before any of these ship.
+
+## The flywheel: finish one, get the next
+
+Editions are consumable physical sets. When a couple has collected an edition's
+moments, the app gently points them back to the shop for a new one — there's
+always a next edition for the next season. This is surfaced as a "get your next
+edition" link at the end of an edition's diary and a quiet "get more editions"
+link in the library. The shop URL lives in `lib/config.ts` (`SHOP_URL`). The
+app never gates the diary behind a purchase; the link is an invitation, not a
+wall.
 
 ## Friends: a space, not a product line (PP-026)
 

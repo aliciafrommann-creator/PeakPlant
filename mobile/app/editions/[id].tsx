@@ -7,6 +7,7 @@ import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { getEdition, SEED_EDITION, SEED_CARDS } from '../../lib/seed';
 import { MemoryCard } from '../../components/memory/MemoryCard';
+import { ShopLink } from '../../components/edition/ShopLink';
 import type { Memory } from '../../lib/types';
 
 export default function EditionScreen() {
@@ -91,6 +92,9 @@ export default function EditionScreen() {
               </Text>
             </View>
           )
+        }
+        ListFooterComponent={
+          editionMemories.length > 0 ? <ShopLink variant="card" /> : null
         }
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}

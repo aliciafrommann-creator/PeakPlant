@@ -180,6 +180,40 @@ export const SEED_EDITIONS: Edition[] = [
     cardCount: 20,
     cards: [],
   },
+  // Life-stage editions — for a specific season of a relationship.
+  {
+    id: 'edition-10',
+    order: 10,
+    name: 'Just Started',
+    subtitle: 'Edition 10 — Seedling',
+    description: 'for the early days — getting to know each other, one moment at a time.',
+    symbol: '🌱',
+    status: 'upcoming',
+    cardCount: 20,
+    cards: [],
+  },
+  {
+    id: 'edition-11',
+    order: 11,
+    name: 'After Hours',
+    subtitle: 'Edition 11 — Lantern',
+    description: 'for busy lives — small moments that fit between everything else.',
+    symbol: '🌙',
+    status: 'upcoming',
+    cardCount: 20,
+    cards: [],
+  },
+  {
+    id: 'edition-12',
+    order: 12,
+    name: 'After Bedtime',
+    subtitle: 'Edition 12 — Hearth',
+    description: 'for parents — staying a couple, not just a team.',
+    symbol: '🧸',
+    status: 'upcoming',
+    cardCount: 20,
+    cards: [],
+  },
 ];
 
 /** Back-compat: the launch edition. Prefer SEED_EDITIONS / getEdition(id). */
