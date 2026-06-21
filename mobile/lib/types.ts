@@ -52,11 +52,25 @@ export interface User {
   name: string;
 }
 
+/**
+ * `available` editions have their cards in the catalog and can be opened today.
+ * `upcoming` editions are on the public roadmap but not shipped yet — shown so
+ * a space can see what's coming, but not openable.
+ */
+export type EditionStatus = 'available' | 'upcoming';
+
 export interface Edition {
   id: string;
+  /** Roadmap position, e.g. 1 for "Edition 01". */
+  order: number;
   name: string;
   subtitle: string;
   description: string;
+  /** Symbol/emoji used as the edition's visual marker (e.g. 🌻 for Sunflower). */
+  symbol: string;
+  status: EditionStatus;
+  /** Announced number of moment cards (used before cards are seeded). */
+  cardCount: number;
   cards: MomentCard[];
   coverImage?: string;
 }

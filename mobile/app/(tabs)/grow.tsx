@@ -1,67 +1,80 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  SafeAreaView,
-} from 'react-native';
+import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
-import { EditionHeader } from '../../components/edition/EditionHeader';
-import { MomentCardItem } from '../../components/edition/MomentCardItem';
-import { useEdition } from '../../lib/hooks/useEdition';
+import { SEED_EDITIONS } from '../../lib/seed';
+import { cardRepository } from '../../lib/repositories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
-import { useAppStore } from '../../lib/store';
-import { ai } from '../../lib/ai';
-import type { MomentCard } from '../../lib/types';
-import type { CardSuggestion } from '../../lib/ai/types';
+import type { Edition } from '../../lib/types';
 
 export default function GrowScreen() {
   const { activeSpace } = useSpaces();
-  const { edition, cards, loading, activatedCount } = useEdition(activeSpace?.id);
-  const goals = useAppStore((s) => s.goals);
-  const [suggestion, setSuggestion] = useState<CardSuggestion | null>(null);
+  const [progress, setProgress] = useState<Record<string, number>>({});
 
+  // For each available edition, how many cards this space has preserved.
   useEffect(() => {
-    if (loading || cards.length === 0) return;
-    const context = {
-      goals,
-      activatedCardIds: cards.filter((c) => c.status === 'activated').map((c) => c.id),
-      edition: 'edition-01',
-      sealedCardCount: cards.filter((c) => c.status === 'sealed').length,
-      totalMemories: cards.filter((c) => c.status === 'activated').length,
+    if (!activeSpace?.id) {
+      setProgress({});
+      return;
+    }
+    let active = true;
+    Promise.all(
+      SEED_EDITIONS.filter((e) => e.status === 'available').map(async (e) => {
+        const cards = await cardRepository.getAll(e.id, activeSpace.id);
+        return [e.id, cards.filter((c) => c.status === 'activated').length] as const;
+      })
+    ).then((entries) => {
+      if (active) setProgress(Object.fromEntries(entries));
+    });
+    return () => {
+      active = false;
     };
-    ai.suggestCard(context, cards).then(setSuggestion).catch(() => setSuggestion(null));
-  }, [loading, cards, goals]);
+  }, [activeSpace?.id]);
 
-  function renderCard({ item }: { item: MomentCard }) {
-    const isSuggested = suggestion?.cardId === item.id;
+  function renderEdition({ item }: { item: Edition }) {
+    const available = item.status === 'available';
+    const done = progress[item.id] ?? 0;
     return (
-      <View style={styles.cardWrapper}>
-        <MomentCardItem
-          card={item}
-          onPress={() => router.push(`/card/${item.id}`)}
-          isSuggested={isSuggested}
-        />
-        {isSuggested && suggestion?.rationale ? (
-          <Text style={styles.rationale}>{suggestion.rationale}</Text>
-        ) : null}
-      </View>
+      <TouchableOpacity
+        style={[styles.card, !available && styles.cardUpcoming]}
+        onPress={() => available && router.push(`/editions/${item.id}`)}
+        disabled={!available}
+        activeOpacity={0.85}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: !available }}
+        accessibilityLabel={`${item.name}, ${available ? 'open edition' : 'coming soon'}`}
+      >
+        <Text style={styles.symbol}>{item.symbol}</Text>
+        <View style={styles.cardBody}>
+          <Text style={styles.editionLabel}>{item.subtitle.toUpperCase()}</Text>
+          <Text style={styles.name}>{item.name.toLowerCase()}</Text>
+          <Text style={styles.desc} numberOfLines={2}>{item.description}</Text>
+          <Text style={available ? styles.meta : styles.metaSoon}>
+            {available
+              ? `${done} of ${item.cardCount} preserved`
+              : 'coming soon'}
+          </Text>
+        </View>
+      </TouchableOpacity>
     );
   }
 
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={cards}
-        keyExtractor={(item) => item.id}
-        renderItem={renderCard}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
+        data={SEED_EDITIONS}
+        keyExtractor={(e) => e.id}
+        renderItem={renderEdition}
         ListHeaderComponent={
-          <EditionHeader edition={edition} activatedCount={activatedCount} />
+          <View style={styles.header}>
+            <Text style={styles.kicker}>EDITIONS</Text>
+            <Text style={styles.title}>grow</Text>
+            <Text style={styles.lead}>
+              each edition is a deck of moments to collect together. open one,
+              then scan the card you finished to preserve it.
+            </Text>
+          </View>
         }
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
@@ -71,28 +84,53 @@ export default function GrowScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  list: {
-    paddingBottom: Spacing.xl,
-  },
-  row: {
+  container: { flex: 1, backgroundColor: Colors.background },
+  list: { paddingBottom: Spacing.xl },
+  header: {
     paddingHorizontal: Spacing.screen,
-    gap: 8,
-    marginBottom: 8,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.lg,
+    gap: 4,
   },
-  cardWrapper: {
-    flex: 1,
+  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
+  title: { fontSize: 28, fontWeight: '200', color: Colors.text, letterSpacing: -0.5 },
+  lead: {
+    fontSize: 14,
+    fontWeight: '300',
+    color: Colors.textMuted,
+    lineHeight: 21,
+    marginTop: Spacing.sm,
   },
-  rationale: {
-    fontSize: 9,
+  card: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+    marginHorizontal: Spacing.screen,
+    marginBottom: Spacing.sm,
+    padding: Spacing.lg,
+    backgroundColor: Colors.backgroundWarm,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  cardUpcoming: { opacity: 0.55 },
+  symbol: { fontSize: 28 },
+  cardBody: { flex: 1, gap: 3 },
+  editionLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.accent },
+  name: { fontSize: 20, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
+  desc: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
+  meta: {
+    fontSize: 10,
     fontWeight: '500',
     letterSpacing: 1.5,
     textTransform: 'uppercase',
-    color: Colors.accent,
+    color: Colors.textSubtle,
     marginTop: 4,
-    marginBottom: 4,
+  },
+  metaSoon: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
+    color: Colors.textFaint,
+    marginTop: 4,
   },
 });

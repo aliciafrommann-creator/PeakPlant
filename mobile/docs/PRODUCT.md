@@ -54,5 +54,21 @@ experience.
 
 ## Editions roadmap
 
-01 Grow Together · 02 Love Languages · 03 In Presence · 04 Deep Spice ·
-05 Far Away · 06 Lovemaxing · 07 Self Worth · 08 Wild Cards · 09 Hideout
+The **Grow** tab is the editions library. Opening an *available* edition shows
+its deck; you scan the QR of the card you finished to preserve that moment
+(note + photo), then can share it to other apps. *Upcoming* editions are shown
+on the roadmap but not yet openable.
+
+01 Grow Together 🌻 *(available)* · 02 Love Languages 💬 · 03 In Presence 🌿 ·
+04 Deep Spice 🌶️ · 05 Far Away ✈️ · 06 Lovemaxing ✨ · 07 Self Worth 🪞 ·
+08 Wild Cards 🎲 · 09 Hideout 🏕️
+
+These are all **couples** editions (catalog: `mobile/lib/seed.ts → SEED_EDITIONS`).
+
+## Friends: a space, not a product line (PP-026)
+
+Friends use the same app — a **friends space** with the same diary and the same
+couples-neutral editions (e.g. Grow Together, In Presence). PeakPlant does **not**
+ship a separate friends *product line* at launch: the brand is couples/intimacy,
+and a second SKU line would dilute it and double production + marketing. A
+friends sub-brand is backlog, revisited once the couples line proves out.

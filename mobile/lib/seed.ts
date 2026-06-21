@@ -73,13 +73,121 @@ export const SEED_ACTIVATIONS: Record<string, string[]> = {
   'space-friends-01': ['card-12'],
 };
 
-export const SEED_EDITION: Edition = {
-  id: 'edition-01',
-  name: 'Grow Together',
-  subtitle: 'Edition 01 — Sunflower',
-  description: 'twenty moments to collect, in any order. choose what feels right.',
-  cards: SEED_CARDS,
-};
+/**
+ * Couples editions roadmap. Only edition-01 ships with its 20 cards today
+ * (status: available); the rest are on the public roadmap (status: upcoming)
+ * so a space can see what's coming. Friends editions are intentionally not a
+ * product line — friends still use the available couples-neutral editions in a
+ * friends space (see PRODUCT.md / decision register).
+ */
+export const SEED_EDITIONS: Edition[] = [
+  {
+    id: 'edition-01',
+    order: 1,
+    name: 'Grow Together',
+    subtitle: 'Edition 01 — Sunflower',
+    description: 'twenty moments to collect, in any order. choose what feels right.',
+    symbol: '🌻',
+    status: 'available',
+    cardCount: SEED_CARDS.length,
+    cards: SEED_CARDS,
+  },
+  {
+    id: 'edition-02',
+    order: 2,
+    name: 'Love Languages',
+    subtitle: 'Edition 02 — Letters',
+    description: 'discover how each of you gives and receives love.',
+    symbol: '💬',
+    status: 'upcoming',
+    cardCount: 20,
+    cards: [],
+  },
+  {
+    id: 'edition-03',
+    order: 3,
+    name: 'In Presence',
+    subtitle: 'Edition 03 — Stillness',
+    description: 'phones away, fully here. moments of undivided attention.',
+    symbol: '🌿',
+    status: 'upcoming',
+    cardCount: 20,
+    cards: [],
+  },
+  {
+    id: 'edition-04',
+    order: 4,
+    name: 'Deep Spice',
+    subtitle: 'Edition 04 — Ember',
+    description: 'playful heat and honest desire, just for the two of you.',
+    symbol: '🌶️',
+    status: 'upcoming',
+    cardCount: 20,
+    cards: [],
+  },
+  {
+    id: 'edition-05',
+    order: 5,
+    name: 'Far Away',
+    subtitle: 'Edition 05 — Horizon',
+    description: 'for the distance — staying close across the miles.',
+    symbol: '✈️',
+    status: 'upcoming',
+    cardCount: 20,
+    cards: [],
+  },
+  {
+    id: 'edition-06',
+    order: 6,
+    name: 'Lovemaxing',
+    subtitle: 'Edition 06 — Bloom',
+    description: 'small daily acts that compound into closeness.',
+    symbol: '✨',
+    status: 'upcoming',
+    cardCount: 20,
+    cards: [],
+  },
+  {
+    id: 'edition-07',
+    order: 7,
+    name: 'Self Worth',
+    subtitle: 'Edition 07 — Mirror',
+    description: 'grow as individuals, so you grow as a pair.',
+    symbol: '🪞',
+    status: 'upcoming',
+    cardCount: 20,
+    cards: [],
+  },
+  {
+    id: 'edition-08',
+    order: 8,
+    name: 'Wild Cards',
+    subtitle: 'Edition 08 — Spark',
+    description: 'unexpected dares and spontaneous detours.',
+    symbol: '🎲',
+    status: 'upcoming',
+    cardCount: 20,
+    cards: [],
+  },
+  {
+    id: 'edition-09',
+    order: 9,
+    name: 'Hideout',
+    subtitle: 'Edition 09 — Nest',
+    description: 'slow, cozy moments to retreat into together.',
+    symbol: '🏕️',
+    status: 'upcoming',
+    cardCount: 20,
+    cards: [],
+  },
+];
+
+/** Back-compat: the launch edition. Prefer SEED_EDITIONS / getEdition(id). */
+export const SEED_EDITION: Edition = SEED_EDITIONS[0];
+
+export function getEdition(editionId: string): Edition | undefined {
+  return SEED_EDITIONS.find((e) => e.id === editionId);
+}
 
 export const SEED_MEMORIES: Memory[] = [
   {

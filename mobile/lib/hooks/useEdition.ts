@@ -1,22 +1,22 @@
 import { useState, useEffect } from 'react';
 import { cardRepository } from '../repositories';
-import { SEED_EDITION } from '../seed';
+import { getEdition, SEED_EDITION } from '../seed';
 import type { Edition, MomentCard } from '../types';
 
-export function useEdition(spaceId?: string) {
-  const [edition] = useState<Edition>(SEED_EDITION);
+export function useEdition(spaceId?: string, editionId: string = SEED_EDITION.id) {
+  const edition: Edition = getEdition(editionId) ?? SEED_EDITION;
   const [cards, setCards] = useState<MomentCard[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!spaceId) {
+    if (!spaceId || edition.status !== 'available') {
       setCards([]);
       setLoading(false);
       return;
     }
     let active = true;
     setLoading(true);
-    cardRepository.getAll('edition-01', spaceId).then((data) => {
+    cardRepository.getAll(edition.id, spaceId).then((data) => {
       if (active) {
         setCards(data);
         setLoading(false);
@@ -25,7 +25,7 @@ export function useEdition(spaceId?: string) {
     return () => {
       active = false;
     };
-  }, [spaceId]);
+  }, [spaceId, edition.id, edition.status]);
 
   const activatedCount = cards.filter((c) => c.status === 'activated').length;
 
