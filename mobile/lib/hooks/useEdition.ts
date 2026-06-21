@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { localCardRepository } from '../repositories/local';
+import { cardRepository } from '../repositories';
 import { SEED_EDITION } from '../seed';
 import type { Edition, MomentCard } from '../types';
 
@@ -16,7 +16,7 @@ export function useEdition(spaceId?: string) {
     }
     let active = true;
     setLoading(true);
-    localCardRepository.getAll('edition-01', spaceId).then((data) => {
+    cardRepository.getAll('edition-01', spaceId).then((data) => {
       if (active) {
         setCards(data);
         setLoading(false);

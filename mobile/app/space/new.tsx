@@ -13,13 +13,12 @@ import {
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
-import { localSpaceRepository } from '../../lib/repositories/local';
-import { getMockUser } from '../../lib/mock-auth';
+import { spaceRepository } from '../../lib/repositories';
+import { getActiveUser } from '../../lib/session';
 import { useAppStore } from '../../lib/store';
 import type { SpaceType } from '../../lib/types';
 
 export default function NewSpaceScreen() {
-  const user = getMockUser();
   const setActiveSpace = useAppStore((s) => s.setActiveSpace);
 
   const [type, setType] = useState<SpaceType>('friends');
@@ -31,7 +30,9 @@ export default function NewSpaceScreen() {
     if (!name.trim() || busy) return;
     setBusy(true);
     try {
-      const space = await localSpaceRepository.create({
+      const user = await getActiveUser();
+      if (!user) throw new Error('Not signed in');
+      const space = await spaceRepository.create({
         type,
         name,
         ownerUserId: user.id,
@@ -48,7 +49,9 @@ export default function NewSpaceScreen() {
     if (!code.trim() || busy) return;
     setBusy(true);
     try {
-      const space = await localSpaceRepository.joinByCode(code, user.id, user.name);
+      const user = await getActiveUser();
+      if (!user) throw new Error('Not signed in');
+      const space = await spaceRepository.joinByCode(code, user.id, user.name);
       setActiveSpace(space.id);
       router.back();
     } catch {

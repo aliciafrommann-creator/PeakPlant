@@ -1,4 +1,5 @@
 import { storage } from './storage';
+import { supabase, isSupabaseConfigured } from './supabase/client';
 import type { SpaceType } from './types';
 
 /**
@@ -71,11 +72,26 @@ async function loadAll(): Promise<EnrollmentMap> {
 }
 
 export async function getEnrollments(spaceId: string): Promise<Enrollment[]> {
+  if (isSupabaseConfigured && supabase) {
+    const { data, error } = await supabase
+      .from('challenge_enrollments')
+      .select('challenge_id, joined_at')
+      .eq('space_id', spaceId);
+    if (error) throw error;
+    return (data ?? []).map((r) => ({ challengeId: r.challenge_id as string, joinedAt: r.joined_at as string }));
+  }
   const all = await loadAll();
   return all[spaceId] ?? [];
 }
 
 export async function joinChallenge(spaceId: string, challengeId: string): Promise<void> {
+  if (isSupabaseConfigured && supabase) {
+    const { error } = await supabase
+      .from('challenge_enrollments')
+      .upsert({ space_id: spaceId, challenge_id: challengeId }, { onConflict: 'space_id,challenge_id', ignoreDuplicates: true });
+    if (error) throw error;
+    return;
+  }
   const all = await loadAll();
   const current = all[spaceId] ?? [];
   if (current.some((e) => e.challengeId === challengeId)) return;
@@ -84,6 +100,15 @@ export async function joinChallenge(spaceId: string, challengeId: string): Promi
 }
 
 export async function leaveChallenge(spaceId: string, challengeId: string): Promise<void> {
+  if (isSupabaseConfigured && supabase) {
+    const { error } = await supabase
+      .from('challenge_enrollments')
+      .delete()
+      .eq('space_id', spaceId)
+      .eq('challenge_id', challengeId);
+    if (error) throw error;
+    return;
+  }
   const all = await loadAll();
   all[spaceId] = (all[spaceId] ?? []).filter((e) => e.challengeId !== challengeId);
   await storage.set(ENROLLMENTS_KEY, all);

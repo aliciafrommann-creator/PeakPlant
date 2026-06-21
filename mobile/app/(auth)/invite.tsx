@@ -11,6 +11,9 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { SEED_SPACES } from '../../lib/seed';
 import { useAppStore } from '../../lib/store';
+import { isSupabaseConfigured } from '../../lib/supabase/client';
+import { spaceRepository } from '../../lib/repositories';
+import { getActiveUser } from '../../lib/session';
 
 const FIRST_SPACE = SEED_SPACES[0];
 
@@ -19,6 +22,29 @@ export default function InviteScreen() {
   const setActiveSpace = useAppStore((s) => s.setActiveSpace);
 
   const enter = async () => {
+    if (isSupabaseConfigured) {
+      // Backend mode: create a real couple space for the signed-in user.
+      const user = await getActiveUser();
+      if (!user) {
+        router.replace('/(auth)/sign-in');
+        return;
+      }
+      try {
+        const space = await spaceRepository.create({
+          type: 'couple',
+          name: user.name ? `${user.name}'s space` : 'Our space',
+          ownerUserId: user.id,
+          ownerName: user.name,
+        });
+        setActiveSpace(space.id);
+        await completeOnboarding();
+        router.replace('/(tabs)/us');
+      } catch {
+        // Stay on the screen; the user can retry.
+      }
+      return;
+    }
+    // Local-first mode: use the seeded space.
     setActiveSpace(FIRST_SPACE.id);
     await completeOnboarding();
     router.replace('/(tabs)/us');
@@ -38,9 +64,11 @@ export default function InviteScreen() {
 
         <View style={styles.codeContainer}>
           <Text style={styles.codeLabel}>YOUR CODE</Text>
-          <Text style={styles.code}>{FIRST_SPACE.inviteCode}</Text>
+          <Text style={styles.code}>{isSupabaseConfigured ? '— — — —' : FIRST_SPACE.inviteCode}</Text>
           <Text style={styles.codeHint}>
-            your partner enters this when they set up their account
+            {isSupabaseConfigured
+              ? 'your space gets its own code once you continue — find it in the space switcher.'
+              : 'your partner enters this when they set up their account'}
           </Text>
         </View>
 

@@ -60,8 +60,8 @@ AI-generated assumptions are never authoritative.
 
 | ID | Domain | Decision required | Status | Blocks |
 |----|--------|-------------------|--------|--------|
-| O-001 | Auth | Email OTP / magic link (P0) + Apple/Google (P1) **designed** (BACKEND.md); going live needs a real EU Supabase project + credentials (human step). | OPEN (design ready) | Couple linking, store review |
-| O-002 | Space linking | Invite-code **redeem_invite RPC** designed (BACKEND.md); `0001` ships the interim self-join policy, `0002` adds the hardened RPC with caps/expiry. | OPEN (design ready) | Backend, onboarding |
+| O-001 | Auth | Email-OTP auth **implemented** (`lib/supabase/auth.ts` + sign-in screen), gated by `isSupabaseConfigured`. Remaining: real keys in env + on-device verification; Apple/Google (P1) later. | IN PROGRESS | Store review |
+| O-002 | Space linking | Invite-code join **implemented** via `redeem_invite` RPC (migration `0002`) + `supabaseSpaceRepository`. Remaining: run `0002`, on-device test; couple member-cap enforcement later. | IN PROGRESS | — |
 | O-003 | Shop checkout | Hosted external checkout vs. integrated commerce for card-set sales; payment provider for the EU market. | OPEN | Shop scope, legal docs |
 | O-004 | AI scope | Which concrete personalization the launch AI does (card suggestion, reflection prompts) and which provider/model, within the AI_SAFETY signal taxonomy. | OPEN | AI build, evaluation suite |
 | O-005 | Realtime | Whether the shared diary uses Supabase Realtime at launch or refetch-on-focus only. | TO VALIDATE | Sync UX |

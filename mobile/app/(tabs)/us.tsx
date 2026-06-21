@@ -58,8 +58,8 @@ export default function UsScreen() {
           </View>
         </View>
 
-        {/* Space switcher — only when there's more than one */}
-        {spaces.length > 1 && (
+        {/* Space switcher — lets you switch spaces and add a new one */}
+        {spaces.length >= 1 && (
           <SpaceSwitcher
             spaces={spaces}
             activeSpaceId={activeSpace?.id}

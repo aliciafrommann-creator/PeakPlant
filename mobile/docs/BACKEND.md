@@ -51,12 +51,18 @@ recursive RLS on `space_members`.
 - **EXIF/GPS stripped** + re-encoded before storage (SECURITY).
 - `memories.photo_path` stores the private path, never a public URL.
 
-## Switching the app over (next increment)
+## Switching the app over — status
 
-1. `npm i @supabase/supabase-js` (done) → `lib/supabase/client.ts` reads env.
-2. Implement `supabaseSpaceRepository` / memory / card repos against the schema.
-3. Point the hooks at the Supabase repos; replace mock auth with the session.
-4. Add pgTAP RLS tests (allow + deny per role) before any real data (TESTING).
+Implemented and gated by `isSupabaseConfigured` (no keys → unchanged local-first
+behavior; keys → Supabase):
+
+1. ✅ `lib/supabase/client.ts` reads env.
+2. ✅ `supabaseSpaceRepository` / memory / card repos + `challenge_enrollments`.
+3. ✅ Repo selector `lib/repositories/index.ts`; hooks use it.
+4. ✅ Email-OTP auth (`lib/supabase/auth.ts` + `(auth)/sign-in.tsx`); entry gate
+   routes by session + space membership; onboarding creates a real couple space.
+5. ⏳ Run migration `0002_redeem_invite.sql`; set env keys; verify on device.
+6. ⏳ pgTAP RLS tests (allow + deny per role) before broad real data (TESTING).
 
 Each step is a small, reviewed increment — not one big switch.
 

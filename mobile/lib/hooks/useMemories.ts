@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { localMemoryRepository, localCardRepository } from '../repositories/local';
+import { memoryRepository, cardRepository } from '../repositories';
 import type { Memory } from '../types';
 
 export function useMemories(spaceId?: string) {
@@ -15,7 +15,7 @@ export function useMemories(spaceId?: string) {
     }
     try {
       setLoading(true);
-      const data = await localMemoryRepository.getAll(spaceId);
+      const data = await memoryRepository.getAll(spaceId);
       setMemories(data);
     } catch (e) {
       setError(e instanceof Error ? e : new Error('Failed to load memories'));
@@ -31,9 +31,9 @@ export function useMemories(spaceId?: string) {
   const createMemory = useCallback(
     async (data: { cardId: string; note: string; photoUri?: string }) => {
       if (!spaceId) throw new Error('No active space');
-      const memory = await localMemoryRepository.create({ ...data, spaceId });
+      const memory = await memoryRepository.create({ ...data, spaceId });
       // A preserved moment discovers its card — for this space only.
-      await localCardRepository.activate(data.cardId, spaceId).catch(() => undefined);
+      await cardRepository.activate(data.cardId, spaceId).catch(() => undefined);
       setMemories((prev) => [memory, ...prev]);
       return memory;
     },
@@ -41,7 +41,7 @@ export function useMemories(spaceId?: string) {
   );
 
   const deleteMemory = useCallback(async (id: string) => {
-    await localMemoryRepository.delete(id);
+    await memoryRepository.delete(id);
     setMemories((prev) => prev.filter((m) => m.id !== id));
   }, []);
 

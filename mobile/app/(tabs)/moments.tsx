@@ -41,7 +41,7 @@ export default function MomentsScreen() {
         </Text>
       </View>
 
-      {spaces.length > 1 && (
+      {spaces.length >= 1 && (
         <SpaceSwitcher
           spaces={spaces}
           activeSpaceId={activeSpace?.id}
