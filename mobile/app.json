@@ -2,10 +2,13 @@
   "expo": {
     "name": "PeakPlant",
     "slug": "peakplant",
+    "owner": "aliciafrommann",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "runtimeVersion": { "policy": "appVersion" },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -15,7 +18,9 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.peakplant.app",
-      "config": { "usesNonExemptEncryption": false }
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -42,6 +47,12 @@
     "scheme": "peakplant",
     "web": {
       "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d346781d-c0f6-4826-a8f3-381a52a6670d"
+      }
     }
   }
 }
+
