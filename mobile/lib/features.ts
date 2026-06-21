@@ -59,8 +59,8 @@ export const FEATURES: FeatureMeta[] = [
     key: 'challenges',
     label: 'challenges',
     description: 'finite, no-pressure challenges you can take on as a space.',
-    status: 'soon',
-    defaultEnabled: false,
+    status: 'live',
+    defaultEnabled: true,
   },
   {
     key: 'communities',

@@ -24,6 +24,7 @@ export default function UsScreen() {
   const { memories } = useMemories(activeSpace?.id);
   const streaksEnabled = useAppStore((s) => s.features.streaks);
   const missionsEnabled = useAppStore((s) => s.features.missions);
+  const challengesEnabled = useAppStore((s) => s.features.challenges);
 
   const isCouple = activeSpace?.type === 'couple';
   const streak = computeWeeklyStreak(memories.map((m) => m.createdAt));
@@ -90,6 +91,23 @@ export default function UsScreen() {
               <Text style={styles.togetherTitle}>small things, out in the world</Text>
             </View>
             <Text style={styles.togetherArrow}>→</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Challenges — optional */}
+        {challengesEnabled && (
+          <TouchableOpacity
+            style={styles.challengeEntry}
+            onPress={() => router.push('/challenges')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel="Challenges"
+          >
+            <View style={styles.togetherText}>
+              <Text style={styles.challengeLabel}>CHALLENGES</Text>
+              <Text style={styles.challengeTitle}>gentle goals, kept as badges</Text>
+            </View>
+            <Text style={styles.challengeArrow}>→</Text>
           </TouchableOpacity>
         )}
 
@@ -223,6 +241,35 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '200',
     color: Colors.white,
+  },
+  challengeEntry: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Colors.backgroundWarm,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
+    marginHorizontal: Spacing.screen,
+    marginBottom: Spacing.xl,
+  },
+  challengeLabel: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 3,
+    color: Colors.accent,
+  },
+  challengeTitle: {
+    fontSize: 16,
+    fontWeight: '200',
+    color: Colors.text,
+    letterSpacing: -0.2,
+  },
+  challengeArrow: {
+    fontSize: 20,
+    fontWeight: '200',
+    color: Colors.textMuted,
   },
   partnerNote: {
     backgroundColor: Colors.backgroundCream,

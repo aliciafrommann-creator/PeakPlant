@@ -18,7 +18,7 @@ rebuild what exists.
 | `rituals` | soon | Turn a loved moment into something recurring. |
 | `missions` | **live** | Small real-world things to do together, suggested by AI. |
 | `localShops` | **live** | Nearby + partner places to share a moment in (revenue). |
-| `challenges` | soon | Finite, no-pressure challenges for a space. |
+| `challenges` | **live** | Finite, no-pressure challenges for a space. |
 | `communities` | soon | Optional circles beyond private spaces. |
 | `feed` | soon | A finite, private feed across your spaces. |
 
@@ -39,14 +39,16 @@ private-spaces model (no public network, no business portal until much later).
    moments tied to optional **local partner places** (Innsbruck pilot) — the
    first revenue stream beyond product sales. No purchase ever required to
    participate; partner places carry a small, transparent perk.
-5. **Challenges.** Finite, badge-not-score challenges a space can opt into.
+5. **Challenges (done).** Finite, badge-not-score challenges a space can opt
+   into; progress counts moments preserved after joining.
 6. **Communities & feed.** Optional, finite, private-first — only after the
    private loop is validated.
-7. **Backend.** Supabase (EU), real auth + couple/space linking, RLS
-   deny-by-default, atomic unlocks/purchases, media privacy (see ARCHITECTURE,
-   SECURITY).
-8. **Testing & release.** Unit tests (streak logic first), RLS/concurrency
-   tests, CI, then store release.
+7. **Backend (foundation started).** Supabase (EU): SQL migrations + deny-by-
+   default RLS + auth/space-linking design are in `supabase/`. Going live needs
+   a real Supabase project + credentials (human O-item). See SECURITY,
+   ARCHITECTURE, and supabase/README.
+8. **Testing & release.** Unit tests (done: streaks, together, challenges),
+   RLS/concurrency tests (backend phase), CI, then store release.
 
 ## Revenue model (staged)
 
