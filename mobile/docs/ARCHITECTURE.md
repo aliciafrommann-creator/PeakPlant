@@ -40,3 +40,26 @@ screens (app/) → hooks (lib/hooks) → repository interface (lib/repositories/
 3. Implement `supabaseMemoryRepository` / `supabaseCardRepository`
 4. Point hooks at the Supabase repositories
 5. Replace `getMockSession()` with real auth + couple linking
+
+## Supabase-phase targets
+
+These are the architecture commitments for the backend phase (see
+DECISION_REGISTER, SECURITY, AI_SAFETY). They shape the repository
+implementations rather than the screens.
+
+- **EU data plane.** Dedicated EU Supabase projects for staging and production,
+  with separate secrets per environment (local · preview · staging · production).
+- **Atomic critical writes.** Preserving a moment, unlocking an Intimacy card,
+  and purchases run as atomic server-side commands (Postgres transactions / RPC),
+  never as multi-step client writes. The client never grants entitlements.
+- **Repository, plus an AI abstraction.** A second interface, `lib/ai/`, mirrors
+  the repository pattern: an interface plus a provider stub. All model calls are
+  server-side; the client holds no provider keys.
+- **Offline outbox.** Auth material in SecureStore; cached read models, drafts,
+  and a mutation outbox in local storage. Mutations queue offline and finalize
+  only after server acceptance.
+- **Realtime with fallback.** If the shared diary uses Supabase Realtime, every
+  subscription has a refetch-on-focus fallback so state is never stuck (O-005).
+- **First-party analytics only.** No autocapture, no session replay. Diary
+  content is never sent to analytics or error reporting; error payloads are
+  sanitized.

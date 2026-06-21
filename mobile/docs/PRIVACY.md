@@ -20,7 +20,17 @@ trust *is* the product.
 
 ## Supabase phase requirements
 
-- Row-Level Security: a row is readable only by members of its `coupleId`.
-- Private storage bucket for photos; non-enumerable media paths; signed URLs.
-- Explicit, revocable opt-in before any AI personalization.
-- No private notes/photos used for recommendations without consent.
+- Row-Level Security (deny-by-default): a row is readable only by members of its
+  `coupleId`.
+- Private storage bucket for photos; EXIF/GPS stripped and re-encoded;
+  non-enumerable media paths; short-lived signed URLs.
+- EU data region; vendors bound by DPA and an exit plan.
+- Explicit, revocable opt-in before any AI personalization; raw diary text is
+  processed ephemerally and never stored as a durable profile (see AI_SAFETY).
+- No private notes/photos used for recommendations, analytics, or model training.
+- 18+ self-attestation for the Intimacy Collection / explicit content.
+- Self-service export, correction, and account deletion (active-system erasure
+  within 30 days after a grace period).
+
+See **SECURITY.md** for the implementation-facing controls (RLS, atomic writes,
+audit, incident response) and **AI_SAFETY.md** for the AI policy.
