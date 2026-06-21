@@ -1,13 +1,19 @@
 /**
  * Supabase repository stubs — not yet wired.
- * TODO: Replace localMemoryRepository with these when Supabase is configured.
+ * TODO: Replace the local repositories with these when Supabase is configured.
+ * Every personal table is space-scoped under deny-by-default RLS (see SECURITY).
  */
 
-import type { IMemoryRepository, ICardRepository } from './interfaces';
-import type { Memory, MomentCard } from '../types';
+import type {
+  IMemoryRepository,
+  ICardRepository,
+  ISpaceRepository,
+  CreateSpaceInput,
+} from './interfaces';
+import type { Memory, MomentCard, Space, SpaceMember } from '../types';
 
 export const supabaseMemoryRepository: IMemoryRepository = {
-  async getAll(_coupleId: string): Promise<Memory[]> {
+  async getAll(_spaceId: string): Promise<Memory[]> {
     throw new Error('Supabase not configured. Use localMemoryRepository.');
   },
   async getById(_id: string): Promise<Memory | null> {
@@ -25,13 +31,31 @@ export const supabaseMemoryRepository: IMemoryRepository = {
 };
 
 export const supabaseCardRepository: ICardRepository = {
-  async getAll(_editionId: string): Promise<MomentCard[]> {
+  async getAll(_editionId: string, _spaceId: string): Promise<MomentCard[]> {
     throw new Error('Supabase not configured.');
   },
-  async getById(_id: string): Promise<MomentCard | null> {
+  async getById(_id: string, _spaceId: string): Promise<MomentCard | null> {
     throw new Error('Supabase not configured.');
   },
-  async activate(_id: string): Promise<MomentCard> {
+  async activate(_cardId: string, _spaceId: string): Promise<MomentCard> {
+    throw new Error('Supabase not configured.');
+  },
+};
+
+export const supabaseSpaceRepository: ISpaceRepository = {
+  async getAllForUser(_userId: string): Promise<Space[]> {
+    throw new Error('Supabase not configured.');
+  },
+  async getById(_id: string): Promise<Space | null> {
+    throw new Error('Supabase not configured.');
+  },
+  async getMembers(_spaceId: string): Promise<SpaceMember[]> {
+    throw new Error('Supabase not configured.');
+  },
+  async create(_input: CreateSpaceInput): Promise<Space> {
+    throw new Error('Supabase not configured.');
+  },
+  async joinByCode(_code: string, _userId: string, _userName: string): Promise<Space> {
     throw new Error('Supabase not configured.');
   },
 };

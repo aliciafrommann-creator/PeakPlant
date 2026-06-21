@@ -1,26 +1,47 @@
 import { storage } from '../storage';
-import type { Memory, MomentCard } from '../types';
-import { SEED_MEMORIES, SEED_CARDS } from '../seed';
-import type { IMemoryRepository, ICardRepository } from './interfaces';
+import type { Memory, MomentCard, Space, SpaceMember } from '../types';
+import {
+  SEED_MEMORIES,
+  SEED_CARDS,
+  SEED_SPACES,
+  SEED_MEMBERS,
+  SEED_ACTIVATIONS,
+} from '../seed';
+import type {
+  IMemoryRepository,
+  ICardRepository,
+  ISpaceRepository,
+  CreateSpaceInput,
+} from './interfaces';
 
 const MEMORIES_KEY = 'memories';
-const CARDS_KEY = 'cards';
+const ACTIVATIONS_KEY = 'cardActivations';
+const SPACES_KEY = 'spaces';
+const MEMBERS_KEY = 'spaceMembers';
 
-function generateId(): string {
-  return `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+function generateId(prefix: string): string {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 function now(): string {
   return new Date().toISOString();
 }
 
+function generateInviteCode(): string {
+  return `PEAK-${Math.floor(1000 + Math.random() * 9000)}`;
+}
+
+async function loadActivations(): Promise<Record<string, string[]>> {
+  return (await storage.get<Record<string, string[]>>(ACTIVATIONS_KEY)) ?? SEED_ACTIVATIONS;
+}
+
 export const localMemoryRepository: IMemoryRepository = {
-  async getAll(coupleId: string): Promise<Memory[]> {
+  async getAll(spaceId: string): Promise<Memory[]> {
     const stored = await storage.get<Memory[]>(MEMORIES_KEY);
     const memories = stored ?? SEED_MEMORIES;
-    return memories.filter((m) => m.coupleId === coupleId).sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    return memories
+      .filter((m) => m.spaceId === spaceId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   },
 
   async getById(id: string): Promise<Memory | null> {
@@ -34,7 +55,7 @@ export const localMemoryRepository: IMemoryRepository = {
     const memories = stored ?? [...SEED_MEMORIES];
     const newMemory: Memory = {
       ...data,
-      id: generateId(),
+      id: generateId('memory'),
       createdAt: now(),
       updatedAt: now(),
     };
@@ -61,26 +82,116 @@ export const localMemoryRepository: IMemoryRepository = {
 };
 
 export const localCardRepository: ICardRepository = {
-  async getAll(editionId: string): Promise<MomentCard[]> {
-    const stored = await storage.get<MomentCard[]>(CARDS_KEY);
-    const cards = stored ?? SEED_CARDS;
-    return cards.filter((c) => c.edition === editionId);
+  async getAll(editionId: string, spaceId: string): Promise<MomentCard[]> {
+    const activations = await loadActivations();
+    const activated = new Set(activations[spaceId] ?? []);
+    return SEED_CARDS.filter((c) => c.edition === editionId).map((c) => ({
+      ...c,
+      status: activated.has(c.id) ? 'activated' : 'sealed',
+    }));
   },
 
-  async getById(id: string): Promise<MomentCard | null> {
-    const stored = await storage.get<MomentCard[]>(CARDS_KEY);
-    const cards = stored ?? SEED_CARDS;
-    return cards.find((c) => c.id === id) ?? null;
+  async getById(id: string, spaceId: string): Promise<MomentCard | null> {
+    const activations = await loadActivations();
+    const activated = new Set(activations[spaceId] ?? []);
+    const card = SEED_CARDS.find((c) => c.id === id);
+    if (!card) return null;
+    return { ...card, status: activated.has(card.id) ? 'activated' : 'sealed' };
   },
 
-  async activate(id: string): Promise<MomentCard> {
-    const stored = await storage.get<MomentCard[]>(CARDS_KEY);
-    const cards = stored ?? [...SEED_CARDS];
-    const idx = cards.findIndex((c) => c.id === id);
-    if (idx === -1) throw new Error(`Card ${id} not found`);
-    const updated: MomentCard = { ...cards[idx], status: 'activated' };
-    cards[idx] = updated;
-    await storage.set(CARDS_KEY, cards);
-    return updated;
+  async activate(cardId: string, spaceId: string): Promise<MomentCard> {
+    const card = SEED_CARDS.find((c) => c.id === cardId);
+    if (!card) throw new Error(`Card ${cardId} not found`);
+    const activations = await loadActivations();
+    const current = activations[spaceId] ?? [];
+    if (!current.includes(cardId)) {
+      await storage.set(ACTIVATIONS_KEY, { ...activations, [spaceId]: [...current, cardId] });
+    }
+    return { ...card, status: 'activated' };
+  },
+};
+
+async function loadSpaces(): Promise<Space[]> {
+  return (await storage.get<Space[]>(SPACES_KEY)) ?? SEED_SPACES;
+}
+
+async function loadMembers(): Promise<SpaceMember[]> {
+  return (await storage.get<SpaceMember[]>(MEMBERS_KEY)) ?? SEED_MEMBERS;
+}
+
+export const localSpaceRepository: ISpaceRepository = {
+  async getAllForUser(userId: string): Promise<Space[]> {
+    const spaces = await loadSpaces();
+    const members = await loadMembers();
+    const mySpaceIds = new Set(members.filter((m) => m.userId === userId).map((m) => m.spaceId));
+    return spaces
+      .filter((s) => mySpaceIds.has(s.id))
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+  },
+
+  async getById(id: string): Promise<Space | null> {
+    const spaces = await loadSpaces();
+    return spaces.find((s) => s.id === id) ?? null;
+  },
+
+  async getMembers(spaceId: string): Promise<SpaceMember[]> {
+    const members = await loadMembers();
+    return members.filter((m) => m.spaceId === spaceId);
+  },
+
+  async create({ type, name, ownerUserId, ownerName }: CreateSpaceInput): Promise<Space> {
+    const spaces = await loadSpaces();
+    const members = await loadMembers();
+    const space: Space = {
+      id: generateId('space'),
+      type,
+      name: name.trim() || (type === 'couple' ? 'Our space' : 'Friends'),
+      inviteCode: generateInviteCode(),
+      createdAt: now(),
+    };
+    const ownerMember: SpaceMember = {
+      id: generateId('m'),
+      spaceId: space.id,
+      userId: ownerUserId,
+      name: ownerName,
+      role: 'owner',
+      joinedAt: now(),
+    };
+    await storage.set(SPACES_KEY, [...spaces, space]);
+    await storage.set(MEMBERS_KEY, [...members, ownerMember]);
+    return space;
+  },
+
+  async joinByCode(code: string, userId: string, userName: string): Promise<Space> {
+    const spaces = await loadSpaces();
+    const members = await loadMembers();
+    const normalized = code.trim().toUpperCase();
+    let space = spaces.find((s) => s.inviteCode.toUpperCase() === normalized) ?? null;
+
+    if (!space) {
+      // Mock: no server to validate against, so represent the joined space locally.
+      space = {
+        id: generateId('space'),
+        type: 'friends',
+        name: 'Joined space',
+        inviteCode: normalized || generateInviteCode(),
+        createdAt: now(),
+      };
+      await storage.set(SPACES_KEY, [...spaces, space]);
+    }
+
+    const alreadyMember = members.some((m) => m.spaceId === space!.id && m.userId === userId);
+    if (!alreadyMember) {
+      const member: SpaceMember = {
+        id: generateId('m'),
+        spaceId: space.id,
+        userId,
+        name: userName,
+        role: 'member',
+        joinedAt: now(),
+      };
+      await storage.set(MEMBERS_KEY, [...members, member]);
+    }
+    return space;
   },
 };

@@ -1,17 +1,38 @@
-import { Couple, Edition, Memory, MomentCard, User } from './types';
-
-export const SEED_COUPLE: Couple = {
-  id: 'couple-01',
-  name: 'Alicia & Partner',
-  inviteCode: 'PEAK-7842',
-  createdAt: '2026-03-15T10:00:00Z',
-};
+import { Edition, Memory, MomentCard, Space, SpaceMember, User } from './types';
 
 export const SEED_USER: User = {
   id: 'user-01',
   name: 'Alicia',
-  coupleId: 'couple-01',
 };
+
+/**
+ * The current user belongs to two spaces: a couple space and a friends space.
+ * This demonstrates multi-space membership — the same model, different type.
+ */
+export const SEED_SPACES: Space[] = [
+  {
+    id: 'space-couple-01',
+    type: 'couple',
+    name: 'Alicia & Partner',
+    inviteCode: 'PEAK-7842',
+    createdAt: '2026-03-15T10:00:00Z',
+  },
+  {
+    id: 'space-friends-01',
+    type: 'friends',
+    name: 'The Saturday People',
+    inviteCode: 'PEAK-3310',
+    createdAt: '2026-04-02T18:00:00Z',
+  },
+];
+
+export const SEED_MEMBERS: SpaceMember[] = [
+  { id: 'm-1', spaceId: 'space-couple-01', userId: 'user-01', name: 'Alicia', role: 'owner', joinedAt: '2026-03-15T10:00:00Z' },
+  { id: 'm-2', spaceId: 'space-couple-01', userId: 'user-02', name: 'Partner', role: 'member', joinedAt: '2026-03-15T11:00:00Z' },
+  { id: 'm-3', spaceId: 'space-friends-01', userId: 'user-01', name: 'Alicia', role: 'member', joinedAt: '2026-04-02T18:00:00Z' },
+  { id: 'm-4', spaceId: 'space-friends-01', userId: 'user-03', name: 'Jonas', role: 'owner', joinedAt: '2026-04-02T18:00:00Z' },
+  { id: 'm-5', spaceId: 'space-friends-01', userId: 'user-04', name: 'Mira', role: 'member', joinedAt: '2026-04-02T18:05:00Z' },
+];
 
 const CARD_PROMPTS: Array<{ number: number; prompt: string; type: 'question' | 'action' }> = [
   { number: 1, prompt: 'what makes you feel seen by me?', type: 'question' },
@@ -42,8 +63,15 @@ export const SEED_CARDS: MomentCard[] = CARD_PROMPTS.map((c) => ({
   prompt: c.prompt,
   type: c.type,
   edition: 'edition-01',
-  status: c.number <= 3 ? 'activated' : 'sealed',
+  // Base status is always 'sealed'; activation is tracked per space (see SEED_ACTIVATIONS).
+  status: 'sealed',
 }));
+
+/** Which cards each space has already preserved a moment for (spaceId → cardIds). */
+export const SEED_ACTIVATIONS: Record<string, string[]> = {
+  'space-couple-01': ['card-01', 'card-02', 'card-03'],
+  'space-friends-01': ['card-12'],
+};
 
 export const SEED_EDITION: Edition = {
   id: 'edition-01',
@@ -57,7 +85,7 @@ export const SEED_MEMORIES: Memory[] = [
   {
     id: 'memory-01',
     cardId: 'card-01',
-    coupleId: 'couple-01',
+    spaceId: 'space-couple-01',
     note: 'we talked until 2am about the little things — the way you notice when i go quiet, the way you always make sure i eat. i feel seen in the smallest moments.',
     createdAt: '2026-04-03T21:30:00Z',
     updatedAt: '2026-04-03T21:30:00Z',
@@ -65,7 +93,7 @@ export const SEED_MEMORIES: Memory[] = [
   {
     id: 'memory-02',
     cardId: 'card-02',
-    coupleId: 'couple-01',
+    spaceId: 'space-couple-01',
     note: 'hiking to the summit. the wind, the silence, the way we just stood there without needing to say anything. that morning felt infinite.',
     photoUri: undefined,
     createdAt: '2026-04-20T09:15:00Z',
@@ -74,10 +102,18 @@ export const SEED_MEMORIES: Memory[] = [
   {
     id: 'memory-03',
     cardId: 'card-03',
-    coupleId: 'couple-01',
+    spaceId: 'space-couple-01',
     note: 'you asked me what i needed instead of guessing. that was it. that was all i ever needed.',
     createdAt: '2026-05-10T19:45:00Z',
     updatedAt: '2026-05-10T19:45:00Z',
+  },
+  {
+    id: 'memory-04',
+    cardId: 'card-12',
+    spaceId: 'space-friends-01',
+    note: 'no destination, just walked the river until it got dark. jonas found that tiny bakery. we stayed way too long. easy day, good people.',
+    createdAt: '2026-05-24T16:20:00Z',
+    updatedAt: '2026-05-24T16:20:00Z',
   },
 ];
 

@@ -8,7 +8,12 @@ The MVP is a polished, local-first foundation. No real backend required.
 - [x] Onboarding lets a user select shared goals; selection persists.
 - [x] Invite screen shows a mock couple code and enters the app.
 - [x] Tab navigation: Us · Moments · Scan · Grow.
-- [x] **Us** shows a weekly suggestion, a partner note, and the latest moment.
+- [x] Spaces: a user can belong to multiple spaces (couple + friends); a switcher
+      changes the active space and all space-scoped content (memories, card
+      progress, suggestions) follows.
+- [x] A new space can be created (couple or friends) or joined via invite code.
+- [x] Preserving a moment activates its card **for the active space only**.
+- [x] **Us** shows a weekly suggestion, a space note, and the latest moment.
 - [x] **Moments** lists seeded memories; opening one shows its detail.
 - [x] **Grow** shows the Grow Together edition with 20 cards (discovered/sealed),
       shown as "N of 20 discovered" (no completion %).

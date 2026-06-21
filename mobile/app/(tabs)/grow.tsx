@@ -12,13 +12,15 @@ import { Spacing } from '../../constants/spacing';
 import { EditionHeader } from '../../components/edition/EditionHeader';
 import { MomentCardItem } from '../../components/edition/MomentCardItem';
 import { useEdition } from '../../lib/hooks/useEdition';
+import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useAppStore } from '../../lib/store';
 import { ai } from '../../lib/ai';
 import type { MomentCard } from '../../lib/types';
 import type { CardSuggestion } from '../../lib/ai/types';
 
 export default function GrowScreen() {
-  const { edition, cards, loading, activatedCount } = useEdition();
+  const { activeSpace } = useSpaces();
+  const { edition, cards, loading, activatedCount } = useEdition(activeSpace?.id);
   const goals = useAppStore((s) => s.goals);
   const [suggestion, setSuggestion] = useState<CardSuggestion | null>(null);
 

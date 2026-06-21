@@ -14,6 +14,20 @@ visible long after the conversation or experience has ended.
 
 **Core promise:** collect moments. grow together.
 
+## Spaces
+
+A **space** is the private container a small group shares a diary in. A couple is
+the original space type; **friends spaces** use the exact same model — same
+cards, same diary, same preserve-a-moment loop, just more people.
+
+One person can be in **several spaces at once**: a couple space with their
+partner and, say, a friends space with their Saturday crew. Everything is scoped
+to the active space — its memories, its card progress, its suggestions — and a
+switcher moves between them. Each space's diary is private to that space's
+members; nothing is ever shared across spaces or made public.
+
+> One model, many circles: the people you grow with aren't only a partner.
+
 ## Launch edition — Grow Together (Sunflower)
 
 The first edition uses flowers, roots, and growth as symbols for relationships

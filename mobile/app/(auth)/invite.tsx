@@ -9,13 +9,17 @@ import {
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
-import { SEED_COUPLE } from '../../lib/seed';
+import { SEED_SPACES } from '../../lib/seed';
 import { useAppStore } from '../../lib/store';
+
+const FIRST_SPACE = SEED_SPACES[0];
 
 export default function InviteScreen() {
   const completeOnboarding = useAppStore((s) => s.completeOnboarding);
+  const setActiveSpace = useAppStore((s) => s.setActiveSpace);
 
   const enter = async () => {
+    setActiveSpace(FIRST_SPACE.id);
     await completeOnboarding();
     router.replace('/(tabs)/us');
   };
@@ -28,12 +32,13 @@ export default function InviteScreen() {
           <Text style={styles.title}>your{'\n'}invite code</Text>
           <Text style={styles.subtitle}>
             share this with your partner so you can build your shared diary together.
+            you can also start friends spaces later.
           </Text>
         </View>
 
         <View style={styles.codeContainer}>
           <Text style={styles.codeLabel}>YOUR CODE</Text>
-          <Text style={styles.code}>{SEED_COUPLE.inviteCode}</Text>
+          <Text style={styles.code}>{FIRST_SPACE.inviteCode}</Text>
           <Text style={styles.codeHint}>
             your partner enters this when they set up their account
           </Text>

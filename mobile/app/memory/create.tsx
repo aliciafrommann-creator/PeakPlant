@@ -16,7 +16,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useMemories } from '../../lib/hooks/useMemories';
-import { localCardRepository } from '../../lib/repositories/local';
+import { useSpaces } from '../../lib/hooks/useSpaces';
 import { SEED_CARDS } from '../../lib/seed';
 
 export default function CreateMemoryScreen() {
@@ -24,7 +24,8 @@ export default function CreateMemoryScreen() {
   const [note, setNote] = useState('');
   const [photoUri, setPhotoUri] = useState<string | undefined>(undefined);
   const [saving, setSaving] = useState(false);
-  const { createMemory } = useMemories();
+  const { activeSpace } = useSpaces();
+  const { createMemory } = useMemories(activeSpace?.id);
 
   const selectedCardId = cardId ?? 'card-04';
   const card = SEED_CARDS.find((c) => c.id === selectedCardId);
@@ -41,7 +42,7 @@ export default function CreateMemoryScreen() {
   };
 
   const handleSave = async () => {
-    if (!note.trim()) return;
+    if (!note.trim() || !activeSpace) return;
     setSaving(true);
     try {
       const memory = await createMemory({
@@ -49,8 +50,6 @@ export default function CreateMemoryScreen() {
         note: note.trim(),
         photoUri,
       });
-      // Keep the collection in sync: a preserved moment discovers its card.
-      await localCardRepository.activate(selectedCardId).catch(() => undefined);
       router.replace(`/memory/${memory.id}`);
     } catch (_e) {
       setSaving(false);
@@ -85,12 +84,22 @@ export default function CreateMemoryScreen() {
           )}
 
           {/* Photo area */}
-          <TouchableOpacity style={styles.photoArea} activeOpacity={0.8}>
-            <View style={styles.photoPlaceholder}>
-              <Text style={styles.photoIcon}>○</Text>
-              <Text style={styles.photoText}>ADD PHOTO</Text>
-              <Text style={styles.photoHint}>optional</Text>
-            </View>
+          <TouchableOpacity
+            style={styles.photoArea}
+            activeOpacity={0.8}
+            onPress={pickPhoto}
+            accessibilityRole="button"
+            accessibilityLabel={photoUri ? 'Change photo' : 'Add a photo (optional)'}
+          >
+            {photoUri ? (
+              <Image source={{ uri: photoUri }} style={styles.photoPreview} />
+            ) : (
+              <View style={styles.photoPlaceholder}>
+                <Text style={styles.photoIcon}>○</Text>
+                <Text style={styles.photoText}>ADD PHOTO</Text>
+                <Text style={styles.photoHint}>optional</Text>
+              </View>
+            )}
           </TouchableOpacity>
 
           {/* Note input */}
@@ -178,6 +187,11 @@ const styles = StyleSheet.create({
     height: 180,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
+  },
+  photoPreview: {
+    width: '100%',
+    height: '100%',
   },
   photoPlaceholder: {
     alignItems: 'center',

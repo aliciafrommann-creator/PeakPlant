@@ -12,7 +12,7 @@ purpose-limited. Designed in from the first migration, not bolted on.
 
 - Every personal-domain table uses **deny-by-default** RLS from the first
   migration. No table is readable without an explicit policy.
-- The core rule: a row is readable/writable only by members of its `coupleId`.
+- The core rule: a row is readable/writable only by members of its `spaceId`.
 - Critical writes — preserving a moment, unlocking an Intimacy card, a purchase —
   execute as **atomic** server-side commands, never as multi-step client writes.
 - Privileged/admin access uses named accounts with MFA, scoped permissions, and
@@ -23,7 +23,7 @@ purpose-limited. Designed in from the first migration, not bolted on.
 
 - Stored in **private** buckets — never public URLs.
 - **EXIF/GPS stripped** and images re-encoded before storage.
-- Served only via short-lived **signed URLs** to authorized couple members.
+- Served only via short-lived **signed URLs** to authorized space members.
 - Media paths are non-enumerable.
 
 ## Age & identity

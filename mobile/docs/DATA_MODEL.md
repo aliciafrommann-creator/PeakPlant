@@ -5,11 +5,25 @@ AsyncStorage; the rest are modelled for the Supabase phase.
 
 ## Entities
 
-### Couple
-`id`, `name`, `inviteCode`, `createdAt` — the shared space two members belong to.
+### Space
+`id`, `type` (`couple` | `friends`), `name`, `inviteCode`, `createdAt` — the
+shared container people preserve moments in. A couple is just one kind of space;
+friends spaces use the identical model. This is the unit everything else is
+scoped to.
+
+### SpaceMember
+`id`, `spaceId`, `userId`, `name`, `role` (`owner` | `member`), `joinedAt` — the
+join between a user and a space. A single user can hold many memberships, so one
+person can belong to a couple space **and** several friends spaces at once.
 
 ### User
-`id`, `name`, `coupleId` — a single member. Auth is mocked in the MVP.
+`id`, `name` — a single person. Membership lives in `SpaceMember`, not on the
+user. Auth is mocked in the MVP.
+
+### CardActivation
+A card's progress is **per space**: each space discovers cards independently.
+In the MVP this is stored as `spaceId → cardId[]`; in the Supabase phase it
+becomes a `CardActivation` row (`spaceId`, `cardId`, `activatedAt`).
 
 ### Edition
 `id`, `name`, `subtitle`, `description`, `cards[]`, `coverImage?` — a seasonal
@@ -17,29 +31,28 @@ set. Launch edition: `edition-01` "Grow Together".
 
 ### MomentCard
 `id`, `number`, `prompt`, `type` (`question` | `action`), `edition`,
-`status` (`sealed` | `activated`). A card becomes `activated` when a memory is
-preserved for it.
+`status` (`sealed` | `activated`). `status` is **derived per space** from
+CardActivation — the same card can be activated in one space and sealed in
+another.
 
 ### Memory
-`id`, `cardId`, `coupleId`, `note`, `photoUri?`, `createdAt`, `updatedAt`.
-The unit of the diary — a preserved moment tied to a card.
+`id`, `cardId`, `spaceId`, `note`, `photoUri?`, `createdAt`, `updatedAt`.
+The unit of the diary — a preserved moment tied to a card, owned by one space.
 
 ## Future entities (Supabase phase)
 
-- **CoupleMember** — join between User and Couple with role/joinedAt
 - **IntimacyCard** — the separate condom-box collection per edition
-- **CardActivation** — who activated which card, when
 - **MemoryPhoto** — multiple photos per memory (1–2), with order
-- **PartnerInvitation** — invite token, expiry, accepted state
+- **SpaceInvitation** — invite token, expiry, accepted state
 
 A production `Memory` will also carry optional `location`, `createdBy`, and a
 `photos[]` array rather than a single `photoUri`.
 
 ## Modelling conventions (Supabase phase)
 
-- **Couple-scoped by default.** Every personal-domain table carries `coupleId`
-  and is governed by deny-by-default RLS keyed on couple membership (see
-  SECURITY).
+- **Space-scoped by default.** Every personal-domain table carries `spaceId`
+  and is governed by deny-by-default RLS keyed on space membership — a row is
+  visible only to members of its space (see SECURITY).
 - **Append-oriented activity vs. domain tables.** Activity/analytics-style events
   are append-only; financially or behaviorally distinct objects (entitlements,
   purchases) use dedicated domain tables with atomic writes — never overwriting a

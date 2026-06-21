@@ -11,14 +11,16 @@ import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { Logo } from '../../components/ui/Logo';
+import { SpaceSwitcher } from '../../components/space/SpaceSwitcher';
 import { useMemories } from '../../lib/hooks/useMemories';
-import { useCouple } from '../../lib/hooks/useCouple';
+import { useSpaces } from '../../lib/hooks/useSpaces';
 import { SEED_CARDS } from '../../lib/seed';
 
 export default function UsScreen() {
-  const { couple } = useCouple();
-  const { memories } = useMemories();
+  const { spaces, activeSpace, setActiveSpace } = useSpaces();
+  const { memories } = useMemories(activeSpace?.id);
 
+  const isCouple = activeSpace?.type === 'couple';
   const latestMemory = memories[0];
   const latestCard = latestMemory
     ? SEED_CARDS.find((c) => c.id === latestMemory.cardId)
@@ -35,14 +37,29 @@ export default function UsScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Logo size="sm" />
-          <Text style={styles.coupleName}>{couple.name.toLowerCase()}</Text>
+          <Text style={styles.coupleName}>
+            {(activeSpace?.name ?? 'your space').toLowerCase()}
+          </Text>
         </View>
 
-        {/* Partner note */}
+        {/* Space switcher — only when there's more than one */}
+        {spaces.length > 1 && (
+          <SpaceSwitcher
+            spaces={spaces}
+            activeSpaceId={activeSpace?.id}
+            onSelect={setActiveSpace}
+          />
+        )}
+
+        {/* Note from the space */}
         <View style={styles.partnerNote}>
-          <Text style={styles.partnerLabel}>PARTNER NOTE</Text>
+          <Text style={styles.partnerLabel}>
+            {isCouple ? 'PARTNER NOTE' : 'FROM THE GROUP'}
+          </Text>
           <Text style={styles.partnerText}>
-            "thinking about our walk last week. want to do it again soon."
+            {isCouple
+              ? '"thinking about our walk last week. want to do it again soon."'
+              : '"who\'s in for saturday? same spot, same time."'}
           </Text>
         </View>
 
@@ -91,7 +108,9 @@ export default function UsScreen() {
         {/* Tagline */}
         <View style={styles.taglineSection}>
           <Text style={styles.tagline}>
-            your relationship is not something to optimise.{'\n'}it is something to notice.
+            {isCouple
+              ? 'your relationship is not something to optimise.\nit is something to notice.'
+              : 'time with friends is not something to optimise.\nit is something to notice.'}
           </Text>
         </View>
 

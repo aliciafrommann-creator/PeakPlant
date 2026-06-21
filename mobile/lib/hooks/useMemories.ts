@@ -1,24 +1,28 @@
 import { useState, useEffect, useCallback } from 'react';
-import { localMemoryRepository } from '../repositories/local';
+import { localMemoryRepository, localCardRepository } from '../repositories/local';
 import type { Memory } from '../types';
-import { SEED_COUPLE } from '../seed';
 
-export function useMemories() {
+export function useMemories(spaceId?: string) {
   const [memories, setMemories] = useState<Memory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const load = useCallback(async () => {
+    if (!spaceId) {
+      setMemories([]);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
-      const data = await localMemoryRepository.getAll(SEED_COUPLE.id);
+      const data = await localMemoryRepository.getAll(spaceId);
       setMemories(data);
     } catch (e) {
       setError(e instanceof Error ? e : new Error('Failed to load memories'));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [spaceId]);
 
   useEffect(() => {
     load();
@@ -26,14 +30,14 @@ export function useMemories() {
 
   const createMemory = useCallback(
     async (data: { cardId: string; note: string; photoUri?: string }) => {
-      const memory = await localMemoryRepository.create({
-        ...data,
-        coupleId: SEED_COUPLE.id,
-      });
+      if (!spaceId) throw new Error('No active space');
+      const memory = await localMemoryRepository.create({ ...data, spaceId });
+      // A preserved moment discovers its card — for this space only.
+      await localCardRepository.activate(data.cardId, spaceId).catch(() => undefined);
       setMemories((prev) => [memory, ...prev]);
       return memory;
     },
-    []
+    [spaceId],
   );
 
   const deleteMemory = useCallback(async (id: string) => {

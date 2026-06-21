@@ -3,25 +3,31 @@ import { localCardRepository } from '../repositories/local';
 import { SEED_EDITION } from '../seed';
 import type { Edition, MomentCard } from '../types';
 
-export function useEdition() {
+export function useEdition(spaceId?: string) {
   const [edition] = useState<Edition>(SEED_EDITION);
-  const [cards, setCards] = useState<MomentCard[]>(SEED_EDITION.cards);
+  const [cards, setCards] = useState<MomentCard[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    localCardRepository.getAll('edition-01').then((data) => {
-      setCards(data);
+    if (!spaceId) {
+      setCards([]);
       setLoading(false);
+      return;
+    }
+    let active = true;
+    setLoading(true);
+    localCardRepository.getAll('edition-01', spaceId).then((data) => {
+      if (active) {
+        setCards(data);
+        setLoading(false);
+      }
     });
-  }, []);
-
-  const activateCard = async (cardId: string) => {
-    const updated = await localCardRepository.activate(cardId);
-    setCards((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
-    return updated;
-  };
+    return () => {
+      active = false;
+    };
+  }, [spaceId]);
 
   const activatedCount = cards.filter((c) => c.status === 'activated').length;
 
-  return { edition, cards, loading, activateCard, activatedCount };
+  return { edition, cards, loading, activatedCount };
 }

@@ -11,12 +11,15 @@ import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useMemories } from '../../lib/hooks/useMemories';
+import { useSpaces } from '../../lib/hooks/useSpaces';
 import { MemoryCard } from '../../components/memory/MemoryCard';
+import { SpaceSwitcher } from '../../components/space/SpaceSwitcher';
 import { SEED_CARDS } from '../../lib/seed';
 import type { Memory } from '../../lib/types';
 
 export default function MomentsScreen() {
-  const { memories, loading } = useMemories();
+  const { spaces, activeSpace, setActiveSpace } = useSpaces();
+  const { memories, loading } = useMemories(activeSpace?.id);
 
   function renderItem({ item }: { item: Memory }) {
     const card = SEED_CARDS.find((c) => c.id === item.cardId);
@@ -33,8 +36,18 @@ export default function MomentsScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>moments</Text>
-        <Text style={styles.subtitle}>your shared diary</Text>
+        <Text style={styles.subtitle}>
+          {activeSpace ? `${activeSpace.name.toLowerCase()} · shared diary` : 'your shared diary'}
+        </Text>
       </View>
+
+      {spaces.length > 1 && (
+        <SpaceSwitcher
+          spaces={spaces}
+          activeSpaceId={activeSpace?.id}
+          onSelect={setActiveSpace}
+        />
+      )}
 
       {loading ? (
         <View style={styles.center}>

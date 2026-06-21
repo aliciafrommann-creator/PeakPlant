@@ -37,6 +37,10 @@ export default function RootLayout() {
             options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
           />
           <Stack.Screen name="memory/[id]" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen
+            name="space/new"
+            options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+          />
         </Stack>
       </QueryClientProvider>
     </SafeAreaProvider>

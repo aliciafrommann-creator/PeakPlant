@@ -5,7 +5,7 @@ trust *is* the product.
 
 ## Principles
 
-- The diary is **private** to the two connected couple members.
+- A diary is **private** to the members of its space (a couple, or a friends group).
 - Photos and notes are **never public** and **never auto-shared**.
 - Diary content is **never** sent to product analytics or used for training.
 - **Deletion** is always possible; invite tokens can expire.
@@ -21,7 +21,7 @@ trust *is* the product.
 ## Supabase phase requirements
 
 - Row-Level Security (deny-by-default): a row is readable only by members of its
-  `coupleId`.
+  `spaceId`.
 - Private storage bucket for photos; EXIF/GPS stripped and re-encoded;
   non-enumerable media paths; short-lived signed URLs.
 - EU data region; vendors bound by DPA and an exit plan.
