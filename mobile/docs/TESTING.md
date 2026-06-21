@@ -23,10 +23,10 @@ All three are green as of this commit (15 unit tests passing).
   every linked place resolves, only partners carry a perk).
 - **Component tests (planned):** React Native Testing Library for screen
   states (loading/empty/error) once flows stabilise.
-- **Database / RLS tests (planned, backend phase):** pgTAP + client
-  authorization tests — allow/deny per role, space-membership isolation,
-  atomic unlock/purchase concurrency. Required before any real data (see
-  SECURITY, ARCHITECTURE).
+- **Database / RLS tests:** pgTAP suite at `supabase/tests/rls_test.sql`
+  (member sees space+memory; outsider/anon see nothing; outsider cannot insert).
+  Run via `supabase test db` against a local/staging stack — not executed in the
+  JS CI. Required green before broad real data (see SECURITY).
 - **E2E (planned):** the core journey — scan → card → preserve moment →
   appears in the right space's diary.
 

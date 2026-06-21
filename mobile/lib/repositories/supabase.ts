@@ -5,6 +5,7 @@
  */
 
 import { supabase } from '../supabase/client';
+import { uploadMemoryPhoto, signedPhotoUrl } from '../supabase/storage';
 import { SEED_CARDS } from '../seed';
 import type { Memory, MomentCard, Space, SpaceMember } from '../types';
 import type {
@@ -43,6 +44,13 @@ function mapMemory(r: any): Memory {
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
+/** Replace the stored photo path with a short-lived signed URL for display. */
+async function withSignedPhoto(m: Memory): Promise<Memory> {
+  if (!m.photoUri) return m;
+  const url = await signedPhotoUrl(m.photoUri);
+  return { ...m, photoUri: url };
+}
+
 export const supabaseMemoryRepository: IMemoryRepository = {
   async getAll(spaceId: string): Promise<Memory[]> {
     const { data, error } = await db()
@@ -51,30 +59,35 @@ export const supabaseMemoryRepository: IMemoryRepository = {
       .eq('space_id', spaceId)
       .order('created_at', { ascending: false });
     if (error) throw error;
-    return (data ?? []).map(mapMemory);
+    return Promise.all((data ?? []).map(mapMemory).map(withSignedPhoto));
   },
 
   async getById(id: string): Promise<Memory | null> {
     const { data, error } = await db().from('memories').select('*').eq('id', id).maybeSingle();
     if (error) throw error;
-    return data ? mapMemory(data) : null;
+    return data ? withSignedPhoto(mapMemory(data)) : null;
   },
 
   async create(data: Omit<Memory, 'id' | 'createdAt' | 'updatedAt'>): Promise<Memory> {
     const { data: user } = await db().auth.getUser();
+    // A picked photo is a local file uri — upload it (EXIF stripped) and store the path.
+    let photoPath: string | null = null;
+    if (data.photoUri) {
+      photoPath = await uploadMemoryPhoto(data.spaceId, data.photoUri);
+    }
     const { data: row, error } = await db()
       .from('memories')
       .insert({
         space_id: data.spaceId,
         card_id: data.cardId,
         note: data.note,
-        photo_path: data.photoUri ?? null,
+        photo_path: photoPath,
         created_by: user.user?.id ?? null,
       })
       .select()
       .single();
     if (error) throw error;
-    return mapMemory(row);
+    return withSignedPhoto(mapMemory(row));
   },
 
   async update(id: string, updates: Partial<Pick<Memory, 'note' | 'photoUri'>>): Promise<Memory> {

@@ -61,8 +61,12 @@ behavior; keys → Supabase):
 3. ✅ Repo selector `lib/repositories/index.ts`; hooks use it.
 4. ✅ Email-OTP auth (`lib/supabase/auth.ts` + `(auth)/sign-in.tsx`); entry gate
    routes by session + space membership; onboarding creates a real couple space.
-5. ⏳ Run migration `0002_redeem_invite.sql`; set env keys; verify on device.
-6. ⏳ pgTAP RLS tests (allow + deny per role) before broad real data (TESTING).
+5. ✅ Photo upload: private `memory-photos` bucket (migration `0003`) + member-
+   scoped policies; client uploads via `lib/supabase/storage.ts` (EXIF stripped,
+   downscaled), reads via signed URLs.
+6. ✅ Account deletion: `delete_account()` RPC (`0003`) + in-app screen.
+7. ✅ pgTAP RLS tests written (`supabase/tests/rls_test.sql`).
+8. ⏳ Run migrations `0002` + `0003`; set env keys; run pgTAP; verify on device.
 
 Each step is a small, reviewed increment — not one big switch.
 
