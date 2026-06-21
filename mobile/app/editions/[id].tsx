@@ -27,6 +27,14 @@ export default function EditionScreen() {
     return SEED_CARDS.find((c) => c.id === cardId);
   }
 
+  // Each edition themes its diary header with its own signature color.
+  const onLight = edition.ink === 'dark'; // dark text on a light edition color
+  const fg = onLight ? '#1A1A1A' : '#FAF7F0';
+  const fgMuted = onLight ? 'rgba(26,26,26,0.62)' : 'rgba(250,247,240,0.78)';
+  const fgFaint = onLight ? 'rgba(26,26,26,0.5)' : 'rgba(250,247,240,0.62)';
+  const btnBg = onLight ? '#1A1A1A' : '#FAF7F0';
+  const btnText = onLight ? '#FAF7F0' : '#1A1A1A';
+
   function renderMemory({ item }: { item: Memory }) {
     return (
       <View style={styles.memoryWrapper}>
@@ -56,30 +64,30 @@ export default function EditionScreen() {
         keyExtractor={(item) => item.id}
         renderItem={renderMemory}
         ListHeaderComponent={
-          <View style={styles.header}>
+          <View style={[styles.header, { backgroundColor: edition.color }]}>
             <Text style={styles.symbol}>{edition.symbol}</Text>
-            <Text style={styles.editionLabel}>{edition.subtitle.toUpperCase()}</Text>
-            <Text style={styles.title}>{edition.name.toLowerCase()}</Text>
-            <Text style={styles.description}>{edition.description}</Text>
+            <Text style={[styles.editionLabel, { color: fg }]}>{edition.subtitle.toUpperCase()}</Text>
+            <Text style={[styles.title, { color: fg }]}>{edition.name.toLowerCase()}</Text>
+            <Text style={[styles.description, { color: fgMuted }]}>{edition.description}</Text>
 
             <View style={styles.statsRow}>
-              <Text style={styles.stat}>
+              <Text style={[styles.stat, { color: fgMuted }]}>
                 {editionMemories.length} moment{editionMemories.length !== 1 ? 's' : ''} preserved
               </Text>
             </View>
 
             <TouchableOpacity
-              style={styles.scanButton}
+              style={[styles.scanButton, { backgroundColor: btnBg }]}
               onPress={() => router.push('/(tabs)/scan')}
               activeOpacity={0.85}
               accessibilityRole="button"
               accessibilityLabel="Scan a card from this edition"
             >
-              <Text style={styles.scanButtonText}>SCAN A CARD</Text>
+              <Text style={[styles.scanButtonText, { color: btnText }]}>SCAN A CARD</Text>
             </TouchableOpacity>
 
             {editionMemories.length > 0 && (
-              <Text style={styles.diaryLabel}>YOUR DIARY</Text>
+              <Text style={[styles.diaryLabel, { color: fgFaint }]}>YOUR DIARY</Text>
             )}
           </View>
         }

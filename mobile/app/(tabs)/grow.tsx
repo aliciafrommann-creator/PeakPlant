@@ -38,7 +38,11 @@ export default function GrowScreen() {
     const done = progress[item.id] ?? 0;
     return (
       <TouchableOpacity
-        style={[styles.card, !available && styles.cardUpcoming]}
+        style={[
+          styles.card,
+          { borderLeftWidth: 3, borderLeftColor: item.color },
+          !available && styles.cardUpcoming,
+        ]}
         onPress={() => available && router.push(`/editions/${item.id}`)}
         disabled={!available}
         activeOpacity={0.85}

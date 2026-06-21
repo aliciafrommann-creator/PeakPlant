@@ -68,6 +68,10 @@ export interface Edition {
   description: string;
   /** Symbol/emoji used as the edition's visual marker (e.g. 🌻 for Sunflower). */
   symbol: string;
+  /** The edition's signature color — themes its diary when opened. */
+  color: string;
+  /** Whether text/foreground on `color` should be dark or light (for contrast). */
+  ink: 'dark' | 'light';
   status: EditionStatus;
   /**
    * Number of cards in this edition's deck. A deck holds 15–20 cards
