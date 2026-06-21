@@ -1,0 +1,36 @@
+name: EAS iOS build
+
+# Manual button in GitHub → Actions → "EAS iOS build" → Run workflow.
+# No terminal needed. Requires the EXPO_TOKEN repo secret and (one-time) iOS
+# credentials managed by EAS via an App Store Connect API key.
+# See mobile/docs/IOS_TESTFLIGHT.md for the full setup.
+
+on:
+  workflow_dispatch:
+    inputs:
+      submit:
+        description: "Also submit to TestFlight after build"
+        type: boolean
+        default: false
+
+jobs:
+  build:
+    name: build (iOS)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: npm ci
+      - name: Build iOS (production)${{ inputs.submit && ' + submit' || '' }}
+        run: eas build --platform ios --profile production --non-interactive ${{ inputs.submit && '--auto-submit' || '' }}

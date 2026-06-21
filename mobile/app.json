@@ -6,8 +6,11 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "runtimeVersion": { "policy": "appVersion" },
+    "icon": "./assets/icon.png",
     "splash": {
-      "backgroundColor": "#ffffff"
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1A1A1A"
     },
     "ios": {
       "supportsTablet": true,
@@ -16,7 +19,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1A1A1A"
       },
       "package": "com.peakplant.app"
     },

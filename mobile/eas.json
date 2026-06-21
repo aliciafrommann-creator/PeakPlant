@@ -12,12 +12,18 @@
       "distribution": "internal",
       "channel": "preview",
       "ios": { "simulator": false },
-      "env": {}
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://kmlqjmxkcnkfwsbptvuc.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_yXn6he-Mbcr5JQQoeBa1FQ_8l8WIqql"
+      }
     },
     "production": {
       "channel": "production",
       "autoIncrement": true,
-      "env": {}
+      "env": {
+        "EXPO_PUBLIC_SUPABASE_URL": "https://kmlqjmxkcnkfwsbptvuc.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_yXn6he-Mbcr5JQQoeBa1FQ_8l8WIqql"
+      }
     }
   },
   "submit": {

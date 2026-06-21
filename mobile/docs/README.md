@@ -12,6 +12,7 @@ what is DECIDED vs. OPEN before you build.
 | [BACKEND](./BACKEND.md) | Supabase auth, space-linking, RLS matrix, go-live steps. |
 | [LAUNCH_READINESS](./LAUNCH_READINESS.md) | What's done, gaps to pilot/launch, what needs a human. |
 | [STORE_LISTING](./STORE_LISTING.md) | App Store / Play metadata, privacy answers, checklist. |
+| [IOS_TESTFLIGHT](./IOS_TESTFLIGHT.md) | No-terminal path to TestFlight (accounts, IDs, the build button). |
 | [ARCHITECTURE](./ARCHITECTURE.md) | App layers, repository pattern, Supabase-phase targets. |
 | [DATA_MODEL](./DATA_MODEL.md) | Entities and Supabase-phase modelling conventions. |
 | [DESIGN_SYSTEM](./DESIGN_SYSTEM.md) | Colors, type, spacing, components, rules. |
