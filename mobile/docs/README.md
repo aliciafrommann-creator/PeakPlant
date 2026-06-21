@@ -9,6 +9,7 @@ what is DECIDED vs. OPEN before you build.
 | [PRODUCT](./PRODUCT.md) | Concept, editions, cards, Intimacy Collection. |
 | [PLATFORM](./PLATFORM.md) | Customizable feature flags, build phases, staged revenue model. |
 | [TESTING](./TESTING.md) | Test stack, what's verified, pyramid, and conventions. |
+| [BACKEND](./BACKEND.md) | Supabase auth, space-linking, RLS matrix, go-live steps. |
 | [ARCHITECTURE](./ARCHITECTURE.md) | App layers, repository pattern, Supabase-phase targets. |
 | [DATA_MODEL](./DATA_MODEL.md) | Entities and Supabase-phase modelling conventions. |
 | [DESIGN_SYSTEM](./DESIGN_SYSTEM.md) | Colors, type, spacing, components, rules. |

@@ -38,6 +38,7 @@ AI-generated assumptions are never authoritative.
 | PP-022 | Revenue | "Moments to do together" can link to **local partner places**. Partner places may offer a small, transparent perk; participation never requires a purchase. This is the first revenue stream beyond product sales. Aggregate, privacy-safe — no per-user commercial profiling. | DECIDED |
 | PP-023 | Quality | PeakPlant ships in small reviewed increments verified by `tsc` (typecheck), Vitest (pure-logic unit tests), and `expo export` (build). P0 invariants get explicit tests; checks are run for real, not assumed (see TESTING). | DECIDED |
 | PP-024 | Challenges | Opt-in, **finite** challenges a space can take on: a gentle goal (preserve N moments) that earns a collectible **badge** on completion. No scores, no leaderboards, no countdown. Progress counts moments preserved after joining; leaving keeps every moment. Switch-off-able via the `challenges` flag. | DECIDED |
+| PP-025 | Backend | The Supabase backend is built foundation-first: SQL migrations + **deny-by-default, space-scoped RLS** (`supabase/migrations/0001`), with auth (email OTP/magic link) and invite-code space-linking designed in BACKEND.md. The app stays local-first until a real EU project + credentials exist; repos are then wired in small reviewed increments. | DECIDED |
 | PP-003 | Behavioral design | No points, scores, ratings, completion %, loss countdowns, or fabricated peer activity. Progress copy is non-punitive. **Amended by PP-021:** a gentle, opt-in "shared rhythm" streak is allowed as a positive collectible, without loss/threat framing. | DECIDED |
 | PP-004 | Iconography | No pink hearts, gamification visuals, or progress bars. Editorial, minimal, warm. | DECIDED |
 | PP-005 | Cards | Each edition ships 20 Moment Cards. Couples pick any card in any order; ~12 moments over ~12 weeks is a gentle suggestion, never a rule. | DECIDED |
@@ -59,8 +60,8 @@ AI-generated assumptions are never authoritative.
 
 | ID | Domain | Decision required | Status | Blocks |
 |----|--------|-------------------|--------|--------|
-| O-001 | Auth | Auth method for the Supabase phase: email OTP / magic link (likely P0) plus Apple & Google (P1) via account linking. | OPEN | Couple linking, store review |
-| O-002 | Couple linking | Exact invite/redeem flow and token expiry that connects two members into one couple. | OPEN | Backend, onboarding |
+| O-001 | Auth | Email OTP / magic link (P0) + Apple/Google (P1) **designed** (BACKEND.md); going live needs a real EU Supabase project + credentials (human step). | OPEN (design ready) | Couple linking, store review |
+| O-002 | Space linking | Invite-code **redeem_invite RPC** designed (BACKEND.md); `0001` ships the interim self-join policy, `0002` adds the hardened RPC with caps/expiry. | OPEN (design ready) | Backend, onboarding |
 | O-003 | Shop checkout | Hosted external checkout vs. integrated commerce for card-set sales; payment provider for the EU market. | OPEN | Shop scope, legal docs |
 | O-004 | AI scope | Which concrete personalization the launch AI does (card suggestion, reflection prompts) and which provider/model, within the AI_SAFETY signal taxonomy. | OPEN | AI build, evaluation suite |
 | O-005 | Realtime | Whether the shared diary uses Supabase Realtime at launch or refetch-on-focus only. | TO VALIDATE | Sync UX |
