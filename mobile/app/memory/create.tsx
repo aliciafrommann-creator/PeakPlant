@@ -28,16 +28,15 @@ export default function CreateMemoryScreen() {
   const { activeSpace } = useSpaces();
   const { createMemory } = useMemories(activeSpace?.id);
 
-  const { t } = useLanguage();
-  const selectedCardId = cardId ?? 'card-04';
+  const { t, l } = useLanguage();
+  const selectedCardId = cardId ?? 'card-01';
   const card = SEED_CARDS.find((c) => c.id === selectedCardId);
 
-  const cardTitle = card?.content
-    ? t(card.content.title, card.content.titleDe)
-    : card?.prompt ?? '';
-  const notePlaceholder = card?.content?.keepNote
-    ? t(card.content.keepNote, card.content.keepNoteDe ?? card.content.keepNote)
-    : t('what do you want to remember about this moment?', 'was möchtest du von diesem Moment festhalten?');
+  const cardTitle = card?.content ? l(card.content.title) : card?.prompt ?? '';
+  const notePlaceholder = t(
+    'what do you want to remember about this moment?',
+    'was möchtest du von diesem Moment festhalten?'
+  );
 
   const pickPhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({

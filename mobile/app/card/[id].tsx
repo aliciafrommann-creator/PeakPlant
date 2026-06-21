@@ -12,17 +12,11 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
 import { useLanguage } from '../../lib/hooks/useLanguage';
-import type { CardKind } from '../../lib/types';
-
-const KIND_LABEL: Record<CardKind, [string, string]> = {
-  'grow-date':        ['GROW DATE', 'GROW DATE'],
-  'small-act':        ['SMALL ACT', 'KLEINER WACHSTUMSAKT'],
-  'growing-question': ['GROWING QUESTION', 'WACHSTUMSFRAGE'],
-};
+import type { CardGroup, CardSection } from '../../lib/types';
 
 export default function CardDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { t } = useLanguage();
+  const { t, l } = useLanguage();
 
   const card = SEED_CARDS.find((c) => c.id === id);
   const edition = card ? (getEdition(card.edition) ?? SEED_EDITION) : SEED_EDITION;
@@ -40,16 +34,74 @@ export default function CardDetailScreen() {
     );
   }
 
-  const { content, kind } = card;
-  const kindLabels = kind ? KIND_LABEL[kind] : ['CARD', 'KARTE'];
-  const kindLabel = t(kindLabels[0], kindLabels[1]);
+  const group: CardGroup = card.group ?? 'question';
+  const groupLabel = edition.groupLabels ? l(edition.groupLabels[group]) : t('Card', 'Karte');
+  const isQuestion = group === 'question';
 
-  const title = content ? t(content.title, content.titleDe) : card.prompt;
-  const before = content ? t(content.before, content.beforeDe) : null;
-  const tryThis = content ? t(content.tryThis, content.tryThisDe) : null;
-  const talkAboutIt = content ? t(content.talkAboutIt, content.talkAboutItDe) : null;
-  const keepNote = content?.keepNote ? t(content.keepNote, content.keepNoteDe ?? content.keepNote) : null;
-  const comeBack = content?.comeBack ? t(content.comeBack, content.comeBackDe ?? content.comeBack) : null;
+  const title = card.content ? l(card.content.title) : card.prompt;
+  const sections = card.content?.sections ?? [];
+
+  // A quiet note that adapts to the kind of card (and intimate editions).
+  const quietNote = isQuestion
+    ? t(
+        'Take your time. You can pause, skip or return to this card whenever it feels right.',
+        'Lasst euch Zeit. Ihr könnt jederzeit pausieren, überspringen oder später zurückkommen.'
+      )
+    : t(
+        'Choose what feels right for both of you. You can pause, change or stop at any time.',
+        'Macht, was sich für euch beide richtig anfühlt. Ihr könnt jederzeit pausieren, ändern oder aufhören.'
+      );
+
+  function renderPreserveCTA(keyPrefix: string) {
+    return (
+      <View key={`${keyPrefix}-cta`} style={styles.ctaBlock}>
+        <TouchableOpacity
+          style={styles.preserveButton}
+          onPress={() => router.push({ pathname: '/memory/create', params: { cardId: card!.id } })}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel={t('Preserve this moment', 'Diesen Moment festhalten')}
+        >
+          <Text style={styles.preserveText}>
+            {t('PRESERVE THIS MOMENT', 'MOMENT FESTHALTEN')}
+          </Text>
+        </TouchableOpacity>
+        {edition.sensitive && (
+          <Text style={styles.privacyNote}>
+            {t('This stays private on your device.', 'Das bleibt privat auf deinem Gerät.')}
+          </Text>
+        )}
+        <Text style={styles.noPressure}>
+          {t('no pressure. choose what feels right.', 'kein druck. macht, was sich richtig anfühlt.')}
+        </Text>
+      </View>
+    );
+  }
+
+  function renderSection(section: CardSection, index: number) {
+    return (
+      <React.Fragment key={index}>
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>{l(section.heading).toUpperCase()}</Text>
+          {section.body ? <Text style={styles.sectionText}>{l(section.body)}</Text> : null}
+          {section.bullets && section.bullets.length > 0 ? (
+            <View style={styles.bullets}>
+              {section.bullets.map((b, i) => (
+                <View key={i} style={styles.bulletRow}>
+                  <Text style={styles.bulletDot}>·</Text>
+                  <Text style={styles.bulletText}>{l(b)}</Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
+          {section.footer ? <Text style={styles.sectionText}>{l(section.footer)}</Text> : null}
+        </View>
+        {section.preserveHere ? renderPreserveCTA(String(index)) : null}
+      </React.Fragment>
+    );
+  }
+
+  const hasPreserve = sections.some((s) => s.preserveHere);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -57,79 +109,47 @@ export default function CardDetailScreen() {
         <TouchableOpacity onPress={() => router.back()}>
           <Text style={styles.backText}>← {t('BACK', 'ZURÜCK')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerLabel}>{kindLabel}</Text>
+        <Text style={styles.headerLabel} numberOfLines={1}>{groupLabel.toUpperCase()}</Text>
         <View style={{ width: 60 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
-        {/* Card visual — mimics the physical card */}
-        <View style={styles.cardVisual}>
+        {/* Card visual — mirrors the physical card */}
+        <View style={[styles.cardVisual, { backgroundColor: edition.color }]}>
           <View style={styles.cardInner}>
-            <Text style={styles.cardEdition}>PEAKPLANT — {edition.name.toUpperCase()}</Text>
-            <Text style={styles.cardKindLabel}>{kindLabel} · #{String(card.number).padStart(2, '0')}</Text>
-            <Text style={styles.cardTitle}>{title}</Text>
-            <View style={styles.cardDot} />
-          </View>
-        </View>
-
-        {/* Before you begin */}
-        {before && (
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('BEFORE YOU BEGIN', 'BEVOR IHR ANFANGT')}</Text>
-            <Text style={styles.sectionText}>{before}</Text>
-          </View>
-        )}
-
-        {/* Try this */}
-        {tryThis && (
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('TRY THIS', 'PROBIERT DAS')}</Text>
-            <Text style={styles.sectionText}>{tryThis}</Text>
-          </View>
-        )}
-
-        {/* Talk about it */}
-        {talkAboutIt && (
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('TALK ABOUT IT', 'SPRECHT DARÜBER')}</Text>
-            <Text style={styles.sectionTextAccent}>{talkAboutIt}</Text>
-          </View>
-        )}
-
-        {/* Keep the moment — CTA */}
-        <View style={styles.preserveSection}>
-          <Text style={styles.sectionLabel}>{t('KEEP THE MOMENT', 'HALTET DEN MOMENT FEST')}</Text>
-          {keepNote && (
-            <Text style={styles.keepNoteHint}>{keepNote}</Text>
-          )}
-          <TouchableOpacity
-            style={styles.preserveButton}
-            onPress={() => router.push({ pathname: '/memory/create', params: { cardId: card.id } })}
-            activeOpacity={0.8}
-            accessibilityRole="button"
-            accessibilityLabel={t('Preserve this moment', 'Diesen Moment festhalten')}
-          >
-            <Text style={styles.preserveText}>
-              {t('PRESERVE THIS MOMENT', 'MOMENT FESTHALTEN')}
+            <Text style={[styles.cardEdition, tone(edition.ink, 0.7)]}>
+              PEAKPLANT — {edition.name.toUpperCase()}
             </Text>
-          </TouchableOpacity>
-          <Text style={styles.noPressure}>
-            {t('no pressure. choose what feels right.', 'kein druck. macht, was sich richtig anfühlt.')}
-          </Text>
+            <Text style={[styles.cardKindLabel, tone(edition.ink, 0.6)]}>
+              {groupLabel.toUpperCase()} · #{String(card.number).padStart(2, '0')}
+            </Text>
+            <Text style={[styles.cardTitle, tone(edition.ink, 1)]}>{title}</Text>
+            <View
+              style={[
+                styles.cardDot,
+                { backgroundColor: edition.ink === 'dark' ? '#1A1A1A' : '#FAF7F0' },
+              ]}
+            />
+          </View>
         </View>
 
-        {/* Come back later */}
-        {comeBack && (
-          <View style={styles.comeBackSection}>
-            <Text style={styles.sectionLabel}>{t('COME BACK LATER', 'KOMMT SPÄTER NOCHMAL')}</Text>
-            <Text style={styles.comeBackText}>{comeBack}</Text>
-          </View>
-        )}
+        <Text style={styles.quietNote}>{quietNote}</Text>
+
+        {sections.map(renderSection)}
+
+        {/* If a card has no explicit keep-the-moment section, still offer the CTA. */}
+        {!hasPreserve ? renderPreserveCTA('end') : null}
 
       </ScrollView>
     </SafeAreaView>
   );
+}
+
+/** Foreground color for text on an edition's color, by ink + opacity. */
+function tone(ink: 'dark' | 'light', opacity: number) {
+  const base = ink === 'dark' ? '26,26,26' : '250,247,240';
+  return { color: `rgba(${base},${opacity})` };
 }
 
 const styles = StyleSheet.create({
@@ -163,56 +183,58 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: Spacing.screen,
-    gap: Spacing.xl,
+    gap: Spacing.lg,
     paddingBottom: Spacing.xxxl,
   },
   cardVisual: {
-    backgroundColor: Colors.backgroundDark,
     padding: 2,
   },
   cardInner: {
-    backgroundColor: Colors.backgroundDark,
     padding: Spacing.xl,
-    aspectRatio: 0.65,
+    aspectRatio: 0.7,
     justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: Colors.borderDark,
+    gap: Spacing.md,
   },
   cardEdition: {
     fontSize: 8,
-    fontWeight: '500',
+    fontWeight: '600',
     letterSpacing: 2.5,
-    color: Colors.accent,
   },
   cardKindLabel: {
     fontSize: 9,
     fontWeight: '400',
     letterSpacing: 2,
-    color: Colors.textSubtle,
   },
   cardTitle: {
-    fontSize: 22,
-    fontWeight: '200',
-    color: Colors.white,
-    lineHeight: 30,
+    fontSize: 26,
+    fontWeight: '300',
+    lineHeight: 34,
     letterSpacing: -0.3,
     flex: 1,
-    paddingVertical: Spacing.xl,
+    paddingVertical: Spacing.lg,
   },
   cardDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: Colors.accent,
+  },
+  quietNote: {
+    fontSize: 12,
+    fontWeight: '300',
+    color: Colors.textFaint,
+    lineHeight: 18,
+    letterSpacing: 0.2,
+    fontStyle: 'italic',
   },
   section: {
     gap: Spacing.sm,
+    marginTop: Spacing.sm,
   },
   sectionLabel: {
     fontSize: 9,
     fontWeight: '500',
     letterSpacing: 3,
-    color: Colors.textFaint,
+    color: Colors.accent,
   },
   sectionText: {
     fontSize: 15,
@@ -221,33 +243,37 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     letterSpacing: 0.1,
   },
-  sectionTextAccent: {
-    fontSize: 16,
-    fontWeight: '200',
-    color: Colors.text,
-    lineHeight: 26,
-    letterSpacing: -0.1,
-    fontStyle: 'italic',
+  bullets: {
+    gap: 6,
+    marginTop: 2,
   },
-  preserveSection: {
-    gap: Spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    paddingTop: Spacing.lg,
+  bulletRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
   },
-  keepNoteHint: {
-    fontSize: 13,
+  bulletDot: {
+    fontSize: 15,
+    color: Colors.textFaint,
+    lineHeight: 22,
+  },
+  bulletText: {
+    flex: 1,
+    fontSize: 15,
     fontWeight: '300',
-    color: Colors.textMuted,
-    lineHeight: 20,
+    color: Colors.text,
+    lineHeight: 22,
     letterSpacing: 0.1,
+  },
+  ctaBlock: {
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   preserveButton: {
     height: 56,
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: Spacing.sm,
   },
   preserveText: {
     fontSize: 11,
@@ -255,26 +281,19 @@ const styles = StyleSheet.create({
     letterSpacing: 3,
     color: Colors.white,
   },
+  privacyNote: {
+    fontSize: 11,
+    fontWeight: '400',
+    color: Colors.textMuted,
+    textAlign: 'center',
+    letterSpacing: 0.3,
+  },
   noPressure: {
     fontSize: 11,
     fontWeight: '300',
     color: Colors.textFaint,
     textAlign: 'center',
     letterSpacing: 0.5,
-    fontStyle: 'italic',
-  },
-  comeBackSection: {
-    gap: Spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    paddingTop: Spacing.lg,
-  },
-  comeBackText: {
-    fontSize: 14,
-    fontWeight: '300',
-    color: Colors.textMuted,
-    lineHeight: 22,
-    letterSpacing: 0.1,
     fontStyle: 'italic',
   },
   notFound: {

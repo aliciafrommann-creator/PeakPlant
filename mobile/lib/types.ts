@@ -1,21 +1,37 @@
 export type CardType = 'question' | 'action';
 export type CardStatus = 'sealed' | 'activated';
-export type CardKind = 'grow-date' | 'small-act' | 'growing-question';
+/**
+ * The three universal groupings inside every edition. Each edition gives them
+ * its own display label (see Edition.groupLabels) — e.g. for Grow Together a
+ * `date` is a "Grow Date", for Soft & Wild it's an "Intimacy Date".
+ */
+export type CardGroup = 'date' | 'act' | 'question';
 export type Lang = 'en' | 'de';
 
+/** Text that is either English-only (string) or fully bilingual. */
+export type LocalizedText = string | { en: string; de: string };
+
+/**
+ * One block of the in-app card experience (e.g. "Before you begin",
+ * "Talk about it", "Keep the moment"). A section can carry a paragraph,
+ * a bullet list, and a closing paragraph — in that order.
+ */
+export interface CardSection {
+  heading: LocalizedText;
+  /** Lead paragraph(s); use \n\n between paragraphs. */
+  body?: LocalizedText;
+  /** Optional bullet list. */
+  bullets?: LocalizedText[];
+  /** Optional closing paragraph(s) after the bullets. */
+  footer?: LocalizedText;
+  /** When true, the "preserve this moment" CTA is rendered right after this section. */
+  preserveHere?: boolean;
+}
+
 export interface CardContent {
-  title: string;
-  titleDe: string;
-  before: string;
-  beforeDe: string;
-  tryThis: string;
-  tryThisDe: string;
-  talkAboutIt: string;
-  talkAboutItDe: string;
-  keepNote?: string;
-  keepNoteDe?: string;
-  comeBack?: string;
-  comeBackDe?: string;
+  /** In-app title (the physical card carries the short `prompt`). */
+  title: LocalizedText;
+  sections: CardSection[];
 }
 
 /**
@@ -50,9 +66,9 @@ export interface MomentCard {
   /** Short physical-card prompt (EN, printed on the card). Used for sharing. */
   prompt: string;
   type: CardType;
-  /** Semantic category within the edition (grow-date / small-act / growing-question). */
-  kind?: CardKind;
-  /** Full bilingual content for the in-app card detail experience. */
+  /** Which of the edition's three groups this card belongs to. */
+  group?: CardGroup;
+  /** Full content for the in-app card detail experience (shown after scanning). */
   content?: CardContent;
   edition: string;
   /** Derived per space: a card is `activated` once that space preserves a moment for it. */
@@ -103,6 +119,13 @@ export interface Edition {
   cardCount: number;
   cards: MomentCard[];
   coverImage?: string;
+  /** Per-edition display names for the three card groups. */
+  groupLabels?: { date: LocalizedText; act: LocalizedText; question: LocalizedText };
+  /**
+   * Intimate editions (e.g. Soft & Wild) carry extra privacy treatment in the
+   * UI — quieter previews, "stays private" affordances. See PRODUCT.md.
+   */
+  sensitive?: boolean;
 }
 
 export interface Goal {

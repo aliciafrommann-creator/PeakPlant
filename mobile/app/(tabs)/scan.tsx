@@ -101,7 +101,7 @@ export default function ScanScreen() {
 
         <TouchableOpacity
           style={styles.demoButton}
-          onPress={() => router.push('/card/card-04')}
+          onPress={() => router.push('/card/card-01')}
           activeOpacity={0.8}
           accessibilityRole="button"
           accessibilityLabel="Try a demo card"
@@ -110,7 +110,7 @@ export default function ScanScreen() {
         </TouchableOpacity>
 
         <Text style={styles.hint}>
-          uses card #04 — "what makes our relationship feel warm?"
+          uses Grow Together #01 — "Grow Something Together"
         </Text>
       </View>
     </SafeAreaView>

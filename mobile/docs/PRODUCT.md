@@ -65,9 +65,9 @@ generated, one edition at a time. In the data model this is `cardCount`
 (`0` = deck not finalized yet) and `DECK_SIZE_RANGE` in `mobile/lib/seed.ts`.
 
 **Thematic editions:**
-01 Grow Together 🌻 *(available)* · 02 Love Languages 💬 · 03 In Presence 🌿 ·
-04 Deep Spice 🌶️ · 05 Far Away ✈️ · 06 Lovemaxing ✨ · 07 Self Worth 🪞 ·
-08 Wild Cards 🎲 · 09 Hideout 🏕️
+01 Grow Together 🌻 *(available)* · 02 Soft & Wild 🌹 *(available, intimate)* ·
+03 Love Languages 💬 · 04 In Presence 🌿 · 05 Far Away ✈️ · 06 Lovemaxing ✨ ·
+07 Self Worth 🪞 · 08 Wild Cards 🎲 · 09 Hideout 🏕️
 
 **Life-stage editions** (for a specific season of a relationship):
 10 Just Started 🌱 *(dating / the beginning)* · 11 After Hours 🌙 *(busy couples)* ·
@@ -75,6 +75,41 @@ generated, one edition at a time. In the data model this is `cardCount`
 
 These are all **couples** editions (catalog: `mobile/lib/seed.ts → SEED_EDITIONS`).
 Names/symbols/order are easy to adjust before any of these ship.
+
+### Card structure inside an edition
+
+Every edition splits its deck into three groups, with edition-specific labels
+(`Edition.groupLabels`):
+
+- **5 dates** — a shared activity (Grow Dates / Intimacy Dates)
+- **5 acts** — a small, low-effort gesture (Small Acts of Growth / Small Sparks)
+- **10 questions** — a reflective prompt (Growing Questions / Closer Questions)
+
+After scanning, a card shows a flexible set of **sections** (`CardContent.sections`)
+— typically *Before you begin / a "try this" block / Talk about it / Keep the
+moment / Come back later*. Section content is authored per card in
+`mobile/lib/content/edition0N.ts`; the renderer (`app/card/[id].tsx`) lays out
+heading + paragraph + bullets + footer and attaches the "preserve" CTA to the
+section flagged `preserveHere`.
+
+### Bilingual (EN / DE)
+
+The **physical card is English-first** (short printed `prompt`). The **in-app
+experience is bilingual** — the user picks EN or DE at first launch
+(`app/(auth)/language.tsx`, persisted in `store.language`). Text uses
+`LocalizedText` (`string | { en, de }`); `useLanguage().l()` / `loc()` resolve
+it. Today most card content is English-only; German is added per-field over time
+without code changes.
+
+### Soft & Wild — the intimate edition (sensitive)
+
+Edition 02 follows the principle **intimacy without pressure, desire without
+performance, curiosity with consent**. It is flagged `sensitive: true`, which
+the UI uses for quieter privacy treatment (a "stays private on your device" note
+on the preserve CTA today). Still **TODO** for a full intimate-content pass:
+hide intimate previews in notifications / lock screen, biometric or device-lock
+gating, avoid automatic cloud previews, never use private images for AI without
+explicit consent, and per-member access visibility. Tracked in `docs/PRIVACY.md`.
 
 ## The flywheel: finish one, get the next
 
