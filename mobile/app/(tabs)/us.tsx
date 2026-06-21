@@ -12,15 +12,20 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { Logo } from '../../components/ui/Logo';
 import { SpaceSwitcher } from '../../components/space/SpaceSwitcher';
+import { StreakBanner } from '../../components/space/StreakBanner';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { useAppStore } from '../../lib/store';
+import { computeWeeklyStreak } from '../../lib/streaks';
 import { SEED_CARDS } from '../../lib/seed';
 
 export default function UsScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { memories } = useMemories(activeSpace?.id);
+  const streaksEnabled = useAppStore((s) => s.features.streaks);
 
   const isCouple = activeSpace?.type === 'couple';
+  const streak = computeWeeklyStreak(memories.map((m) => m.createdAt));
   const latestMemory = memories[0];
   const latestCard = latestMemory
     ? SEED_CARDS.find((c) => c.id === latestMemory.cardId)
@@ -37,9 +42,18 @@ export default function UsScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Logo size="sm" />
-          <Text style={styles.coupleName}>
-            {(activeSpace?.name ?? 'your space').toLowerCase()}
-          </Text>
+          <View style={styles.headerRight}>
+            <Text style={styles.coupleName}>
+              {(activeSpace?.name ?? 'your space').toLowerCase()}
+            </Text>
+            <TouchableOpacity
+              onPress={() => router.push('/customize')}
+              accessibilityRole="button"
+              accessibilityLabel="Customize your app"
+            >
+              <Text style={styles.customize}>CUSTOMIZE</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Space switcher — only when there's more than one */}
@@ -48,6 +62,16 @@ export default function UsScreen() {
             spaces={spaces}
             activeSpaceId={activeSpace?.id}
             onSelect={setActiveSpace}
+          />
+        )}
+
+        {/* Shared rhythm — optional, collectible, gentle */}
+        {streaksEnabled && activeSpace && (
+          <StreakBanner
+            spaceType={activeSpace.type}
+            count={streak.count}
+            atRisk={streak.atRisk}
+            active={streak.active}
           />
         )}
 
@@ -135,12 +159,22 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
+  headerRight: {
+    alignItems: 'flex-end',
+    gap: 4,
+  },
   coupleName: {
     fontSize: 11,
     fontWeight: '400',
     letterSpacing: 2,
     color: Colors.textMuted,
     textTransform: 'uppercase',
+  },
+  customize: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2,
+    color: Colors.accent,
   },
   partnerNote: {
     backgroundColor: Colors.backgroundCream,

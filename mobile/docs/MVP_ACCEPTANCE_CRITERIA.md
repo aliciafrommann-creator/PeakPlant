@@ -12,6 +12,11 @@ The MVP is a polished, local-first foundation. No real backend required.
       changes the active space and all space-scoped content (memories, card
       progress, suggestions) follows.
 - [x] A new space can be created (couple or friends) or joined via invite code.
+- [x] Customizable platform: a Customize screen toggles optional features on/off;
+      the core diary always works regardless.
+- [x] Shared rhythm (opt-in): a gentle weekly streak, themed per space
+      (couples 🌶️, friends 🌻), shown as a positive collectible with no
+      loss/threat framing; switch-off-able.
 - [x] Preserving a moment activates its card **for the active space only**.
 - [x] **Us** shows a weekly suggestion, a space note, and the latest moment.
 - [x] **Moments** lists seeded memories; opening one shows its detail.

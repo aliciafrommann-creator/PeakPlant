@@ -1,33 +1,41 @@
 import { create } from 'zustand';
 import { storage } from './storage';
+import { DEFAULT_FEATURES, type FeatureKey } from './features';
 
 const ONBOARDED_KEY = 'onboarded';
 const GOALS_KEY = 'goals';
 const ACTIVE_SPACE_KEY = 'activeSpaceId';
+const FEATURES_KEY = 'enabledFeatures';
 
 interface AppState {
   hydrated: boolean;
   onboarded: boolean;
   goals: string[];
   activeSpaceId: string | null;
+  features: Record<FeatureKey, boolean>;
   hydrate: () => Promise<void>;
   setGoals: (goals: string[]) => void;
   setActiveSpace: (id: string) => void;
+  toggleFeature: (key: FeatureKey, enabled: boolean) => void;
   completeOnboarding: () => Promise<void>;
   reset: () => Promise<void>;
 }
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>((set, get) => ({
   hydrated: false,
   onboarded: false,
   goals: [],
   activeSpaceId: null,
+  features: { ...DEFAULT_FEATURES },
 
   hydrate: async () => {
     const onboarded = (await storage.get<boolean>(ONBOARDED_KEY)) ?? false;
     const goals = (await storage.get<string[]>(GOALS_KEY)) ?? [];
     const activeSpaceId = (await storage.get<string>(ACTIVE_SPACE_KEY)) ?? null;
-    set({ onboarded, goals, activeSpaceId, hydrated: true });
+    const storedFeatures = await storage.get<Record<string, boolean>>(FEATURES_KEY);
+    // Merge defaults with stored so newly-added features get their default.
+    const features = { ...DEFAULT_FEATURES, ...(storedFeatures ?? {}) };
+    set({ onboarded, goals, activeSpaceId, features, hydrated: true });
   },
 
   setGoals: (goals) => {
@@ -40,6 +48,12 @@ export const useAppStore = create<AppState>((set) => ({
     void storage.set(ACTIVE_SPACE_KEY, id);
   },
 
+  toggleFeature: (key, enabled) => {
+    const features = { ...get().features, [key]: enabled };
+    set({ features });
+    void storage.set(FEATURES_KEY, features);
+  },
+
   completeOnboarding: async () => {
     await storage.set(ONBOARDED_KEY, true);
     set({ onboarded: true });
@@ -49,8 +63,9 @@ export const useAppStore = create<AppState>((set) => ({
     await storage.remove(ONBOARDED_KEY);
     await storage.remove(GOALS_KEY);
     await storage.remove(ACTIVE_SPACE_KEY);
-    set({ onboarded: false, goals: [], activeSpaceId: null });
+    await storage.remove(FEATURES_KEY);
+    set({ onboarded: false, goals: [], activeSpaceId: null, features: { ...DEFAULT_FEATURES } });
   },
 }));
 
-export { GOALS_KEY, ONBOARDED_KEY, ACTIVE_SPACE_KEY };
+export { GOALS_KEY, ONBOARDED_KEY, ACTIVE_SPACE_KEY, FEATURES_KEY };

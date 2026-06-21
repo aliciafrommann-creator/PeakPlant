@@ -33,7 +33,9 @@ AI-generated assumptions are never authoritative.
 | PP-001 | Product | PeakPlant is a private two-person couple diary built around physical Moment Cards. It is not a question game, social network, productivity tracker, or relationship-scoring app. | DECIDED |
 | PP-002 | Social model | The **space** is the social unit — a small, private, invite-only group of people who share a diary. A couple is one space type; friends spaces use the identical model. There is no public profile, follower graph, or feed. | DECIDED |
 | PP-019 | Spaces | A user can belong to **multiple spaces at once** (one couple space and several friends spaces). Everything — memories, card progress, suggestions — is scoped per space. Switching space switches the whole diary context. | DECIDED |
-| PP-003 | Behavioral design | No streaks, points, scores, ratings, completion %, loss countdowns, or fabricated peer activity. Progress copy is non-punitive. | DECIDED |
+| PP-020 | Platform | PeakPlant grows into a **customizable platform**: optional capabilities (shared rhythm, rituals, moments-to-do-together, local places, challenges, communities, feed) are **feature flags** a user turns on/off. The core (collecting moments + physical products) always works and is never gated. Built additively on the existing skeleton, in small reviewed increments (per D-023-equivalent). | DECIDED |
+| PP-021 | Shared rhythm | An opt-in weekly **streak** is a positive, collectible nudge to share more moments together — themed per space (couples collect 🌶️ chillis, friends collect 🌻 sunflowers). No daily pressure, no loss/threat framing, fully switch-off-able. | DECIDED |
+| PP-003 | Behavioral design | No points, scores, ratings, completion %, loss countdowns, or fabricated peer activity. Progress copy is non-punitive. **Amended by PP-021:** a gentle, opt-in "shared rhythm" streak is allowed as a positive collectible, without loss/threat framing. | DECIDED |
 | PP-004 | Iconography | No pink hearts, gamification visuals, or progress bars. Editorial, minimal, warm. | DECIDED |
 | PP-005 | Cards | Each edition ships 20 Moment Cards. Couples pick any card in any order; ~12 moments over ~12 weeks is a gentle suggestion, never a rule. | DECIDED |
 | PP-006 | Intimacy Collection | A separate 20-card Intimacy Collection is distributed randomly inside condom boxes, never required to complete the main experience. | DECIDED |
@@ -66,7 +68,7 @@ AI-generated assumptions are never authoritative.
 
 | ID | Choice | Status | Reason |
 |----|--------|--------|--------|
-| R-001 | Relationship scoring, streaks, leaderboards | REJECTED | Conflicts with the product thesis (no pressure, no scoring). |
+| R-001 | Relationship scoring, leaderboards, ranking | REJECTED | Conflicts with the product thesis (no pressure, no scoring). Note: gentle opt-in streaks are now allowed (PP-021); competitive scoring/ranking is not. |
 | R-002 | Public social feed / follower graph | REJECTED | PeakPlant is a private two-person diary. |
 | R-003 | Using diary content for AI training or advertising | REJECTED | Trust is the product for an intimacy brand. |
 | R-004 | Making a public share mandatory to unlock content | REJECTED | Coercive sharing undermines trust. |

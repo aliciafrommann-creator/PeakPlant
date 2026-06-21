@@ -69,7 +69,7 @@ export const SEED_CARDS: MomentCard[] = CARD_PROMPTS.map((c) => ({
 
 /** Which cards each space has already preserved a moment for (spaceId → cardIds). */
 export const SEED_ACTIVATIONS: Record<string, string[]> = {
-  'space-couple-01': ['card-01', 'card-02', 'card-03'],
+  'space-couple-01': ['card-01', 'card-02', 'card-03', 'card-04', 'card-05'],
   'space-friends-01': ['card-12'],
 };
 
@@ -114,6 +114,22 @@ export const SEED_MEMORIES: Memory[] = [
     note: 'no destination, just walked the river until it got dark. jonas found that tiny bakery. we stayed way too long. easy day, good people.',
     createdAt: '2026-05-24T16:20:00Z',
     updatedAt: '2026-05-24T16:20:00Z',
+  },
+  {
+    id: 'memory-05',
+    cardId: 'card-05',
+    spaceId: 'space-couple-01',
+    note: 'told you where i needed more light. you just listened, then changed something the next day. quietly. that meant everything.',
+    createdAt: '2026-06-09T20:10:00Z',
+    updatedAt: '2026-06-09T20:10:00Z',
+  },
+  {
+    id: 'memory-06',
+    cardId: 'card-04',
+    spaceId: 'space-couple-01',
+    note: 'sunday morning, nowhere to be. coffee, the window open, your feet on my lap. warm. that\'s the word.',
+    createdAt: '2026-06-16T09:30:00Z',
+    updatedAt: '2026-06-16T09:30:00Z',
   },
 ];
 
