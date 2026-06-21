@@ -2,7 +2,7 @@
   "expo": {
     "name": "PeakPlant",
     "slug": "peakplant",
-    "owner": "aliciafrommann",
+    "owner": "peak-plant",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
@@ -55,4 +55,3 @@
     }
   }
 }
-
