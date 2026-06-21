@@ -35,8 +35,15 @@ export async function uploadMemoryPhoto(spaceId: string, localUri: string): Prom
   return path;
 }
 
+/** Remove a private memory photo by its storage path. */
+export async function deleteMemoryPhoto(path: string): Promise<void> {
+  const { error } = await client().storage.from(BUCKET).remove([path]);
+  if (error) throw error;
+}
+
 /** Short-lived signed URL for a stored path, or undefined. */
 export async function signedPhotoUrl(path: string): Promise<string | undefined> {
-  const { data } = await client().storage.from(BUCKET).createSignedUrl(path, SIGNED_URL_TTL);
+  const { data, error } = await client().storage.from(BUCKET).createSignedUrl(path, SIGNED_URL_TTL);
+  if (error) throw error;
   return data?.signedUrl;
 }

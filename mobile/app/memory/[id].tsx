@@ -13,7 +13,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { SEED_CARDS } from '../../lib/seed';
-import { localMemoryRepository } from '../../lib/repositories/local';
+import { memoryRepository } from '../../lib/repositories';
 import { shareMemory } from '../../lib/share';
 import type { Memory } from '../../lib/types';
 
@@ -33,12 +33,17 @@ export default function MemoryDetailScreen() {
 
   useEffect(() => {
     let active = true;
-    localMemoryRepository.getById(id).then((m) => {
-      if (active) {
-        setMemory(m);
-        setLoading(false);
-      }
-    });
+    memoryRepository
+      .getById(id)
+      .then((m) => {
+        if (active) setMemory(m);
+      })
+      .catch(() => {
+        if (active) setMemory(null);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
     return () => {
       active = false;
     };

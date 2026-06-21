@@ -14,7 +14,12 @@ export interface StreakResult {
   active: boolean;
 }
 
-const MS_PER_DAY = 24 * 60 * 60 * 1000;
+function localDateKey(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 /** Monday 00:00 (local) of the week containing `date`, as a YYYY-MM-DD key. */
 export function weekKey(date: Date): string {
@@ -22,12 +27,13 @@ export function weekKey(date: Date): string {
   const day = d.getDay(); // 0 = Sunday … 6 = Saturday
   const diffToMonday = (day + 6) % 7;
   d.setDate(d.getDate() - diffToMonday);
-  return d.toISOString().slice(0, 10);
+  return localDateKey(d);
 }
 
 function addWeeks(key: string, weeks: number): string {
   const d = new Date(`${key}T00:00:00`);
-  return weekKey(new Date(d.getTime() + weeks * 7 * MS_PER_DAY));
+  d.setDate(d.getDate() + weeks * 7);
+  return weekKey(d);
 }
 
 export function computeWeeklyStreak(isoDates: string[], now: Date = new Date()): StreakResult {

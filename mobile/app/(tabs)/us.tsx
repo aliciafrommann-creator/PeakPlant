@@ -111,15 +111,15 @@ export default function UsScreen() {
           </TouchableOpacity>
         )}
 
-        {/* Note from the space */}
-        <View style={styles.partnerNote}>
-          <Text style={styles.partnerLabel}>
-            {isCouple ? 'PARTNER NOTE' : 'FROM THE GROUP'}
+        {/* Honest static orientation — never presented as partner-authored content. */}
+        <View style={styles.spaceIntro}>
+          <Text style={styles.spaceIntroLabel}>
+            YOUR PRIVATE SPACE
           </Text>
-          <Text style={styles.partnerText}>
+          <Text style={styles.spaceIntroText}>
             {isCouple
-              ? '"thinking about our walk last week. want to do it again soon."'
-              : '"who\'s in for saturday? same spot, same time."'}
+              ? 'a quiet place for the moments you choose to keep together.'
+              : 'a shared place for the moments your group chooses to remember.'}
           </Text>
         </View>
 
@@ -271,25 +271,24 @@ const styles = StyleSheet.create({
     fontWeight: '200',
     color: Colors.textMuted,
   },
-  partnerNote: {
+  spaceIntro: {
     backgroundColor: Colors.backgroundCream,
     padding: Spacing.lg,
     margin: Spacing.screen,
     gap: Spacing.sm,
   },
 
-  partnerLabel: {
+  spaceIntroLabel: {
     fontSize: 9,
     fontWeight: '500',
     letterSpacing: 2.5,
     color: Colors.accent,
   },
-  partnerText: {
+  spaceIntroText: {
     fontSize: 15,
     fontWeight: '300',
     color: Colors.text,
     lineHeight: 22,
-    fontStyle: 'italic',
   },
   suggestion: {
     backgroundColor: Colors.backgroundDark,
