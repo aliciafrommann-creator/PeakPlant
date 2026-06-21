@@ -12,6 +12,39 @@ trust *is* the product.
 - A member must hold a valid invitation to join a couple.
 - Neither partner receives secret analysis about the other.
 
+## Sensitive edition controls (Soft & Wild — Edition 02)
+
+Edition 02 is flagged `sensitive: true`. The following controls are active:
+
+### Implemented
+
+- **Biometric / device-lock gate** (`lib/hooks/useBiometric.ts`): opening the
+  Soft & Wild edition from the Grow tab requires Face ID, Touch ID, or the
+  device passcode. If no biometric method is enrolled the user is allowed through
+  (can't gate without an auth method). The session stays unlocked until the app
+  is backgrounded, then re-locks.
+- **Background privacy overlay** (`lib/hooks/usePrivacyOverlay.ts`,
+  `components/ui/PrivacyScreen.tsx`): while the edition diary is open, moving
+  the app to the background replaces the screen with a blank PeakPlant cover so
+  intimate content never appears in the app-switcher thumbnail.
+- **"Stays private" UX signals**: a "private · device only" badge on the
+  edition card in the Grow tab, and a "this diary stays private on your device"
+  note in the edition diary header.
+- **"This stays private on your device"** note in the Preserve CTA on any card
+  belonging to a sensitive edition (`app/card/[id].tsx`).
+
+### Pending
+
+- Hide memory photo / note from lock-screen and notification previews (requires
+  a notification layer to exist first; set `content-available: 0` on iOS and
+  `visibility: private` on Android when notifications are added).
+- Avoid automatic iCloud / Google Photos backup of sensitive memory photos (set
+  `NSPhotoLibraryUsageDescription` and guide users, or save to a non-backed-up
+  location such as the app's `Documents` directory with appropriate
+  `NSFileProtection` class).
+- Per-member access visibility: show which space members can see this diary.
+- 18+ self-attestation gate before first access to an intimate edition.
+
 ## MVP status
 
 - All data is stored **on-device** (AsyncStorage). Nothing leaves the phone.

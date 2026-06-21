@@ -42,6 +42,12 @@
         {
           "photosPermission": "Allow PeakPlant to access your photos to add them to your shared diary."
         }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow PeakPlant to use Face ID to keep your private diary secure."
+        }
       ]
     ],
     "scheme": "peakplant",

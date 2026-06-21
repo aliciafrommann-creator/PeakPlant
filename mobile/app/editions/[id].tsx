@@ -5,15 +5,18 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { getEdition, SEED_EDITION, SEED_CARDS } from '../../lib/seed';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { ShopLink } from '../../components/edition/ShopLink';
+import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import type { Memory } from '../../lib/types';
 
 export default function EditionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { activeSpace } = useSpaces();
   const { memories, loading } = useMemories(activeSpace?.id);
+  const obscured = usePrivacyOverlay();
 
   const edition = getEdition(id ?? '') ?? SEED_EDITION;
 
@@ -74,6 +77,11 @@ export default function EditionScreen() {
               <Text style={[styles.stat, { color: fgMuted }]}>
                 {editionMemories.length} moment{editionMemories.length !== 1 ? 's' : ''} preserved
               </Text>
+              {edition.sensitive && (
+                <Text style={[styles.privateNote, { color: fgFaint }]}>
+                  this diary stays private on your device
+                </Text>
+              )}
             </View>
 
             <TouchableOpacity
@@ -107,6 +115,7 @@ export default function EditionScreen() {
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
       />
+      {edition.sensitive && obscured && <PrivacyScreen />}
     </SafeAreaView>
   );
 }
@@ -145,6 +154,14 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
     color: Colors.textSubtle,
     textTransform: 'uppercase',
+  },
+  privateNote: {
+    fontSize: 11,
+    fontWeight: '300',
+    color: Colors.textFaint,
+    letterSpacing: 0.3,
+    fontStyle: 'italic',
+    marginTop: 4,
   },
   scanButton: {
     height: 52,

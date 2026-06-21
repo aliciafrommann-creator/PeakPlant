@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
@@ -6,11 +6,13 @@ import { Spacing } from '../../constants/spacing';
 import { SEED_EDITIONS, DECK_SIZE_RANGE } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { useBiometric } from '../../lib/hooks/useBiometric';
 import { ShopLink } from '../../components/edition/ShopLink';
 import type { Edition } from '../../lib/types';
 
 export default function GrowScreen() {
   const { activeSpace } = useSpaces();
+  const { authenticate } = useBiometric();
   const [progress, setProgress] = useState<Record<string, number>>({});
 
   // For each available edition, how many cards this space has preserved.
@@ -33,6 +35,15 @@ export default function GrowScreen() {
     };
   }, [activeSpace?.id]);
 
+  const handleEditionPress = useCallback(async (item: Edition) => {
+    if (item.status !== 'available') return;
+    if (item.sensitive) {
+      const granted = await authenticate('unlock your private diary');
+      if (!granted) return;
+    }
+    router.push(`/editions/${item.id}`);
+  }, [authenticate]);
+
   function renderEdition({ item }: { item: Edition }) {
     const available = item.status === 'available';
     const done = progress[item.id] ?? 0;
@@ -43,7 +54,7 @@ export default function GrowScreen() {
           { borderLeftWidth: 3, borderLeftColor: item.color },
           !available && styles.cardUpcoming,
         ]}
-        onPress={() => available && router.push(`/editions/${item.id}`)}
+        onPress={() => void handleEditionPress(item)}
         disabled={!available}
         activeOpacity={0.85}
         accessibilityRole="button"
@@ -60,6 +71,9 @@ export default function GrowScreen() {
               ? `${done} of ${item.cardCount} preserved`
               : `${DECK_SIZE_RANGE.min}–${DECK_SIZE_RANGE.max} cards · coming soon`}
           </Text>
+          {item.sensitive && available && (
+            <Text style={styles.privateBadge}>private · device only</Text>
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -138,5 +152,13 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: Colors.textFaint,
     marginTop: 4,
+  },
+  privateBadge: {
+    fontSize: 9,
+    fontWeight: '400',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    color: Colors.accent,
+    marginTop: 2,
   },
 });
