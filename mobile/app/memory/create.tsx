@@ -17,6 +17,7 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import { SEED_CARDS } from '../../lib/seed';
 
 export default function CreateMemoryScreen() {
@@ -27,8 +28,16 @@ export default function CreateMemoryScreen() {
   const { activeSpace } = useSpaces();
   const { createMemory } = useMemories(activeSpace?.id);
 
+  const { t } = useLanguage();
   const selectedCardId = cardId ?? 'card-04';
   const card = SEED_CARDS.find((c) => c.id === selectedCardId);
+
+  const cardTitle = card?.content
+    ? t(card.content.title, card.content.titleDe)
+    : card?.prompt ?? '';
+  const notePlaceholder = card?.content?.keepNote
+    ? t(card.content.keepNote, card.content.keepNoteDe ?? card.content.keepNote)
+    : t('what do you want to remember about this moment?', 'was möchtest du von diesem Moment festhalten?');
 
   const pickPhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -75,10 +84,10 @@ export default function CreateMemoryScreen() {
         </View>
 
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          {/* The prompt comes from the physical card — shown here to confirm the right card was scanned. */}
+          {/* Title from the scanned card — confirms the right card was scanned. */}
           {card && (
             <View style={styles.promptSection}>
-              <Text style={styles.prompt}>{card.prompt}</Text>
+              <Text style={styles.prompt}>{cardTitle}</Text>
             </View>
           )}
 
@@ -106,7 +115,7 @@ export default function CreateMemoryScreen() {
             <Text style={styles.noteLabel}>YOUR NOTE</Text>
             <TextInput
               style={styles.noteInput}
-              placeholder="what do you want to remember about this moment?"
+              placeholder={notePlaceholder}
               placeholderTextColor={Colors.textFaint}
               multiline
               value={note}

@@ -1,5 +1,22 @@
 export type CardType = 'question' | 'action';
 export type CardStatus = 'sealed' | 'activated';
+export type CardKind = 'grow-date' | 'small-act' | 'growing-question';
+export type Lang = 'en' | 'de';
+
+export interface CardContent {
+  title: string;
+  titleDe: string;
+  before: string;
+  beforeDe: string;
+  tryThis: string;
+  tryThisDe: string;
+  talkAboutIt: string;
+  talkAboutItDe: string;
+  keepNote?: string;
+  keepNoteDe?: string;
+  comeBack?: string;
+  comeBackDe?: string;
+}
 
 /**
  * A Space is the shared container two-or-more people preserve moments in.
@@ -30,8 +47,13 @@ export interface SpaceMember {
 export interface MomentCard {
   id: string;
   number: number;
+  /** Short physical-card prompt (EN, printed on the card). Used for sharing. */
   prompt: string;
   type: CardType;
+  /** Semantic category within the edition (grow-date / small-act / growing-question). */
+  kind?: CardKind;
+  /** Full bilingual content for the in-app card detail experience. */
+  content?: CardContent;
   edition: string;
   /** Derived per space: a card is `activated` once that space preserves a moment for it. */
   status: CardStatus;
