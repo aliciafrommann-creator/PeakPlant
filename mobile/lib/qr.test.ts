@@ -12,12 +12,12 @@ describe('parseCardQr', () => {
   });
 
   it('accepts an https url with a long or short path', () => {
-    expect(parseCardQr('https://peakplant.app/card/card-07')).toBe('card-07');
-    expect(parseCardQr('https://peakplant.app/c/card-01')).toBe('card-01');
+    expect(parseCardQr('https://peak-plant.com/card/card-07')).toBe('card-07');
+    expect(parseCardQr('https://peak-plant.com/c/card-01')).toBe('card-01');
   });
 
   it('ignores query strings and fragments', () => {
-    expect(parseCardQr('https://peakplant.app/card/card-03?ref=box#x')).toBe('card-03');
+    expect(parseCardQr('https://peak-plant.com/c/card-03?ref=box#x')).toBe('card-03');
   });
 
   it('trims surrounding whitespace', () => {

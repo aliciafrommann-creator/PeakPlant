@@ -4,7 +4,7 @@
  * Physical cards carry a route (PP-015), not personal data. We accept a few
  * shapes so printing/encoding can evolve without breaking the scanner:
  *   - peakplant://card/card-04
- *   - https://peakplant.app/card/card-04   (or any host, /c/ short path)
+ *   - https://peak-plant.com/c/card-04     (production form; any host works)
  *   - card-04                              (bare id)
  *
  * Returns the normalized card id (e.g. "card-04") or null if the payload
