@@ -14,6 +14,7 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { SEED_CARDS } from '../../lib/seed';
 import { localMemoryRepository } from '../../lib/repositories/local';
+import { shareMemory } from '../../lib/share';
 import type { Memory } from '../../lib/types';
 
 function formatDate(iso: string): string {
@@ -83,7 +84,14 @@ export default function MemoryDetailScreen() {
           <Text style={styles.backText}>← BACK</Text>
         </TouchableOpacity>
         <Text style={styles.headerLabel}>MOMENT</Text>
-        <View style={{ width: 60 }} />
+        <TouchableOpacity
+          onPress={() => shareMemory(memory, card).catch(() => {})}
+          accessibilityRole="button"
+          accessibilityLabel="Share this moment"
+          style={styles.shareHit}
+        >
+          <Text style={styles.shareText}>SHARE</Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -136,6 +144,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: 3,
     color: Colors.text,
+  },
+  shareHit: { width: 60, alignItems: 'flex-end' },
+  shareText: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 1.5,
+    color: Colors.accent,
   },
   photo: {
     width: '100%',
