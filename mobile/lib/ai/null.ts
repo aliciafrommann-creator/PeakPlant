@@ -6,8 +6,10 @@
  */
 
 import type { MomentCard } from '../types';
+import type { TogetherMoment } from '../together';
+import { pickTogetherMoment } from '../together';
 import type { IAIPersonalization } from './interface';
-import type { AIContext, CardSuggestion, ReflectionPrompt } from './types';
+import type { AIContext, CardSuggestion, ReflectionPrompt, MomentSuggestion } from './types';
 
 const GOAL_CARD_AFFINITY: Record<string, string[]> = {
   'deeper conversations': ['card-01', 'card-03', 'card-05', 'card-17'],
@@ -53,5 +55,19 @@ export const nullAI: IAIPersonalization = {
   async reflectionPrompt(_note: string, _card: MomentCard): Promise<ReflectionPrompt> {
     // No reflection prompts in the MVP — return empty so the UI hides the widget.
     return { text: '' };
+  },
+
+  async suggestMoment(context: AIContext, candidates: TogetherMoment[]): Promise<MomentSuggestion> {
+    const pick = pickTogetherMoment(candidates, context.goals) ?? candidates[0];
+    // The pick matched a goal if choosing with only that goal yields the same moment.
+    const matchedGoal = context.goals.find(
+      (g) => pickTogetherMoment(candidates, [g])?.id === pick.id,
+    );
+    return {
+      momentId: pick.id,
+      rationale: matchedGoal ? `fits your goal: ${matchedGoal}` : 'a gentle one to start with',
+      signalsUsed: matchedGoal ? ['chosen goals'] : [],
+      signalsNotUsed: ['time of day', 'weather', 'location'],
+    };
   },
 };

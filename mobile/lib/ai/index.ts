@@ -9,4 +9,4 @@
 
 export { nullAI as ai } from './null';
 export type { IAIPersonalization } from './interface';
-export type { AIContext, CardSuggestion, ReflectionPrompt } from './types';
+export type { AIContext, CardSuggestion, ReflectionPrompt, MomentSuggestion } from './types';

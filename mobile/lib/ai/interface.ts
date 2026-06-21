@@ -1,5 +1,6 @@
 import type { MomentCard } from '../types';
-import type { AIContext, CardSuggestion, ReflectionPrompt } from './types';
+import type { TogetherMoment } from '../together';
+import type { AIContext, CardSuggestion, ReflectionPrompt, MomentSuggestion } from './types';
 
 /**
  * AI personalization contract.
@@ -28,4 +29,14 @@ export interface IAIPersonalization {
    * Raw note text is ephemeral — never stored as a profile signal (AI_SAFETY).
    */
   reflectionPrompt(note: string, card: MomentCard): Promise<ReflectionPrompt>;
+
+  /**
+   * Suggest one "moment to do together" from candidates, with a factual
+   * rationale and signal lists (explainability). Used when the `missions`
+   * feature is enabled.
+   */
+  suggestMoment(
+    context: AIContext,
+    candidates: TogetherMoment[],
+  ): Promise<MomentSuggestion>;
 }

@@ -21,8 +21,9 @@
  */
 
 import type { MomentCard } from '../types';
+import type { TogetherMoment } from '../together';
 import type { IAIPersonalization } from './interface';
-import type { AIContext, CardSuggestion, ReflectionPrompt } from './types';
+import type { AIContext, CardSuggestion, ReflectionPrompt, MomentSuggestion } from './types';
 
 export const anthropicAI: IAIPersonalization = {
   async suggestCard(_context: AIContext, _candidates: MomentCard[]): Promise<CardSuggestion> {
@@ -32,6 +33,10 @@ export const anthropicAI: IAIPersonalization = {
   },
 
   async reflectionPrompt(_note: string, _card: MomentCard): Promise<ReflectionPrompt> {
+    throw new Error('Anthropic AI not configured.');
+  },
+
+  async suggestMoment(_context: AIContext, _candidates: TogetherMoment[]): Promise<MomentSuggestion> {
     throw new Error('Anthropic AI not configured.');
   },
 };

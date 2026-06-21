@@ -29,3 +29,11 @@ export interface ReflectionPrompt {
   /** A single gentle follow-up line shown while writing a memory note. Empty = no prompt. */
   text: string;
 }
+
+export interface MomentSuggestion {
+  momentId: string;
+  /** Human-readable, factual rationale shown verbatim (AI_SAFETY — explainability). */
+  rationale: string;
+  signalsUsed: string[];
+  signalsNotUsed: string[];
+}

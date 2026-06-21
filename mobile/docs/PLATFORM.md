@@ -16,8 +16,8 @@ rebuild what exists.
 |------|--------|-----------|
 | `streaks` | **live** | Shared rhythm — opt-in weekly streak, themed per space (🌶️/🌻). |
 | `rituals` | soon | Turn a loved moment into something recurring. |
-| `missions` | soon | Small real-world things to do together, suggested by AI. |
-| `localShops` | soon | Nearby + partner places to share a moment in (revenue). |
+| `missions` | **live** | Small real-world things to do together, suggested by AI. |
+| `localShops` | **live** | Nearby + partner places to share a moment in (revenue). |
 | `challenges` | soon | Finite, no-pressure challenges for a space. |
 | `communities` | soon | Optional circles beyond private spaces. |
 | `feed` | soon | A finite, private feed across your spaces. |
@@ -35,9 +35,10 @@ private-spaces model (no public network, no business portal until much later).
 2. **Shared rhythm (done).** Opt-in themed streaks; feature-flag backbone;
    Customize screen.
 3. **Rituals.** A loved moment → a gentle recurring prompt for the space.
-4. **Moments to do together + local places.** AI-suggested real-world moments
-   tied to optional **local partner places** — the first real revenue stream
-   beyond product sales (no purchase ever required to participate).
+4. **Moments to do together + local places (done).** AI-suggested real-world
+   moments tied to optional **local partner places** (Innsbruck pilot) — the
+   first revenue stream beyond product sales. No purchase ever required to
+   participate; partner places carry a small, transparent perk.
 5. **Challenges.** Finite, badge-not-score challenges a space can opt into.
 6. **Communities & feed.** Optional, finite, private-first — only after the
    private loop is validated.

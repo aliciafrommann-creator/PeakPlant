@@ -23,6 +23,7 @@ export default function UsScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { memories } = useMemories(activeSpace?.id);
   const streaksEnabled = useAppStore((s) => s.features.streaks);
+  const missionsEnabled = useAppStore((s) => s.features.missions);
 
   const isCouple = activeSpace?.type === 'couple';
   const streak = computeWeeklyStreak(memories.map((m) => m.createdAt));
@@ -73,6 +74,23 @@ export default function UsScreen() {
             atRisk={streak.atRisk}
             active={streak.active}
           />
+        )}
+
+        {/* Moments to do together — optional */}
+        {missionsEnabled && (
+          <TouchableOpacity
+            style={styles.togetherEntry}
+            onPress={() => router.push('/together')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel="Moments to do together"
+          >
+            <View style={styles.togetherText}>
+              <Text style={styles.togetherLabel}>TO DO TOGETHER</Text>
+              <Text style={styles.togetherTitle}>small things, out in the world</Text>
+            </View>
+            <Text style={styles.togetherArrow}>→</Text>
+          </TouchableOpacity>
         )}
 
         {/* Note from the space */}
@@ -176,12 +194,43 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     color: Colors.accent,
   },
+  togetherEntry: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Colors.backgroundDark,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.lg,
+    marginHorizontal: Spacing.screen,
+    marginBottom: Spacing.xl,
+  },
+  togetherText: {
+    gap: 4,
+  },
+  togetherLabel: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 3,
+    color: Colors.accent,
+  },
+  togetherTitle: {
+    fontSize: 16,
+    fontWeight: '200',
+    color: Colors.white,
+    letterSpacing: -0.2,
+  },
+  togetherArrow: {
+    fontSize: 20,
+    fontWeight: '200',
+    color: Colors.white,
+  },
   partnerNote: {
     backgroundColor: Colors.backgroundCream,
     padding: Spacing.lg,
     margin: Spacing.screen,
     gap: Spacing.sm,
   },
+
   partnerLabel: {
     fontSize: 9,
     fontWeight: '500',

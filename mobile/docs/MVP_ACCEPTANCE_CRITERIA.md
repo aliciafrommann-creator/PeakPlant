@@ -17,6 +17,12 @@ The MVP is a polished, local-first foundation. No real backend required.
 - [x] Shared rhythm (opt-in): a gentle weekly streak, themed per space
       (couples 🌶️, friends 🌻), shown as a positive collectible with no
       loss/threat framing; switch-off-able.
+- [x] Moments to do together (opt-in): AI-suggested real-world ideas per space,
+      with a list + detail; gated by the `missions` feature.
+- [x] Local places (opt-in): Innsbruck places with partner perks highlighted;
+      gated by `localShops`; participation never requires a purchase.
+- [x] Quality: `tsc --noEmit`, `vitest run` (pure logic), and `expo export`
+      (build) all pass.
 - [x] Preserving a moment activates its card **for the active space only**.
 - [x] **Us** shows a weekly suggestion, a space note, and the latest moment.
 - [x] **Moments** lists seeded memories; opening one shows its detail.
