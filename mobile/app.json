@@ -6,9 +6,6 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -18,6 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.peakplant.app",
+      "buildNumber": "1",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -27,7 +25,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1A1A1A"
       },
-      "package": "com.peakplant.app"
+      "package": "com.peakplant.app",
+      "versionCode": 1
     },
     "plugins": [
       "expo-router",
