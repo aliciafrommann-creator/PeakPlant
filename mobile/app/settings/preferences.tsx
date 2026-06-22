@@ -1,12 +1,3 @@
-/**
- * Learned Preferences — the transparency screen mandated by PP-014.
- *
- * Shows every personalization signal the Discover recommender uses so the
- * couple can see, understand, and clear what shapes their picks. Realizes
- * the "Personalization & learned preferences" entry in the IA (§7 of the
- * strategy doc). For the MVP this is explicit signals only (goals, shortcuts);
- * behavioral signals arrive when the Edge Function path is wired.
- */
 import React, { useCallback } from 'react';
 import {
   View,
@@ -21,6 +12,7 @@ import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useAppStore } from '../../lib/store';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 
 interface SignalRow {
   label: string;
@@ -32,30 +24,50 @@ interface SignalRow {
 export default function PreferencesScreen() {
   const goals = useAppStore((s) => s.goals);
   const setGoals = useAppStore((s) => s.setGoals);
+  const { t } = useLanguage();
 
   const signals: SignalRow[] = [
     ...goals.map((g) => ({
       label: g,
       value: 'active goal',
       source: 'onboarding' as const,
-      note: 'set during onboarding; used to boost matching date ideas',
+      note: t(
+        'set during onboarding; used to boost matching date ideas',
+        'beim Onboarding gesetzt; hebt passende Ideen in Entdecken hervor',
+      ),
     })),
   ];
 
   const clearGoals = useCallback(() => {
     Alert.alert(
-      'clear onboarding goals?',
-      'your discovery picks will no longer be personalised by these. you can re-set them from onboarding at any time.',
+      t('clear onboarding goals?', 'Onboarding-Ziele loschen?'),
+      t(
+        'your discovery picks will no longer be personalised by these. you can re-set them from onboarding at any time.',
+        'Deine Entdecken-Vorschlage werden nicht mehr danach personalisiert. Du kannst sie jederzeit neu setzen.',
+      ),
       [
-        { text: 'keep them', style: 'cancel' },
+        { text: t('keep them', 'behalten'), style: 'cancel' },
         {
-          text: 'clear',
+          text: t('clear', 'loschen'),
           style: 'destructive',
           onPress: () => void setGoals([]),
         },
       ],
     );
-  }, [setGoals]);
+  }, [setGoals, t]);
+
+  const neverItems = [
+    t(
+      'your precise device location (you can share a city per-request, never background)',
+      'dein genauer Standort (du kannst einen Ort pro Anfrage teilen, nie im Hintergrund)',
+    ),
+    t(
+      'inferred relationship or intimacy attributes',
+      'abgeleitete Beziehungs- oder Intimitatsmerkmale',
+    ),
+    t('the content of your diary notes', 'der Inhalt deiner Tagebuch-Notizen'),
+    t("anything you haven't explicitly told us", 'alles, was du uns nicht explizit mitgeteilt hast'),
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -63,29 +75,32 @@ export default function PreferencesScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           accessibilityRole="button"
-          accessibilityLabel="Back"
+          accessibilityLabel={t('Back', 'Zuruck')}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Text style={styles.back}>← BACK</Text>
+          <Text style={styles.back}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>personalization</Text>
+        <Text style={styles.title}>{t('personalization', 'Personalisierung')}</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <Text style={styles.lead}>
-          here is everything that shapes your Discover picks. nothing is inferred
-          behind the scenes — only what you've explicitly told us is used.
+          {t(
+            "here is everything that shapes your Discover picks. nothing is inferred behind the scenes — only what you've explicitly told us is used.",
+            'Hier ist alles, was deine Entdecken-Vorschlage beeinflusst. Nichts wird im Hintergrund abgeleitet - nur was du uns explizit mitgeteilt hast, wird verwendet.',
+          )}
         </Text>
 
-        <Text style={styles.sectionLabel}>WHAT WE USE</Text>
+        <Text style={styles.sectionLabel}>{t('WHAT WE USE', 'WAS WIR VERWENDEN')}</Text>
 
         {signals.length === 0 ? (
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>no signals set yet.</Text>
+            <Text style={styles.emptyText}>{t('no signals set yet.', 'noch keine Signale gesetzt.')}</Text>
             <Text style={styles.emptyHint}>
-              your picks today are ordered by the ideas in our curated catalog,
-              not personalised. set goals during onboarding or use the filter
-              chips on Discover to tune results.
+              {t(
+                'your picks today are ordered by the ideas in our curated catalog, not personalised. set goals during onboarding or use the filter chips on Discover to tune results.',
+                'Deine heutigen Vorschlage basieren auf unserem kuratierten Katalog, nicht auf personlichen Praferenzen. Setze Ziele beim Onboarding oder nutze die Filter-Chips in Entdecken.',
+              )}
             </Text>
           </View>
         ) : (
@@ -102,23 +117,20 @@ export default function PreferencesScreen() {
           ))
         )}
 
-        <Text style={styles.sectionLabel}>WHAT WE NEVER USE</Text>
-        {[
-          'your precise device location (you can share a city per-request, never background)',
-          'inferred relationship or intimacy attributes',
-          'the content of your diary notes',
-          'anything you haven\'t explicitly told us',
-        ].map((item, i) => (
+        <Text style={styles.sectionLabel}>{t('WHAT WE NEVER USE', 'WAS WIR NIE VERWENDEN')}</Text>
+        {neverItems.map((item, i) => (
           <View key={i} style={styles.neverRow}>
-            <Text style={styles.neverBullet}>—</Text>
+            <Text style={styles.neverBullet}>-</Text>
             <Text style={styles.neverText}>{item}</Text>
           </View>
         ))}
 
-        <Text style={styles.sectionLabel}>SHORTCUT FILTERS</Text>
+        <Text style={styles.sectionLabel}>{t('SHORTCUT FILTERS', 'SCHNELLFILTER')}</Text>
         <Text style={styles.sectionNote}>
-          the chips on the Discover screen (calm, outdoors, free…) are applied
-          only for that session and are never stored. they reset when you leave.
+          {t(
+            'the chips on the Discover screen (calm, outdoors, free...) are applied only for that session and are never stored. they reset when you leave.',
+            'Die Chips auf dem Entdecken-Bildschirm (ruhig, draussen, kostenlos ...) gelten nur fur diese Sitzung und werden nie gespeichert. Sie werden zuruckgesetzt, wenn du die Seite verlasst.',
+          )}
         </Text>
 
         {goals.length > 0 && (
@@ -126,16 +138,17 @@ export default function PreferencesScreen() {
             style={styles.clearBtn}
             onPress={clearGoals}
             accessibilityRole="button"
-            accessibilityLabel="Clear onboarding goals"
+            accessibilityLabel={t('Clear onboarding goals', 'Onboarding-Ziele loschen')}
           >
-            <Text style={styles.clearText}>CLEAR ONBOARDING GOALS</Text>
+            <Text style={styles.clearText}>{t('CLEAR ONBOARDING GOALS', 'ONBOARDING-ZIELE LOSCHEN')}</Text>
           </TouchableOpacity>
         )}
 
         <Text style={styles.footer}>
-          personalization signals live only on this device in local mode, or
-          in your private space in backend mode — they are never used for ads,
-          sold, or shared outside your space. (PP-014 / PP-016)
+          {t(
+            'personalization signals live only on this device in local mode, or in your private space in backend mode — they are never used for ads, sold, or shared outside your space. (PP-014 / PP-016)',
+            'Personalisierungssignale leben nur auf diesem Gerat (lokaler Modus) oder in deinem privaten Space (Backend-Modus) - sie werden nie fur Werbung verwendet, verkauft oder ausserhalb deines Space geteilt. (PP-014 / PP-016)',
+          )}
         </Text>
       </ScrollView>
     </SafeAreaView>

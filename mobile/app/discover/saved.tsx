@@ -14,18 +14,20 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { savedDateRepository } from '../../lib/repositories';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { SavedDate } from '../../lib/types';
-
-const STATUS_LABEL: Record<string, string> = {
-  idea: 'idea',
-  saved: 'saved',
-  planned: 'planned',
-  completed: 'done',
-  dismissed: 'dismissed',
-};
 
 export default function SavedDatesScreen() {
   const { activeSpace } = useSpaces();
+  const { t } = useLanguage();
+
+  const STATUS_LABEL: Record<string, string> = {
+    idea: t('idea', 'Idee'),
+    saved: t('saved', 'gespeichert'),
+    planned: t('planned', 'geplant'),
+    completed: t('done', 'erledigt'),
+    dismissed: t('dismissed', 'verworfen'),
+  };
   const [dates, setDates] = useState<SavedDate[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -54,35 +56,40 @@ export default function SavedDatesScreen() {
         // Completion → memory bridge: pre-fill create screen with the date's context.
         router.push({
           pathname: '/memory/create',
-          params: { prefillNote: `we did it: ${d.title}. ${d.concept}` },
+          params: {
+            prefillNote: t(
+              `we did it: ${d.title}. ${d.concept}`,
+              `wir haben es gemacht: ${d.title}. ${d.concept}`,
+            ),
+          },
         });
         void load();
       } catch {
-        Alert.alert('something went wrong', 'could not update this idea. please try again.');
+        Alert.alert(t('something went wrong', 'etwas ist schiefgelaufen'), t('could not update this idea. please try again.', 'Idee konnte nicht aktualisiert werden.'));
       }
     },
-    [load],
+    [load, t],
   );
 
   const dismiss = useCallback(
     async (d: SavedDate) => {
-      Alert.alert('remove this idea?', d.title, [
-        { text: 'keep it', style: 'cancel' },
+      Alert.alert(t('remove this idea?', 'Diese Idee entfernen?'), d.title, [
+        { text: t('keep it', 'behalten'), style: 'cancel' },
         {
-          text: 'remove',
+          text: t('remove', 'entfernen'),
           style: 'destructive',
           onPress: async () => {
             try {
               await savedDateRepository.update(d.id, { status: 'dismissed' });
               setDates((prev) => prev.filter((x) => x.id !== d.id));
             } catch {
-              Alert.alert('something went wrong', 'could not remove this idea.');
+              Alert.alert(t('something went wrong', 'etwas ist schiefgelaufen'), t('could not remove this idea.', 'Idee konnte nicht entfernt werden.'));
             }
           },
         },
       ]);
     },
-    [],
+    [t],
   );
 
   return (
@@ -94,9 +101,9 @@ export default function SavedDatesScreen() {
           accessibilityLabel="Back"
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Text style={styles.back}>← BACK</Text>
+          <Text style={styles.back}>← {t('BACK', 'ZURÜCK')}</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>saved ideas</Text>
+        <Text style={styles.title}>{t('saved ideas', 'gespeicherte Ideen')}</Text>
       </View>
 
       {loading ? (
@@ -105,21 +112,24 @@ export default function SavedDatesScreen() {
         </View>
       ) : dates.length === 0 ? (
         <View style={styles.center}>
-          <Text style={styles.emptyText}>nothing saved yet.</Text>
+          <Text style={styles.emptyText}>{t('nothing saved yet.', 'noch nichts gespeichert.')}</Text>
           <Text style={styles.emptyHint}>
-            tap SAVE on any idea in Discover — your shortlist lives here.
+            {t(
+              'tap SAVE on any idea in Discover — your shortlist lives here.',
+              'MERKEN antippen bei einer Idee in Entdecken — deine Shortlist erscheint hier.',
+            )}
           </Text>
           <TouchableOpacity
             style={styles.cta}
             onPress={() => router.back()}
             accessibilityRole="button"
           >
-            <Text style={styles.ctaText}>BACK TO DISCOVER</Text>
+            <Text style={styles.ctaText}>{t('BACK TO DISCOVER', 'ZURÜCK ZU ENTDECKEN')}</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-          <Text style={styles.hint}>tap DONE when you've experienced it — we'll help you preserve the memory.</Text>
+          <Text style={styles.hint}>{t("tap DONE when you've experienced it — we'll help you preserve the memory.", 'ERLEDIGT antippen wenn ihr es erlebt habt — wir helfen euch, den Moment festzuhalten.')}</Text>
           {dates.map((d) => (
             <View key={d.id} style={styles.card}>
               <View style={styles.cardTop}>
@@ -133,7 +143,7 @@ export default function SavedDatesScreen() {
               <View style={styles.meta}>
                 <Text style={styles.metaItem}>{d.estDurationMin} min</Text>
                 <Text style={styles.metaDot}>·</Text>
-                <Text style={styles.metaItem}>{d.priceBand === 'free' ? 'free' : d.priceBand}</Text>
+                <Text style={styles.metaItem}>{d.priceBand === 'free' ? t('free', 'kostenlos') : d.priceBand}</Text>
               </View>
               <View style={styles.actions}>
                 {d.status !== 'completed' && (
@@ -141,18 +151,18 @@ export default function SavedDatesScreen() {
                     style={styles.actionDone}
                     onPress={() => void markDone(d)}
                     accessibilityRole="button"
-                    accessibilityLabel={`Mark ${d.title} as done`}
+                    accessibilityLabel={t(`Mark ${d.title} as done`, `${d.title} als erledigt markieren`)}
                   >
-                    <Text style={styles.actionDoneText}>DONE → PRESERVE</Text>
+                    <Text style={styles.actionDoneText}>{t('DONE -> PRESERVE', 'ERLEDIGT -> FESTHALTEN')}</Text>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
                   style={styles.actionDismiss}
                   onPress={() => void dismiss(d)}
                   accessibilityRole="button"
-                  accessibilityLabel={`Remove ${d.title}`}
+                  accessibilityLabel={t(`Remove ${d.title}`, `${d.title} entfernen`)}
                 >
-                  <Text style={styles.actionDismissText}>REMOVE</Text>
+                  <Text style={styles.actionDismissText}>{t('REMOVE', 'ENTFERNEN')}</Text>
                 </TouchableOpacity>
               </View>
             </View>
