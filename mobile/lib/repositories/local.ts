@@ -1,5 +1,6 @@
 import { storage } from '../storage';
 import type { Memory, MomentCard, Space, SpaceMember, SavedDate, DateFeedback } from '../types';
+import { sanitiseTip } from '../privacy/boundaries';
 import {
   SEED_MEMORIES,
   SEED_CARDS,
@@ -259,7 +260,12 @@ export const localDateFeedbackRepository: IDateFeedbackRepository = {
   async save(item: Omit<DateFeedback, 'id' | 'createdAt'>): Promise<DateFeedback> {
     const stored = await storage.get<DateFeedback[]>(FEEDBACK_KEY);
     const all = stored ?? [];
-    const entry: DateFeedback = { ...item, id: generateId('fb'), createdAt: now() };
+    const entry: DateFeedback = {
+      ...item,
+      tip: sanitiseTip(item.tip),
+      id: generateId('fb'),
+      createdAt: now(),
+    };
     await storage.set(FEEDBACK_KEY, [...all, entry]);
     return entry;
   },
