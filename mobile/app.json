@@ -6,6 +6,12 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/d346781d-c0f6-4826-a8f3-381a52a6670d"
+    },
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -30,6 +36,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-updates",
       [
         "expo-camera",
         {
