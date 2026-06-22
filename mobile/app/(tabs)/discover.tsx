@@ -22,6 +22,7 @@ import { discovery } from '../../lib/ai';
 import type { DateConstraints, DateRecommendation } from '../../lib/ai';
 import type { TimeOfDay } from '../../lib/together';
 import { savedDateRepository } from '../../lib/repositories';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 
 /** Device clock → coarse time of day. Honest, location-free contextual signal. */
 function currentTimeOfDay(): TimeOfDay {
@@ -51,6 +52,7 @@ export default function DiscoverScreen() {
   const streaksEnabled = useAppStore((s) => s.features.streaks);
   const challengesEnabled = useAppStore((s) => s.features.challenges);
   const missionsEnabled = useAppStore((s) => s.features.missions);
+  const { t } = useLanguage();
 
   const [active, setActive] = useState<Set<string>>(new Set());
   const [excludeIds, setExcludeIds] = useState<string[]>([]);
@@ -186,9 +188,12 @@ export default function DiscoverScreen() {
         )}
 
         <View style={styles.titleBlock}>
-          <Text style={styles.title}>what could you do{'\n'}together?</Text>
+          <Text style={styles.title}>{t('what could you do\ntogether?', 'was könntet\nihr zusammen tun?')}</Text>
           <Text style={styles.subtitle}>
-            a real, doable idea near you — tuned to this {timeOfDay}. tap a chip to refine.
+            {t(
+              `a real, doable idea — tuned to this ${timeOfDay}. tap a chip to refine.`,
+              `eine konkrete Idee für diesen ${timeOfDay === 'morning' ? 'Morgen' : timeOfDay === 'afternoon' ? 'Nachmittag' : 'Abend'}. chip antippen zum Eingrenzen.`,
+            )}
           </Text>
         </View>
 
@@ -223,6 +228,10 @@ export default function DiscoverScreen() {
               rec={primary}
               onOpen={() => router.push(`/together/${primary.momentId}`)}
               onSave={() => void saveDate(primary)}
+              saveLabel={t('SAVE', 'MERKEN')}
+              seeLabel={t('SEE THIS IDEA →', 'DIESE IDEE ANSEHEN →')}
+              whyLabel={t('WHY THIS', 'WARUM DIES')}
+              notUsedPrefix={t('not used:', 'nicht verwendet:')}
             />
 
             <View style={styles.actionRow}>
@@ -231,9 +240,9 @@ export default function DiscoverScreen() {
                 onPress={showAnother}
                 activeOpacity={0.85}
                 accessibilityRole="button"
-                accessibilityLabel="Show another idea"
+                accessibilityLabel={t('Show another idea', 'Andere Idee zeigen')}
               >
-                <Text style={styles.actionText}>SHOW ANOTHER</Text>
+                <Text style={styles.actionText}>{t('SHOW ANOTHER', 'ANDERE IDEE')}</Text>
               </TouchableOpacity>
               {active.size > 0 && (
                 <TouchableOpacity
@@ -241,35 +250,38 @@ export default function DiscoverScreen() {
                   onPress={resetFilters}
                   activeOpacity={0.85}
                   accessibilityRole="button"
-                  accessibilityLabel="Clear filters"
+                  accessibilityLabel={t('Clear filters', 'Filter zurücksetzen')}
                 >
-                  <Text style={styles.actionTextGhost}>CLEAR FILTERS</Text>
+                  <Text style={styles.actionTextGhost}>{t('CLEAR FILTERS', 'FILTER LÖSCHEN')}</Text>
                 </TouchableOpacity>
               )}
             </View>
 
             {alternative && (
               <View style={styles.altBlock}>
-                <Text style={styles.altLabel}>OR INSTEAD</Text>
+                <Text style={styles.altLabel}>{t('OR INSTEAD', 'ODER STATTDESSEN')}</Text>
                 <RecommendationCard
                   rec={alternative}
                   compact
                   onOpen={() => router.push(`/together/${alternative.momentId}`)}
+                  seeLabel={t('SEE THIS IDEA →', 'DIESE IDEE ANSEHEN →')}
+                  whyLabel={t('WHY THIS', 'WARUM DIES')}
+                  notUsedPrefix={t('not used:', 'nicht verwendet:')}
                 />
               </View>
             )}
           </>
         ) : (
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>nothing fits all of that right now.</Text>
-            <Text style={styles.emptyHint}>loosen a filter and we’ll find something.</Text>
+            <Text style={styles.emptyText}>{t('nothing fits all of that right now.', 'nichts passt gerade auf alles.')}</Text>
+            <Text style={styles.emptyHint}>{t("loosen a filter and we'll find something.", 'einen Filter lockern und wir finden etwas.')}</Text>
             <TouchableOpacity
               style={styles.actionBtn}
               onPress={resetFilters}
               accessibilityRole="button"
-              accessibilityLabel="Clear filters"
+              accessibilityLabel={t('Clear filters', 'Filter zurücksetzen')}
             >
-              <Text style={styles.actionText}>CLEAR FILTERS</Text>
+              <Text style={styles.actionText}>{t('CLEAR FILTERS', 'FILTER LÖSCHEN')}</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -314,8 +326,14 @@ export default function DiscoverScreen() {
 
         <Text style={styles.tagline}>
           {activeSpace?.type === 'friends'
-            ? 'time with friends is not something to optimise.\nit is something to notice.'
-            : 'your relationship is not something to optimise.\nit is something to notice.'}
+            ? t(
+                'time with friends is not something to optimise.\nit is something to notice.',
+                'Zeit mit Freunden ist nichts zum Optimieren.\nSie ist etwas zum Bemerken.',
+              )
+            : t(
+                'your relationship is not something to optimise.\nit is something to notice.',
+                'Eure Beziehung ist nichts zum Optimieren.\nSie ist etwas zum Bemerken.',
+              )}
         </Text>
       </ScrollView>
     </SafeAreaView>
@@ -327,11 +345,19 @@ function RecommendationCard({
   onOpen,
   onSave,
   compact,
+  saveLabel = 'SAVE',
+  seeLabel = 'SEE THIS IDEA →',
+  whyLabel = 'WHY THIS',
+  notUsedPrefix = 'not used:',
 }: {
   rec: DateRecommendation;
   onOpen: () => void;
   onSave?: () => void;
   compact?: boolean;
+  saveLabel?: string;
+  seeLabel?: string;
+  whyLabel?: string;
+  notUsedPrefix?: string;
 }) {
   return (
     <TouchableOpacity
@@ -355,11 +381,11 @@ function RecommendationCard({
 
       {!compact && (
         <View style={styles.why}>
-          <Text style={styles.whyLabel}>WHY THIS</Text>
+          <Text style={styles.whyLabel}>{whyLabel}</Text>
           <Text style={styles.whyText}>{rec.why}</Text>
           {rec.signalsNotUsed.length > 0 && (
             <Text style={styles.notUsed}>
-              not used: {rec.signalsNotUsed.join(' · ')}
+              {notUsedPrefix} {rec.signalsNotUsed.join(' · ')}
             </Text>
           )}
         </View>
@@ -367,15 +393,15 @@ function RecommendationCard({
 
       <Text style={styles.provenance}>curated · checked {rec.freshnessAt}</Text>
       <View style={styles.cardFooter}>
-        <Text style={styles.cta}>SEE THIS IDEA →</Text>
+        <Text style={styles.cta}>{seeLabel}</Text>
         {onSave && !compact && (
           <TouchableOpacity
             onPress={(e) => { e.stopPropagation?.(); onSave(); }}
             accessibilityRole="button"
-            accessibilityLabel="Save this idea"
+            accessibilityLabel={saveLabel}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Text style={styles.save}>SAVE</Text>
+            <Text style={styles.save}>{saveLabel}</Text>
           </TouchableOpacity>
         )}
       </View>

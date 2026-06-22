@@ -45,6 +45,23 @@ Edition 02 is flagged `sensitive: true`. The following controls are active:
 - Per-member access visibility: show which space members can see this diary.
 - 18+ self-attestation gate before first access to an intimate edition.
 
+## Date Discovery privacy (PP-030)
+
+- **Location is per-use and explicit.** The Discover surface works without device
+  location; device GPS is never accessed passively. A future "near me" option will
+  be a one-tap, one-request grant with a clear explanation at the point of use.
+- **DateConstraints are ephemeral.** The filter chips and preference inputs used
+  to shape Discovery picks live only in the component state for that request; they
+  are never written to a durable profile.
+- **Personalization signals are inspectable.** Every signal the recommender uses
+  is surfaced in `app/settings/preferences.tsx`, labelled by source (`onboarding`
+  / `shortcut`), and deletable with one tap.
+- **Saved dates are space-scoped.** Saved/planned/completed date ideas live in
+  `saved_dates` under the same deny-by-default RLS as memories — visible only to
+  members of that space.
+- **Discovery never surfaces sensitive edition content** in picks, previews, or
+  notification previews (Discover is not aware of `sensitive` editions by design).
+
 ## MVP status
 
 - All data is stored **on-device** (AsyncStorage). Nothing leaves the phone.
