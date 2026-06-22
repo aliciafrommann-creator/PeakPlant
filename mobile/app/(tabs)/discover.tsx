@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { Logo } from '../../components/ui/Logo';
@@ -20,8 +20,10 @@ import { useAppStore } from '../../lib/store';
 import { computeWeeklyStreak } from '../../lib/streaks';
 import { discovery } from '../../lib/ai';
 import type { DateConstraints, DateRecommendation } from '../../lib/ai';
-import type { TimeOfDay } from '../../lib/together';
+import { momentById, type TimeOfDay } from '../../lib/together';
 import { savedDateRepository } from '../../lib/repositories';
+import { summarizeLearning, affinityWeights } from '../../lib/discovery/learning';
+import type { SavedDate } from '../../lib/types';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 
 /** Device clock → coarse time of day. Honest, location-free contextual signal. */
@@ -52,24 +54,51 @@ export default function DiscoverScreen() {
   const streaksEnabled = useAppStore((s) => s.features.streaks);
   const challengesEnabled = useAppStore((s) => s.features.challenges);
   const missionsEnabled = useAppStore((s) => s.features.missions);
+  const personalization = useAppStore((s) => s.personalization);
+  const personalizationResetAt = useAppStore((s) => s.personalizationResetAt);
   const { t } = useLanguage();
 
   const [active, setActive] = useState<Set<string>>(new Set());
   const [excludeIds, setExcludeIds] = useState<string[]>([]);
   const [recs, setRecs] = useState<DateRecommendation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [saved, setSaved] = useState<SavedDate[]>([]);
 
   const streak = computeWeeklyStreak(memories.map((m) => m.createdAt));
   const timeOfDay = useMemo(currentTimeOfDay, []);
 
+  // Load the space's saved ideas so we can learn a gentle, explicit affinity
+  // from them. Re-runs whenever the screen regains focus (e.g. after saving).
+  useFocusEffect(
+    useCallback(() => {
+      if (!activeSpace) return;
+      let alive = true;
+      savedDateRepository
+        .getAll(activeSpace.id)
+        .then((d) => { if (alive) setSaved(d); })
+        .catch(() => { /* best-effort: no learning rather than a crash */ });
+      return () => { alive = false; };
+    }, [activeSpace]),
+  );
+
+  const categoryAffinity = useMemo(() => {
+    const summary = summarizeLearning(saved, {
+      categoryOf: (id) => momentById(id)?.category,
+      enabled: personalization,
+      since: personalizationResetAt ?? undefined,
+    });
+    const weights = affinityWeights(summary);
+    return Object.keys(weights).length > 0 ? weights : undefined;
+  }, [saved, personalization, personalizationResetAt]);
+
   const constraints = useMemo<DateConstraints | null>(() => {
     if (!activeSpace) return null;
-    let c: DateConstraints = { spaceType: activeSpace.type, goals, timeOfDay, excludeIds };
+    let c: DateConstraints = { spaceType: activeSpace.type, goals, timeOfDay, excludeIds, categoryAffinity };
     for (const s of SHORTCUTS) {
       if (active.has(s.key)) c = { ...c, ...s.patch };
     }
     return c;
-  }, [activeSpace, goals, timeOfDay, active, excludeIds]);
+  }, [activeSpace, goals, timeOfDay, active, excludeIds, categoryAffinity]);
 
   useEffect(() => {
     if (!constraints) {

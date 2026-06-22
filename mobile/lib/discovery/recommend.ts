@@ -105,6 +105,16 @@ function evaluate(
   if (c.maxBudget && PRICE_ORDER[effectivePrice(moment, place)] <= PRICE_ORDER[c.maxBudget]) {
     used.push('it fits your budget');
   }
+  // Gentle nudge from the user's own past, explicit choices. Bounded to +/-1 so
+  // it can break ties and lift familiar flavours without overriding the
+  // in-the-moment constraints above. Surfaced in "why" so it's never a secret.
+  const affinity = c.categoryAffinity?.[moment.category];
+  if (affinity && affinity > 0) {
+    score += 1;
+    used.push('it is like ideas you have saved before');
+  } else if (affinity && affinity < 0) {
+    score -= 1;
+  }
 
   return { moment, place, score, used };
 }

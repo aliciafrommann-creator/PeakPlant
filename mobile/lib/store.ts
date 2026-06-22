@@ -8,6 +8,8 @@ const GOALS_KEY = 'goals';
 const ACTIVE_SPACE_KEY = 'activeSpaceId';
 const FEATURES_KEY = 'enabledFeatures';
 const LANGUAGE_KEY = 'language';
+const PERSONALIZATION_KEY = 'personalization';
+const PERSONALIZATION_RESET_KEY = 'personalizationResetAt';
 
 /**
  * UI-preference writes are fire-and-forget: the in-memory state already updated,
@@ -26,11 +28,18 @@ interface AppState {
   goals: string[];
   activeSpaceId: string | null;
   features: Record<FeatureKey, boolean>;
+  /** Behavioral personalization: learn gentle bias from explicit saves. */
+  personalization: boolean;
+  /** ISO of the last "forget what you've learned" reset (null = never). */
+  personalizationResetAt: string | null;
   hydrate: () => Promise<void>;
   setLanguage: (lang: Lang) => void;
   setGoals: (goals: string[]) => void;
   setActiveSpace: (id: string) => void;
   toggleFeature: (key: FeatureKey, enabled: boolean) => void;
+  setPersonalization: (enabled: boolean) => void;
+  /** Forget everything learned so far without deleting the saved ideas. */
+  resetLearning: () => void;
   completeOnboarding: () => Promise<void>;
   reset: () => Promise<void>;
 }
@@ -42,6 +51,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   goals: [],
   activeSpaceId: null,
   features: { ...DEFAULT_FEATURES },
+  personalization: true,
+  personalizationResetAt: null,
 
   hydrate: async () => {
     const onboarded = (await storage.get<boolean>(ONBOARDED_KEY)) ?? false;
@@ -51,7 +62,18 @@ export const useAppStore = create<AppState>((set, get) => ({
     const storedFeatures = await storage.get<Record<string, boolean>>(FEATURES_KEY);
     // Merge defaults with stored so newly-added features get their default.
     const features = { ...DEFAULT_FEATURES, ...(storedFeatures ?? {}) };
-    set({ onboarded, language, goals, activeSpaceId, features, hydrated: true });
+    const personalization = (await storage.get<boolean>(PERSONALIZATION_KEY)) ?? true;
+    const personalizationResetAt = (await storage.get<string>(PERSONALIZATION_RESET_KEY)) ?? null;
+    set({
+      onboarded,
+      language,
+      goals,
+      activeSpaceId,
+      features,
+      personalization,
+      personalizationResetAt,
+      hydrated: true,
+    });
   },
 
   setLanguage: (lang) => {
@@ -75,6 +97,17 @@ export const useAppStore = create<AppState>((set, get) => ({
     void storage.set(FEATURES_KEY, features).catch(warnWriteFailed);
   },
 
+  setPersonalization: (enabled) => {
+    set({ personalization: enabled });
+    void storage.set(PERSONALIZATION_KEY, enabled).catch(warnWriteFailed);
+  },
+
+  resetLearning: () => {
+    const at = new Date().toISOString();
+    set({ personalizationResetAt: at });
+    void storage.set(PERSONALIZATION_RESET_KEY, at).catch(warnWriteFailed);
+  },
+
   completeOnboarding: async () => {
     await storage.set(ONBOARDED_KEY, true);
     set({ onboarded: true });
@@ -86,8 +119,26 @@ export const useAppStore = create<AppState>((set, get) => ({
     await storage.remove(ACTIVE_SPACE_KEY);
     await storage.remove(FEATURES_KEY);
     await storage.remove(LANGUAGE_KEY);
-    set({ onboarded: false, language: 'en', goals: [], activeSpaceId: null, features: { ...DEFAULT_FEATURES } });
+    await storage.remove(PERSONALIZATION_KEY);
+    await storage.remove(PERSONALIZATION_RESET_KEY);
+    set({
+      onboarded: false,
+      language: 'en',
+      goals: [],
+      activeSpaceId: null,
+      features: { ...DEFAULT_FEATURES },
+      personalization: true,
+      personalizationResetAt: null,
+    });
   },
 }));
 
-export { GOALS_KEY, ONBOARDED_KEY, ACTIVE_SPACE_KEY, FEATURES_KEY, LANGUAGE_KEY };
+export {
+  GOALS_KEY,
+  ONBOARDED_KEY,
+  ACTIVE_SPACE_KEY,
+  FEATURES_KEY,
+  LANGUAGE_KEY,
+  PERSONALIZATION_KEY,
+  PERSONALIZATION_RESET_KEY,
+};

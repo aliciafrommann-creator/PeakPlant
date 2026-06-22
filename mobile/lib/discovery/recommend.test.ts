@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { recommendDates } from './recommend';
-import { TOGETHER_MOMENTS, LOCAL_PLACES } from '../together';
+import { TOGETHER_MOMENTS, LOCAL_PLACES, momentById } from '../together';
 
 describe('recommendDates', () => {
   it('returns a primary pick and one alternative for a couple', () => {
@@ -51,6 +51,32 @@ describe('recommendDates', () => {
     expect(recs[0].momentId).toBe('tm-8');
     expect(recs[0].why.toLowerCase()).toContain('playful moments');
     expect(recs[0].signalsUsed.some((s) => s.includes('playful moments'))).toBe(true);
+  });
+
+  it('gently lifts a category the user has saved before, and explains it', () => {
+    const baseline = recommendDates({ spaceType: 'couple' })[0];
+    const baseCat = momentById(baseline.momentId)!.category;
+    // Favour a different category than the baseline top so the effect is visible.
+    const otherCat = (['food', 'outdoors', 'create', 'calm', 'play'] as const).find(
+      (c) => c !== baseCat && TOGETHER_MOMENTS.some((m) => m.spaceTypes.includes('couple') && m.category === c),
+    )!;
+    const recs = recommendDates({ spaceType: 'couple', categoryAffinity: { [otherCat]: 1 } });
+    expect(momentById(recs[0].momentId)!.category).toBe(otherCat);
+    expect(recs[0].signalsUsed.some((s) => s.includes('saved before'))).toBe(true);
+  });
+
+  it('gently demotes a category the user has dismissed before', () => {
+    const baseline = recommendDates({ spaceType: 'couple' })[0];
+    const baseCat = momentById(baseline.momentId)!.category;
+    const recs = recommendDates({ spaceType: 'couple', categoryAffinity: { [baseCat]: -1 } });
+    // The previously-top category is pushed below neutral ones.
+    expect(momentById(recs[0].momentId)!.category).not.toBe(baseCat);
+  });
+
+  it('affinity never overrides a hard constraint', () => {
+    // Favour a category but also cap budget to free — only free picks may appear.
+    const recs = recommendDates({ spaceType: 'couple', maxBudget: 'free', categoryAffinity: { food: 1 } });
+    expect(recs.every((r) => r.priceBand === 'free')).toBe(true);
   });
 
   it('is honest about signals it cannot use', () => {

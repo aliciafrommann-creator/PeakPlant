@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -6,13 +6,19 @@ import {
   ScrollView,
   SafeAreaView,
   TouchableOpacity,
+  Switch,
   Alert,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useAppStore } from '../../lib/store';
+import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { savedDateRepository } from '../../lib/repositories';
+import { summarizeLearning } from '../../lib/discovery/learning';
+import { momentById, type MomentCategory } from '../../lib/together';
+import type { SavedDate } from '../../lib/types';
 
 interface SignalRow {
   label: string;
@@ -21,10 +27,57 @@ interface SignalRow {
   note: string;
 }
 
+/** Human, bilingual labels for the learned categories. */
+const CATEGORY_LABEL: Record<MomentCategory, [en: string, de: string]> = {
+  food: ['food & drink', 'Essen & Trinken'],
+  outdoors: ['the outdoors', 'die Natur'],
+  create: ['making things', 'gemeinsam gestalten'],
+  calm: ['calm & quiet', 'ruhig & still'],
+  play: ['playful things', 'verspielte Dinge'],
+};
+
 export default function PreferencesScreen() {
   const goals = useAppStore((s) => s.goals);
   const setGoals = useAppStore((s) => s.setGoals);
+  const personalization = useAppStore((s) => s.personalization);
+  const setPersonalization = useAppStore((s) => s.setPersonalization);
+  const personalizationResetAt = useAppStore((s) => s.personalizationResetAt);
+  const resetLearning = useAppStore((s) => s.resetLearning);
+  const { activeSpace } = useSpaces();
   const { t } = useLanguage();
+
+  const [saved, setSaved] = useState<SavedDate[]>([]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!activeSpace) return;
+      let alive = true;
+      savedDateRepository
+        .getAll(activeSpace.id)
+        .then((d) => { if (alive) setSaved(d); })
+        .catch(() => { /* best-effort: show no learning rather than crash */ });
+      return () => { alive = false; };
+    }, [activeSpace]),
+  );
+
+  const learning = summarizeLearning(saved, {
+    categoryOf: (id) => momentById(id)?.category,
+    enabled: personalization,
+    since: personalizationResetAt ?? undefined,
+  });
+
+  const resetLearned = useCallback(() => {
+    Alert.alert(
+      t('forget what you have learned?', 'Gelerntes vergessen?'),
+      t(
+        'your saved ideas stay. only the gentle bias learned from them is forgotten, and Discover starts fresh.',
+        'Deine gemerkten Ideen bleiben. Nur die daraus gelernte sanfte Tendenz wird vergessen, und Entdecken beginnt neu.',
+      ),
+      [
+        { text: t('keep it', 'behalten'), style: 'cancel' },
+        { text: t('forget', 'vergessen'), style: 'destructive', onPress: () => resetLearning() },
+      ],
+    );
+  }, [resetLearning, t]);
 
   const signals: SignalRow[] = [
     ...goals.map((g) => ({
@@ -144,6 +197,74 @@ export default function PreferencesScreen() {
           </TouchableOpacity>
         )}
 
+        <Text style={styles.sectionLabel}>{t('WHAT PEAKPLANT HAS LEARNED', 'WAS PEAKPLANT GELERNT HAT')}</Text>
+        <View style={styles.learnToggleRow}>
+          <View style={styles.learnToggleLeft}>
+            <Text style={styles.signalLabel}>{t('learn from what you save', 'aus Gemerktem lernen')}</Text>
+            <Text style={styles.signalNote}>
+              {t(
+                'gently lifts ideas like the ones you save, plan and complete. only your own explicit actions — never inferred.',
+                'hebt sanft Ideen hervor, die du merkst, planst und abschliesst. nur deine eigenen Aktionen - nie abgeleitet.',
+              )}
+            </Text>
+          </View>
+          <Switch
+            value={personalization}
+            onValueChange={setPersonalization}
+            trackColor={{ false: Colors.border, true: Colors.text }}
+            thumbColor={Colors.white}
+            accessibilityLabel={t('Toggle learning from what you save', 'Lernen aus Gemerktem umschalten')}
+          />
+        </View>
+
+        {personalization && (
+          learning.total === 0 ? (
+            <Text style={styles.sectionNote}>
+              {t(
+                "nothing learned yet. save, plan or complete a few ideas and a gentle picture forms here — always visible, always yours to reset.",
+                'noch nichts gelernt. merke, plane oder schliesse ein paar Ideen ab, und hier entsteht ein sanftes Bild - immer sichtbar, immer von dir rucksetzbar.',
+              )}
+            </Text>
+          ) : (
+            <>
+              {learning.liked.length > 0 && (
+                <View style={styles.learnedBlock}>
+                  <Text style={styles.learnedHeading}>{t('you seem drawn to', 'du scheinst dich hingezogen zu fuhlen zu')}</Text>
+                  {learning.liked.map((a) => (
+                    <View key={a.category} style={styles.learnedRow}>
+                      <Text style={styles.learnedCat}>{t(...CATEGORY_LABEL[a.category])}</Text>
+                      <Text style={styles.learnedFrom}>
+                        {t(`from ${a.signals} idea${a.signals === 1 ? '' : 's'}`, `aus ${a.signals} Idee${a.signals === 1 ? '' : 'n'}`)}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+              {learning.disliked.length > 0 && (
+                <View style={styles.learnedBlock}>
+                  <Text style={styles.learnedHeading}>{t('you tend to pass on', 'du lasst eher aus')}</Text>
+                  {learning.disliked.map((a) => (
+                    <View key={a.category} style={styles.learnedRow}>
+                      <Text style={styles.learnedCat}>{t(...CATEGORY_LABEL[a.category])}</Text>
+                      <Text style={styles.learnedFrom}>
+                        {t(`from ${a.signals} idea${a.signals === 1 ? '' : 's'}`, `aus ${a.signals} Idee${a.signals === 1 ? '' : 'n'}`)}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+              <TouchableOpacity
+                style={styles.clearBtn}
+                onPress={resetLearned}
+                accessibilityRole="button"
+                accessibilityLabel={t('Forget what has been learned', 'Gelerntes vergessen')}
+              >
+                <Text style={styles.clearText}>{t('FORGET WHAT WAS LEARNED', 'GELERNTES VERGESSEN')}</Text>
+              </TouchableOpacity>
+            </>
+          )
+        )}
+
         <Text style={styles.footer}>
           {t(
             'personalization signals live only on this device in local mode, or in your private space in backend mode — they are never used for ads, sold, or shared outside your space. (PP-014 / PP-016)',
@@ -230,6 +351,30 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
   },
   clearText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: '#b42318' },
+  learnToggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: Spacing.md,
+  },
+  learnToggleLeft: { flex: 1, gap: 2 },
+  learnedBlock: { gap: Spacing.xs, marginTop: Spacing.sm },
+  learnedHeading: {
+    fontSize: 11,
+    fontWeight: '400',
+    color: Colors.textMuted,
+    fontStyle: 'italic',
+  },
+  learnedRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    paddingVertical: Spacing.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  learnedCat: { fontSize: 15, fontWeight: '300', color: Colors.text },
+  learnedFrom: { fontSize: 10, fontWeight: '300', color: Colors.textFaint, letterSpacing: 0.3 },
   footer: {
     fontSize: 11,
     fontWeight: '300',

@@ -28,6 +28,13 @@ export interface DateConstraints {
   weather?: Weather;
   categories?: MomentCategory[];
   energy?: Energy;
+  /**
+   * Gentle per-category bias learned from the user's own explicit saves /
+   * completions / dismissals (see discovery/learning.ts). Bounded to +/-1 so it
+   * nudges ranking without overriding in-the-moment constraints. Omitted when
+   * behavioral personalization is disabled.
+   */
+  categoryAffinity?: Partial<Record<MomentCategory, number>>;
   /** Moment ids to skip — powers "show another" without repeating a pick. */
   excludeIds?: string[];
 }
