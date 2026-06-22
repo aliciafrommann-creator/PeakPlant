@@ -20,6 +20,7 @@ import { useSpaces } from '../../lib/hooks/useSpaces';
 import { savedDateRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { transitionEffect } from '../../lib/savedDates/status';
+import { shareSavedDate } from '../../lib/share';
 import type { SavedDate } from '../../lib/types';
 
 export default function SavedDatesScreen() {
@@ -160,6 +161,17 @@ export default function SavedDatesScreen() {
     [t],
   );
 
+  const share = useCallback(
+    async (d: SavedDate) => {
+      try {
+        await shareSavedDate(d);
+      } catch {
+        // The OS share sheet was dismissed or unavailable — nothing to recover.
+      }
+    },
+    [],
+  );
+
   const planningDate = dates.find((d) => d.id === planningId);
 
   return (
@@ -267,6 +279,14 @@ export default function SavedDatesScreen() {
                     <Text style={styles.actionDismissText}>{t('CALL OFF', 'ABSAGEN')}</Text>
                   </TouchableOpacity>
                 )}
+                <TouchableOpacity
+                  style={styles.actionDismiss}
+                  onPress={() => void share(d)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t(`Share ${d.title}`, `${d.title} teilen`)}
+                >
+                  <Text style={styles.actionDismissText}>{t('SHARE', 'TEILEN')}</Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.actionDismiss}
                   onPress={() => void dismiss(d)}
