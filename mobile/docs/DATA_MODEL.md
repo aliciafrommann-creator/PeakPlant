@@ -39,6 +39,52 @@ another.
 `id`, `cardId`, `spaceId`, `note`, `photoUri?`, `createdAt`, `updatedAt`.
 The unit of the diary — a preserved moment tied to a card, owned by one space.
 
+### TogetherMoment (catalog, in-app)
+Enriched activity ideas: `id`, `title`, `idea`, `category`, `spaceTypes`,
+`priceBand`, `indoorOutdoor`, `avgDurationMin`, `energy`, `idealTimeOfDay`,
+`weatherFit`, `linkedCardIds`, `placeId?`. Static catalog in `lib/together.ts`.
+
+### LocalPlace (catalog, in-app)
+Enriched partner venues: `id`, `name`, `area`, `priceBand`, `indoorOutdoor`,
+`accessibility[]`, `tags[]`, `provenance`, `lastVerifiedAt`, `lat?`, `lng?`,
+`isPartner`, `perk?`. Static catalog in `lib/together.ts`.
+
+### DateConstraints (ephemeral, never stored)
+Per-request struct that shapes Discovery picks: `spaceType`, `goals[]`,
+`timeOfDay`, `indoorOutdoor`, `maxDurationMin`, `maxBudget`, `weather`,
+`categories[]`, `energy`, `excludeIds[]`. Lives only for the duration of one
+recommend call — never persisted as a profile (PP-030).
+
+### DateRecommendation (transient)
+The recommender's output: `id`, `momentId`, `title`, `concept`, `placeId?`,
+`place?`, `why`, `signalsUsed[]`, `signalsNotUsed[]`, `facts[]` (each with
+a `provenance` label), `estDurationMin`, `priceBand`, `indoorOutdoor`,
+`isAlternative?`, `freshnessAt`. Never stored; only a snapshot is kept if saved.
+
+### SavedDate (persisted, space-scoped)
+`id`, `spaceId`, `momentId`, `title`, `concept`, `priceBand`, `estDurationMin`,
+`status` (`idea` | `saved` | `planned` | `completed` | `dismissed`), `savedAt`,
+`plannedFor?`, `completedAt?`, `memoryId?`. The `memoryId` field closes the
+Discover→experience→Diary loop when a completed date becomes a memory.
+Migration: `0005_date_discovery.sql`. Repository: `ISavedDateRepository`.
+
+### DatePreferences (persisted, space-scoped)
+Explicit preferences a couple sets: `spaceId`, `userId?`, `scope` (`couple` |
+`member`), `categories[]`, `budgetBand?`, `indoorOutdoor?`, `maxTravelMin?`,
+`dietary[]`, `accessibility[]`. Inspectable and deletable via the Personalization
+screen. Migration: `0005_date_discovery.sql`.
+
+### PersonalizationSignal (persisted, space-scoped)
+One inspectable signal: `spaceId`, `userId?`, `kind`, `value`, `source`
+(`explicit` | `behavioral`), `createdAt`. Shown in full on the Personalization
+screen; any row can be deleted by the user. Sensitive inferences are never stored
+(PP-014). Migration: `0005_date_discovery.sql`.
+
+### DateFeedback (persisted, space-scoped)
+Post-date rating: `spaceId`, `savedDateId?`, `userId?`, `rating` (−1 or +1),
+`reason?`, `createdAt`. Feeds ranking improvements; never used for ads or resale.
+Migration: `0005_date_discovery.sql`.
+
 ## Future entities (Supabase phase)
 
 - **IntimacyCard** — the separate condom-box collection per edition
