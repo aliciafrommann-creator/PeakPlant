@@ -13,6 +13,7 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { SEED_SPACES } from '../../lib/seed';
 import { useAppStore } from '../../lib/store';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import { isSupabaseConfigured } from '../../lib/supabase/client';
 import { spaceRepository } from '../../lib/repositories';
 import { getActiveUser } from '../../lib/session';
@@ -24,10 +25,8 @@ const FIRST_SPACE = SEED_SPACES[0];
 export default function InviteScreen() {
   const completeOnboarding = useAppStore((s) => s.completeOnboarding);
   const setActiveSpace = useAppStore((s) => s.setActiveSpace);
+  const { t } = useLanguage();
 
-  // Local-first: the seeded space already has a real, shareable code. Backend:
-  // we create the couple space up front so the code shown here is real (no more
-  // misleading "— — — —" placeholder).
   const [space, setSpace] = useState<Space | null>(isSupabaseConfigured ? null : FIRST_SPACE);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,11 +49,11 @@ export default function InviteScreen() {
       setSpace(created);
       setActiveSpace(created.id);
     } catch {
-      setError("couldn't set up your space. tap retry to try again.");
+      setError(t("couldn't set up your space. tap retry to try again.", 'Space konnte nicht eingerichtet werden. Tippe auf Wiederholen.'));
     } finally {
       setCreating(false);
     }
-  }, [setActiveSpace]);
+  }, [setActiveSpace, t]);
 
   useEffect(() => {
     if (isSupabaseConfigured) void createBackendSpace();
@@ -70,7 +69,6 @@ export default function InviteScreen() {
   };
 
   const enter = async () => {
-    // In backend mode a failed creation leaves no space — CONTINUE becomes retry.
     if (isSupabaseConfigured && !space) {
       await createBackendSpace();
       return;
@@ -81,7 +79,7 @@ export default function InviteScreen() {
       await completeOnboarding();
       router.replace('/(tabs)/discover');
     } catch {
-      setError("couldn't finish setup. please try again.");
+      setError(t("couldn't finish setup. please try again.", 'Einrichtung konnte nicht abgeschlossen werden. Bitte versuche es erneut.'));
     }
   };
 
@@ -92,29 +90,34 @@ export default function InviteScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
         <View style={styles.header}>
-          <Text style={styles.label}>INVITE YOUR PARTNER</Text>
-          <Text style={styles.title}>your{'\n'}invite code</Text>
+          <Text style={styles.label}>{t('INVITE YOUR PARTNER', 'PARTNER EINLADEN')}</Text>
+          <Text style={styles.title}>{t('your\ninvite code', 'dein\nEinladungscode')}</Text>
           <Text style={styles.subtitle}>
-            share this with your partner so you can build your shared diary together.
-            you can also start friends spaces later.
+            {t(
+              'share this with your partner so you can build your shared diary together. you can also start friends spaces later.',
+              'Teile diesen Code mit deinem Partner, damit ihr gemeinsam euer Tagebuch aufbaut. Du kannst spater auch Freunde-Spaces starten.',
+            )}
           </Text>
         </View>
 
         <View style={styles.codeContainer}>
-          <Text style={styles.codeLabel}>YOUR CODE</Text>
+          <Text style={styles.codeLabel}>{t('YOUR CODE', 'DEIN CODE')}</Text>
           {creating && !code ? (
             <ActivityIndicator color={Colors.accent} style={styles.codeLoading} />
           ) : (
-            <Text style={styles.code}>{code ?? '— — — —'}</Text>
+            <Text style={styles.code}>{code ?? '- - - -'}</Text>
           )}
           <Text style={styles.codeHint}>
-            your partner enters this when they set up their account.
+            {t(
+              'your partner enters this when they set up their account.',
+              'Dein Partner gibt diesen Code ein, wenn er sein Konto einrichtet.',
+            )}
           </Text>
         </View>
 
         <View style={styles.divider}>
           <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>OR</Text>
+          <Text style={styles.dividerText}>{t('OR', 'ODER')}</Text>
           <View style={styles.dividerLine} />
         </View>
 
@@ -124,9 +127,9 @@ export default function InviteScreen() {
           onPress={onShare}
           disabled={!canShare}
           accessibilityRole="button"
-          accessibilityLabel="Share invite link"
+          accessibilityLabel={t('Share invite link', 'Einladungslink teilen')}
         >
-          <Text style={styles.shareText}>SHARE INVITE</Text>
+          <Text style={styles.shareText}>{t('SHARE INVITE', 'EINLADUNG TEILEN')}</Text>
         </TouchableOpacity>
 
         {error && (
@@ -142,14 +145,19 @@ export default function InviteScreen() {
             activeOpacity={0.8}
             disabled={creating}
             accessibilityRole="button"
-            accessibilityLabel={isSupabaseConfigured && !space ? 'Retry' : 'Continue'}
+            accessibilityLabel={isSupabaseConfigured && !space ? t('Retry', 'Wiederholen') : t('Continue', 'Weiter')}
           >
             <Text style={styles.continueText}>
-              {isSupabaseConfigured && !space && !creating ? 'RETRY' : 'CONTINUE FOR NOW'}
+              {isSupabaseConfigured && !space && !creating
+                ? t('RETRY', 'WIEDERHOLEN')
+                : t('CONTINUE FOR NOW', 'VORERST WEITER')}
             </Text>
           </TouchableOpacity>
           <Text style={styles.hint}>
-            your partner can join later using the code above
+            {t(
+              'your partner can join later using the code above',
+              'Dein Partner kann spater mit dem Code oben beitreten',
+            )}
           </Text>
         </View>
       </View>

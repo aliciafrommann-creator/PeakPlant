@@ -6,6 +6,7 @@ import { Spacing } from '../../constants/spacing';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import { getEdition, SEED_EDITION, SEED_CARDS } from '../../lib/seed';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { ShopLink } from '../../components/edition/ShopLink';
@@ -17,10 +18,10 @@ export default function EditionScreen() {
   const { activeSpace } = useSpaces();
   const { memories, loading } = useMemories(activeSpace?.id);
   const obscured = usePrivacyOverlay();
+  const { t } = useLanguage();
 
   const edition = getEdition(id ?? '') ?? SEED_EDITION;
 
-  // Show only memories whose card belongs to this edition.
   const editionCardIds = new Set(
     SEED_CARDS.filter((c) => c.edition === edition.id).map((c) => c.id)
   );
@@ -30,8 +31,7 @@ export default function EditionScreen() {
     return SEED_CARDS.find((c) => c.id === cardId);
   }
 
-  // Each edition themes its diary header with its own signature color.
-  const onLight = edition.ink === 'dark'; // dark text on a light edition color
+  const onLight = edition.ink === 'dark';
   const fg = onLight ? '#1A1A1A' : '#FAF7F0';
   const fgMuted = onLight ? 'rgba(26,26,26,0.62)' : 'rgba(250,247,240,0.78)';
   const fgFaint = onLight ? 'rgba(26,26,26,0.5)' : 'rgba(250,247,240,0.62)';
@@ -50,15 +50,20 @@ export default function EditionScreen() {
     );
   }
 
+  const momentCount = t(
+    `${editionMemories.length} moment${editionMemories.length !== 1 ? 's' : ''} preserved`,
+    `${editionMemories.length} Moment${editionMemories.length !== 1 ? 'e' : ''} bewahrt`,
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.bar}>
         <TouchableOpacity
           onPress={() => router.back()}
           accessibilityRole="button"
-          accessibilityLabel="Back to editions"
+          accessibilityLabel={t('Back to editions', 'Zuruck zu Editionen')}
         >
-          <Text style={styles.back}>← EDITIONS</Text>
+          <Text style={styles.back}>{'<-'} {t('EDITIONS', 'EDITIONEN')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -74,12 +79,10 @@ export default function EditionScreen() {
             <Text style={[styles.description, { color: fgMuted }]}>{edition.description}</Text>
 
             <View style={styles.statsRow}>
-              <Text style={[styles.stat, { color: fgMuted }]}>
-                {editionMemories.length} moment{editionMemories.length !== 1 ? 's' : ''} preserved
-              </Text>
+              <Text style={[styles.stat, { color: fgMuted }]}>{momentCount}</Text>
               {edition.sensitive && (
                 <Text style={[styles.privateNote, { color: fgFaint }]}>
-                  this diary stays private on your device
+                  {t('this diary stays private on your device', 'dieses Tagebuch bleibt privat auf deinem Gerat')}
                 </Text>
               )}
             </View>
@@ -89,22 +92,25 @@ export default function EditionScreen() {
               onPress={() => router.push('/(tabs)/scan')}
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel="Scan a card from this edition"
+              accessibilityLabel={t('Scan a card from this edition', 'Karte aus dieser Edition scannen')}
             >
-              <Text style={[styles.scanButtonText, { color: btnText }]}>SCAN A CARD</Text>
+              <Text style={[styles.scanButtonText, { color: btnText }]}>{t('SCAN A CARD', 'KARTE SCANNEN')}</Text>
             </TouchableOpacity>
 
             {editionMemories.length > 0 && (
-              <Text style={[styles.diaryLabel, { color: fgFaint }]}>YOUR DIARY</Text>
+              <Text style={[styles.diaryLabel, { color: fgFaint }]}>{t('YOUR DIARY', 'EUER TAGEBUCH')}</Text>
             )}
           </View>
         }
         ListEmptyComponent={
           loading ? null : (
             <View style={styles.empty}>
-              <Text style={styles.emptyText}>no moments yet.</Text>
+              <Text style={styles.emptyText}>{t('no moments yet.', 'noch keine Momente.')}</Text>
               <Text style={styles.emptyHint}>
-                complete a card, then scan its QR code to add it to your diary.
+                {t(
+                  'complete a card, then scan its QR code to add it to your diary.',
+                  'Schliesse eine Karte ab, dann scanne ihren QR-Code, um sie eurem Tagebuch hinzuzufugen.',
+                )}
               </Text>
             </View>
           )
