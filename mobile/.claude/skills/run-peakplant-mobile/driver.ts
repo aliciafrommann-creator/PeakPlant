@@ -31,6 +31,8 @@ import {
 import { enrichWithLiveWeather } from '../../../lib/discovery/weatherContext';
 import { rankedCandidates } from '../../../lib/discovery/recommend';
 import { mergeAiRanking, AI_WHY_MAX, type AiPick } from '../../../lib/ai/aiRecommend';
+import { generateInviteCode, isValidInviteCode, normalizeInviteCode } from '../../../lib/invite';
+import { buildCreateSpaceRpcArgs } from '../../../lib/repositories/spaceCreation';
 import type { IWeatherProvider, LiveWeather, ProviderResult } from '../../../lib/discovery/providers/interface';
 import type { DateConstraints } from '../../../lib/discovery/types';
 
@@ -115,7 +117,25 @@ async function main() {
     console.log('  (need >=2 candidates to demo reorder; pool too small for these constraints)');
   }
 
-  console.log('\nDONE — drove openMeteo, weatherContext, recommend, aiRecommend end to end.');
+  // 6. Pairing key: create -> share -> partner joins ---------------------
+  hr('6. Pairing key round-trip (invite.ts + spaceCreation.ts)');
+  const ownerCode = generateInviteCode();
+  console.log(`  owner generates code: ${ownerCode}`);
+  console.log(`    passes DB create_space regex? ${isValidInviteCode(ownerCode) ? 'yes' : 'NO (BUG)'}`);
+  const rpcArgs = buildCreateSpaceRpcArgs(
+    { type: 'couple', name: '', ownerName: 'Alex' },
+    ownerCode,
+  );
+  console.log(`    create_space RPC args: ${JSON.stringify(rpcArgs)}`);
+  // Partner types it back sloppily (lowercase + spaces); must still match.
+  const partnerTyped = `  ${ownerCode.toLowerCase()} `;
+  const normalized = normalizeInviteCode(partnerTyped);
+  console.log(`  partner types "${partnerTyped}" -> redeem_invite gets "${normalized}"`);
+  console.log(`    matches owner's stored code? ${normalized === ownerCode ? 'yes (pair links)' : 'NO (BUG)'}`);
+  // A junk code is rejected before any network call.
+  console.log(`  junk code "hello" valid? ${isValidInviteCode('hello') ? 'YES (BUG)' : 'no (rejected client-side)'}`);
+
+  console.log('\nDONE — drove openMeteo, weatherContext, recommend, aiRecommend, pairing end to end.');
 }
 
 main().catch((e) => {

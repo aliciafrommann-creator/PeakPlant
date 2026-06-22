@@ -16,19 +16,11 @@ import type {
   CreateSpaceInput,
 } from './interfaces';
 import { buildCreateSpaceRpcArgs } from './spaceCreation';
+import { generateInviteCode, normalizeInviteCode } from '../invite';
 
 function db() {
   if (!supabase) throw new Error('Supabase not configured');
   return supabase;
-}
-
-function generateInviteCode(): string {
-  // 6 chars from an unambiguous alphabet (~1e9 combos) — a 4-digit code was
-  // brute-forceable to join a stranger's private space.
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) code += alphabet[Math.floor(Math.random() * alphabet.length)];
-  return `PEAK-${code}`;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -196,7 +188,7 @@ export const supabaseSpaceRepository: ISpaceRepository = {
   async joinByCode(code: string): Promise<Space> {
     // redeem_invite is a SECURITY DEFINER RPC (migration 0002) so a non-member
     // can join without being able to read the space directly under RLS.
-    const { data, error } = await db().rpc('redeem_invite', { code: code.trim().toUpperCase() });
+    const { data, error } = await db().rpc('redeem_invite', { code: normalizeInviteCode(code) });
     if (error) throw error;
     return mapSpace(data);
   },

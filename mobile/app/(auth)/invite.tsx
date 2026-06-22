@@ -1,10 +1,13 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
   Share,
   ActivityIndicator,
 } from 'react-native';
@@ -18,28 +21,48 @@ import { isSupabaseConfigured } from '../../lib/supabase/client';
 import { spaceRepository } from '../../lib/repositories';
 import { getActiveUser } from '../../lib/session';
 import { composeInviteText } from '../../lib/shareText';
+import { isValidInviteCode } from '../../lib/invite';
 import type { Space } from '../../lib/types';
 
 const FIRST_SPACE = SEED_SPACES[0];
+
+/**
+ * First-run space setup. A new user either STARTS a space (becomes the owner and
+ * shares the code) or JOINS their partner's space with a code. The two paths are
+ * an explicit choice — we never auto-create a space, because a joining partner
+ * would otherwise be stranded in their own empty space and the pair never links.
+ */
+type Phase = 'choice' | 'created' | 'join';
 
 export default function InviteScreen() {
   const completeOnboarding = useAppStore((s) => s.completeOnboarding);
   const setActiveSpace = useAppStore((s) => s.setActiveSpace);
   const { t } = useLanguage();
 
+  // Local-first mode has a seeded space already; backend users start by choosing.
+  const [phase, setPhase] = useState<Phase>(isSupabaseConfigured ? 'choice' : 'created');
   const [space, setSpace] = useState<Space | null>(isSupabaseConfigured ? null : FIRST_SPACE);
+  const [code, setCode] = useState('');
   const [creating, setCreating] = useState(false);
+  const [joining, setJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const requireUser = useCallback(async () => {
+    const user = await getActiveUser();
+    if (!user) {
+      router.replace('/(auth)/sign-in');
+      return null;
+    }
+    return user;
+  }, []);
+
   const createBackendSpace = useCallback(async () => {
+    if (creating) return;
     setCreating(true);
     setError(null);
     try {
-      const user = await getActiveUser();
-      if (!user) {
-        router.replace('/(auth)/sign-in');
-        return;
-      }
+      const user = await requireUser();
+      if (!user) return;
       const created = await spaceRepository.create({
         type: 'couple',
         name: user.name ? `${user.name}'s space` : 'Our space',
@@ -48,16 +71,34 @@ export default function InviteScreen() {
       });
       setSpace(created);
       setActiveSpace(created.id);
+      setPhase('created');
     } catch {
       setError(t("couldn't set up your space. tap retry to try again.", 'Space konnte nicht eingerichtet werden. Tippe auf Wiederholen.'));
     } finally {
       setCreating(false);
     }
-  }, [setActiveSpace, t]);
+  }, [creating, requireUser, setActiveSpace, t]);
 
-  useEffect(() => {
-    if (isSupabaseConfigured) void createBackendSpace();
-  }, [createBackendSpace]);
+  const submitJoin = useCallback(async () => {
+    if (joining) return;
+    if (!isValidInviteCode(code)) {
+      setError(t('that code doesn’t look right. it looks like PEAK-AB23CD.', 'Dieser Code sieht nicht richtig aus. Er sieht aus wie PEAK-AB23CD.'));
+      return;
+    }
+    setJoining(true);
+    setError(null);
+    try {
+      const user = await requireUser();
+      if (!user) return;
+      const joined = await spaceRepository.joinByCode(code, user.id, user.name);
+      setActiveSpace(joined.id);
+      await completeOnboarding();
+      router.replace('/(tabs)/discover');
+    } catch {
+      setError(t("that code didn't work. check it with your partner and try again.", 'Dieser Code hat nicht funktioniert. Prufe ihn mit deinem Partner und versuche es erneut.'));
+      setJoining(false);
+    }
+  }, [joining, code, requireUser, setActiveSpace, completeOnboarding, t]);
 
   const onShare = async () => {
     if (!space) return;
@@ -69,10 +110,6 @@ export default function InviteScreen() {
   };
 
   const enter = async () => {
-    if (isSupabaseConfigured && !space) {
-      await createBackendSpace();
-      return;
-    }
     setError(null);
     try {
       if (space) setActiveSpace(space.id);
@@ -83,8 +120,124 @@ export default function InviteScreen() {
     }
   };
 
-  const code = space?.inviteCode;
-  const canShare = !!code;
+  // ---- JOIN: partner enters the owner's code ----------------------------
+  if (phase === 'join') {
+    const canJoin = isValidInviteCode(code) && !joining;
+    return (
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.inner}>
+            <View style={styles.header}>
+              <Text style={styles.label}>{t('JOIN YOUR PARTNER', 'PARTNER BEITRETEN')}</Text>
+              <Text style={styles.title}>{t('enter the\ninvite code', 'gib den\nCode ein')}</Text>
+              <Text style={styles.subtitle}>
+                {t(
+                  'ask your partner for the code from their invite screen. it looks like PEAK-AB23CD.',
+                  'Frage deinen Partner nach dem Code von seinem Einladungs-Bildschirm. Er sieht aus wie PEAK-AB23CD.',
+                )}
+              </Text>
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.codeLabel}>{t('INVITE CODE', 'EINLADUNGSCODE')}</Text>
+              <TextInput
+                style={styles.joinInput}
+                placeholder="PEAK-AB23CD"
+                placeholderTextColor={Colors.textFaint}
+                value={code}
+                onChangeText={(v) => { setCode(v.toUpperCase()); if (error) setError(null); }}
+                autoCapitalize="characters"
+                autoCorrect={false}
+                maxLength={11}
+                autoFocus
+                accessibilityLabel={t('Invite code', 'Einladungscode')}
+              />
+            </View>
+
+            {error && <Text style={styles.error} accessibilityLiveRegion="polite">{error}</Text>}
+
+            <View style={styles.bottom}>
+              <TouchableOpacity
+                style={[styles.continueButton, !canJoin && styles.disabled]}
+                onPress={submitJoin}
+                disabled={!canJoin}
+                activeOpacity={0.8}
+                accessibilityRole="button"
+                accessibilityLabel={t('Join space', 'Space beitreten')}
+              >
+                {joining ? (
+                  <ActivityIndicator color={Colors.white} size="small" />
+                ) : (
+                  <Text style={styles.continueText}>{t('JOIN', 'BEITRETEN')}</Text>
+                )}
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => { setPhase('choice'); setError(null); }}
+                disabled={joining}
+                accessibilityRole="button"
+                accessibilityLabel={t('Back', 'Zuruck')}
+              >
+                <Text style={styles.backText}>{t('back', 'zuruck')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
+    );
+  }
+
+  // ---- CHOICE: start a space, or join one (backend mode only) -----------
+  if (phase === 'choice') {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.inner}>
+          <View style={styles.header}>
+            <Text style={styles.label}>{t('SET UP YOUR SPACE', 'RICHTE DEINEN SPACE EIN')}</Text>
+            <Text style={styles.title}>{t('start, or\njoin a partner', 'starten, oder\nPartner beitreten')}</Text>
+            <Text style={styles.subtitle}>
+              {t(
+                'starting creates a shared space and gives you a code to share. joining links you into a space your partner already made.',
+                'Beim Starten entsteht ein gemeinsamer Space mit einem Code zum Teilen. Beim Beitreten verbindest du dich mit dem Space deines Partners.',
+              )}
+            </Text>
+          </View>
+
+          {error && <Text style={styles.error} accessibilityLiveRegion="polite">{error}</Text>}
+
+          <View style={styles.bottom}>
+            <TouchableOpacity
+              style={[styles.continueButton, creating && styles.disabled]}
+              onPress={createBackendSpace}
+              disabled={creating}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel={t('Start a new space', 'Neuen Space starten')}
+            >
+              {creating ? (
+                <ActivityIndicator color={Colors.white} size="small" />
+              ) : (
+                <Text style={styles.continueText}>{t('START A SPACE', 'SPACE STARTEN')}</Text>
+              )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.shareButton, creating && styles.disabled]}
+              onPress={() => { setPhase('join'); setError(null); }}
+              disabled={creating}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel={t('I have an invite code', 'Ich habe einen Einladungscode')}
+            >
+              <Text style={styles.shareText}>{t('I HAVE A CODE', 'ICH HABE EINEN CODE')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // ---- CREATED: show the owner's code to share --------------------------
+  const inviteCode = space?.inviteCode;
+  const canShare = !!inviteCode;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -102,15 +255,15 @@ export default function InviteScreen() {
 
         <View style={styles.codeContainer}>
           <Text style={styles.codeLabel}>{t('YOUR CODE', 'DEIN CODE')}</Text>
-          {creating && !code ? (
+          {creating && !inviteCode ? (
             <ActivityIndicator color={Colors.accent} style={styles.codeLoading} />
           ) : (
-            <Text style={styles.code}>{code ?? '- - - -'}</Text>
+            <Text style={styles.code}>{inviteCode ?? '- - - -'}</Text>
           )}
           <Text style={styles.codeHint}>
             {t(
-              'your partner enters this when they set up their account.',
-              'Dein Partner gibt diesen Code ein, wenn er sein Konto einrichtet.',
+              'your partner taps "I have a code" on their welcome screen and enters this.',
+              'Dein Partner tippt auf "Ich habe einen Code" und gibt diesen ein.',
             )}
           </Text>
         </View>
@@ -145,13 +298,9 @@ export default function InviteScreen() {
             activeOpacity={0.8}
             disabled={creating}
             accessibilityRole="button"
-            accessibilityLabel={isSupabaseConfigured && !space ? t('Retry', 'Wiederholen') : t('Continue', 'Weiter')}
+            accessibilityLabel={t('Continue', 'Weiter')}
           >
-            <Text style={styles.continueText}>
-              {isSupabaseConfigured && !space && !creating
-                ? t('RETRY', 'WIEDERHOLEN')
-                : t('CONTINUE FOR NOW', 'VORERST WEITER')}
-            </Text>
+            <Text style={styles.continueText}>{t('CONTINUE', 'WEITER')}</Text>
           </TouchableOpacity>
           <Text style={styles.hint}>
             {t(
@@ -198,6 +347,7 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     lineHeight: 20,
   },
+  section: { gap: Spacing.sm },
   codeContainer: {
     backgroundColor: Colors.backgroundDark,
     padding: Spacing.xl,
@@ -224,6 +374,15 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     color: Colors.textSubtle,
     lineHeight: 18,
+  },
+  joinInput: {
+    fontSize: 28,
+    fontWeight: '300',
+    color: Colors.text,
+    letterSpacing: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    paddingVertical: Spacing.sm,
   },
   divider: {
     flexDirection: 'row',
@@ -276,6 +435,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: 2.5,
     color: Colors.white,
+  },
+  backText: {
+    fontSize: 12,
+    fontWeight: '300',
+    letterSpacing: 0.5,
+    color: Colors.textMuted,
+    textAlign: 'center',
   },
   hint: {
     fontSize: 11,

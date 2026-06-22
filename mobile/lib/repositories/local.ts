@@ -18,6 +18,7 @@ import type {
   IRitualRepository,
   CreateSpaceInput,
 } from './interfaces';
+import { generateInviteCode, normalizeInviteCode } from '../invite';
 
 const MEMORIES_KEY = 'memories';
 const ACTIVATIONS_KEY = 'cardActivations';
@@ -33,14 +34,6 @@ function now(): string {
   return new Date().toISOString();
 }
 
-function generateInviteCode(): string {
-  // 6 chars from an unambiguous alphabet (~1e9 combos) — a 4-digit code was
-  // brute-forceable to join a stranger's private space.
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) code += alphabet[Math.floor(Math.random() * alphabet.length)];
-  return `PEAK-${code}`;
-}
 
 async function loadActivations(): Promise<Record<string, string[]>> {
   return (await storage.get<Record<string, string[]>>(ACTIVATIONS_KEY)) ?? SEED_ACTIVATIONS;
@@ -184,7 +177,7 @@ export const localSpaceRepository: ISpaceRepository = {
   async joinByCode(code: string, userId: string, userName: string): Promise<Space> {
     const spaces = await loadSpaces();
     const members = await loadMembers();
-    const normalized = code.trim().toUpperCase();
+    const normalized = normalizeInviteCode(code);
     let space = spaces.find((s) => s.inviteCode.toUpperCase() === normalized) ?? null;
 
     if (!space) {
