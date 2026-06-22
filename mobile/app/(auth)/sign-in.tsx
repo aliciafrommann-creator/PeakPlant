@@ -23,15 +23,34 @@ export default function SignInScreen() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
+
   const sendCode = async () => {
-    if (!email.trim() || busy) return;
+    if (busy) return;
+    if (!isValidEmail(email)) {
+      setError('please enter a valid email address.');
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
-      await sendEmailCode(email);
+      await sendEmailCode(email.trim().toLowerCase());
       setStage('code');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Could not send the code.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const resendCode = async () => {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await sendEmailCode(email.trim().toLowerCase());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Could not resend the code.');
     } finally {
       setBusy(false);
     }
@@ -93,8 +112,20 @@ export default function SignInScreen() {
                 textContentType="oneTimeCode"
                 autoFocus
               />
-              <TouchableOpacity onPress={() => setStage('email')} accessibilityRole="button" accessibilityLabel="Use a different email">
+              <TouchableOpacity
+                onPress={() => { setStage('email'); setCode(''); setError(null); }}
+                accessibilityRole="button"
+                accessibilityLabel="Use a different email"
+              >
                 <Text style={styles.link}>use a different email</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => void resendCode()}
+                disabled={busy}
+                accessibilityRole="button"
+                accessibilityLabel="Resend code"
+              >
+                <Text style={[styles.link, busy && styles.linkDisabled]}>resend code</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -141,6 +172,7 @@ const styles = StyleSheet.create({
   },
   codeInput: { fontSize: 28, letterSpacing: 5 },
   link: { fontSize: 12, fontWeight: '300', color: Colors.accent, marginTop: Spacing.md },
+  linkDisabled: { opacity: 0.4 },
   error: { fontSize: 13, fontWeight: '300', color: '#b42318', marginBottom: Spacing.md },
   bottom: { alignItems: 'flex-start' },
   button: {
