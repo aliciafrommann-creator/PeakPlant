@@ -47,6 +47,24 @@ If text credibly signals immediate danger (self-harm, abuse, coercion), the app
 resource path. PeakPlant does not diagnose, score risk, contact third parties
 automatically, or use that input for future personalization.
 
+**Implemented** (`lib/ai/safety.ts`, `assessSafety`): a deterministic, offline,
+EN/DE phrase detector runs BEFORE any AI/recommendation response in the Ask
+PeakPlant flow (`app/ask/index.tsx`). On a crisis match it shows a neutral help
+message (emergency 112 + Telefonseelsorge 0800 111 0 111 / 0800 111 0 222) and
+returns early — no recommendations, no model call. The input is never stored,
+logged, or returned in the decision (enforced by a test). The detector is
+conservative toward false positives (showing help to someone who didn't need it
+is low-harm). 11 tests cover EN/DE self-harm, abuse, coercion, case-insensitivity,
+and the no-echo guarantee.
+
+## AI kill switches
+
+`lib/ai/safety.ts` exposes `AI_KILL_SWITCHES` + `aiSurfaceEnabled(surface)` — a
+runtime switch per AI surface (`askPeakPlant`, `liveRecommendations`,
+`reflectionPrompts`). All default OFF for the beta, so only the deterministic
+recommender runs. Turning a surface on is gated on the Edge Function being
+deployed and an eval pass (see Release governance).
+
 ## AI authority boundary
 
 The model has **no authority** to take real-world actions. It cannot publish,

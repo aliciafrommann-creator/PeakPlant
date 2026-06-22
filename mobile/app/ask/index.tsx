@@ -27,6 +27,7 @@ import { Spacing } from '../../constants/spacing';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { askGateway } from '../../lib/ai/askGateway';
+import { assessSafety } from '../../lib/ai/safety';
 import type { DateRecommendation } from '../../lib/discovery/types';
 import type { DateConstraints } from '../../lib/discovery/types';
 
@@ -35,6 +36,8 @@ interface Message {
   text: string;
   recommendations?: DateRecommendation[];
   sourceLabel?: string;
+  /** When true this is the neutral crisis-help response, not a playful one. */
+  crisis?: boolean;
 }
 
 export default function AskScreen() {
@@ -60,6 +63,26 @@ export default function AskScreen() {
 
     const userMessage: Message = { role: 'user', text };
     setMessages((prev) => [...prev, userMessage]);
+
+    // Crisis route (AI_SAFETY): if the text credibly signals immediate danger,
+    // suppress any playful/recommendation response and surface neutral help.
+    // The input is not stored, logged, or used for personalization.
+    const safety = assessSafety(text);
+    if (safety.kind === 'crisis') {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          crisis: true,
+          text: t(
+            "it sounds like you might be going through something serious. PeakPlant can't help with this, but people who can are available right now. In an emergency call 112. You can reach the Telefonseelsorge anytime, free and confidential, at 0800 111 0 111 or 0800 111 0 222. You are not alone.",
+            "Es klingt, als würdest du gerade etwas Ernstes durchmachen. PeakPlant kann dabei nicht helfen, aber Menschen, die das können, sind jetzt für dich da. Im Notfall wähle 112. Die Telefonseelsorge erreichst du jederzeit, kostenlos und vertraulich, unter 0800 111 0 111 oder 0800 111 0 222. Du bist nicht allein.",
+          ),
+        },
+      ]);
+      setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -129,6 +152,10 @@ export default function AskScreen() {
             <View key={i} style={msg.role === 'user' ? styles.userBubble : styles.assistantBlock}>
               {msg.role === 'user' ? (
                 <Text style={styles.userText}>{msg.text}</Text>
+              ) : msg.crisis ? (
+                <View style={styles.crisisBlock} accessibilityLiveRegion="polite">
+                  <Text style={styles.crisisText}>{msg.text}</Text>
+                </View>
               ) : (
                 <>
                   <Text style={styles.assistantText}>{msg.text}</Text>
@@ -217,6 +244,18 @@ const styles = StyleSheet.create({
   },
   userText: { fontSize: 15, fontWeight: '300', color: Colors.white, lineHeight: 22 },
   assistantBlock: { gap: Spacing.md, maxWidth: '100%' },
+  crisisBlock: {
+    backgroundColor: Colors.backgroundCream,
+    borderLeftWidth: 3,
+    borderLeftColor: Colors.accent,
+    padding: Spacing.md,
+  },
+  crisisText: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: Colors.text,
+    lineHeight: 23,
+  },
   assistantText: {
     fontSize: 15,
     fontWeight: '300',
