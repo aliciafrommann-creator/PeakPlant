@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
   },
   codeInput: { fontSize: 28, letterSpacing: 5 },
-  link: { fontSize: 12, fontWeight: '300', color: Colors.accent, marginTop: Spacing.md },
+  link: { fontSize: 12, fontWeight: '300', color: Colors.textSubtle, marginTop: Spacing.md },
   linkDisabled: { opacity: 0.4 },
   error: { fontSize: 13, fontWeight: '300', color: '#b42318', marginBottom: Spacing.md },
   bottom: { alignItems: 'flex-start' },

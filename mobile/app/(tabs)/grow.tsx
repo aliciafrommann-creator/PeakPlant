@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   cardUpcoming: { opacity: 0.55 },
   symbol: { fontSize: 28 },
   cardBody: { flex: 1, gap: 3 },
-  editionLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.accent },
+  editionLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
   name: { fontSize: 20, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
   desc: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
   meta: {
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     letterSpacing: 2,
     textTransform: 'uppercase',
-    color: Colors.accent,
+    color: Colors.textSubtle,
     marginTop: 2,
   },
 });

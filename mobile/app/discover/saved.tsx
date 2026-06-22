@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: '500',
     letterSpacing: 1.5,
-    color: Colors.accent,
+    color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
   savedAt: { fontSize: 10, fontWeight: '300', color: Colors.textFaint },
@@ -467,7 +467,7 @@ const styles = StyleSheet.create({
   meta: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
   metaItem: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
   metaDot: { fontSize: 12, color: Colors.textFaint },
-  plannedFor: { color: Colors.accent, fontWeight: '500' },
+  plannedFor: { color: Colors.text, fontWeight: '500' },
   notes: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, fontStyle: 'italic', lineHeight: 17 },
   actions: {
     flexDirection: 'row',
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  actionPlanText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  actionPlanText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   actionDismiss: {
     height: 40,
     paddingHorizontal: Spacing.md,

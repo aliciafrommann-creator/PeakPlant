@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '500',
     letterSpacing: 2.5,
-    color: Colors.accent,
+    color: Colors.textSubtle,
     marginTop: Spacing.sm,
   },
   sectionNote: {

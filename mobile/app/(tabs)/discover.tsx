@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     textTransform: 'uppercase',
   },
-  settings: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  settings: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textSubtle },
   titleBlock: { paddingHorizontal: Spacing.screen, paddingTop: Spacing.xl, gap: Spacing.sm },
   title: { fontSize: 30, fontWeight: '200', color: Colors.text, letterSpacing: -0.5, lineHeight: 36 },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.border,
     paddingTop: Spacing.md,
   },
-  whyLabel: { fontSize: 8, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  whyLabel: { fontSize: 8, fontWeight: '500', letterSpacing: 2, color: Colors.textSubtle },
   whyText: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
   notUsed: { fontSize: 10, fontWeight: '300', color: Colors.textFaint, fontStyle: 'italic', marginTop: 2 },
   provenance: {
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cta: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  cta: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   save: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
   actionRow: { flexDirection: 'row', gap: Spacing.sm, paddingHorizontal: Spacing.screen, marginTop: Spacing.md },
   actionBtn: {

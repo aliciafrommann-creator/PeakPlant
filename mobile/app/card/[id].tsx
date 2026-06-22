@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '500',
     letterSpacing: 3,
-    color: Colors.accent,
+    color: Colors.textSubtle,
   },
   sectionText: {
     fontSize: 15,
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
   backLink: {
     fontSize: 12,
     fontWeight: '300',
-    color: Colors.accent,
+    color: Colors.textSubtle,
     letterSpacing: 0.5,
   },
 });

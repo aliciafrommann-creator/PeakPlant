@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   },
   skip: { fontSize: 10, fontWeight: '400', letterSpacing: 2, color: Colors.textFaint },
   headerTitle: { fontSize: 10, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
-  saveBtn: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  saveBtn: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   saveBtnDisabled: { opacity: 0.3 },
   content: { padding: Spacing.screen, gap: Spacing.xl, paddingBottom: Spacing.xxxl },
   ideaTitle: {

@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   headerLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.text },
   content: { padding: Spacing.screen, gap: Spacing.sm, paddingBottom: Spacing.xxxl },
   badge: { fontSize: 40, minHeight: 28 },
-  duration: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.accent, marginTop: Spacing.sm },
+  duration: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle, marginTop: Spacing.sm },
   title: { fontSize: 30, fontWeight: '200', color: Colors.text, letterSpacing: -0.4, lineHeight: 36 },
   subtitle: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 24, marginTop: 4 },
   progressCard: {
@@ -162,5 +162,5 @@ const styles = StyleSheet.create({
   },
   notFound: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: Spacing.md },
   notFoundText: { fontSize: 16, fontWeight: '200', color: Colors.textMuted },
-  backLink: { fontSize: 12, fontWeight: '300', color: Colors.accent, letterSpacing: 0.5 },
+  backLink: { fontSize: 12, fontWeight: '300', color: Colors.textSubtle, letterSpacing: 0.5 },
 });

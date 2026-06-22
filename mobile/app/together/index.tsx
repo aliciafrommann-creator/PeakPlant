@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: 1.5,
     textTransform: 'uppercase',
-    color: Colors.accent,
+    color: Colors.textSubtle,
   },
   placesNote: {
     fontSize: 11,

@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '500',
     letterSpacing: 2,
-    color: Colors.accent,
+    color: Colors.text,
   },
   saveDisabled: {
     opacity: 0.3,

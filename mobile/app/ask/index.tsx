@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
   recMeta: { flexDirection: 'row', gap: 6, alignItems: 'center' },
   recMetaText: { fontSize: 11, fontWeight: '400', color: Colors.textMuted },
   recMetaDot: { fontSize: 11, color: Colors.textFaint },
-  recWhy: { fontSize: 11, fontWeight: '300', color: Colors.accent, lineHeight: 17 },
+  recWhy: { fontSize: 11, fontWeight: '300', color: Colors.textSubtle, lineHeight: 17 },
   sourceLabel: {
     fontSize: 9,
     fontWeight: '400',
