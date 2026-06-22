@@ -8,7 +8,9 @@
 import type { MomentCard } from '../types';
 import type { TogetherMoment } from '../together';
 import { pickTogetherMoment } from '../together';
-import type { IAIPersonalization } from './interface';
+import { recommendDates } from '../discovery/recommend';
+import type { DateConstraints, DateRecommendation } from '../discovery/types';
+import type { IAIPersonalization, IDateDiscovery } from './interface';
 import type { AIContext, CardSuggestion, ReflectionPrompt, MomentSuggestion } from './types';
 
 const GOAL_CARD_AFFINITY: Record<string, string[]> = {
@@ -69,5 +71,19 @@ export const nullAI: IAIPersonalization = {
       signalsUsed: matchedGoal ? ['chosen goals'] : [],
       signalsNotUsed: ['time of day', 'weather', 'location'],
     };
+  },
+};
+
+/**
+ * Deterministic Date Discovery — the active MVP implementation. Wraps the pure
+ * curated recommender; no network, no provider keys, no fabrication. Swapped for
+ * `anthropicDiscovery` once the Edge Function is wired (see lib/ai/index.ts).
+ */
+export const nullDiscovery: IDateDiscovery = {
+  async recommend(constraints: DateConstraints): Promise<DateRecommendation[]> {
+    return recommendDates(constraints);
+  },
+  explain(rec: DateRecommendation) {
+    return { signalsUsed: rec.signalsUsed, signalsNotUsed: rec.signalsNotUsed };
   },
 };

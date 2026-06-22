@@ -79,7 +79,7 @@ export default function InviteScreen() {
     try {
       if (space) setActiveSpace(space.id);
       await completeOnboarding();
-      router.replace('/(tabs)/us');
+      router.replace('/(tabs)/discover');
     } catch {
       setError("couldn't finish setup. please try again.");
     }

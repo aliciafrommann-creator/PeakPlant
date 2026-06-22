@@ -32,7 +32,7 @@ export default function Index() {
           return;
         }
         const spaces = await spaceRepository.getAllForUser(user.id);
-        if (active) setRoute(spaces.length > 0 ? '/(tabs)/us' : '/(auth)/onboarding');
+        if (active) setRoute(spaces.length > 0 ? '/(tabs)/discover' : '/(auth)/onboarding');
       } catch {
         if (active) setRoute('/(auth)/sign-in');
       }
@@ -46,7 +46,7 @@ export default function Index() {
 
   // Local-first mode (no Supabase keys): unchanged behavior.
   if (!isSupabaseConfigured) {
-    return <Redirect href={onboarded ? '/(tabs)/us' : '/(auth)/welcome'} />;
+    return <Redirect href={onboarded ? '/(tabs)/discover' : '/(auth)/welcome'} />;
   }
 
   if (!route) return <Spinner />;

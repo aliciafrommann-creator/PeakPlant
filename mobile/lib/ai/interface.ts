@@ -1,5 +1,6 @@
 import type { MomentCard } from '../types';
 import type { TogetherMoment } from '../together';
+import type { DateConstraints, DateRecommendation } from '../discovery/types';
 import type { AIContext, CardSuggestion, ReflectionPrompt, MomentSuggestion } from './types';
 
 /**
@@ -39,4 +40,22 @@ export interface IAIPersonalization {
     context: AIContext,
     candidates: TogetherMoment[],
   ): Promise<MomentSuggestion>;
+}
+
+/**
+ * Date Discovery contract (PROPOSAL, Phase 2). Kept separate from
+ * IAIPersonalization because discovery has its own lifecycle: today it's the
+ * deterministic curated recommender (`nullDiscovery`); later the same interface
+ * is satisfied by a server-side Claude Edge Function (`anthropicDiscovery`)
+ * that personalizes and verifies freshness — the client never changes.
+ *
+ * Hard rules (AI_SAFETY): suggestions only (never books/acts), no fabricated
+ * venues/facts (every fact carries provenance), raw constraints are ephemeral,
+ * explainable via signalsUsed/signalsNotUsed.
+ */
+export interface IDateDiscovery {
+  /** Rank curated date ideas for the couple's current situation. */
+  recommend(constraints: DateConstraints): Promise<DateRecommendation[]>;
+  /** The plain-language "why this?" contract for a recommendation. */
+  explain(rec: DateRecommendation): { signalsUsed: string[]; signalsNotUsed: string[] };
 }
