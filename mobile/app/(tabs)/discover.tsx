@@ -20,9 +20,10 @@ import { useAppStore } from '../../lib/store';
 import { computeWeeklyStreak } from '../../lib/streaks';
 import { discovery } from '../../lib/ai';
 import type { DateConstraints, DateRecommendation } from '../../lib/ai';
-import { momentById, type TimeOfDay } from '../../lib/together';
+import { momentById, type TimeOfDay, type Weather } from '../../lib/together';
 import { savedDateRepository } from '../../lib/repositories';
 import { summarizeLearning, affinityWeights } from '../../lib/discovery/learning';
+import { enrichWithLiveWeather } from '../../lib/discovery/weatherContext';
 import type { SavedDate } from '../../lib/types';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 
@@ -64,9 +65,20 @@ export default function DiscoverScreen() {
   const [recs, setRecs] = useState<DateRecommendation[]>([]);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState<SavedDate[]>([]);
+  const [liveWeather, setLiveWeather] = useState<Weather | undefined>(undefined);
 
   const streak = computeWeeklyStreak(memories.map((m) => m.createdAt));
   const timeOfDay = useMemo(currentTimeOfDay, []);
+
+  // Fetch live weather once (Open-Meteo, no key). Used as a gentle default when
+  // the user hasn't picked a weather chip. Best-effort: silent no-op on failure.
+  useEffect(() => {
+    let alive = true;
+    enrichWithLiveWeather({ spaceType: 'couple' })
+      .then(({ constraints: c }) => { if (alive && c.weather) setLiveWeather(c.weather); })
+      .catch(() => { /* no live weather rather than a crash */ });
+    return () => { alive = false; };
+  }, []);
 
   // Load the space's saved ideas so we can learn a gentle, explicit affinity
   // from them. Re-runs whenever the screen regains focus (e.g. after saving).
@@ -98,8 +110,10 @@ export default function DiscoverScreen() {
     for (const s of SHORTCUTS) {
       if (active.has(s.key)) c = { ...c, ...s.patch };
     }
+    // Live weather is a default only — a manual weather chip always wins.
+    if (!c.weather && liveWeather) c = { ...c, weather: liveWeather };
     return c;
-  }, [activeSpace, goals, timeOfDay, active, excludeIds, categoryAffinity]);
+  }, [activeSpace, goals, timeOfDay, active, excludeIds, categoryAffinity, liveWeather]);
 
   useEffect(() => {
     if (!constraints) {

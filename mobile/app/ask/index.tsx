@@ -28,6 +28,7 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { askGateway } from '../../lib/ai/askGateway';
 import { assessSafety } from '../../lib/ai/safety';
+import { enrichWithLiveWeather } from '../../lib/discovery/weatherContext';
 import type { DateRecommendation } from '../../lib/discovery/types';
 import type { DateConstraints } from '../../lib/discovery/types';
 
@@ -86,9 +87,12 @@ export default function AskScreen() {
 
     setLoading(true);
     try {
-      const constraints: DateConstraints = {
+      const base: DateConstraints = {
         spaceType: activeSpace?.type ?? 'couple',
       };
+      // Fold in live weather (Open-Meteo, no key). Never overrides an explicit
+      // choice and silently no-ops on failure.
+      const { constraints } = await enrichWithLiveWeather(base);
       const result = await askGateway(constraints, text, true);
       const recs = result.recommendations.slice(0, 3);
 

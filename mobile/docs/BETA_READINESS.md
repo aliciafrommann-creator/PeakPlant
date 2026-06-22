@@ -97,7 +97,9 @@ device. On-device QA (below) is a release blocker.
 - Discovery recommendations are a deterministic `nullDiscovery` over curated
   local content. The UI labels them "curated · checked <date>". **No live data.**
 - "Local places" (Innsbruck) and partner perks are curated, not live.
-- Time-of-day context is the **device clock only** — no location/weather.
+- Time-of-day context is the **device clock**; **weather is now live** (Open-Meteo,
+  Innsbruck) and folded into the recommender. Location is still fixed to Innsbruck
+  (no GPS until `expo-location`).
 
 ## 5. Stubbed / not built (🔴)
 
@@ -105,7 +107,12 @@ device. On-device QA (below) is a release blocker.
   the gateway calls it. Remaining 🔑: set the `ANTHROPIC_API_KEY` Edge Function
   secret to turn it on (without it, it 501s and the client uses the curated
   recommender). On-device verification of the live AI path still pending.
-- 🔴 Live providers: places, events, maps, routing, transit, weather, booking
+- 🟡 Live **weather** is wired: Open-Meteo (no API key) via the `weatherProvider`
+  swap. The Ask flow and the Discover tab fold the live condition into the
+  recommendation constraints (a manual weather chip always wins; silent no-op on
+  failure). Innsbruck coords are used until `expo-location` lands. On-device
+  verification of the live fetch is pending.
+- 🔴 Live providers: places, events, maps, routing, transit, booking
   (interfaces + null adapters built; real provider swap-in documented). These
   belong server-side (keys in the Edge Function, never the client) and need
   provider API keys before they can be wired — see §6.
@@ -236,12 +243,14 @@ Full detail in `IOS_TESTFLIGHT.md`. Summary:
 ## 14. Verification at this checkpoint
 
 - ✅ `tsc --noEmit` — 0 errors.
-- ✅ `vitest run` — 229/229 across 24 files (added AI ranking merge: 10).
+- ✅ `vitest run` — 249/249 across 26 files (added AI ranking merge: 10;
+  Open-Meteo weather: 15; weather enrichment: 5).
   - QR parse/resolve (20) · recommendations (18) · learning (10) · experience (11)
   - status machine (9) · share/links (11) · feedback repository (5) · ratings (8)
   - calendar ICS (7) · providers contract (7) · privacy boundaries (17)
   - analytics contract (8) · notifications contract (7) · cache (8)
   - AI safety/crisis (11) · AI ranking merge (10) · rituals repository (6)
+  - weather provider (15) · weather enrichment (5)
   - monetization entitlements (12) + usage (13) · spaceCreation (4) · challenges (6)
 - ✅ `expo export --platform ios` — bundle builds.
 - ✅ Migrations 0005–0008 applied live; the 7 new tables verified RLS-enabled

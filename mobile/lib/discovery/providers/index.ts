@@ -16,6 +16,8 @@
 
 export { nullPlacesProvider as placesProvider } from './null';
 export { nullEventsProvider as eventsProvider } from './null';
-export { nullWeatherProvider as weatherProvider } from './null';
+// Weather is LIVE: Open-Meteo needs no API key. Places/Events stay null until
+// their (paid) keys exist — swap them here with no change to recommend.ts/UI.
+export { openMeteoWeather as weatherProvider } from './openMeteo';
 
 export type { IPlacesProvider, IEventsProvider, IWeatherProvider, ProviderResult, LivePlace, LiveEvent, LiveWeather, GeoCoords } from './interface';
