@@ -1,5 +1,5 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Linking } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Colors } from '../../constants/colors';
@@ -82,7 +82,17 @@ export default function ScanScreen() {
                 >
                   <Text style={styles.permissionButtonText}>ALLOW CAMERA</Text>
                 </TouchableOpacity>
-              ) : null}
+              ) : (
+                <TouchableOpacity
+                  style={styles.permissionButton}
+                  onPress={() => void Linking.openSettings()}
+                  activeOpacity={0.85}
+                  accessibilityRole="button"
+                  accessibilityLabel="Open settings to enable camera"
+                >
+                  <Text style={styles.permissionButtonText}>OPEN SETTINGS</Text>
+                </TouchableOpacity>
+              )}
             </View>
           ) : (
             <Text style={styles.cameraText}>

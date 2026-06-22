@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../constants/colors';
@@ -88,7 +89,11 @@ export default function AccountScreen() {
             <Text style={styles.rowLabel}>sign out</Text>
             <Text style={styles.rowDesc}>you can sign back in any time.</Text>
           </View>
-          <Text style={styles.arrow}>→</Text>
+          {busy ? (
+            <ActivityIndicator color={Colors.accent} size="small" />
+          ) : (
+            <Text style={styles.arrow}>→</Text>
+          )}
         </TouchableOpacity>
 
         <View style={styles.dangerZone}>

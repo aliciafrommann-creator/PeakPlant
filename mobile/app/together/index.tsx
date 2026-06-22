@@ -91,7 +91,7 @@ export default function TogetherScreen() {
 
         {placesEnabled && (
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>LOCAL PLACES · INNSBRUCK</Text>
+            <Text style={styles.sectionLabel}>LOCAL PLACES</Text>
             <View>
               {partnerPlaces.map((p) => (
                 <PlaceItem key={p.id} place={p} />

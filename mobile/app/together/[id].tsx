@@ -73,12 +73,17 @@ export default function TogetherDetailScreen() {
 
         <TouchableOpacity
           style={styles.cta}
-          onPress={() => router.push('/(tabs)/grow')}
+          onPress={() =>
+            router.push({
+              pathname: '/memory/create',
+              params: { prefillNote: `${moment.title} — ${moment.idea}` },
+            })
+          }
           activeOpacity={0.85}
           accessibilityRole="button"
-          accessibilityLabel="Open your cards to preserve a moment"
+          accessibilityLabel="Preserve this as a moment in your diary"
         >
-          <Text style={styles.ctaText}>OPEN YOUR CARDS</Text>
+          <Text style={styles.ctaText}>PRESERVE THIS MOMENT</Text>
         </TouchableOpacity>
 
         <Text style={styles.noPressure}>no pressure. only if it feels right.</Text>

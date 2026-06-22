@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
@@ -109,7 +110,11 @@ export default function SignInScreen() {
               accessibilityRole="button"
               accessibilityLabel={stage === 'email' ? 'Send code' : 'Verify code'}
             >
-              <Text style={styles.buttonText}>{stage === 'email' ? 'SEND CODE' : 'CONTINUE'}</Text>
+              {busy ? (
+                <ActivityIndicator color={Colors.white} size="small" />
+              ) : (
+                <Text style={styles.buttonText}>{stage === 'email' ? 'SEND CODE' : 'CONTINUE'}</Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
