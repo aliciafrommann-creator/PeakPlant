@@ -29,10 +29,28 @@ device. On-device QA (below) is a release blocker.
 - ✅ **Discovery MVP**: Discover tab, deterministic recommendations, mood/filter
   chips, "show another", clear filters, save an idea, **plan an idea** (PLAN IT
   sheet → status `planned` + `plannedFor`), saved-ideas screen.
+- ✅ **Completion → diary close-the-loop**: DONE → PRESERVE → private memory
+  → `memoryId` written back to the saved date → optional public star rating +
+  tip (HOW WAS IT? screen, strictly separate from private diary note).
+- ✅ **Calendar export**: CALENDAR button on planned items → ICS via native
+  share sheet (no `expo-calendar` permission required).
+- ✅ **Ask PeakPlant**: conversational idea-finding UI. Beta: backed by the
+  deterministic curated recommender (AI Edge Function = 501 stub). Source label
+  always shown ("curated · verified by PeakPlant").
 - ✅ **Spaces**: create couple/friends space, join by code, space switcher,
-  per-space scoping of memories/cards/suggestions.
+  per-space scoping of memories/cards/suggestions. Atomic space creation via
+  `create_space` RPC (migration 0008, dormant).
 - ✅ **Challenges**: finite, badge-not-score, join/leave, progress.
 - ✅ **Full EN/DE localization** across all central flows + runtime switch.
+- ✅ **Privacy boundaries**: `lib/privacy/boundaries.ts` enforces content
+  contracts at write time (tip length, link structure, no private-content
+  wiring). Tested with 17 assertions.
+- ✅ **Analytics scaffold**: exhaustive `AnalyticsEvent` union (no private
+  content allowed in any event). Active provider: nullAnalytics (no-op).
+- ✅ **Notifications scaffold**: `NotificationCategory`, `NotificationPayload`,
+  `INotificationProvider`. Active provider: nullNotifications (no-op).
+- ✅ **Performance**: 5 s in-memory TTL cache for local repository `getAll`
+  reads (savedDates, memories) with write-time invalidation.
 
 ## 2. Supabase-backed (🟡 built, needs device verification + keys 🔑)
 
@@ -60,13 +78,18 @@ device. On-device QA (below) is a release blocker.
 
 ## 5. Stubbed / not built (🔴)
 
-- 🔴 Server-side AI recommendation (Edge Function returns 501; abstraction ready).
-- 🔴 Live providers: places, events, maps, routing, transit, weather, booking.
-- 🔴 "Ask PeakPlant" conversational flow.
+- 🔴 Server-side AI recommendation (Edge Function returns 501; `anthropicDiscovery`
+  adapter and `askGateway` ready to swap in).
+- 🔴 Live providers: places, events, maps, routing, transit, weather, booking
+  (interfaces + null adapters built; real provider swap-in documented).
 - 🔴 Map view / location search / radius / clustering.
-- 🔴 Community: ratings, reviews, tips, contributions, moderation.
+- 🔴 Community: ratings, reviews, tips contributions, moderation. (DateFeedback
+  is stored locally for beta — community display is post-beta.)
 - 🔴 Rituals UI (feature flag exists).
-- 🔴 Calendar write, native share of plans, push notifications, analytics.
+- 🔴 Push notifications (null provider + full type system in place;
+  `expo-notifications` integration is post-beta native-module work).
+- 🔴 Real analytics provider (`AnalyticsEvent` union + null provider in place;
+  wire a privacy-reviewed vendor post-beta with GDPR consent flow).
 - 🔴 Token **signing** (PP1 tokens are forgeable — fine for "open a prompt you
   own", not for value; see QR_FORMAT post-beta hardening).
 
@@ -178,7 +201,12 @@ Full detail in `IOS_TESTFLIGHT.md`. Summary:
 ## 14. Verification at this checkpoint
 
 - ✅ `tsc --noEmit` — 0 errors.
-- ✅ `vitest run` — 71/71 across 7 files (incl. 20 QR parse/resolve tests).
-- ✅ `expo export --platform ios` — bundle builds (3.5 MB hbc).
-- ⚠️ No linter configured (not a regression).
+- ✅ `vitest run` — 196/196 across 20 files.
+  - QR parse/resolve (20) · recommendations (18) · learning (10) · experience (11)
+  - status machine (9) · share/links (11) · feedback repository (5)
+  - calendar ICS (7) · providers contract (7) · privacy boundaries (17)
+  - analytics contract (8) · notifications contract (7) · cache (8)
+  - monetization entitlements (12) + usage (13) · spaceCreation (4) · challenges (6)
+- ✅ `expo export --platform ios` — bundle builds (3.56 MB hbc).
+- ⚠️ No linter configured (not a regression; see §9).
 - 🔴 No on-device run yet — the gating release blocker.
