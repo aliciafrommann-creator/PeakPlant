@@ -15,6 +15,7 @@ import type {
   ISavedDateRepository,
   CreateSpaceInput,
 } from './interfaces';
+import { buildCreateSpaceRpcArgs } from './spaceCreation';
 
 function db() {
   if (!supabase) throw new Error('Supabase not configured');
@@ -184,17 +185,11 @@ export const supabaseSpaceRepository: ISpaceRepository = {
     return (data ?? []).map(mapMember);
   },
 
-  async create({ type, name, ownerUserId, ownerName }: CreateSpaceInput): Promise<Space> {
+  async create(input: CreateSpaceInput): Promise<Space> {
     const { data: spaceRow, error: spaceErr } = await db()
-      .from('spaces')
-      .insert({ type, name: name.trim() || (type === 'couple' ? 'Our space' : 'Friends'), invite_code: generateInviteCode() })
-      .select()
+      .rpc('create_space', buildCreateSpaceRpcArgs(input, generateInviteCode()))
       .single();
     if (spaceErr) throw spaceErr;
-    const { error: memberErr } = await db()
-      .from('space_members')
-      .insert({ space_id: spaceRow.id, user_id: ownerUserId, name: ownerName, role: 'owner' });
-    if (memberErr) throw memberErr;
     return mapSpace(spaceRow);
   },
 
