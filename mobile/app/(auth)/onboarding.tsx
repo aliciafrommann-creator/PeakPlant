@@ -49,6 +49,9 @@ export default function OnboardingScreen() {
                 style={[styles.goalItem, selected && styles.goalSelected]}
                 onPress={() => toggleGoal(goal.id)}
                 activeOpacity={0.8}
+                accessibilityRole="checkbox"
+                accessibilityLabel={`${goal.label}: ${goal.description}`}
+                accessibilityState={{ checked: selected }}
               >
                 <Text style={[styles.goalLabel, selected && styles.goalLabelSelected]}>
                   {goal.label}
@@ -62,10 +65,16 @@ export default function OnboardingScreen() {
         </View>
 
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.continueButton} onPress={goNext} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={styles.continueButton}
+            onPress={goNext}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel="Continue"
+          >
             <Text style={styles.continueText}>CONTINUE</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={goNext} activeOpacity={0.7}>
+          <TouchableOpacity onPress={goNext} activeOpacity={0.7} accessibilityRole="button" accessibilityLabel="Skip for now">
             <Text style={styles.skip}>skip for now</Text>
           </TouchableOpacity>
         </View>

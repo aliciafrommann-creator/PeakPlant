@@ -32,7 +32,9 @@ export default function Index() {
           return;
         }
         const spaces = await spaceRepository.getAllForUser(user.id);
-        if (active) setRoute(spaces.length > 0 ? '/(tabs)/discover' : '/(auth)/onboarding');
+        // New backend users who haven't set up a space yet go through the full
+        // welcome → language → onboarding → invite flow (same as local mode).
+        if (active) setRoute(spaces.length > 0 ? '/(tabs)/discover' : '/(auth)/welcome');
       } catch {
         if (active) setRoute('/(auth)/sign-in');
       }
