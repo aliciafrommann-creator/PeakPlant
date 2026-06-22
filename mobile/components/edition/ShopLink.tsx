@@ -3,6 +3,7 @@ import { Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { SHOP_URL } from '../../lib/config';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 
 interface ShopLinkProps {
   /** 'card' = prominent block (end of a diary); 'inline' = quiet text link. */
@@ -12,7 +13,12 @@ interface ShopLinkProps {
 
 /** Sends people to the shop to get a new physical edition. */
 export function ShopLink({ variant = 'card', label }: ShopLinkProps) {
-  const text = label ?? (variant === 'card' ? 'GET YOUR NEXT EDITION' : 'get more editions →');
+  const { t } = useLanguage();
+  const defaultText = variant === 'card'
+    ? t('GET YOUR NEXT EDITION', 'NACHSTE EDITION HOLEN')
+    : t('get more editions ->', 'weitere Editionen holen ->');
+  const text = label ?? defaultText;
+
   const open = () => {
     Linking.openURL(SHOP_URL).catch(() => {});
   };
@@ -22,7 +28,7 @@ export function ShopLink({ variant = 'card', label }: ShopLinkProps) {
       <TouchableOpacity
         onPress={open}
         accessibilityRole="link"
-        accessibilityLabel="Get more editions in the shop"
+        accessibilityLabel={t('Get more editions in the shop', 'Weitere Editionen im Shop holen')}
       >
         <Text style={styles.inline}>{text}</Text>
       </TouchableOpacity>
@@ -35,10 +41,10 @@ export function ShopLink({ variant = 'card', label }: ShopLinkProps) {
       onPress={open}
       activeOpacity={0.85}
       accessibilityRole="link"
-      accessibilityLabel="Get your next edition in the shop"
+      accessibilityLabel={t('Get your next edition in the shop', 'Nachste Edition im Shop holen')}
     >
       <Text style={styles.cardText}>{text}</Text>
-      <Text style={styles.cardHint}>collected a deck? there's always a new one.</Text>
+      <Text style={styles.cardHint}>{t("collected a deck? there's always a new one.", 'Ein Deck gesammelt? Es gibt immer ein neues.')}</Text>
     </TouchableOpacity>
   );
 }
