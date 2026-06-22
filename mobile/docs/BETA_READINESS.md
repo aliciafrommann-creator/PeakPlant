@@ -112,6 +112,12 @@ filters (Android) in `app.json` before the print run.
 - Everything in §5 (live data, AI, map, community, rituals, calendar, share,
   notifications, analytics) — this is Milestone B.
 - Server-signed tokens + server redemption ledger.
+- **Monetization** (PeakPlant Plus). The M0 foundation is built but fully
+  disabled (`MONETIZATION_ENABLED = false`): typed couple-level entitlements,
+  AI allowance + privacy-safe cost metering, a provider-independent billing
+  adapter (null), config-driven tiers/limits/price hypotheses, and a dormant DB
+  migration (`0007`, not applied). Turning it on — paywall, real purchases,
+  store products, trials — is gated on human approval. See `MONETIZATION.md`.
 
 ---
 
