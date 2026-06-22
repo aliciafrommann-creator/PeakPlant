@@ -53,6 +53,7 @@ export default function DiscoverScreen() {
   const goals = useAppStore((s) => s.goals);
   const streaksEnabled = useAppStore((s) => s.features.streaks);
   const challengesEnabled = useAppStore((s) => s.features.challenges);
+  const ritualsEnabled = useAppStore((s) => s.features.rituals);
   const missionsEnabled = useAppStore((s) => s.features.missions);
   const personalization = useAppStore((s) => s.personalization);
   const personalizationResetAt = useAppStore((s) => s.personalizationResetAt);
@@ -362,6 +363,18 @@ export default function DiscoverScreen() {
               accessibilityLabel={t('Challenges', 'Herausforderungen')}
             >
               <Text style={styles.linkText}>{t('challenges', 'Herausforderungen')}</Text>
+              <Text style={styles.linkArrow}>{'->'}</Text>
+            </TouchableOpacity>
+          )}
+          {ritualsEnabled && (
+            <TouchableOpacity
+              style={styles.linkRow}
+              onPress={() => router.push('/rituals')}
+              activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel={t('Rituals', 'Rituale')}
+            >
+              <Text style={styles.linkText}>{t('rituals', 'Rituale')}</Text>
               <Text style={styles.linkArrow}>{'->'}</Text>
             </TouchableOpacity>
           )}

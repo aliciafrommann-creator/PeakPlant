@@ -1,5 +1,5 @@
 import { storage } from '../storage';
-import type { Memory, MomentCard, Space, SpaceMember, SavedDate, DateFeedback } from '../types';
+import type { Memory, MomentCard, Space, SpaceMember, SavedDate, DateFeedback, Ritual } from '../types';
 import { sanitiseTip } from '../privacy/boundaries';
 import { savedDateCache, memoryCache } from '../cache';
 import {
@@ -15,6 +15,7 @@ import type {
   ISpaceRepository,
   ISavedDateRepository,
   IDateFeedbackRepository,
+  IRitualRepository,
   CreateSpaceInput,
 } from './interfaces';
 
@@ -285,5 +286,44 @@ export const localDateFeedbackRepository: IDateFeedbackRepository = {
     };
     await storage.set(FEEDBACK_KEY, [...all, entry]);
     return entry;
+  },
+};
+
+const RITUALS_KEY = 'rituals';
+
+export const localRitualRepository: IRitualRepository = {
+  async getAll(spaceId: string): Promise<Ritual[]> {
+    const stored = await storage.get<Ritual[]>(RITUALS_KEY);
+    return (stored ?? [])
+      .filter((r) => r.spaceId === spaceId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  },
+
+  async create(item: Omit<Ritual, 'id' | 'createdAt'>): Promise<Ritual> {
+    const stored = await storage.get<Ritual[]>(RITUALS_KEY);
+    const all = stored ?? [];
+    const entry: Ritual = { ...item, id: generateId('ritual'), createdAt: now() };
+    await storage.set(RITUALS_KEY, [...all, entry]);
+    return entry;
+  },
+
+  async update(
+    id: string,
+    updates: Partial<Pick<Ritual, 'title' | 'note' | 'cadence' | 'lastRevisitedAt'>>,
+  ): Promise<Ritual> {
+    const stored = await storage.get<Ritual[]>(RITUALS_KEY);
+    const all = stored ?? [];
+    const idx = all.findIndex((r) => r.id === id);
+    if (idx === -1) throw new Error(`Ritual ${id} not found`);
+    const updated: Ritual = { ...all[idx], ...updates };
+    all[idx] = updated;
+    await storage.set(RITUALS_KEY, all);
+    return updated;
+  },
+
+  async remove(id: string): Promise<void> {
+    const stored = await storage.get<Ritual[]>(RITUALS_KEY);
+    const all = stored ?? [];
+    await storage.set(RITUALS_KEY, all.filter((r) => r.id !== id));
   },
 };

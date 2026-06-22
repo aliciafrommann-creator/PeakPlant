@@ -1,4 +1,4 @@
-import type { Memory, MomentCard, Space, SpaceMember, SpaceType, SavedDate, SavedDateStatus, DateFeedback } from '../types';
+import type { Memory, MomentCard, Space, SpaceMember, SpaceType, SavedDate, SavedDateStatus, DateFeedback, Ritual } from '../types';
 
 export interface IMemoryRepository {
   getAll(spaceId: string): Promise<Memory[]>;
@@ -48,4 +48,14 @@ export interface IDateFeedbackRepository {
   getAll(spaceId: string): Promise<DateFeedback[]>;
   getByMoment(spaceId: string, momentId: string): Promise<DateFeedback | null>;
   save(item: Omit<DateFeedback, 'id' | 'createdAt'>): Promise<DateFeedback>;
+}
+
+export interface IRitualRepository {
+  getAll(spaceId: string): Promise<Ritual[]>;
+  create(item: Omit<Ritual, 'id' | 'createdAt'>): Promise<Ritual>;
+  update(
+    id: string,
+    updates: Partial<Pick<Ritual, 'title' | 'note' | 'cadence' | 'lastRevisitedAt'>>,
+  ): Promise<Ritual>;
+  remove(id: string): Promise<void>;
 }

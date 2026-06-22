@@ -171,6 +171,34 @@ export interface SavedDate {
 }
 
 /**
+ * How often a couple wants to come back to a ritual. 'whenever' = no cadence,
+ * just a saved practice they can revisit anytime.
+ */
+export type RitualCadence = 'weekly' | 'monthly' | 'seasonally' | 'whenever';
+
+/**
+ * A ritual is a moment a space loved, turned into something they return to.
+ * Space-scoped under the same RLS as memories. It may originate from a memory
+ * (sourceMemoryId) or a curated idea (sourceMomentId), or be created free-form.
+ * Private to the space — never shared, never surfaced publicly.
+ */
+export interface Ritual {
+  id: string;
+  spaceId: string;
+  title: string;
+  /** Optional: why this matters to us. Private. */
+  note?: string;
+  cadence: RitualCadence;
+  /** Optional origin memory this ritual grew from. */
+  sourceMemoryId?: string;
+  /** Optional curated idea this ritual grew from. */
+  sourceMomentId?: string;
+  createdAt: string;
+  /** Last time the couple marked they came back to it. */
+  lastRevisitedAt?: string;
+}
+
+/**
  * Public practical feedback left after completing a date idea.
  * Intentionally separate from the private diary memory.
  * `tip` is the only user-text field — it is intended for future community

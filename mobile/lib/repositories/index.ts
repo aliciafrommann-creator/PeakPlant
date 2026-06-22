@@ -10,6 +10,7 @@ import {
   localSpaceRepository,
   localSavedDateRepository,
   localDateFeedbackRepository,
+  localRitualRepository,
 } from './local';
 import {
   supabaseMemoryRepository,
@@ -27,3 +28,7 @@ export const savedDateRepository = isSupabaseConfigured
 
 // Feedback is local-only for the beta; community integration is post-beta.
 export const feedbackRepository = localDateFeedbackRepository;
+
+// Rituals are local-only for the beta; the supabase adapter + migration are
+// post-beta (rituals are private, space-scoped — no cross-device need yet).
+export const ritualRepository = localRitualRepository;
