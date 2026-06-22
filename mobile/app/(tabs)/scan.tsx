@@ -4,37 +4,64 @@ import { router, useFocusEffect } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
-import { parseCardQr } from '../../lib/qr';
+import { resolveScan } from '../../lib/qr';
+import { getRedeemedTokens, markTokenRedeemed } from '../../lib/redeemedTokens';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { SEED_CARDS } from '../../lib/seed';
+
+const cardExists = (id: string) => SEED_CARDS.some((c) => c.id === id);
 
 export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [error, setError] = useState<string | null>(null);
   const handled = useRef(false);
+  const usedTokens = useRef<Set<string>>(new Set());
   const { t } = useLanguage();
 
   useFocusEffect(
     useCallback(() => {
       handled.current = false;
       setError(null);
+      // Refresh the redeemed-token set each time the scanner opens so an
+      // already-unlocked card is recognized even across navigations.
+      void getRedeemedTokens()
+        .then((s) => { usedTokens.current = s; })
+        .catch(() => { /* read failure: fall back to empty — never blocks a scan */ });
     }, [])
   );
 
-  const onScanned = useCallback(({ data }: { data: string }) => {
+  const onScanned = useCallback(async ({ data }: { data: string }) => {
     if (handled.current) return;
-    const cardId = parseCardQr(data);
-    if (!cardId) {
-      setError(t("that doesn't look like a PeakPlant card.", 'Das sieht nicht wie eine PeakPlant-Karte aus.'));
-      return;
+    const outcome = resolveScan(data, { cardExists, usedTokens: usedTokens.current });
+
+    switch (outcome.status) {
+      case 'malformed':
+        setError(t("that doesn't look like a PeakPlant card.", 'Das sieht nicht wie eine PeakPlant-Karte aus.'));
+        return;
+      case 'unknown_card':
+        setError(t("this card belongs to an edition that isn't out yet.", 'Diese Karte gehort zu einer Edition, die noch nicht erschienen ist.'));
+        return;
+      case 'expired':
+        setError(t('this unlock code has expired.', 'Dieser Freischalt-Code ist abgelaufen.'));
+        return;
+      case 'used':
+        setError(t('this card has already been unlocked.', 'Diese Karte wurde bereits freigeschaltet.'));
+        return;
+      case 'ok':
+        handled.current = true;
+        setError(null);
+        if (outcome.token) {
+          try {
+            await markTokenRedeemed(outcome.token);
+            usedTokens.current.add(outcome.token);
+          } catch {
+            // Couldn't record the redemption — let them through this time
+            // rather than block a legitimate unlock on a storage hiccup.
+          }
+        }
+        router.push(`/card/${outcome.cardId}`);
+        return;
     }
-    if (!SEED_CARDS.some((c) => c.id === cardId)) {
-      setError(t('this card belongs to an edition that isn\'t out yet.', 'Diese Karte gehort zu einer Edition, die noch nicht erschienen ist.'));
-      return;
-    }
-    handled.current = true;
-    setError(null);
-    router.push(`/card/${cardId}`);
   }, [t]);
 
   const granted = permission?.granted ?? false;
@@ -93,9 +120,22 @@ export default function ScanScreen() {
                 </TouchableOpacity>
               )}
             </View>
+          ) : error ? (
+            <View style={styles.permissionBox}>
+              <Text style={styles.cameraText}>{error}</Text>
+              <TouchableOpacity
+                style={styles.permissionButton}
+                onPress={() => { handled.current = false; setError(null); }}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Try scanning again', 'Erneut scannen')}
+              >
+                <Text style={styles.permissionButtonText}>{t('TRY AGAIN', 'ERNEUT VERSUCHEN')}</Text>
+              </TouchableOpacity>
+            </View>
           ) : (
             <Text style={styles.cameraText}>
-              {error ?? t('point at the QR code on your moment card', 'QR-Code auf deiner Momentkarte anvisieren')}
+              {t('point at the QR code on your moment card', 'QR-Code auf deiner Momentkarte anvisieren')}
             </Text>
           )}
         </View>

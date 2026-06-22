@@ -33,16 +33,16 @@ function currentTimeOfDay(): TimeOfDay {
 }
 
 /** Mood/shortcut chips — each maps to a slice of DateConstraints. */
-type Shortcut = { key: string; label: string; patch: Partial<DateConstraints> };
+type Shortcut = { key: string; label: string; labelDe: string; patch: Partial<DateConstraints> };
 const SHORTCUTS: Shortcut[] = [
-  { key: 'quick', label: 'under 2h', patch: { maxDurationMin: 120 } },
-  { key: 'free', label: 'free', patch: { maxBudget: 'free' } },
-  { key: 'cheap', label: 'easy spend', patch: { maxBudget: '€€' } },
-  { key: 'outdoor', label: 'outdoors', patch: { indoorOutdoor: 'outdoor' } },
-  { key: 'indoor', label: 'stay in', patch: { indoorOutdoor: 'indoor' } },
-  { key: 'rain', label: 'rainy day', patch: { weather: 'rain' } },
-  { key: 'calm', label: 'calm', patch: { categories: ['calm'] } },
-  { key: 'play', label: 'playful', patch: { categories: ['play'] } },
+  { key: 'quick', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
+  { key: 'free', label: 'free', labelDe: 'gratis', patch: { maxBudget: 'free' } },
+  { key: 'cheap', label: 'easy spend', labelDe: 'günstig', patch: { maxBudget: '€€' } },
+  { key: 'outdoor', label: 'outdoors', labelDe: 'draußen', patch: { indoorOutdoor: 'outdoor' } },
+  { key: 'indoor', label: 'stay in', labelDe: 'drinnen', patch: { indoorOutdoor: 'indoor' } },
+  { key: 'rain', label: 'rainy day', labelDe: 'Regentag', patch: { weather: 'rain' } },
+  { key: 'calm', label: 'calm', labelDe: 'ruhig', patch: { categories: ['calm'] } },
+  { key: 'play', label: 'playful', labelDe: 'verspielt', patch: { categories: ['play'] } },
 ];
 
 export default function DiscoverScreen() {
@@ -163,9 +163,9 @@ export default function DiscoverScreen() {
             <TouchableOpacity
               onPress={() => router.push('/customize')}
               accessibilityRole="button"
-              accessibilityLabel="Customize and account"
+              accessibilityLabel={t('Customize and account', 'Anpassen und Konto')}
             >
-              <Text style={styles.settings}>SETTINGS</Text>
+              <Text style={styles.settings}>{t('SETTINGS', 'EINSTELLUNGEN')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -209,9 +209,9 @@ export default function DiscoverScreen() {
                 activeOpacity={0.85}
                 accessibilityRole="button"
                 accessibilityState={{ selected: on }}
-                accessibilityLabel={s.label}
+                accessibilityLabel={t(s.label, s.labelDe)}
               >
-                <Text style={[styles.chipText, on && styles.chipTextOn]}>{s.label}</Text>
+                <Text style={[styles.chipText, on && styles.chipTextOn]}>{t(s.label, s.labelDe)}</Text>
               </TouchableOpacity>
             );
           })}
@@ -220,7 +220,7 @@ export default function DiscoverScreen() {
         {loading ? (
           <View style={styles.loading}>
             <ActivityIndicator color={Colors.accent} />
-            <Text style={styles.loadingText}>finding something that fits…</Text>
+            <Text style={styles.loadingText}>{t('finding something that fits...', 'wir suchen etwas Passendes...')}</Text>
           </View>
         ) : primary ? (
           <>
@@ -229,9 +229,11 @@ export default function DiscoverScreen() {
               onOpen={() => router.push(`/together/${primary.momentId}`)}
               onSave={() => void saveDate(primary)}
               saveLabel={t('SAVE', 'MERKEN')}
-              seeLabel={t('SEE THIS IDEA →', 'DIESE IDEE ANSEHEN →')}
+              seeLabel={t('SEE THIS IDEA ->', 'DIESE IDEE ANSEHEN ->')}
               whyLabel={t('WHY THIS', 'WARUM DIES')}
               notUsedPrefix={t('not used:', 'nicht verwendet:')}
+              curatedLabel={t('curated', 'kuratiert')}
+              checkedLabel={t('checked', 'geprüft')}
             />
 
             <View style={styles.actionRow}>
@@ -264,9 +266,11 @@ export default function DiscoverScreen() {
                   rec={alternative}
                   compact
                   onOpen={() => router.push(`/together/${alternative.momentId}`)}
-                  seeLabel={t('SEE THIS IDEA →', 'DIESE IDEE ANSEHEN →')}
+                  seeLabel={t('SEE THIS IDEA ->', 'DIESE IDEE ANSEHEN ->')}
                   whyLabel={t('WHY THIS', 'WARUM DIES')}
                   notUsedPrefix={t('not used:', 'nicht verwendet:')}
+                  curatedLabel={t('curated', 'kuratiert')}
+                  checkedLabel={t('checked', 'geprüft')}
                 />
               </View>
             )}
@@ -293,10 +297,10 @@ export default function DiscoverScreen() {
             onPress={() => router.push('/discover/saved')}
             activeOpacity={0.85}
             accessibilityRole="button"
-            accessibilityLabel="Saved date ideas"
+            accessibilityLabel={t('Saved date ideas', 'Gemerkte Ideen')}
           >
-            <Text style={styles.linkText}>saved ideas</Text>
-            <Text style={styles.linkArrow}>→</Text>
+            <Text style={styles.linkText}>{t('saved ideas', 'gemerkte Ideen')}</Text>
+            <Text style={styles.linkArrow}>{'->'}</Text>
           </TouchableOpacity>
           {missionsEnabled && (
             <TouchableOpacity
@@ -304,10 +308,10 @@ export default function DiscoverScreen() {
               onPress={() => router.push('/together')}
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel="Browse all ideas and local places"
+              accessibilityLabel={t('Browse all ideas and local places', 'Alle Ideen und Orte in der Nahe')}
             >
-              <Text style={styles.linkText}>all ideas & local places</Text>
-              <Text style={styles.linkArrow}>→</Text>
+              <Text style={styles.linkText}>{t('all ideas & local places', 'alle Ideen & Orte')}</Text>
+              <Text style={styles.linkArrow}>{'->'}</Text>
             </TouchableOpacity>
           )}
           {challengesEnabled && (
@@ -316,10 +320,10 @@ export default function DiscoverScreen() {
               onPress={() => router.push('/challenges')}
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel="Challenges"
+              accessibilityLabel={t('Challenges', 'Herausforderungen')}
             >
-              <Text style={styles.linkText}>challenges</Text>
-              <Text style={styles.linkArrow}>→</Text>
+              <Text style={styles.linkText}>{t('challenges', 'Herausforderungen')}</Text>
+              <Text style={styles.linkArrow}>{'->'}</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -346,9 +350,11 @@ function RecommendationCard({
   onSave,
   compact,
   saveLabel = 'SAVE',
-  seeLabel = 'SEE THIS IDEA →',
+  seeLabel = 'SEE THIS IDEA ->',
   whyLabel = 'WHY THIS',
   notUsedPrefix = 'not used:',
+  curatedLabel = 'curated',
+  checkedLabel = 'checked',
 }: {
   rec: DateRecommendation;
   onOpen: () => void;
@@ -358,6 +364,8 @@ function RecommendationCard({
   seeLabel?: string;
   whyLabel?: string;
   notUsedPrefix?: string;
+  curatedLabel?: string;
+  checkedLabel?: string;
 }) {
   return (
     <TouchableOpacity
@@ -391,7 +399,7 @@ function RecommendationCard({
         </View>
       )}
 
-      <Text style={styles.provenance}>curated · checked {rec.freshnessAt}</Text>
+      <Text style={styles.provenance}>{curatedLabel} · {checkedLabel} {rec.freshnessAt}</Text>
       <View style={styles.cardFooter}>
         <Text style={styles.cta}>{seeLabel}</Text>
         {onSave && !compact && (

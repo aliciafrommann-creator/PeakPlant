@@ -25,7 +25,7 @@ export default function CardDetailScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.notFound}>
-          <Text style={styles.notFoundText}>card not found.</Text>
+          <Text style={styles.notFoundText}>{t('card not found.', 'Karte nicht gefunden.')}</Text>
           <TouchableOpacity onPress={() => router.back()}>
             <Text style={styles.backLink}>{t('go back', 'zurück')}</Text>
           </TouchableOpacity>
@@ -107,7 +107,7 @@ export default function CardDetailScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backText}>← {t('BACK', 'ZURÜCK')}</Text>
+          <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURÜCK')}</Text>
         </TouchableOpacity>
         <Text style={styles.headerLabel} numberOfLines={1}>{groupLabel.toUpperCase()}</Text>
         <View style={{ width: 60 }} />

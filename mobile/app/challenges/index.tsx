@@ -14,12 +14,14 @@ import { ChallengeCard } from '../../components/challenge/ChallengeCard';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useChallenges } from '../../lib/hooks/useChallenges';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import { challengesForSpaceType, progressFor } from '../../lib/challenges';
 
 export default function ChallengesScreen() {
   const { activeSpace } = useSpaces();
   const { memories } = useMemories(activeSpace?.id);
   const { enrollmentFor } = useChallenges(activeSpace?.id);
+  const { t } = useLanguage();
 
   const candidates = activeSpace ? challengesForSpaceType(activeSpace.type) : [];
   const memoryDates = memories.map((m) => m.createdAt);
@@ -33,23 +35,25 @@ export default function ChallengesScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           accessibilityRole="button"
-          accessibilityLabel="Back"
+          accessibilityLabel={t('Back', 'Zuruck')}
         >
-          <Text style={styles.backText}>← BACK</Text>
+          <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerLabel}>CHALLENGES</Text>
+        <Text style={styles.headerLabel}>{t('CHALLENGES', 'HERAUSFORDERUNGEN')}</Text>
         <View style={{ width: 60 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.intro}>
-          gentle, finite goals you can take on together. complete one, keep the badge.
-          no scores, no rush.
+          {t(
+            'gentle, finite goals you can take on together. complete one, keep the badge. no scores, no rush.',
+            'sanfte, endliche Ziele, die ihr gemeinsam angehen konnt. eines abschliessen, das Abzeichen behalten. keine Punkte, keine Eile.',
+          )}
         </Text>
 
         {joined.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>YOU'RE IN</Text>
+            <Text style={styles.sectionLabel}>{t("YOU'RE IN", 'DU BIST DABEI')}</Text>
             <View style={styles.list}>
               {joined.map((c) => {
                 const enr = enrollmentFor(c.id)!;
@@ -69,7 +73,9 @@ export default function ChallengesScreen() {
         )}
 
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>{joined.length > 0 ? 'MORE TO TRY' : 'AVAILABLE'}</Text>
+          <Text style={styles.sectionLabel}>
+            {joined.length > 0 ? t('MORE TO TRY', 'MEHR ZUM AUSPROBIEREN') : t('AVAILABLE', 'VERFUGBAR')}
+          </Text>
           <View style={styles.list}>
             {available.map((c) => (
               <ChallengeCard
