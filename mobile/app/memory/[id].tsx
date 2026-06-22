@@ -18,17 +18,9 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { SEED_CARDS } from '../../lib/seed';
 import { memoryRepository } from '../../lib/repositories';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import { shareMemory } from '../../lib/share';
 import type { Memory } from '../../lib/types';
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).toLowerCase();
-}
 
 export default function MemoryDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -39,6 +31,7 @@ export default function MemoryDetailScreen() {
   const [draftNote, setDraftNote] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     let active = true;
@@ -81,7 +74,7 @@ export default function MemoryDetailScreen() {
       setMemory(updated);
       setEditing(false);
     } catch {
-      setError("couldn't save your changes. please try again.");
+      setError(t("couldn't save your changes. please try again.", 'Anderungen konnten nicht gespeichert werden. Bitte versuche es erneut.'));
     } finally {
       setBusy(false);
     }
@@ -90,19 +83,22 @@ export default function MemoryDetailScreen() {
   const confirmDelete = () => {
     if (!memory) return;
     Alert.alert(
-      'delete this moment?',
-      'this removes it from your diary for everyone in this space. it cannot be undone.',
+      t('delete this moment?', 'Diesen Moment loschen?'),
+      t(
+        'this removes it from your diary for everyone in this space. it cannot be undone.',
+        'Das entfernt ihn aus eurem Tagebuch fur alle in diesem Space. Das kann nicht ruckgangig gemacht werden.',
+      ),
       [
-        { text: 'keep it', style: 'cancel' },
+        { text: t('keep it', 'behalten'), style: 'cancel' },
         {
-          text: 'delete',
+          text: t('delete', 'loschen'),
           style: 'destructive',
           onPress: async () => {
             try {
               await memoryRepository.delete(memory.id);
               router.back();
             } catch {
-              setError("couldn't delete this moment. please try again.");
+              setError(t("couldn't delete this moment. please try again.", 'Dieser Moment konnte nicht geloscht werden. Bitte versuche es erneut.'));
             }
           },
         },
@@ -124,18 +120,23 @@ export default function MemoryDetailScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.notFound}>
-          <Text style={styles.notFoundText}>moment not found.</Text>
+          <Text style={styles.notFoundText}>{t('moment not found.', 'Moment nicht gefunden.')}</Text>
           <TouchableOpacity
             onPress={() => router.back()}
             accessibilityRole="button"
-            accessibilityLabel="Go back"
+            accessibilityLabel={t('Go back', 'Zuruck')}
           >
-            <Text style={styles.backLink}>go back</Text>
+            <Text style={styles.backLink}>{t('go back', 'zuruck')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
   }
+
+  const formattedDate = new Date(memory.createdAt).toLocaleDateString(
+    t('en-US', 'de-DE'),
+    { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' },
+  ).toLowerCase();
 
   return (
     <KeyboardAvoidingView
@@ -149,20 +150,20 @@ export default function MemoryDetailScreen() {
               <TouchableOpacity
                 onPress={cancelEdit}
                 accessibilityRole="button"
-                accessibilityLabel="Cancel editing"
+                accessibilityLabel={t('Cancel editing', 'Bearbeitung abbrechen')}
               >
-                <Text style={styles.backText}>CANCEL</Text>
+                <Text style={styles.backText}>{t('CANCEL', 'ABBRECHEN')}</Text>
               </TouchableOpacity>
-              <Text style={styles.headerLabel}>EDIT</Text>
+              <Text style={styles.headerLabel}>{t('EDIT', 'BEARBEITEN')}</Text>
               <TouchableOpacity
                 onPress={saveEdit}
                 disabled={!draftNote.trim() || busy}
                 accessibilityRole="button"
-                accessibilityLabel="Save changes"
+                accessibilityLabel={t('Save changes', 'Anderungen speichern')}
                 style={styles.shareHit}
               >
                 <Text style={[styles.shareText, (!draftNote.trim() || busy) && styles.disabled]}>
-                  {busy ? 'SAVING…' : 'SAVE'}
+                  {busy ? t('SAVING...', 'SPEICHERT...') : t('SAVE', 'SPEICHERN')}
                 </Text>
               </TouchableOpacity>
             </>
@@ -171,18 +172,18 @@ export default function MemoryDetailScreen() {
               <TouchableOpacity
                 onPress={() => router.back()}
                 accessibilityRole="button"
-                accessibilityLabel="Back"
+                accessibilityLabel={t('Back', 'Zuruck')}
               >
-                <Text style={styles.backText}>← BACK</Text>
+                <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
               </TouchableOpacity>
-              <Text style={styles.headerLabel}>MOMENT</Text>
+              <Text style={styles.headerLabel}>{t('MOMENT', 'MOMENT')}</Text>
               <TouchableOpacity
                 onPress={() => shareMemory(memory, card).catch(() => {})}
                 accessibilityRole="button"
-                accessibilityLabel="Share this moment"
+                accessibilityLabel={t('Share this moment', 'Diesen Moment teilen')}
                 style={styles.shareHit}
               >
-                <Text style={styles.shareText}>SHARE</Text>
+                <Text style={styles.shareText}>{t('SHARE', 'TEILEN')}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -196,7 +197,7 @@ export default function MemoryDetailScreen() {
           <View style={styles.body}>
             {card && (
               <View style={styles.cardInfo}>
-                <Text style={styles.cardLabel}>CARD {String(card.number).padStart(2, '0')}</Text>
+                <Text style={styles.cardLabel}>{t('CARD', 'KARTE')} {String(card.number).padStart(2, '0')}</Text>
                 <Text style={styles.prompt}>{card.prompt}</Text>
               </View>
             )}
@@ -211,7 +212,7 @@ export default function MemoryDetailScreen() {
                 multiline
                 autoFocus
                 textAlignVertical="top"
-                placeholder="what do you want to remember about this moment?"
+                placeholder={t('what do you want to remember about this moment?', 'was mochtest du von diesem Moment festhalten?')}
                 placeholderTextColor={Colors.textFaint}
               />
             ) : (
@@ -224,25 +225,25 @@ export default function MemoryDetailScreen() {
               </Text>
             )}
 
-            <Text style={styles.date}>{formatDate(memory.createdAt)}</Text>
+            <Text style={styles.date}>{formattedDate}</Text>
 
             {!editing && (
               <View style={styles.actions}>
                 <TouchableOpacity
                   onPress={startEdit}
                   accessibilityRole="button"
-                  accessibilityLabel="Edit this moment"
+                  accessibilityLabel={t('Edit this moment', 'Diesen Moment bearbeiten')}
                   style={styles.actionBtn}
                 >
-                  <Text style={styles.actionText}>EDIT NOTE</Text>
+                  <Text style={styles.actionText}>{t('EDIT NOTE', 'NOTIZ BEARBEITEN')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={confirmDelete}
                   accessibilityRole="button"
-                  accessibilityLabel="Delete this moment"
+                  accessibilityLabel={t('Delete this moment', 'Diesen Moment loschen')}
                   style={styles.actionBtn}
                 >
-                  <Text style={[styles.actionText, styles.deleteText]}>DELETE</Text>
+                  <Text style={[styles.actionText, styles.deleteText]}>{t('DELETE', 'LOSCHEN')}</Text>
                 </TouchableOpacity>
               </View>
             )}
