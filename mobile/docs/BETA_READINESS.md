@@ -39,7 +39,7 @@ device. On-device QA (below) is a release blocker.
   always shown ("curated · verified by PeakPlant").
 - ✅ **Spaces**: create couple/friends space, join by code, space switcher,
   per-space scoping of memories/cards/suggestions. Atomic space creation via
-  `create_space` RPC (migration 0008, dormant).
+  `create_space` RPC (migration 0008, **applied to the live project 2026-06-22**).
 - ✅ **Challenges**: finite, badge-not-score, join/leave, progress.
 - ✅ **Full EN/DE localization** across all central flows + runtime switch.
 - ✅ **Privacy boundaries**: `lib/privacy/boundaries.ts` enforces content
@@ -61,7 +61,7 @@ device. On-device QA (below) is a release blocker.
   surfaced back on the idea detail screen as the couple's OWN history
   ("YOUR SPACE TRIED THIS") — honest, never a fabricated community average.
 
-## 2. Supabase-backed (🟡 built, needs device verification + keys 🔑)
+## 2. Supabase-backed (🟡 built + migrated live, needs device verification 🔑)
 
 - Auth (email OTP) + session gate; repos behind `isSupabaseConfigured`.
 - Memories, spaces, members, card activations, challenge enrollments, saved
@@ -69,6 +69,15 @@ device. On-device QA (below) is a release blocker.
 - Photo upload → private bucket (EXIF-stripped, signed URLs).
 - Account deletion / sign-out via RPC.
 - Deny-by-default RLS applied to the live EU project; pgTAP suite written.
+- **Migrations 0005–0008 applied to the live project `kmlqjmxkcnkfwsbptvuc`
+  on 2026-06-22** (date discovery, saved-date planning, entitlements,
+  `create_space`). All additive; website tables (`orders`, `subscribers`,
+  `newsletter_subscribers`, `community_questions`) untouched. Security advisor:
+  the 7 new tables are RLS-enabled and member-scoped; the only finding tied to
+  these migrations is the intentional, self-guarding `create_space` SECURITY
+  DEFINER function (same pattern as `redeem_invite` / `delete_account`).
+- Public client keys (URL + publishable anon key) are wired into `eas.json`
+  preview/production build profiles. The `service_role` key is never shipped.
 
 ## 3. Local-only by design (🔵)
 
@@ -128,10 +137,14 @@ filters (Android) in `app.json` before the print run.
 ## 8. Release blockers (must fix before beta ships)
 
 1. 🔑 On-device QA on a real iPhone **and** Android device (checklist below).
-2. 🔑 Decide beta mode: local-first (no keys) vs Supabase (keys + run migrations
-   + pgTAP RLS suite + device test of auth/upload/delete).
+2. 🔑 Backend mode is now provisioned: migrations 0005–0008 are applied live and
+   the public keys are wired in `eas.json`. Remaining: a device test of the live
+   auth/upload/delete path against the migrated project (the pgTAP RLS suite is
+   written; run it against the live project before public testers).
 3. 🔑 `app.json`: bundle id, version, camera usage strings (EN/DE), associated
-   domains/intent filters if using HTTPS card links.
+   domains/intent filters if using HTTPS card links. (Bundle ids, version,
+   camera strings, and EAS project id are already set; HTTPS associated domains
+   are still TODO if printing HTTPS card links.)
 
 ## 9. Should-fix before beta
 
@@ -147,8 +160,9 @@ filters (Android) in `app.json` before the print run.
 - **Monetization** (PeakPlant Plus). The M0 foundation is built but fully
   disabled (`MONETIZATION_ENABLED = false`): typed couple-level entitlements,
   AI allowance + privacy-safe cost metering, a provider-independent billing
-  adapter (null), config-driven tiers/limits/price hypotheses, and a dormant DB
-  migration (`0007`, not applied). Turning it on — paywall, real purchases,
+  adapter (null), config-driven tiers/limits/price hypotheses, and the DB
+  migration (`0007`, **applied live 2026-06-22** — tables exist but the feature
+  stays fully disabled in code). Turning it on — paywall, real purchases,
   store products, trials — is gated on human approval. See `MONETIZATION.md`.
 
 ---
