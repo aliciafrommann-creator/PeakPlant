@@ -19,10 +19,18 @@ import { Spacing } from '../../constants/spacing';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { savedDateRepository } from '../../lib/repositories';
 import { SEED_CARDS } from '../../lib/seed';
 
 export default function CreateMemoryScreen() {
-  const { cardId, prefillNote } = useLocalSearchParams<{ cardId?: string; prefillNote?: string }>();
+  const { cardId, prefillNote, savedDateId, savedDateTitle, savedDateMomentId } =
+    useLocalSearchParams<{
+      cardId?: string;
+      prefillNote?: string;
+      savedDateId?: string;
+      savedDateTitle?: string;
+      savedDateMomentId?: string;
+    }>();
   const [note, setNote] = useState(typeof prefillNote === 'string' ? prefillNote : '');
   const [photoUri, setPhotoUri] = useState<string | undefined>(undefined);
   const [saving, setSaving] = useState(false);
@@ -70,7 +78,26 @@ export default function CreateMemoryScreen() {
         note: note.trim(),
         photoUri,
       });
-      router.replace(`/memory/${memory.id}`);
+      // Close the loop: write memory id back to the saved date so learning
+      // can confirm this was a real completed experience.
+      if (savedDateId) {
+        try {
+          await savedDateRepository.update(savedDateId, { memoryId: memory.id });
+        } catch {
+          // Best-effort; the memory itself is already saved.
+        }
+        router.replace({
+          pathname: '/discover/feedback/[id]',
+          params: {
+            id: savedDateId,
+            memoryId: memory.id,
+            title: savedDateTitle ?? '',
+            momentId: savedDateMomentId ?? '',
+          },
+        });
+      } else {
+        router.replace(`/memory/${memory.id}`);
+      }
     } catch (_e) {
       // The write failed — tell the user so they don't lose the moment thinking
       // it was saved. Their note stays in the field so they can retry.

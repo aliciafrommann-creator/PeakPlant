@@ -9,6 +9,7 @@ import {
   localCardRepository,
   localSpaceRepository,
   localSavedDateRepository,
+  localDateFeedbackRepository,
 } from './local';
 import {
   supabaseMemoryRepository,
@@ -23,3 +24,6 @@ export const spaceRepository = isSupabaseConfigured ? supabaseSpaceRepository : 
 export const savedDateRepository = isSupabaseConfigured
   ? supabaseSavedDateRepository
   : localSavedDateRepository;
+
+// Feedback is local-only for the beta; community integration is post-beta.
+export const feedbackRepository = localDateFeedbackRepository;

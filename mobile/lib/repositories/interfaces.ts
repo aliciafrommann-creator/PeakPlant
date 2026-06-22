@@ -1,4 +1,4 @@
-import type { Memory, MomentCard, Space, SpaceMember, SpaceType, SavedDate, SavedDateStatus } from '../types';
+import type { Memory, MomentCard, Space, SpaceMember, SpaceType, SavedDate, SavedDateStatus, DateFeedback } from '../types';
 
 export interface IMemoryRepository {
   getAll(spaceId: string): Promise<Memory[]>;
@@ -42,4 +42,10 @@ export interface ISavedDateRepository {
     >,
   ): Promise<SavedDate>;
   remove(id: string): Promise<void>;
+}
+
+export interface IDateFeedbackRepository {
+  getAll(spaceId: string): Promise<DateFeedback[]>;
+  getByMoment(spaceId: string, momentId: string): Promise<DateFeedback | null>;
+  save(item: Omit<DateFeedback, 'id' | 'createdAt'>): Promise<DateFeedback>;
 }

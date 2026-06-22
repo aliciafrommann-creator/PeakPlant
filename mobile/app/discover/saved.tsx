@@ -117,16 +117,19 @@ export default function SavedDatesScreen() {
           status: 'completed',
           completedAt: new Date().toISOString(),
         });
+        void load();
         router.push({
           pathname: '/memory/create',
           params: {
+            savedDateId: d.id,
+            savedDateTitle: d.title,
+            savedDateMomentId: d.momentId,
             prefillNote: t(
-              `we did it: ${d.title}. ${d.concept}`,
-              `wir haben es gemacht: ${d.title}. ${d.concept}`,
+              `we did it: ${d.title}`,
+              `wir haben es gemacht: ${d.title}`,
             ),
           },
         });
-        void load();
       } catch {
         Alert.alert(
           t('something went wrong', 'etwas ist schiefgelaufen'),

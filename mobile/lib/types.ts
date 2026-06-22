@@ -169,3 +169,21 @@ export interface SavedDate {
   completedAt?: string;
   memoryId?: string;
 }
+
+/**
+ * Public practical feedback left after completing a date idea.
+ * Intentionally separate from the private diary memory.
+ * `tip` is the only user-text field — it is intended for future community
+ * display and must never contain intimate diary content.
+ * `rating` is a simple 1-5 star score.
+ */
+export interface DateFeedback {
+  id: string;
+  savedDateId: string;
+  spaceId: string;
+  momentId: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  /** Optional public practical tip (max 280 chars). No diary content here. */
+  tip?: string;
+  createdAt: string;
+}

@@ -1,5 +1,5 @@
 import { storage } from '../storage';
-import type { Memory, MomentCard, Space, SpaceMember, SavedDate } from '../types';
+import type { Memory, MomentCard, Space, SpaceMember, SavedDate, DateFeedback } from '../types';
 import {
   SEED_MEMORIES,
   SEED_CARDS,
@@ -12,6 +12,7 @@ import type {
   ICardRepository,
   ISpaceRepository,
   ISavedDateRepository,
+  IDateFeedbackRepository,
   CreateSpaceInput,
 } from './interfaces';
 
@@ -239,5 +240,27 @@ export const localSavedDateRepository: ISavedDateRepository = {
     const stored = await storage.get<SavedDate[]>(SAVED_DATES_KEY);
     const all = stored ?? [];
     await storage.set(SAVED_DATES_KEY, all.filter((d) => d.id !== id));
+  },
+};
+
+const FEEDBACK_KEY = 'dateFeedback';
+
+export const localDateFeedbackRepository: IDateFeedbackRepository = {
+  async getAll(spaceId: string): Promise<DateFeedback[]> {
+    const stored = await storage.get<DateFeedback[]>(FEEDBACK_KEY);
+    return (stored ?? []).filter((f) => f.spaceId === spaceId);
+  },
+
+  async getByMoment(spaceId: string, momentId: string): Promise<DateFeedback | null> {
+    const stored = await storage.get<DateFeedback[]>(FEEDBACK_KEY);
+    return (stored ?? []).find((f) => f.spaceId === spaceId && f.momentId === momentId) ?? null;
+  },
+
+  async save(item: Omit<DateFeedback, 'id' | 'createdAt'>): Promise<DateFeedback> {
+    const stored = await storage.get<DateFeedback[]>(FEEDBACK_KEY);
+    const all = stored ?? [];
+    const entry: DateFeedback = { ...item, id: generateId('fb'), createdAt: now() };
+    await storage.set(FEEDBACK_KEY, [...all, entry]);
+    return entry;
   },
 };
