@@ -70,6 +70,17 @@ export default function CustomizeScreen() {
 
         <TouchableOpacity
           style={styles.accountRow}
+          onPress={() => router.push('/settings/preferences')}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel="Personalization and learned preferences"
+        >
+          <Text style={styles.accountLabel}>personalization</Text>
+          <Text style={styles.accountArrow}>→</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.accountRow}
           onPress={() => router.push('/account')}
           activeOpacity={0.8}
           accessibilityRole="button"

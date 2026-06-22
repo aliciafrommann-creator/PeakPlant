@@ -14,6 +14,23 @@ visible long after the conversation or experience has ended.
 
 **Core promise:** collect moments. grow together.
 
+## Product loop (Discover · Together · Diary)
+
+The app is organized as one relationship loop across three pillars:
+
+1. **Discover** — "what could we do together?" — curated date ideas and local
+   partner places, surfaced by a deterministic recommender and (later) a
+   server-side AI. Replaces the former static Us tab. Every suggestion is
+   explained ("why this?"), filterable, and honest about what signals were or
+   were not used.
+2. **Together** — light support during and between experiences: saved ideas,
+   challenges, and the shared rhythm streak. Nothing required; everything opt-in.
+3. **Diary** — the destination the loop returns to: the private space-scoped diary
+   of notes and photos, growing with every preserved moment.
+
+Each pillar feeds the next: a Discover idea becomes a Together plan; completing
+it pre-fills a Diary memory; a growing diary improves the next Discover pick.
+
 ## Spaces
 
 A **space** is the private container a small group shares a diary in. A couple is

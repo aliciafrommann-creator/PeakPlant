@@ -1,4 +1,4 @@
-import type { Memory, MomentCard, Space, SpaceMember, SpaceType } from '../types';
+import type { Memory, MomentCard, Space, SpaceMember, SpaceType, SavedDate, SavedDateStatus } from '../types';
 
 export interface IMemoryRepository {
   getAll(spaceId: string): Promise<Memory[]>;
@@ -30,4 +30,14 @@ export interface ISpaceRepository {
   create(input: CreateSpaceInput): Promise<Space>;
   /** Mock join-by-code: links the user into the matching space (or a new one). */
   joinByCode(code: string, userId: string, userName: string): Promise<Space>;
+}
+
+export interface ISavedDateRepository {
+  getAll(spaceId: string): Promise<SavedDate[]>;
+  save(item: Omit<SavedDate, 'id' | 'savedAt'>): Promise<SavedDate>;
+  update(
+    id: string,
+    updates: Partial<Pick<SavedDate, 'status' | 'plannedFor' | 'completedAt' | 'memoryId'>>,
+  ): Promise<SavedDate>;
+  remove(id: string): Promise<void>;
 }

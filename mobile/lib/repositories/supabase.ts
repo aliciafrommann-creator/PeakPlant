@@ -7,11 +7,12 @@
 import { supabase } from '../supabase/client';
 import { deleteMemoryPhoto, uploadMemoryPhoto, signedPhotoUrl } from '../supabase/storage';
 import { SEED_CARDS } from '../seed';
-import type { Memory, MomentCard, Space, SpaceMember } from '../types';
+import type { Memory, MomentCard, Space, SpaceMember, SavedDate } from '../types';
 import type {
   IMemoryRepository,
   ICardRepository,
   ISpaceRepository,
+  ISavedDateRepository,
   CreateSpaceInput,
 } from './interfaces';
 
@@ -203,5 +204,73 @@ export const supabaseSpaceRepository: ISpaceRepository = {
     const { data, error } = await db().rpc('redeem_invite', { code: code.trim().toUpperCase() });
     if (error) throw error;
     return mapSpace(data);
+  },
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapSavedDate(r: any): SavedDate {
+  return {
+    id: r.id,
+    spaceId: r.space_id,
+    momentId: r.moment_id,
+    title: r.title,
+    concept: r.concept,
+    priceBand: r.price_band,
+    estDurationMin: r.est_duration_min,
+    status: r.status,
+    savedAt: r.saved_at,
+    plannedFor: r.planned_for ?? undefined,
+    completedAt: r.completed_at ?? undefined,
+    memoryId: r.memory_id ?? undefined,
+  };
+}
+
+export const supabaseSavedDateRepository: ISavedDateRepository = {
+  async getAll(spaceId: string): Promise<SavedDate[]> {
+    const { data, error } = await db()
+      .from('saved_dates')
+      .select('*')
+      .eq('space_id', spaceId)
+      .neq('status', 'dismissed')
+      .order('saved_at', { ascending: false });
+    if (error) throw error;
+    return (data ?? []).map(mapSavedDate);
+  },
+
+  async save(item: Omit<SavedDate, 'id' | 'savedAt'>): Promise<SavedDate> {
+    const { data, error } = await db()
+      .from('saved_dates')
+      .insert({
+        space_id: item.spaceId,
+        moment_id: item.momentId,
+        title: item.title,
+        concept: item.concept,
+        price_band: item.priceBand,
+        est_duration_min: item.estDurationMin,
+        status: item.status,
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return mapSavedDate(data);
+  },
+
+  async update(
+    id: string,
+    updates: Partial<Pick<SavedDate, 'status' | 'plannedFor' | 'completedAt' | 'memoryId'>>,
+  ): Promise<SavedDate> {
+    const patch: Record<string, unknown> = {};
+    if (updates.status !== undefined) patch.status = updates.status;
+    if (updates.plannedFor !== undefined) patch.planned_for = updates.plannedFor;
+    if (updates.completedAt !== undefined) patch.completed_at = updates.completedAt;
+    if (updates.memoryId !== undefined) patch.memory_id = updates.memoryId;
+    const { data, error } = await db().from('saved_dates').update(patch).eq('id', id).select().single();
+    if (error) throw error;
+    return mapSavedDate(data);
+  },
+
+  async remove(id: string): Promise<void> {
+    const { error } = await db().from('saved_dates').delete().eq('id', id);
+    if (error) throw error;
   },
 };

@@ -22,8 +22,8 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { SEED_CARDS } from '../../lib/seed';
 
 export default function CreateMemoryScreen() {
-  const { cardId } = useLocalSearchParams<{ cardId?: string }>();
-  const [note, setNote] = useState('');
+  const { cardId, prefillNote } = useLocalSearchParams<{ cardId?: string; prefillNote?: string }>();
+  const [note, setNote] = useState(typeof prefillNote === 'string' ? prefillNote : '');
   const [photoUri, setPhotoUri] = useState<string | undefined>(undefined);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);

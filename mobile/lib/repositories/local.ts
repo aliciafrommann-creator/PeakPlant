@@ -1,5 +1,5 @@
 import { storage } from '../storage';
-import type { Memory, MomentCard, Space, SpaceMember } from '../types';
+import type { Memory, MomentCard, Space, SpaceMember, SavedDate } from '../types';
 import {
   SEED_MEMORIES,
   SEED_CARDS,
@@ -11,6 +11,7 @@ import type {
   IMemoryRepository,
   ICardRepository,
   ISpaceRepository,
+  ISavedDateRepository,
   CreateSpaceInput,
 } from './interfaces';
 
@@ -18,6 +19,7 @@ const MEMORIES_KEY = 'memories';
 const ACTIVATIONS_KEY = 'cardActivations';
 const SPACES_KEY = 'spaces';
 const MEMBERS_KEY = 'spaceMembers';
+const SAVED_DATES_KEY = 'savedDates';
 
 function generateId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -198,5 +200,42 @@ export const localSpaceRepository: ISpaceRepository = {
       await storage.set(MEMBERS_KEY, [...members, member]);
     }
     return space;
+  },
+};
+
+export const localSavedDateRepository: ISavedDateRepository = {
+  async getAll(spaceId: string): Promise<SavedDate[]> {
+    const stored = await storage.get<SavedDate[]>(SAVED_DATES_KEY);
+    return (stored ?? [])
+      .filter((d) => d.spaceId === spaceId)
+      .sort((a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime());
+  },
+
+  async save(item: Omit<SavedDate, 'id' | 'savedAt'>): Promise<SavedDate> {
+    const stored = await storage.get<SavedDate[]>(SAVED_DATES_KEY);
+    const all = stored ?? [];
+    const entry: SavedDate = { ...item, id: generateId('sd'), savedAt: now() };
+    await storage.set(SAVED_DATES_KEY, [...all, entry]);
+    return entry;
+  },
+
+  async update(
+    id: string,
+    updates: Partial<Pick<SavedDate, 'status' | 'plannedFor' | 'completedAt' | 'memoryId'>>,
+  ): Promise<SavedDate> {
+    const stored = await storage.get<SavedDate[]>(SAVED_DATES_KEY);
+    const all = stored ?? [];
+    const idx = all.findIndex((d) => d.id === id);
+    if (idx === -1) throw new Error(`SavedDate ${id} not found`);
+    const updated: SavedDate = { ...all[idx], ...updates };
+    all[idx] = updated;
+    await storage.set(SAVED_DATES_KEY, all);
+    return updated;
+  },
+
+  async remove(id: string): Promise<void> {
+    const stored = await storage.get<SavedDate[]>(SAVED_DATES_KEY);
+    const all = stored ?? [];
+    await storage.set(SAVED_DATES_KEY, all.filter((d) => d.id !== id));
   },
 };

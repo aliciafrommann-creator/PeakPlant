@@ -21,6 +21,7 @@ import { computeWeeklyStreak } from '../../lib/streaks';
 import { discovery } from '../../lib/ai';
 import type { DateConstraints, DateRecommendation } from '../../lib/ai';
 import type { TimeOfDay } from '../../lib/together';
+import { savedDateRepository } from '../../lib/repositories';
 
 /** Device clock → coarse time of day. Honest, location-free contextual signal. */
 function currentTimeOfDay(): TimeOfDay {
@@ -125,6 +126,26 @@ export default function DiscoverScreen() {
     setExcludeIds([]);
   }, []);
 
+  const saveDate = useCallback(
+    async (rec: DateRecommendation) => {
+      if (!activeSpace) return;
+      try {
+        await savedDateRepository.save({
+          spaceId: activeSpace.id,
+          momentId: rec.momentId,
+          title: rec.title,
+          concept: rec.concept,
+          priceBand: rec.priceBand,
+          estDurationMin: rec.estDurationMin,
+          status: 'saved',
+        });
+      } catch {
+        // save is best-effort; the user can try again from the saved screen
+      }
+    },
+    [activeSpace],
+  );
+
   const primary = recs.find((r) => !r.isAlternative);
   const alternative = recs.find((r) => r.isAlternative);
 
@@ -198,7 +219,11 @@ export default function DiscoverScreen() {
           </View>
         ) : primary ? (
           <>
-            <RecommendationCard rec={primary} onOpen={() => router.push(`/together/${primary.momentId}`)} />
+            <RecommendationCard
+              rec={primary}
+              onOpen={() => router.push(`/together/${primary.momentId}`)}
+              onSave={() => void saveDate(primary)}
+            />
 
             <View style={styles.actionRow}>
               <TouchableOpacity
@@ -251,6 +276,16 @@ export default function DiscoverScreen() {
 
         {/* Pillar links — preserve access to the fuller surfaces */}
         <View style={styles.links}>
+          <TouchableOpacity
+            style={styles.linkRow}
+            onPress={() => router.push('/discover/saved')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel="Saved date ideas"
+          >
+            <Text style={styles.linkText}>saved ideas</Text>
+            <Text style={styles.linkArrow}>→</Text>
+          </TouchableOpacity>
           {missionsEnabled && (
             <TouchableOpacity
               style={styles.linkRow}
@@ -290,10 +325,12 @@ export default function DiscoverScreen() {
 function RecommendationCard({
   rec,
   onOpen,
+  onSave,
   compact,
 }: {
   rec: DateRecommendation;
   onOpen: () => void;
+  onSave?: () => void;
   compact?: boolean;
 }) {
   return (
@@ -329,7 +366,19 @@ function RecommendationCard({
       )}
 
       <Text style={styles.provenance}>curated · checked {rec.freshnessAt}</Text>
-      <Text style={styles.cta}>SEE THIS IDEA →</Text>
+      <View style={styles.cardFooter}>
+        <Text style={styles.cta}>SEE THIS IDEA →</Text>
+        {onSave && !compact && (
+          <TouchableOpacity
+            onPress={(e) => { e.stopPropagation?.(); onSave(); }}
+            accessibilityRole="button"
+            accessibilityLabel="Save this idea"
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Text style={styles.save}>SAVE</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </TouchableOpacity>
   );
 }
@@ -414,7 +463,9 @@ const styles = StyleSheet.create({
     color: Colors.textFaint,
     textTransform: 'uppercase',
   },
+  cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   cta: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  save: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
   actionRow: { flexDirection: 'row', gap: Spacing.sm, paddingHorizontal: Spacing.screen, marginTop: Spacing.md },
   actionBtn: {
     height: 44,

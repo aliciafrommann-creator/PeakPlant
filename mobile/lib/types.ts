@@ -133,3 +133,27 @@ export interface Goal {
   label: string;
   description: string;
 }
+
+/** Lifecycle of a saved date idea — progresses forward; never auto-advances. */
+export type SavedDateStatus = 'idea' | 'saved' | 'planned' | 'completed' | 'dismissed';
+
+/**
+ * A date idea the user saved from the Discover feed for their space.
+ * Space-scoped under RLS. The recommendation snapshot (title, concept, priceBand,
+ * estDurationMin) is stored so the card renders without re-running the recommender.
+ * `memoryId` closes the loop when a completed date becomes a diary memory.
+ */
+export interface SavedDate {
+  id: string;
+  spaceId: string;
+  momentId: string;
+  title: string;
+  concept: string;
+  priceBand: string;
+  estDurationMin: number;
+  status: SavedDateStatus;
+  savedAt: string;
+  plannedFor?: string;
+  completedAt?: string;
+  memoryId?: string;
+}
