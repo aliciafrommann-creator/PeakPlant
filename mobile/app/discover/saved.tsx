@@ -8,6 +8,10 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  Modal,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
@@ -28,8 +32,12 @@ export default function SavedDatesScreen() {
     completed: t('done', 'erledigt'),
     dismissed: t('dismissed', 'verworfen'),
   };
+
   const [dates, setDates] = useState<SavedDate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [planningId, setPlanningId] = useState<string | null>(null);
+  const [planText, setPlanText] = useState('');
+  const [planBusy, setPlanBusy] = useState(false);
 
   const load = useCallback(async () => {
     if (!activeSpace) return;
@@ -46,6 +54,32 @@ export default function SavedDatesScreen() {
     void load();
   }, [load]);
 
+  const openPlan = useCallback((d: SavedDate) => {
+    setPlanText(d.plannedFor ?? '');
+    setPlanningId(d.id);
+  }, []);
+
+  const confirmPlan = useCallback(async () => {
+    if (!planningId || !planText.trim() || planBusy) return;
+    setPlanBusy(true);
+    try {
+      await savedDateRepository.update(planningId, {
+        status: 'planned',
+        plannedFor: planText.trim(),
+      });
+      setPlanningId(null);
+      setPlanText('');
+      void load();
+    } catch {
+      Alert.alert(
+        t('something went wrong', 'etwas ist schiefgelaufen'),
+        t('could not plan this idea. please try again.', 'Idee konnte nicht geplant werden.'),
+      );
+    } finally {
+      setPlanBusy(false);
+    }
+  }, [planningId, planText, planBusy, load, t]);
+
   const markDone = useCallback(
     async (d: SavedDate) => {
       try {
@@ -53,7 +87,6 @@ export default function SavedDatesScreen() {
           status: 'completed',
           completedAt: new Date().toISOString(),
         });
-        // Completion → memory bridge: pre-fill create screen with the date's context.
         router.push({
           pathname: '/memory/create',
           params: {
@@ -65,7 +98,10 @@ export default function SavedDatesScreen() {
         });
         void load();
       } catch {
-        Alert.alert(t('something went wrong', 'etwas ist schiefgelaufen'), t('could not update this idea. please try again.', 'Idee konnte nicht aktualisiert werden.'));
+        Alert.alert(
+          t('something went wrong', 'etwas ist schiefgelaufen'),
+          t('could not update this idea. please try again.', 'Idee konnte nicht aktualisiert werden.'),
+        );
       }
     },
     [load, t],
@@ -83,7 +119,10 @@ export default function SavedDatesScreen() {
               await savedDateRepository.update(d.id, { status: 'dismissed' });
               setDates((prev) => prev.filter((x) => x.id !== d.id));
             } catch {
-              Alert.alert(t('something went wrong', 'etwas ist schiefgelaufen'), t('could not remove this idea.', 'Idee konnte nicht entfernt werden.'));
+              Alert.alert(
+                t('something went wrong', 'etwas ist schiefgelaufen'),
+                t('could not remove this idea.', 'Idee konnte nicht entfernt werden.'),
+              );
             }
           },
         },
@@ -92,16 +131,18 @@ export default function SavedDatesScreen() {
     [t],
   );
 
+  const planningDate = dates.find((d) => d.id === planningId);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => router.back()}
           accessibilityRole="button"
-          accessibilityLabel="Back"
+          accessibilityLabel={t('Back', 'Zuruck')}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Text style={styles.back}>← {t('BACK', 'ZURÜCK')}</Text>
+          <Text style={styles.back}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
         </TouchableOpacity>
         <Text style={styles.title}>{t('saved ideas', 'gespeicherte Ideen')}</Text>
       </View>
@@ -124,18 +165,26 @@ export default function SavedDatesScreen() {
             onPress={() => router.back()}
             accessibilityRole="button"
           >
-            <Text style={styles.ctaText}>{t('BACK TO DISCOVER', 'ZURÜCK ZU ENTDECKEN')}</Text>
+            <Text style={styles.ctaText}>{t('BACK TO DISCOVER', 'ZURUCK ZU ENTDECKEN')}</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-          <Text style={styles.hint}>{t("tap DONE when you've experienced it — we'll help you preserve the memory.", 'ERLEDIGT antippen wenn ihr es erlebt habt — wir helfen euch, den Moment festzuhalten.')}</Text>
+          <Text style={styles.hint}>
+            {t(
+              "tap DONE when you've experienced it — we'll help you preserve the memory.",
+              'ERLEDIGT antippen wenn ihr es erlebt habt — wir helfen euch, den Moment festzuhalten.',
+            )}
+          </Text>
           {dates.map((d) => (
             <View key={d.id} style={styles.card}>
               <View style={styles.cardTop}>
                 <Text style={styles.badge}>{STATUS_LABEL[d.status] ?? d.status}</Text>
                 <Text style={styles.savedAt}>
-                  {new Date(d.savedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                  {new Date(d.savedAt).toLocaleDateString(t('en-GB', 'de-DE'), {
+                    day: 'numeric',
+                    month: 'short',
+                  })}
                 </Text>
               </View>
               <Text style={styles.cardTitle}>{d.title}</Text>
@@ -143,7 +192,15 @@ export default function SavedDatesScreen() {
               <View style={styles.meta}>
                 <Text style={styles.metaItem}>{d.estDurationMin} min</Text>
                 <Text style={styles.metaDot}>·</Text>
-                <Text style={styles.metaItem}>{d.priceBand === 'free' ? t('free', 'kostenlos') : d.priceBand}</Text>
+                <Text style={styles.metaItem}>
+                  {d.priceBand === 'free' ? t('free', 'kostenlos') : d.priceBand}
+                </Text>
+                {d.plannedFor && (
+                  <>
+                    <Text style={styles.metaDot}>·</Text>
+                    <Text style={[styles.metaItem, styles.plannedFor]}>{d.plannedFor}</Text>
+                  </>
+                )}
               </View>
               <View style={styles.actions}>
                 {d.status !== 'completed' && (
@@ -154,6 +211,16 @@ export default function SavedDatesScreen() {
                     accessibilityLabel={t(`Mark ${d.title} as done`, `${d.title} als erledigt markieren`)}
                   >
                     <Text style={styles.actionDoneText}>{t('DONE -> PRESERVE', 'ERLEDIGT -> FESTHALTEN')}</Text>
+                  </TouchableOpacity>
+                )}
+                {d.status !== 'completed' && (
+                  <TouchableOpacity
+                    style={styles.actionPlan}
+                    onPress={() => openPlan(d)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t(`Plan ${d.title}`, `${d.title} planen`)}
+                  >
+                    <Text style={styles.actionPlanText}>{t('PLAN', 'PLANEN')}</Text>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
@@ -169,6 +236,62 @@ export default function SavedDatesScreen() {
           ))}
         </ScrollView>
       )}
+
+      {/* Plan It sheet */}
+      <Modal
+        visible={planningId !== null}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setPlanningId(null)}
+      >
+        <KeyboardAvoidingView
+          style={styles.modalBackdrop}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <TouchableOpacity
+            style={StyleSheet.absoluteFill}
+            onPress={() => setPlanningId(null)}
+            accessibilityLabel={t('Close', 'Schliessen')}
+          />
+          <View style={styles.sheet}>
+            <Text style={styles.sheetTitle}>{t('when will you do this?', 'wann macht ihr das?')}</Text>
+            {planningDate && (
+              <Text style={styles.sheetIdea}>{planningDate.title}</Text>
+            )}
+            <TextInput
+              style={styles.sheetInput}
+              placeholder={t('e.g. this Saturday, June 28...', 'z.B. diesen Samstag, 28. Juni...')}
+              placeholderTextColor={Colors.textFaint}
+              value={planText}
+              onChangeText={setPlanText}
+              autoFocus
+              returnKeyType="done"
+              onSubmitEditing={confirmPlan}
+            />
+            <View style={styles.sheetActions}>
+              <TouchableOpacity
+                style={styles.sheetCancel}
+                onPress={() => setPlanningId(null)}
+                accessibilityRole="button"
+              >
+                <Text style={styles.sheetCancelText}>{t('CANCEL', 'ABBRECHEN')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.sheetConfirm, (!planText.trim() || planBusy) && styles.sheetConfirmDisabled]}
+                onPress={confirmPlan}
+                disabled={!planText.trim() || planBusy}
+                accessibilityRole="button"
+              >
+                {planBusy ? (
+                  <ActivityIndicator color={Colors.white} size="small" />
+                ) : (
+                  <Text style={styles.sheetConfirmText}>{t('SET DATE', 'DATUM SETZEN')}</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -238,9 +361,10 @@ const styles = StyleSheet.create({
   savedAt: { fontSize: 10, fontWeight: '300', color: Colors.textFaint },
   cardTitle: { fontSize: 20, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
   cardConcept: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  meta: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
   metaItem: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
   metaDot: { fontSize: 12, color: Colors.textFaint },
+  plannedFor: { color: Colors.accent, fontWeight: '500' },
   actions: {
     flexDirection: 'row',
     gap: Spacing.sm,
@@ -248,15 +372,26 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.border,
     paddingTop: Spacing.md,
     marginTop: Spacing.xs,
+    flexWrap: 'wrap',
   },
   actionDone: {
     height: 40,
     flex: 1,
+    minWidth: 120,
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
   },
   actionDoneText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.white },
+  actionPlan: {
+    height: 40,
+    paddingHorizontal: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.accent,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  actionPlanText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
   actionDismiss: {
     height: 40,
     paddingHorizontal: Spacing.md,
@@ -264,4 +399,51 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   actionDismissText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textFaint },
+  // Modal / sheet
+  modalBackdrop: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
+  sheet: {
+    backgroundColor: Colors.background,
+    paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.xxxl,
+    gap: Spacing.md,
+  },
+  sheetTitle: { fontSize: 18, fontWeight: '200', color: Colors.text, letterSpacing: -0.2 },
+  sheetIdea: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, marginTop: -Spacing.sm },
+  sheetInput: {
+    fontSize: 18,
+    fontWeight: '300',
+    color: Colors.text,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    paddingVertical: Spacing.sm,
+    marginTop: Spacing.sm,
+  },
+  sheetActions: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+  },
+  sheetCancel: {
+    height: 44,
+    paddingHorizontal: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sheetCancelText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
+  sheetConfirm: {
+    height: 44,
+    flex: 1,
+    backgroundColor: Colors.text,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sheetConfirmDisabled: { opacity: 0.35 },
+  sheetConfirmText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
 });
