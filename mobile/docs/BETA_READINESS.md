@@ -34,9 +34,14 @@ device. On-device QA (below) is a release blocker.
   tip (HOW WAS IT? screen, strictly separate from private diary note).
 - ✅ **Calendar export**: CALENDAR button on planned items → ICS via native
   share sheet (no `expo-calendar` permission required).
-- ✅ **Ask PeakPlant**: conversational idea-finding UI. Beta: backed by the
-  deterministic curated recommender (AI Edge Function = 501 stub). Source label
-  always shown ("curated · verified by PeakPlant").
+- ✅ **Ask PeakPlant**: conversational idea-finding UI. The `discover` Edge
+  Function is **deployed** (verify_jwt on): it sends a pool of curated candidates
+  to Claude, which only reorders them and writes a warm "why" — the on-device
+  `mergeAiRanking` validator and the function both drop any id not in the pool,
+  so no venue/price/fact is ever invented. Activates once the `ANTHROPIC_API_KEY`
+  Edge Function secret is set; until then (and on any error) it degrades silently
+  to the curated recommender. Source label always shown ("personalized by
+  PeakPlant AI · facts stay curated" vs "curated · verified by PeakPlant").
 - ✅ **Spaces**: create couple/friends space, join by code, space switcher,
   per-space scoping of memories/cards/suggestions. Atomic space creation via
   `create_space` RPC (migration 0008, **applied to the live project 2026-06-22**).
@@ -96,10 +101,14 @@ device. On-device QA (below) is a release blocker.
 
 ## 5. Stubbed / not built (🔴)
 
-- 🔴 Server-side AI recommendation (Edge Function returns 501; `anthropicDiscovery`
-  adapter and `askGateway` ready to swap in).
+- 🟡 Server-side AI recommendation: the `discover` Edge Function is deployed and
+  the gateway calls it. Remaining 🔑: set the `ANTHROPIC_API_KEY` Edge Function
+  secret to turn it on (without it, it 501s and the client uses the curated
+  recommender). On-device verification of the live AI path still pending.
 - 🔴 Live providers: places, events, maps, routing, transit, weather, booking
-  (interfaces + null adapters built; real provider swap-in documented).
+  (interfaces + null adapters built; real provider swap-in documented). These
+  belong server-side (keys in the Edge Function, never the client) and need
+  provider API keys before they can be wired — see §6.
 - 🔴 Map view / location search / radius / clustering.
 - 🔴 **Cross-space community**: ratings/reviews/tips aggregated across couples,
   plus moderation. (Per-space feedback IS captured and surfaced to the owning
@@ -115,10 +124,13 @@ device. On-device QA (below) is a release blocker.
 
 ## 6. Required environment variables
 
-| Variable | Purpose | Beta required? |
-|----------|---------|----------------|
-| `EXPO_PUBLIC_SUPABASE_URL` | Supabase project URL (publishable) | Only for backend mode |
-| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Supabase **publishable** key (public) | Only for backend mode |
+| Variable | Where | Purpose | Beta required? |
+|----------|-------|---------|----------------|
+| `EXPO_PUBLIC_SUPABASE_URL` | client (`.env` / `eas.json`) | Supabase project URL (public) | Only for backend mode |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | client (`.env` / `eas.json`) | Supabase **publishable** key (public) | Only for backend mode |
+| `ANTHROPIC_API_KEY` | **Edge Function secret only** | Ask PeakPlant AI (`discover`) | Only for live AI; never in client |
+| `ANTHROPIC_MODEL` | Edge Function secret (optional) | override the default model | No (defaults to Haiku) |
+| Provider keys (places/weather/etc.) | **Edge Function secret only** | live data instead of curated | No (post-beta) |
 
 Local-first mode needs **none** — the app runs fully on AsyncStorage seed data.
 Never ship the `service_role` / `sb_secret` key in the client.
@@ -224,13 +236,17 @@ Full detail in `IOS_TESTFLIGHT.md`. Summary:
 ## 14. Verification at this checkpoint
 
 - ✅ `tsc --noEmit` — 0 errors.
-- ✅ `vitest run` — 219/219 across 23 files.
+- ✅ `vitest run` — 229/229 across 24 files (added AI ranking merge: 10).
   - QR parse/resolve (20) · recommendations (18) · learning (10) · experience (11)
   - status machine (9) · share/links (11) · feedback repository (5) · ratings (8)
   - calendar ICS (7) · providers contract (7) · privacy boundaries (17)
   - analytics contract (8) · notifications contract (7) · cache (8)
-  - AI safety/crisis (11) · rituals repository (6)
+  - AI safety/crisis (11) · AI ranking merge (10) · rituals repository (6)
   - monetization entitlements (12) + usage (13) · spaceCreation (4) · challenges (6)
-- ✅ `expo export --platform ios` — bundle builds (3.59 MB hbc).
+- ✅ `expo export --platform ios` — bundle builds.
+- ✅ Migrations 0005–0008 applied live; the 7 new tables verified RLS-enabled
+  with member-scoped policies (read-only check on the live project — the
+  seeding pgTAP suite belongs on a Supabase branch, not production).
+- ✅ `discover` Edge Function deployed (verify_jwt on).
 - ⚠️ No linter configured (not a regression; see §9).
 - 🔴 No on-device run yet — the gating release blocker.
