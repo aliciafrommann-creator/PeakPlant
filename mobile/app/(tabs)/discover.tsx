@@ -323,6 +323,16 @@ export default function DiscoverScreen() {
         <View style={styles.links}>
           <TouchableOpacity
             style={styles.linkRow}
+            onPress={() => router.push('/ask')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('Ask PeakPlant for personalised ideas', 'PeakPlant nach personalisierten Ideen fragen')}
+          >
+            <Text style={styles.linkText}>{t('ask peakplant', 'peakplant fragen')}</Text>
+            <Text style={styles.linkArrow}>{'->'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.linkRow}
             onPress={() => router.push('/discover/saved')}
             activeOpacity={0.85}
             accessibilityRole="button"
