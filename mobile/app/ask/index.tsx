@@ -89,7 +89,7 @@ export default function AskScreen() {
       const constraints: DateConstraints = {
         spaceType: activeSpace?.type ?? 'couple',
       };
-      const result = await askGateway(constraints, text, false);
+      const result = await askGateway(constraints, text, true);
       const recs = result.recommendations.slice(0, 3);
 
       const replyText =

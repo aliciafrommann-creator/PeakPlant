@@ -177,6 +177,24 @@ export interface RecommendOptions {
   places?: LocalPlace[];
 }
 
+/** Score + sort all eligible candidates (shared by recommendDates + rankedCandidates). */
+function scoreEligible(
+  constraints: DateConstraints,
+  options: RecommendOptions,
+): Array<Scored & { index: number }> {
+  const moments = options.moments ?? TOGETHER_MOMENTS;
+  const places = options.places ?? LOCAL_PLACES;
+  const placeFor = (id?: string) => (id ? places.find((p) => p.id === id) : undefined);
+
+  const excluded = new Set(constraints.excludeIds ?? []);
+  return moments
+    .filter((m) => m.spaceTypes.includes(constraints.spaceType) && !excluded.has(m.id))
+    .map((m) => ({ moment: m, place: placeFor(m.placeId), index: moments.indexOf(m) }))
+    .filter(({ moment, place }) => passesHardFilters(moment, place, constraints))
+    .map(({ moment, place, index }) => ({ ...evaluate(moment, place, constraints), index }))
+    .sort((a, b) => (b.score !== a.score ? b.score - a.score : a.index - b.index));
+}
+
 /**
  * Rank curated date ideas against a couple's situation. Returns a primary pick
  * plus (when available) one alternative of a different flavour. Empty array
@@ -188,21 +206,8 @@ export function recommendDates(
   constraints: DateConstraints,
   options: RecommendOptions = {},
 ): DateRecommendation[] {
-  const moments = options.moments ?? TOGETHER_MOMENTS;
-  const places = options.places ?? LOCAL_PLACES;
-  const placeFor = (id?: string) => (id ? places.find((p) => p.id === id) : undefined);
-
-  const excluded = new Set(constraints.excludeIds ?? []);
-  const eligible = moments
-    .filter((m) => m.spaceTypes.includes(constraints.spaceType) && !excluded.has(m.id))
-    .map((m) => ({ moment: m, place: placeFor(m.placeId), index: moments.indexOf(m) }))
-    .filter(({ moment, place }) => passesHardFilters(moment, place, constraints));
-
-  if (eligible.length === 0) return [];
-
-  const scored = eligible
-    .map(({ moment, place, index }) => ({ ...evaluate(moment, place, constraints), index }))
-    .sort((a, b) => (b.score !== a.score ? b.score - a.score : a.index - b.index));
+  const scored = scoreEligible(constraints, options);
+  if (scored.length === 0) return [];
 
   const top = scored[0];
   const alt =
@@ -212,4 +217,22 @@ export function recommendDates(
   const result = [toRecommendation(top, constraints, false)];
   if (alt) result.push(toRecommendation(alt, constraints, true));
   return result;
+}
+
+/**
+ * A pool of up to `limit` curated candidates for the AI re-ranker to choose
+ * from. This is the ONLY thing sent to the discover Edge Function: fully-formed,
+ * provenance-labelled recommendations built from curated data. The AI may
+ * reorder them and rewrite the warm "why" — it can never invent a venue or a
+ * fact, because every fact here already comes from the curated catalog. Returns
+ * the deterministic ordering, so an empty AI response degrades to "curated".
+ */
+export function rankedCandidates(
+  constraints: DateConstraints,
+  limit = 6,
+  options: RecommendOptions = {},
+): DateRecommendation[] {
+  return scoreEligible(constraints, options)
+    .slice(0, Math.max(0, limit))
+    .map((s, i) => toRecommendation(s, constraints, i > 0));
 }

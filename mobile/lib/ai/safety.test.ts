@@ -57,14 +57,14 @@ describe('assessSafety — crisis detection', () => {
 });
 
 describe('AI kill switches', () => {
-  it('all AI surfaces default OFF for the beta (deterministic only)', () => {
-    expect(AI_KILL_SWITCHES.askPeakPlant).toBe(false);
+  it('Ask PeakPlant is ON (discover Edge Function deployed); other surfaces stay OFF', () => {
+    expect(AI_KILL_SWITCHES.askPeakPlant).toBe(true);
     expect(AI_KILL_SWITCHES.liveRecommendations).toBe(false);
     expect(AI_KILL_SWITCHES.reflectionPrompts).toBe(false);
   });
 
   it('aiSurfaceEnabled reflects the switch state', () => {
-    expect(aiSurfaceEnabled('askPeakPlant')).toBe(false);
+    expect(aiSurfaceEnabled('askPeakPlant')).toBe(true);
     expect(aiSurfaceEnabled('liveRecommendations')).toBe(false);
   });
 });

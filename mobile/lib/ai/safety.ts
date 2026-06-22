@@ -94,7 +94,11 @@ export interface AIKillSwitches {
 }
 
 export const AI_KILL_SWITCHES: AIKillSwitches = {
-  askPeakPlant: false,
+  // ON: the `discover` Edge Function is deployed. Safe to enable because the
+  // gateway degrades to the curated recommender on any failure (function not
+  // deployed, ANTHROPIC_API_KEY secret missing, network/auth error). The AI only
+  // reorders + rewords curated candidates; it can never invent venues or facts.
+  askPeakPlant: true,
   liveRecommendations: false,
   reflectionPrompts: false,
 };
