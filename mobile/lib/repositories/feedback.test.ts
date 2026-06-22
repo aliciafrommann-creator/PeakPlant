@@ -10,7 +10,7 @@ vi.mock('../storage', () => ({
 
 import { storage } from '../storage';
 
-const mockStorage = storage as { get: ReturnType<typeof vi.fn>; set: ReturnType<typeof vi.fn> };
+const mockStorage = storage as unknown as { get: ReturnType<typeof vi.fn>; set: ReturnType<typeof vi.fn> };
 
 describe('localDateFeedbackRepository', () => {
   beforeEach(() => {
