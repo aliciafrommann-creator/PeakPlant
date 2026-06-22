@@ -11,11 +11,13 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useAppStore } from '../../lib/store';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import { momentById, placeById } from '../../lib/together';
 
 export default function TogetherDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const placesEnabled = useAppStore((s) => s.features.localShops);
+  const { t } = useLanguage();
   const moment = momentById(id);
   const place = placesEnabled ? placeById(moment?.placeId) : undefined;
 
@@ -23,13 +25,13 @@ export default function TogetherDetailScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.notFound}>
-          <Text style={styles.notFoundText}>idea not found.</Text>
+          <Text style={styles.notFoundText}>{t('idea not found.', 'Idee nicht gefunden.')}</Text>
           <TouchableOpacity
             onPress={() => router.back()}
             accessibilityRole="button"
-            accessibilityLabel="Go back"
+            accessibilityLabel={t('Go back', 'Zuruck')}
           >
-            <Text style={styles.backLink}>go back</Text>
+            <Text style={styles.backLink}>{t('go back', 'zuruck')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -42,11 +44,11 @@ export default function TogetherDetailScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           accessibilityRole="button"
-          accessibilityLabel="Back"
+          accessibilityLabel={t('Back', 'Zuruck')}
         >
-          <Text style={styles.backText}>← BACK</Text>
+          <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerLabel}>TO DO TOGETHER</Text>
+        <Text style={styles.headerLabel}>{t('TO DO TOGETHER', 'GEMEINSAM TUN')}</Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -57,18 +59,21 @@ export default function TogetherDetailScreen() {
 
         {place && (
           <View style={styles.placeCard}>
-            <Text style={styles.placeLabel}>A PLACE FOR IT</Text>
+            <Text style={styles.placeLabel}>{t('A PLACE FOR IT', 'EIN ORT DAFUR')}</Text>
             <View style={styles.placeHead}>
               <Text style={styles.placeName}>{place.name.toLowerCase()}</Text>
-              {place.isPartner && <Text style={styles.partner}>PARTNER</Text>}
+              {place.isPartner && <Text style={styles.partner}>{t('PARTNER', 'PARTNER')}</Text>}
             </View>
             <Text style={styles.placeArea}>{place.area}</Text>
-            {place.perk && <Text style={styles.perk}>🌶️ {place.perk}</Text>}
+            {place.perk && <Text style={styles.perk}>{place.perk}</Text>}
           </View>
         )}
 
         <Text style={styles.invite}>
-          when you've done it, preserve it as a moment in your diary.
+          {t(
+            "when you've done it, preserve it as a moment in your diary.",
+            'Wenn ihr es erlebt habt, bewahrt es als Moment in eurem Tagebuch.',
+          )}
         </Text>
 
         <TouchableOpacity
@@ -76,17 +81,22 @@ export default function TogetherDetailScreen() {
           onPress={() =>
             router.push({
               pathname: '/memory/create',
-              params: { prefillNote: `${moment.title} — ${moment.idea}` },
+              params: {
+                prefillNote: t(
+                  `${moment.title} - ${moment.idea}`,
+                  `${moment.title} - ${moment.idea}`,
+                ),
+              },
             })
           }
           activeOpacity={0.85}
           accessibilityRole="button"
-          accessibilityLabel="Preserve this as a moment in your diary"
+          accessibilityLabel={t('Preserve this as a moment in your diary', 'Als Moment im Tagebuch bewahren')}
         >
-          <Text style={styles.ctaText}>PRESERVE THIS MOMENT</Text>
+          <Text style={styles.ctaText}>{t('PRESERVE THIS MOMENT', 'DIESEN MOMENT BEWAHREN')}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.noPressure}>no pressure. only if it feels right.</Text>
+        <Text style={styles.noPressure}>{t('no pressure. only if it feels right.', 'kein Muss. nur wenn es sich richtig anfuhlt.')}</Text>
       </ScrollView>
     </SafeAreaView>
   );

@@ -293,10 +293,10 @@ export const SEED_MEMORIES: Memory[] = [
 ];
 
 export const ONBOARDING_GOALS = [
-  { id: 'g1', label: 'deeper conversations', description: 'go beyond day-to-day talk' },
-  { id: 'g2', label: 'shared adventures', description: 'discover new places and things together' },
-  { id: 'g3', label: 'more presence', description: 'be fully here, phones away' },
-  { id: 'g4', label: 'understanding each other', description: 'know what the other person carries' },
-  { id: 'g5', label: 'playful moments', description: 'laugh more, create more' },
-  { id: 'g6', label: 'quiet closeness', description: 'just being, without doing' },
+  { id: 'g1', label: 'deeper conversations', description: 'go beyond day-to-day talk', labelDe: 'tiefere Gesprache', descriptionDe: 'uber den Alltag hinausdenken' },
+  { id: 'g2', label: 'shared adventures', description: 'discover new places and things together', labelDe: 'gemeinsame Abenteuer', descriptionDe: 'neue Orte und Dinge zusammen entdecken' },
+  { id: 'g3', label: 'more presence', description: 'be fully here, phones away', labelDe: 'mehr Prasenz', descriptionDe: 'ganz da sein, Handys weg' },
+  { id: 'g4', label: 'understanding each other', description: 'know what the other person carries', labelDe: 'einander verstehen', descriptionDe: 'wissen, was den anderen bewegt' },
+  { id: 'g5', label: 'playful moments', description: 'laugh more, create more', labelDe: 'spielerische Momente', descriptionDe: 'mehr lachen, mehr erschaffen' },
+  { id: 'g6', label: 'quiet closeness', description: 'just being, without doing', labelDe: 'stille Nahe', descriptionDe: 'einfach sein, ohne zu tun' },
 ];
