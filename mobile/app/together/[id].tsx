@@ -13,6 +13,7 @@ import { Spacing } from '../../constants/spacing';
 import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { momentById, placeById } from '../../lib/together';
+import { experienceTags } from '../../lib/discovery/experience';
 
 export default function TogetherDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -56,6 +57,26 @@ export default function TogetherDetailScreen() {
         <Text style={styles.category}>{moment.category.toUpperCase()}</Text>
         <Text style={styles.title}>{moment.title}</Text>
         <Text style={styles.idea}>{moment.idea}</Text>
+
+        {(() => {
+          const tags = experienceTags(moment);
+          if (tags.length === 0) return null;
+          return (
+            <View style={styles.experience}>
+              <Text style={styles.experienceLabel}>{t('WHAT THIS IS LIKE', 'WIE SICH DAS ANFUHLT')}</Text>
+              <View style={styles.tagRow}>
+                {tags.map((tg) => (
+                  <View key={tg.key} style={styles.tag}>
+                    <Text style={styles.tagText}>{t(...tg.label)}</Text>
+                  </View>
+                ))}
+              </View>
+              <Text style={styles.experienceNote}>
+                {t('estimated from this idea, not live data', 'geschatzt aus dieser Idee, keine Live-Daten')}
+              </Text>
+            </View>
+          );
+        })()}
 
         {place && (
           <View style={styles.placeCard}>
@@ -119,6 +140,18 @@ const styles = StyleSheet.create({
   category: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.accent },
   title: { fontSize: 30, fontWeight: '200', color: Colors.text, letterSpacing: -0.4, lineHeight: 36 },
   idea: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 24 },
+  experience: { gap: Spacing.sm, marginTop: Spacing.md },
+  experienceLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textFaint },
+  tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
+  tag: {
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: 999,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
+  },
+  tagText: { fontSize: 12, fontWeight: '400', color: Colors.textMuted, letterSpacing: 0.2 },
+  experienceNote: { fontSize: 10, fontWeight: '300', color: Colors.textFaint, fontStyle: 'italic' },
   placeCard: {
     backgroundColor: Colors.backgroundCream,
     padding: Spacing.lg,
