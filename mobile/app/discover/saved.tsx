@@ -21,6 +21,8 @@ import { savedDateRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { transitionEffect } from '../../lib/savedDates/status';
 import { shareSavedDate } from '../../lib/share';
+import { shareCalendarEvent } from '../../lib/calendarShare';
+import { ideaLink } from '../../lib/links';
 import type { SavedDate } from '../../lib/types';
 
 export default function SavedDatesScreen() {
@@ -175,6 +177,21 @@ export default function SavedDatesScreen() {
     [],
   );
 
+  const addToCalendar = useCallback(
+    async (d: SavedDate) => {
+      try {
+        await shareCalendarEvent({
+          title: d.title,
+          dateText: d.plannedFor,
+          link: ideaLink(d.momentId),
+        });
+      } catch {
+        // Share sheet dismissed or unavailable.
+      }
+    },
+    [],
+  );
+
   const planningDate = dates.find((d) => d.id === planningId);
 
   return (
@@ -270,6 +287,16 @@ export default function SavedDatesScreen() {
                     <Text style={styles.actionPlanText}>
                       {d.status === 'planned' ? t('RE-PLAN', 'UMPLANEN') : t('PLAN', 'PLANEN')}
                     </Text>
+                  </TouchableOpacity>
+                )}
+                {d.status === 'planned' && (
+                  <TouchableOpacity
+                    style={styles.actionDismiss}
+                    onPress={() => void addToCalendar(d)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t(`Add ${d.title} to calendar`, `${d.title} zum Kalender hinzufugen`)}
+                  >
+                    <Text style={styles.actionDismissText}>{t('CALENDAR', 'KALENDER')}</Text>
                   </TouchableOpacity>
                 )}
                 {d.status === 'planned' && (
