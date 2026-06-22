@@ -51,6 +51,15 @@ device. On-device QA (below) is a release blocker.
   `INotificationProvider`. Active provider: nullNotifications (no-op).
 - ✅ **Performance**: 5 s in-memory TTL cache for local repository `getAll`
   reads (savedDates, memories) with write-time invalidation.
+- ✅ **AI safety**: deterministic EN/DE crisis route (`lib/ai/safety.ts`)
+  runs before any Ask PeakPlant response — suppresses recommendations and
+  shows neutral help (112 + Telefonseelsorge). Per-surface AI kill switches,
+  all OFF for beta. Input never stored/echoed.
+- ✅ **Rituals**: moments a couple loved, turned into something they return to
+  (private, space-scoped, behind the `rituals` flag). Create/revisit/let-go.
+- ✅ **Ratings loop**: post-completion feedback (stars + practical tip) is
+  surfaced back on the idea detail screen as the couple's OWN history
+  ("YOUR SPACE TRIED THIS") — honest, never a fabricated community average.
 
 ## 2. Supabase-backed (🟡 built, needs device verification + keys 🔑)
 
@@ -83,9 +92,9 @@ device. On-device QA (below) is a release blocker.
 - 🔴 Live providers: places, events, maps, routing, transit, weather, booking
   (interfaces + null adapters built; real provider swap-in documented).
 - 🔴 Map view / location search / radius / clustering.
-- 🔴 Community: ratings, reviews, tips contributions, moderation. (DateFeedback
-  is stored locally for beta — community display is post-beta.)
-- 🔴 Rituals UI (feature flag exists).
+- 🔴 **Cross-space community**: ratings/reviews/tips aggregated across couples,
+  plus moderation. (Per-space feedback IS captured and surfaced to the owning
+  couple; a shared community average needs a backend + moderation — post-beta.)
 - 🔴 Push notifications (null provider + full type system in place;
   `expo-notifications` integration is post-beta native-module work).
 - 🔴 Real analytics provider (`AnalyticsEvent` union + null provider in place;
@@ -201,12 +210,13 @@ Full detail in `IOS_TESTFLIGHT.md`. Summary:
 ## 14. Verification at this checkpoint
 
 - ✅ `tsc --noEmit` — 0 errors.
-- ✅ `vitest run` — 196/196 across 20 files.
+- ✅ `vitest run` — 219/219 across 23 files.
   - QR parse/resolve (20) · recommendations (18) · learning (10) · experience (11)
-  - status machine (9) · share/links (11) · feedback repository (5)
+  - status machine (9) · share/links (11) · feedback repository (5) · ratings (8)
   - calendar ICS (7) · providers contract (7) · privacy boundaries (17)
   - analytics contract (8) · notifications contract (7) · cache (8)
+  - AI safety/crisis (11) · rituals repository (6)
   - monetization entitlements (12) + usage (13) · spaceCreation (4) · challenges (6)
-- ✅ `expo export --platform ios` — bundle builds (3.56 MB hbc).
+- ✅ `expo export --platform ios` — bundle builds (3.59 MB hbc).
 - ⚠️ No linter configured (not a regression; see §9).
 - 🔴 No on-device run yet — the gating release blocker.
