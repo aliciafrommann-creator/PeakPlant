@@ -1,4 +1,6 @@
 import { Edition, Memory, MomentCard, Space, SpaceMember, User } from './types';
+import { EDITION_01_CARDS } from './content/edition01';
+import { EDITION_02_CARDS } from './content/edition02';
 
 export const SEED_USER: User = {
   id: 'user-01',
@@ -34,51 +36,32 @@ export const SEED_MEMBERS: SpaceMember[] = [
   { id: 'm-5', spaceId: 'space-friends-01', userId: 'user-04', name: 'Mira', role: 'member', joinedAt: '2026-04-02T18:05:00Z' },
 ];
 
-const CARD_PROMPTS: Array<{ number: number; prompt: string; type: 'question' | 'action' }> = [
-  { number: 1, prompt: 'what makes you feel seen by me?', type: 'question' },
-  { number: 2, prompt: 'when do you feel most alive with me?', type: 'question' },
-  { number: 3, prompt: 'what helps you open up to me?', type: 'question' },
-  { number: 4, prompt: 'what makes our relationship feel warm?', type: 'question' },
-  { number: 5, prompt: 'where do you need more light from me?', type: 'question' },
-  { number: 6, prompt: 'when do you feel safe enough to fully bloom?', type: 'question' },
-  { number: 7, prompt: 'where do you need space to grow on your own?', type: 'question' },
-  { number: 8, prompt: 'what are we still growing into together?', type: 'question' },
-  { number: 9, prompt: 'how do we find our way back to each other?', type: 'question' },
-  { number: 10, prompt: 'what have we helped each other become?', type: 'question' },
-  { number: 11, prompt: 'cook something neither of us has ever made. eat it together before it cools.', type: 'action' },
-  { number: 12, prompt: 'take a walk with no destination. stop when something catches your attention.', type: 'action' },
-  { number: 13, prompt: 'put your phones in another room for two hours. do something with your hands.', type: 'action' },
-  { number: 14, prompt: 'write one thing you love about this person. give it to them without explanation.', type: 'action' },
-  { number: 15, prompt: "find a place you haven't been together. spend at least an hour there.", type: 'action' },
-  { number: 16, prompt: 'sit in silence for five minutes. just be next to each other.', type: 'action' },
-  { number: 17, prompt: 'tell each other what you were afraid of as a child. listen without fixing.', type: 'action' },
-  { number: 18, prompt: "make something together. it doesn't have to be good.", type: 'action' },
-  { number: 19, prompt: "one thing you've never said out loud. say it tonight.", type: 'action' },
-  { number: 20, prompt: 'take one photo of something that represents where you are right now.', type: 'action' },
-];
-
-export const SEED_CARDS: MomentCard[] = CARD_PROMPTS.map((c) => ({
-  id: `card-${String(c.number).padStart(2, '0')}`,
-  number: c.number,
-  prompt: c.prompt,
-  type: c.type,
-  edition: 'edition-01',
-  // Base status is always 'sealed'; activation is tracked per space (see SEED_ACTIVATIONS).
-  status: 'sealed',
-}));
+/**
+ * Every card across all editions. Card ids are globally unique (card-NN) so a
+ * single QR format covers the whole catalog. Edition 01 is cards 01–20,
+ * Edition 02 is cards 21–40; each card's `number` is its position in its deck.
+ */
+export const SEED_CARDS: MomentCard[] = [...EDITION_01_CARDS, ...EDITION_02_CARDS];
 
 /** Which cards each space has already preserved a moment for (spaceId → cardIds). */
 export const SEED_ACTIVATIONS: Record<string, string[]> = {
-  'space-couple-01': ['card-01', 'card-02', 'card-03', 'card-04', 'card-05'],
-  'space-friends-01': ['card-12'],
+  'space-couple-01': ['card-11', 'card-12', 'card-14', 'card-15', 'card-16'],
+  'space-friends-01': ['card-05'],
 };
 
 /**
- * Couples editions roadmap. Only edition-01 ships with its 20 cards today
- * (status: available); the rest are on the public roadmap (status: upcoming)
- * so a space can see what's coming. Friends editions are intentionally not a
- * product line — friends still use the available couples-neutral editions in a
- * friends space (see PRODUCT.md / decision register).
+ * A deck holds between 15 and 20 cards. Upcoming editions have cardCount 0
+ * until their cards are assigned and QR codes generated (done incrementally).
+ */
+export const DECK_SIZE_RANGE = { min: 15, max: 20 } as const;
+
+/**
+ * Couples editions roadmap. Editions 01 (Grow Together) and 02 (Soft & Wild)
+ * have finalized decks today (status: available); the rest are on the public
+ * roadmap (status: upcoming) with cardCount 0 — their cards aren't assigned
+ * yet. Friends editions are intentionally not a product line — friends still
+ * use the available couples-neutral editions in a friends space (see
+ * PRODUCT.md / decision register).
  */
 export const SEED_EDITIONS: Edition[] = [
   {
@@ -86,43 +69,62 @@ export const SEED_EDITIONS: Edition[] = [
     order: 1,
     name: 'Grow Together',
     subtitle: 'Edition 01 — Sunflower',
-    description: 'twenty moments to collect, in any order. choose what feels right.',
+    description: 'noticing how you grow, alone and together. dates, small acts and questions.',
     symbol: '🌻',
+    color: '#F2B705',
+    ink: 'dark',
     status: 'available',
-    cardCount: SEED_CARDS.length,
-    cards: SEED_CARDS,
+    cardCount: EDITION_01_CARDS.length,
+    cards: EDITION_01_CARDS,
+    groupLabels: {
+      date: 'Grow Date',
+      act: 'Small Act of Growth',
+      question: 'Growing Question',
+    },
   },
   {
     id: 'edition-02',
     order: 2,
-    name: 'Love Languages',
-    subtitle: 'Edition 02 — Letters',
-    description: 'discover how each of you gives and receives love.',
-    symbol: '💬',
-    status: 'upcoming',
-    cardCount: 20,
-    cards: [],
+    name: 'Soft & Wild',
+    subtitle: 'Edition 02 — Ember',
+    description: 'intimacy without pressure. desire without performance. curiosity with consent.',
+    symbol: '🌹',
+    color: '#B23A48',
+    ink: 'light',
+    status: 'available',
+    sensitive: true,
+    cardCount: EDITION_02_CARDS.length,
+    cards: EDITION_02_CARDS,
+    groupLabels: {
+      date: 'Intimacy Date',
+      act: 'Small Spark',
+      question: 'Closer Question',
+    },
   },
   {
     id: 'edition-03',
     order: 3,
-    name: 'In Presence',
-    subtitle: 'Edition 03 — Stillness',
-    description: 'phones away, fully here. moments of undivided attention.',
-    symbol: '🌿',
+    name: 'Love Languages',
+    subtitle: 'Edition 03 — Letters',
+    description: 'discover how each of you gives and receives love.',
+    symbol: '💬',
+    color: '#E8A0A0',
+    ink: 'dark',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
     id: 'edition-04',
     order: 4,
-    name: 'Deep Spice',
-    subtitle: 'Edition 04 — Ember',
-    description: 'playful heat and honest desire, just for the two of you.',
-    symbol: '🌶️',
+    name: 'In Presence',
+    subtitle: 'Edition 04 — Stillness',
+    description: 'phones away, fully here. moments of undivided attention.',
+    symbol: '🌿',
+    color: '#9CAF88',
+    ink: 'dark',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -132,8 +134,10 @@ export const SEED_EDITIONS: Edition[] = [
     subtitle: 'Edition 05 — Horizon',
     description: 'for the distance — staying close across the miles.',
     symbol: '✈️',
+    color: '#7FA8C9',
+    ink: 'dark',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -143,8 +147,10 @@ export const SEED_EDITIONS: Edition[] = [
     subtitle: 'Edition 06 — Bloom',
     description: 'small daily acts that compound into closeness.',
     symbol: '✨',
+    color: '#F0A070',
+    ink: 'dark',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -154,8 +160,10 @@ export const SEED_EDITIONS: Edition[] = [
     subtitle: 'Edition 07 — Mirror',
     description: 'grow as individuals, so you grow as a pair.',
     symbol: '🪞',
+    color: '#B8A9C9',
+    ink: 'dark',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -165,8 +173,10 @@ export const SEED_EDITIONS: Edition[] = [
     subtitle: 'Edition 08 — Spark',
     description: 'unexpected dares and spontaneous detours.',
     symbol: '🎲',
+    color: '#E8633A',
+    ink: 'light',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
     cards: [],
   },
   {
@@ -176,8 +186,50 @@ export const SEED_EDITIONS: Edition[] = [
     subtitle: 'Edition 09 — Nest',
     description: 'slow, cozy moments to retreat into together.',
     symbol: '🏕️',
+    color: '#8D7B68',
+    ink: 'light',
     status: 'upcoming',
-    cardCount: 20,
+    cardCount: 0,
+    cards: [],
+  },
+  // Life-stage editions — for a specific season of a relationship.
+  {
+    id: 'edition-10',
+    order: 10,
+    name: 'Just Started',
+    subtitle: 'Edition 10 — Seedling',
+    description: 'for the early days — getting to know each other, one moment at a time.',
+    symbol: '🌱',
+    color: '#A3C9A8',
+    ink: 'dark',
+    status: 'upcoming',
+    cardCount: 0,
+    cards: [],
+  },
+  {
+    id: 'edition-11',
+    order: 11,
+    name: 'After Hours',
+    subtitle: 'Edition 11 — Lantern',
+    description: 'for busy lives — small moments that fit between everything else.',
+    symbol: '🌙',
+    color: '#3D4A6B',
+    ink: 'light',
+    status: 'upcoming',
+    cardCount: 0,
+    cards: [],
+  },
+  {
+    id: 'edition-12',
+    order: 12,
+    name: 'After Bedtime',
+    subtitle: 'Edition 12 — Hearth',
+    description: 'for parents — staying a couple, not just a team.',
+    symbol: '🧸',
+    color: '#D9A679',
+    ink: 'dark',
+    status: 'upcoming',
+    cardCount: 0,
     cards: [],
   },
 ];
@@ -192,7 +244,7 @@ export function getEdition(editionId: string): Edition | undefined {
 export const SEED_MEMORIES: Memory[] = [
   {
     id: 'memory-01',
-    cardId: 'card-01',
+    cardId: 'card-11',
     spaceId: 'space-couple-01',
     note: 'we talked until 2am about the little things — the way you notice when i go quiet, the way you always make sure i eat. i feel seen in the smallest moments.',
     createdAt: '2026-04-03T21:30:00Z',
@@ -200,32 +252,31 @@ export const SEED_MEMORIES: Memory[] = [
   },
   {
     id: 'memory-02',
-    cardId: 'card-02',
+    cardId: 'card-12',
     spaceId: 'space-couple-01',
-    note: 'hiking to the summit. the wind, the silence, the way we just stood there without needing to say anything. that morning felt infinite.',
-    photoUri: undefined,
+    note: 'i said i feel most myself when i am making something with my hands, no one watching. you just nodded — you already knew.',
     createdAt: '2026-04-20T09:15:00Z',
     updatedAt: '2026-04-20T09:15:00Z',
   },
   {
     id: 'memory-03',
-    cardId: 'card-03',
+    cardId: 'card-14',
     spaceId: 'space-couple-01',
-    note: 'you asked me what i needed instead of guessing. that was it. that was all i ever needed.',
+    note: 'i am slowly becoming someone who asks for what she needs instead of waiting to be guessed. writing it down made it feel real.',
     createdAt: '2026-05-10T19:45:00Z',
     updatedAt: '2026-05-10T19:45:00Z',
   },
   {
     id: 'memory-04',
-    cardId: 'card-12',
+    cardId: 'card-05',
     spaceId: 'space-friends-01',
-    note: 'no destination, just walked the river until it got dark. jonas found that tiny bakery. we stayed way too long. easy day, good people.',
+    note: 'we finally planned the cabin weekend we keep talking about. jonas put down a date. mira is bringing the playlist. it is actually happening.',
     createdAt: '2026-05-24T16:20:00Z',
     updatedAt: '2026-05-24T16:20:00Z',
   },
   {
     id: 'memory-05',
-    cardId: 'card-05',
+    cardId: 'card-15',
     spaceId: 'space-couple-01',
     note: 'told you where i needed more light. you just listened, then changed something the next day. quietly. that meant everything.',
     createdAt: '2026-06-09T20:10:00Z',
@@ -233,19 +284,19 @@ export const SEED_MEMORIES: Memory[] = [
   },
   {
     id: 'memory-06',
-    cardId: 'card-04',
+    cardId: 'card-16',
     spaceId: 'space-couple-01',
-    note: 'sunday morning, nowhere to be. coffee, the window open, your feet on my lap. warm. that\'s the word.',
+    note: 'sunday morning, nowhere to be. coffee, the window open, your feet on my lap. what is already blooming? this. exactly this.',
     createdAt: '2026-06-16T09:30:00Z',
     updatedAt: '2026-06-16T09:30:00Z',
   },
 ];
 
 export const ONBOARDING_GOALS = [
-  { id: 'g1', label: 'deeper conversations', description: 'go beyond day-to-day talk' },
-  { id: 'g2', label: 'shared adventures', description: 'discover new places and things together' },
-  { id: 'g3', label: 'more presence', description: 'be fully here, phones away' },
-  { id: 'g4', label: 'understanding each other', description: 'know what the other person carries' },
-  { id: 'g5', label: 'playful moments', description: 'laugh more, create more' },
-  { id: 'g6', label: 'quiet closeness', description: 'just being, without doing' },
+  { id: 'g1', label: 'deeper conversations', description: 'go beyond day-to-day talk', labelDe: 'tiefere Gesprache', descriptionDe: 'uber den Alltag hinausdenken' },
+  { id: 'g2', label: 'shared adventures', description: 'discover new places and things together', labelDe: 'gemeinsame Abenteuer', descriptionDe: 'neue Orte und Dinge zusammen entdecken' },
+  { id: 'g3', label: 'more presence', description: 'be fully here, phones away', labelDe: 'mehr Prasenz', descriptionDe: 'ganz da sein, Handys weg' },
+  { id: 'g4', label: 'understanding each other', description: 'know what the other person carries', labelDe: 'einander verstehen', descriptionDe: 'wissen, was den anderen bewegt' },
+  { id: 'g5', label: 'playful moments', description: 'laugh more, create more', labelDe: 'spielerische Momente', descriptionDe: 'mehr lachen, mehr erschaffen' },
+  { id: 'g6', label: 'quiet closeness', description: 'just being, without doing', labelDe: 'stille Nahe', descriptionDe: 'einfach sein, ohne zu tun' },
 ];

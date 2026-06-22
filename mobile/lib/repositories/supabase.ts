@@ -7,26 +7,20 @@
 import { supabase } from '../supabase/client';
 import { deleteMemoryPhoto, uploadMemoryPhoto, signedPhotoUrl } from '../supabase/storage';
 import { SEED_CARDS } from '../seed';
-import type { Memory, MomentCard, Space, SpaceMember } from '../types';
+import type { Memory, MomentCard, Space, SpaceMember, SavedDate } from '../types';
 import type {
   IMemoryRepository,
   ICardRepository,
   ISpaceRepository,
+  ISavedDateRepository,
   CreateSpaceInput,
 } from './interfaces';
+import { buildCreateSpaceRpcArgs } from './spaceCreation';
+import { generateInviteCode, normalizeInviteCode } from '../invite';
 
 function db() {
   if (!supabase) throw new Error('Supabase not configured');
   return supabase;
-}
-
-function generateInviteCode(): string {
-  // 6 chars from an unambiguous alphabet (~1e9 combos) — a 4-digit code was
-  // brute-forceable to join a stranger's private space.
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) code += alphabet[Math.floor(Math.random() * alphabet.length)];
-  return `PEAK-${code}`;
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -183,25 +177,93 @@ export const supabaseSpaceRepository: ISpaceRepository = {
     return (data ?? []).map(mapMember);
   },
 
-  async create({ type, name, ownerUserId, ownerName }: CreateSpaceInput): Promise<Space> {
+  async create(input: CreateSpaceInput): Promise<Space> {
     const { data: spaceRow, error: spaceErr } = await db()
-      .from('spaces')
-      .insert({ type, name: name.trim() || (type === 'couple' ? 'Our space' : 'Friends'), invite_code: generateInviteCode() })
-      .select()
+      .rpc('create_space', buildCreateSpaceRpcArgs(input, generateInviteCode()))
       .single();
     if (spaceErr) throw spaceErr;
-    const { error: memberErr } = await db()
-      .from('space_members')
-      .insert({ space_id: spaceRow.id, user_id: ownerUserId, name: ownerName, role: 'owner' });
-    if (memberErr) throw memberErr;
     return mapSpace(spaceRow);
   },
 
   async joinByCode(code: string): Promise<Space> {
     // redeem_invite is a SECURITY DEFINER RPC (migration 0002) so a non-member
     // can join without being able to read the space directly under RLS.
-    const { data, error } = await db().rpc('redeem_invite', { code: code.trim().toUpperCase() });
+    const { data, error } = await db().rpc('redeem_invite', { code: normalizeInviteCode(code) });
     if (error) throw error;
     return mapSpace(data);
+  },
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapSavedDate(r: any): SavedDate {
+  return {
+    id: r.id,
+    spaceId: r.space_id,
+    momentId: r.moment_id,
+    title: r.title,
+    concept: r.concept,
+    priceBand: r.price_band,
+    estDurationMin: r.est_duration_min,
+    status: r.status,
+    savedAt: r.saved_at,
+    plannedFor: r.planned_for ?? undefined,
+    planningNotes: r.planning_notes ?? undefined,
+    completedAt: r.completed_at ?? undefined,
+    memoryId: r.memory_id ?? undefined,
+  };
+}
+
+export const supabaseSavedDateRepository: ISavedDateRepository = {
+  async getAll(spaceId: string): Promise<SavedDate[]> {
+    const { data, error } = await db()
+      .from('saved_dates')
+      .select('*')
+      .eq('space_id', spaceId)
+      .neq('status', 'dismissed')
+      .order('saved_at', { ascending: false });
+    if (error) throw error;
+    return (data ?? []).map(mapSavedDate);
+  },
+
+  async save(item: Omit<SavedDate, 'id' | 'savedAt'>): Promise<SavedDate> {
+    const { data, error } = await db()
+      .from('saved_dates')
+      .insert({
+        space_id: item.spaceId,
+        moment_id: item.momentId,
+        title: item.title,
+        concept: item.concept,
+        price_band: item.priceBand,
+        est_duration_min: item.estDurationMin,
+        status: item.status,
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return mapSavedDate(data);
+  },
+
+  async update(
+    id: string,
+    updates: Partial<
+      Pick<SavedDate, 'status' | 'plannedFor' | 'planningNotes' | 'completedAt' | 'memoryId'>
+    >,
+  ): Promise<SavedDate> {
+    const patch: Record<string, unknown> = {};
+    if (updates.status !== undefined) patch.status = updates.status;
+    // planned_for is free-text in the app (e.g. "this Saturday"); migration 0006
+    // relaxes the column to text to match. Requires 0006 applied (backend mode).
+    if (updates.plannedFor !== undefined) patch.planned_for = updates.plannedFor;
+    if (updates.planningNotes !== undefined) patch.planning_notes = updates.planningNotes;
+    if (updates.completedAt !== undefined) patch.completed_at = updates.completedAt;
+    if (updates.memoryId !== undefined) patch.memory_id = updates.memoryId;
+    const { data, error } = await db().from('saved_dates').update(patch).eq('id', id).select().single();
+    if (error) throw error;
+    return mapSavedDate(data);
+  },
+
+  async remove(id: string): Promise<void> {
+    const { error } = await db().from('saved_dates').delete().eq('id', id);
+    if (error) throw error;
   },
 };

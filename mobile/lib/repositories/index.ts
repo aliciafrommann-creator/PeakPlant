@@ -4,13 +4,31 @@
  * data source swaps in one place.
  */
 import { isSupabaseConfigured } from '../supabase/client';
-import { localMemoryRepository, localCardRepository, localSpaceRepository } from './local';
+import {
+  localMemoryRepository,
+  localCardRepository,
+  localSpaceRepository,
+  localSavedDateRepository,
+  localDateFeedbackRepository,
+  localRitualRepository,
+} from './local';
 import {
   supabaseMemoryRepository,
   supabaseCardRepository,
   supabaseSpaceRepository,
+  supabaseSavedDateRepository,
 } from './supabase';
 
 export const memoryRepository = isSupabaseConfigured ? supabaseMemoryRepository : localMemoryRepository;
 export const cardRepository = isSupabaseConfigured ? supabaseCardRepository : localCardRepository;
 export const spaceRepository = isSupabaseConfigured ? supabaseSpaceRepository : localSpaceRepository;
+export const savedDateRepository = isSupabaseConfigured
+  ? supabaseSavedDateRepository
+  : localSavedDateRepository;
+
+// Feedback is local-only for the beta; community integration is post-beta.
+export const feedbackRepository = localDateFeedbackRepository;
+
+// Rituals are local-only for the beta; the supabase adapter + migration are
+// post-beta (rituals are private, space-scoped — no cross-device need yet).
+export const ritualRepository = localRitualRepository;

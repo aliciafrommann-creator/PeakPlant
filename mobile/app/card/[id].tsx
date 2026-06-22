@@ -10,83 +10,146 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
-import { SEED_CARDS } from '../../lib/seed';
+import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
+import { useLanguage } from '../../lib/hooks/useLanguage';
+import type { CardGroup, CardSection } from '../../lib/types';
 
 export default function CardDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { t, l } = useLanguage();
+
   const card = SEED_CARDS.find((c) => c.id === id);
+  const edition = card ? (getEdition(card.edition) ?? SEED_EDITION) : SEED_EDITION;
 
   if (!card) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.notFound}>
-          <Text style={styles.notFoundText}>card not found.</Text>
+          <Text style={styles.notFoundText}>{t('card not found.', 'Karte nicht gefunden.')}</Text>
           <TouchableOpacity onPress={() => router.back()}>
-            <Text style={styles.backLink}>go back</Text>
+            <Text style={styles.backLink}>{t('go back', 'zurück')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
   }
 
-  const isAction = card.type === 'action';
+  const group: CardGroup = card.group ?? 'question';
+  const groupLabel = edition.groupLabels ? l(edition.groupLabels[group]) : t('Card', 'Karte');
+  const isQuestion = group === 'question';
+
+  const title = card.content ? l(card.content.title) : card.prompt;
+  const sections = card.content?.sections ?? [];
+
+  // A quiet note that adapts to the kind of card (and intimate editions).
+  const quietNote = isQuestion
+    ? t(
+        'Take your time. You can pause, skip or return to this card whenever it feels right.',
+        'Lasst euch Zeit. Ihr könnt jederzeit pausieren, überspringen oder später zurückkommen.'
+      )
+    : t(
+        'Choose what feels right for both of you. You can pause, change or stop at any time.',
+        'Macht, was sich für euch beide richtig anfühlt. Ihr könnt jederzeit pausieren, ändern oder aufhören.'
+      );
+
+  function renderPreserveCTA(keyPrefix: string) {
+    return (
+      <View key={`${keyPrefix}-cta`} style={styles.ctaBlock}>
+        <TouchableOpacity
+          style={styles.preserveButton}
+          onPress={() => router.push({ pathname: '/memory/create', params: { cardId: card!.id } })}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel={t('Preserve this moment', 'Diesen Moment festhalten')}
+        >
+          <Text style={styles.preserveText}>
+            {t('PRESERVE THIS MOMENT', 'MOMENT FESTHALTEN')}
+          </Text>
+        </TouchableOpacity>
+        {edition.sensitive && (
+          <Text style={styles.privacyNote}>
+            {t('This stays private on your device.', 'Das bleibt privat auf deinem Gerät.')}
+          </Text>
+        )}
+        <Text style={styles.noPressure}>
+          {t('no pressure. choose what feels right.', 'kein druck. macht, was sich richtig anfühlt.')}
+        </Text>
+      </View>
+    );
+  }
+
+  function renderSection(section: CardSection, index: number) {
+    return (
+      <React.Fragment key={index}>
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>{l(section.heading).toUpperCase()}</Text>
+          {section.body ? <Text style={styles.sectionText}>{l(section.body)}</Text> : null}
+          {section.bullets && section.bullets.length > 0 ? (
+            <View style={styles.bullets}>
+              {section.bullets.map((b, i) => (
+                <View key={i} style={styles.bulletRow}>
+                  <Text style={styles.bulletDot}>·</Text>
+                  <Text style={styles.bulletText}>{l(b)}</Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
+          {section.footer ? <Text style={styles.sectionText}>{l(section.footer)}</Text> : null}
+        </View>
+        {section.preserveHere ? renderPreserveCTA(String(index)) : null}
+      </React.Fragment>
+    );
+  }
+
+  const hasPreserve = sections.some((s) => s.preserveHere);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backText}>← BACK</Text>
+          <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURÜCK')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerLabel}>CARD {String(card.number).padStart(2, '0')}</Text>
+        <Text style={styles.headerLabel} numberOfLines={1}>{groupLabel.toUpperCase()}</Text>
         <View style={{ width: 60 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Card visual */}
-        <View style={styles.cardVisual}>
+
+        {/* Card visual — mirrors the physical card */}
+        <View style={[styles.cardVisual, { backgroundColor: edition.color }]}>
           <View style={styles.cardInner}>
-            <Text style={styles.cardEdition}>PEAKPLANT — GROW TOGETHER</Text>
-            <Text style={styles.cardTypeLabel}>
-              {isAction ? 'MOMENT' : 'QUESTION'} — #{String(card.number).padStart(2, '0')}
+            <Text style={[styles.cardEdition, tone(edition.ink, 0.7)]}>
+              PEAKPLANT — {edition.name.toUpperCase()}
             </Text>
-            <Text style={styles.cardPrompt}>{card.prompt}</Text>
-            <View style={styles.cardDot} />
+            <Text style={[styles.cardKindLabel, tone(edition.ink, 0.6)]}>
+              {groupLabel.toUpperCase()} · #{String(card.number).padStart(2, '0')}
+            </Text>
+            <Text style={[styles.cardTitle, tone(edition.ink, 1)]}>{title}</Text>
+            <View
+              style={[
+                styles.cardDot,
+                { backgroundColor: edition.ink === 'dark' ? '#1A1A1A' : '#FAF7F0' },
+              ]}
+            />
           </View>
         </View>
 
-        {/* Guidance */}
-        <View style={styles.guidance}>
-          <Text style={styles.guidanceLabel}>HOW TO USE THIS CARD</Text>
-          {isAction ? (
-            <Text style={styles.guidanceText}>
-              do this together. when you're done, preserve the moment in your diary.
-              it doesn't have to be perfect. it just has to be real.
-            </Text>
-          ) : (
-            <Text style={styles.guidanceText}>
-              ask each other this question. there's no right answer.
-              listen more than you speak. then preserve what came up.
-            </Text>
-          )}
-        </View>
+        <Text style={styles.quietNote}>{quietNote}</Text>
 
-        <Text style={styles.invite}>what is growing between you?</Text>
+        {sections.map(renderSection)}
 
-        {/* CTA */}
-        <TouchableOpacity
-          style={styles.preserveButton}
-          onPress={() => router.push({ pathname: '/memory/create', params: { cardId: card.id } })}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.preserveText}>PRESERVE THIS MOMENT</Text>
-        </TouchableOpacity>
+        {/* If a card has no explicit keep-the-moment section, still offer the CTA. */}
+        {!hasPreserve ? renderPreserveCTA('end') : null}
 
-        <Text style={styles.noPressure}>
-          no pressure. choose what feels right.
-        </Text>
       </ScrollView>
     </SafeAreaView>
   );
+}
+
+/** Foreground color for text on an edition's color, by ink + opacity. */
+function tone(ink: 'dark' | 'light', opacity: number) {
+  const base = ink === 'dark' ? '26,26,26' : '250,247,240';
+  return { color: `rgba(${base},${opacity})` };
 }
 
 const styles = StyleSheet.create({
@@ -111,77 +174,100 @@ const styles = StyleSheet.create({
     width: 60,
   },
   headerLabel: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '500',
-    letterSpacing: 3,
+    letterSpacing: 2.5,
     color: Colors.text,
+    textAlign: 'center',
+    flex: 1,
   },
   content: {
     padding: Spacing.screen,
-    gap: Spacing.xl,
+    gap: Spacing.lg,
     paddingBottom: Spacing.xxxl,
   },
   cardVisual: {
-    backgroundColor: Colors.backgroundDark,
     padding: 2,
   },
   cardInner: {
-    backgroundColor: Colors.backgroundDark,
     padding: Spacing.xl,
-    aspectRatio: 0.65,
+    aspectRatio: 0.7,
     justifyContent: 'space-between',
-    borderWidth: 1,
-    borderColor: Colors.borderDark,
+    gap: Spacing.md,
   },
   cardEdition: {
     fontSize: 8,
-    fontWeight: '500',
+    fontWeight: '600',
     letterSpacing: 2.5,
-    color: Colors.accent,
   },
-  cardTypeLabel: {
+  cardKindLabel: {
     fontSize: 9,
     fontWeight: '400',
     letterSpacing: 2,
-    color: Colors.textSubtle,
   },
-  cardPrompt: {
-    fontSize: 24,
-    fontWeight: '200',
-    color: Colors.white,
+  cardTitle: {
+    fontSize: 26,
+    fontWeight: '300',
     lineHeight: 34,
     letterSpacing: -0.3,
     flex: 1,
-    paddingVertical: Spacing.xl,
+    paddingVertical: Spacing.lg,
   },
   cardDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: Colors.accent,
   },
-  guidance: {
+  quietNote: {
+    fontSize: 12,
+    fontWeight: '300',
+    color: Colors.textFaint,
+    lineHeight: 18,
+    letterSpacing: 0.2,
+    fontStyle: 'italic',
+  },
+  section: {
     gap: Spacing.sm,
+    marginTop: Spacing.sm,
   },
-  guidanceLabel: {
+  sectionLabel: {
     fontSize: 9,
     fontWeight: '500',
     letterSpacing: 3,
-    color: Colors.textFaint,
+    color: Colors.accent,
   },
-  guidanceText: {
+  sectionText: {
     fontSize: 15,
     fontWeight: '300',
     color: Colors.textMuted,
     lineHeight: 24,
     letterSpacing: 0.1,
   },
-  invite: {
-    fontSize: 18,
-    fontWeight: '200',
+  bullets: {
+    gap: 6,
+    marginTop: 2,
+  },
+  bulletRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  bulletDot: {
+    fontSize: 15,
+    color: Colors.textFaint,
+    lineHeight: 22,
+  },
+  bulletText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '300',
     color: Colors.text,
-    fontStyle: 'italic',
-    letterSpacing: -0.2,
+    lineHeight: 22,
+    letterSpacing: 0.1,
+  },
+  ctaBlock: {
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   preserveButton: {
     height: 56,
@@ -194,6 +280,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: 3,
     color: Colors.white,
+  },
+  privacyNote: {
+    fontSize: 11,
+    fontWeight: '400',
+    color: Colors.textMuted,
+    textAlign: 'center',
+    letterSpacing: 0.3,
   },
   noPressure: {
     fontSize: 11,

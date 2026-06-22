@@ -8,11 +8,13 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { Logo } from '../../components/ui/Logo';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import { sendEmailCode, verifyEmailCode, ensureProfile } from '../../lib/supabase/auth';
 
 export default function SignInScreen() {
@@ -21,16 +23,36 @@ export default function SignInScreen() {
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useLanguage();
+
+  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
   const sendCode = async () => {
-    if (!email.trim() || busy) return;
+    if (busy) return;
+    if (!isValidEmail(email)) {
+      setError(t('please enter a valid email address.', 'Bitte gib eine gultige E-Mail-Adresse ein.'));
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
-      await sendEmailCode(email);
+      await sendEmailCode(email.trim().toLowerCase());
       setStage('code');
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Could not send the code.');
+      setError(e instanceof Error ? e.message : t('Could not send the code.', 'Code konnte nicht gesendet werden.'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const resendCode = async () => {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await sendEmailCode(email.trim().toLowerCase());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : t('Could not resend the code.', 'Code konnte nicht erneut gesendet werden.'));
     } finally {
       setBusy(false);
     }
@@ -42,11 +64,10 @@ export default function SignInScreen() {
     setError(null);
     try {
       await verifyEmailCode(email, code);
-      // Seed a profile name from the email local-part; editable later.
       await ensureProfile(email.split('@')[0]).catch(() => undefined);
       router.replace('/');
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'That code did not work.');
+      setError(e instanceof Error ? e.message : t('That code did not work.', 'Dieser Code hat nicht funktioniert.'));
       setBusy(false);
     }
   };
@@ -61,9 +82,12 @@ export default function SignInScreen() {
 
           {stage === 'email' ? (
             <View style={styles.center}>
-              <Text style={styles.title}>sign in</Text>
+              <Text style={styles.title}>{t('sign in', 'anmelden')}</Text>
               <Text style={styles.subtitle}>
-                we'll email you a one-time code. no password to remember.
+                {t(
+                  "we'll email you a one-time code. no password to remember.",
+                  'Wir senden dir einen Einmalcode per E-Mail. Kein Passwort notwendig.',
+                )}
               </Text>
               <TextInput
                 style={styles.input}
@@ -79,8 +103,13 @@ export default function SignInScreen() {
             </View>
           ) : (
             <View style={styles.center}>
-              <Text style={styles.title}>enter your code</Text>
-              <Text style={styles.subtitle}>we sent a one-time code to {email.toLowerCase()}.</Text>
+              <Text style={styles.title}>{t('enter your code', 'Code eingeben')}</Text>
+              <Text style={styles.subtitle}>
+                {t(
+                  `we sent a one-time code to ${email.toLowerCase()}.`,
+                  `Wir haben einen Einmalcode an ${email.toLowerCase()} gesendet.`,
+                )}
+              </Text>
               <TextInput
                 style={[styles.input, styles.codeInput]}
                 placeholder="12345678"
@@ -92,8 +121,20 @@ export default function SignInScreen() {
                 textContentType="oneTimeCode"
                 autoFocus
               />
-              <TouchableOpacity onPress={() => setStage('email')} accessibilityRole="button" accessibilityLabel="Use a different email">
-                <Text style={styles.link}>use a different email</Text>
+              <TouchableOpacity
+                onPress={() => { setStage('email'); setCode(''); setError(null); }}
+                accessibilityRole="button"
+                accessibilityLabel={t('Use a different email', 'Andere E-Mail-Adresse verwenden')}
+              >
+                <Text style={styles.link}>{t('use a different email', 'andere E-Mail-Adresse')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => void resendCode()}
+                disabled={busy}
+                accessibilityRole="button"
+                accessibilityLabel={t('Resend code', 'Code erneut senden')}
+              >
+                <Text style={[styles.link, busy && styles.linkDisabled]}>{t('resend code', 'Code erneut senden')}</Text>
               </TouchableOpacity>
             </View>
           )}
@@ -107,9 +148,15 @@ export default function SignInScreen() {
               disabled={busy}
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel={stage === 'email' ? 'Send code' : 'Verify code'}
+              accessibilityLabel={stage === 'email' ? t('Send code', 'Code senden') : t('Verify code', 'Code bestatigen')}
             >
-              <Text style={styles.buttonText}>{stage === 'email' ? 'SEND CODE' : 'CONTINUE'}</Text>
+              {busy ? (
+                <ActivityIndicator color={Colors.white} size="small" />
+              ) : (
+                <Text style={styles.buttonText}>
+                  {stage === 'email' ? t('SEND CODE', 'CODE SENDEN') : t('CONTINUE', 'WEITER')}
+                </Text>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -136,6 +183,7 @@ const styles = StyleSheet.create({
   },
   codeInput: { fontSize: 28, letterSpacing: 5 },
   link: { fontSize: 12, fontWeight: '300', color: Colors.accent, marginTop: Spacing.md },
+  linkDisabled: { opacity: 0.4 },
   error: { fontSize: 13, fontWeight: '300', color: '#b42318', marginBottom: Spacing.md },
   bottom: { alignItems: 'flex-start' },
   button: {

@@ -12,6 +12,7 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { SpaceSwitcher } from '../../components/space/SpaceSwitcher';
 import { SEED_CARDS } from '../../lib/seed';
@@ -20,6 +21,7 @@ import type { Memory } from '../../lib/types';
 export default function MomentsScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { memories, loading } = useMemories(activeSpace?.id);
+  const { t } = useLanguage();
 
   function renderItem({ item }: { item: Memory }) {
     const card = SEED_CARDS.find((c) => c.id === item.cardId);
@@ -32,13 +34,20 @@ export default function MomentsScreen() {
     );
   }
 
+  const subtitle = activeSpace
+    ? `${activeSpace.name.toLowerCase()} · ${t('shared diary', 'gemeinsames Tagebuch')}`
+    : t('your shared diary', 'euer gemeinsames Tagebuch');
+
+  const countLabel = t(
+    `${memories.length} moment${memories.length !== 1 ? 's' : ''} collected`,
+    `${memories.length} Moment${memories.length !== 1 ? 'e' : ''} gesammelt`,
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>moments</Text>
-        <Text style={styles.subtitle}>
-          {activeSpace ? `${activeSpace.name.toLowerCase()} · shared diary` : 'your shared diary'}
-        </Text>
+        <Text style={styles.title}>{t('moments', 'Momente')}</Text>
+        <Text style={styles.subtitle}>{subtitle}</Text>
       </View>
 
       {spaces.length >= 1 && (
@@ -51,12 +60,12 @@ export default function MomentsScreen() {
 
       {loading ? (
         <View style={styles.center}>
-          <Text style={styles.loadingText}>loading moments...</Text>
+          <Text style={styles.loadingText}>{t('loading moments...', 'Momente werden geladen...')}</Text>
         </View>
       ) : memories.length === 0 ? (
         <View style={styles.empty}>
-          <Text style={styles.emptyText}>no moments yet.</Text>
-          <Text style={styles.emptyHint}>scan a card to begin.</Text>
+          <Text style={styles.emptyText}>{t('no moments yet.', 'noch keine Momente.')}</Text>
+          <Text style={styles.emptyHint}>{t('scan a card to begin.', 'Karte scannen, um zu beginnen.')}</Text>
         </View>
       ) : (
         <FlatList
@@ -66,9 +75,7 @@ export default function MomentsScreen() {
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={
-            <Text style={styles.countLabel}>
-              {memories.length} moment{memories.length !== 1 ? 's' : ''} collected
-            </Text>
+            <Text style={styles.countLabel}>{countLabel}</Text>
           }
         />
       )}
@@ -78,9 +85,9 @@ export default function MomentsScreen() {
         onPress={() => router.push('/memory/create')}
         activeOpacity={0.8}
         accessibilityRole="button"
-        accessibilityLabel="Add a moment"
+        accessibilityLabel={t('Add a moment', 'Moment hinzufugen')}
       >
-        <Text style={styles.fabText}>+ MOMENT</Text>
+        <Text style={styles.fabText}>+ {t('MOMENT', 'MOMENT')}</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

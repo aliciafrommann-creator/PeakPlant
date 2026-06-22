@@ -27,14 +27,15 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="us"
+        name="discover"
         options={{
-          title: 'Us',
+          title: 'Discover',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people-outline" size={size} color={color} />
+            <Ionicons name="compass-outline" size={size} color={color} />
           ),
         }}
       />
+      <Tabs.Screen name="us" options={{ href: null }} />
       <Tabs.Screen
         name="moments"
         options={{

@@ -1,5 +1,38 @@
 export type CardType = 'question' | 'action';
 export type CardStatus = 'sealed' | 'activated';
+/**
+ * The three universal groupings inside every edition. Each edition gives them
+ * its own display label (see Edition.groupLabels) — e.g. for Grow Together a
+ * `date` is a "Grow Date", for Soft & Wild it's an "Intimacy Date".
+ */
+export type CardGroup = 'date' | 'act' | 'question';
+export type Lang = 'en' | 'de';
+
+/** Text that is either English-only (string) or fully bilingual. */
+export type LocalizedText = string | { en: string; de: string };
+
+/**
+ * One block of the in-app card experience (e.g. "Before you begin",
+ * "Talk about it", "Keep the moment"). A section can carry a paragraph,
+ * a bullet list, and a closing paragraph — in that order.
+ */
+export interface CardSection {
+  heading: LocalizedText;
+  /** Lead paragraph(s); use \n\n between paragraphs. */
+  body?: LocalizedText;
+  /** Optional bullet list. */
+  bullets?: LocalizedText[];
+  /** Optional closing paragraph(s) after the bullets. */
+  footer?: LocalizedText;
+  /** When true, the "preserve this moment" CTA is rendered right after this section. */
+  preserveHere?: boolean;
+}
+
+export interface CardContent {
+  /** In-app title (the physical card carries the short `prompt`). */
+  title: LocalizedText;
+  sections: CardSection[];
+}
 
 /**
  * A Space is the shared container two-or-more people preserve moments in.
@@ -30,8 +63,13 @@ export interface SpaceMember {
 export interface MomentCard {
   id: string;
   number: number;
+  /** Short physical-card prompt (EN, printed on the card). Used for sharing. */
   prompt: string;
   type: CardType;
+  /** Which of the edition's three groups this card belongs to. */
+  group?: CardGroup;
+  /** Full content for the in-app card detail experience (shown after scanning). */
+  content?: CardContent;
   edition: string;
   /** Derived per space: a card is `activated` once that space preserves a moment for it. */
   status: CardStatus;
@@ -68,15 +106,112 @@ export interface Edition {
   description: string;
   /** Symbol/emoji used as the edition's visual marker (e.g. 🌻 for Sunflower). */
   symbol: string;
+  /** The edition's signature color — themes its diary when opened. */
+  color: string;
+  /** Whether text/foreground on `color` should be dark or light (for contrast). */
+  ink: 'dark' | 'light';
   status: EditionStatus;
-  /** Announced number of moment cards (used before cards are seeded). */
+  /**
+   * Number of cards in this edition's deck. A deck holds 15–20 cards
+   * (see DECK_SIZE_RANGE). 0 means the deck isn't finalized yet — cards are
+   * assigned to editions (and their QR codes generated) incrementally.
+   */
   cardCount: number;
   cards: MomentCard[];
   coverImage?: string;
+  /** Per-edition display names for the three card groups. */
+  groupLabels?: { date: LocalizedText; act: LocalizedText; question: LocalizedText };
+  /**
+   * Intimate editions (e.g. Soft & Wild) carry extra privacy treatment in the
+   * UI — quieter previews, "stays private" affordances. See PRODUCT.md.
+   */
+  sensitive?: boolean;
 }
 
 export interface Goal {
   id: string;
   label: string;
   description: string;
+}
+
+/**
+ * Lifecycle of a saved date idea — moves only on explicit user action, never
+ * auto-advances. `cancelled` = a plan that was called off. The legal moves
+ * between these are defined in lib/savedDates/status.ts.
+ */
+export type SavedDateStatus =
+  | 'idea'
+  | 'saved'
+  | 'planned'
+  | 'cancelled'
+  | 'completed'
+  | 'dismissed';
+
+/**
+ * A date idea the user saved from the Discover feed for their space.
+ * Space-scoped under RLS. The recommendation snapshot (title, concept, priceBand,
+ * estDurationMin) is stored so the card renders without re-running the recommender.
+ * `memoryId` closes the loop when a completed date becomes a diary memory.
+ */
+export interface SavedDate {
+  id: string;
+  spaceId: string;
+  momentId: string;
+  title: string;
+  concept: string;
+  priceBand: string;
+  estDurationMin: number;
+  status: SavedDateStatus;
+  savedAt: string;
+  plannedFor?: string;
+  /** Optional free-text logistics for a plan (who's booking, what to bring). */
+  planningNotes?: string;
+  completedAt?: string;
+  memoryId?: string;
+}
+
+/**
+ * How often a couple wants to come back to a ritual. 'whenever' = no cadence,
+ * just a saved practice they can revisit anytime.
+ */
+export type RitualCadence = 'weekly' | 'monthly' | 'seasonally' | 'whenever';
+
+/**
+ * A ritual is a moment a space loved, turned into something they return to.
+ * Space-scoped under the same RLS as memories. It may originate from a memory
+ * (sourceMemoryId) or a curated idea (sourceMomentId), or be created free-form.
+ * Private to the space — never shared, never surfaced publicly.
+ */
+export interface Ritual {
+  id: string;
+  spaceId: string;
+  title: string;
+  /** Optional: why this matters to us. Private. */
+  note?: string;
+  cadence: RitualCadence;
+  /** Optional origin memory this ritual grew from. */
+  sourceMemoryId?: string;
+  /** Optional curated idea this ritual grew from. */
+  sourceMomentId?: string;
+  createdAt: string;
+  /** Last time the couple marked they came back to it. */
+  lastRevisitedAt?: string;
+}
+
+/**
+ * Public practical feedback left after completing a date idea.
+ * Intentionally separate from the private diary memory.
+ * `tip` is the only user-text field — it is intended for future community
+ * display and must never contain intimate diary content.
+ * `rating` is a simple 1-5 star score.
+ */
+export interface DateFeedback {
+  id: string;
+  savedDateId: string;
+  spaceId: string;
+  momentId: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  /** Optional public practical tip (max 280 chars). No diary content here. */
+  tip?: string;
+  createdAt: string;
 }

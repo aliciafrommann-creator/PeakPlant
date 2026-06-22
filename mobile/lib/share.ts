@@ -1,7 +1,8 @@
 import { Share } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import { composeShareText } from './shareText';
-import type { Memory, MomentCard } from './types';
+import { composeShareText, composeIdeaShareText, composeDatePlanShareText } from './shareText';
+import { ideaLink } from './links';
+import type { Memory, MomentCard, SavedDate } from './types';
 
 export { composeShareText };
 
@@ -28,4 +29,18 @@ export async function shareMemory(memory: Memory, card?: MomentCard): Promise<vo
   const message = composeShareText(memory, card);
   const url = await resolveLocalPhoto(memory.photoUri);
   await Share.share(url ? { message, url } : { message });
+}
+
+/**
+ * Open the native share sheet for a saved date idea or plan. A planned date
+ * shares its "when"; anything else shares the idea. Only the public idea + its
+ * stable link are sent — never private notes or space data.
+ */
+export async function shareSavedDate(saved: SavedDate): Promise<void> {
+  const link = ideaLink(saved.momentId);
+  const message =
+    saved.status === 'planned'
+      ? composeDatePlanShareText(saved, link)
+      : composeIdeaShareText(saved.title, saved.concept, link);
+  await Share.share({ message });
 }

@@ -13,10 +13,12 @@ import { Colors } from '../constants/colors';
 import { Spacing } from '../constants/spacing';
 import { FEATURES } from '../lib/features';
 import { useAppStore } from '../lib/store';
+import { useLanguage } from '../lib/hooks/useLanguage';
 
 export default function CustomizeScreen() {
   const features = useAppStore((s) => s.features);
   const toggleFeature = useAppStore((s) => s.toggleFeature);
+  const { t } = useLanguage();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,18 +26,20 @@ export default function CustomizeScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           accessibilityRole="button"
-          accessibilityLabel="Close"
+          accessibilityLabel={t('Close', 'Schliessen')}
         >
-          <Text style={styles.close}>CLOSE</Text>
+          <Text style={styles.close}>{t('CLOSE', 'SCHLIESSEN')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>CUSTOMIZE</Text>
+        <Text style={styles.headerTitle}>{t('CUSTOMIZE', 'ANPASSEN')}</Text>
         <View style={{ width: 44 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.lead}>
-          make peakplant yours. turn things on when they feel right — nothing here is
-          required, and collecting moments always works.
+          {t(
+            "make peakplant yours. a few gentle helpers are on to start — switch off anything you don't want. nothing here is required, and collecting moments always works.",
+            'Mach PeakPlant zu deinem. Ein paar hilfreiche Funktionen sind zu Beginn aktiviert - schalte ab, was du nicht mochtest. Nichts davon ist Pflicht, und Momente sammeln funktioniert immer.',
+          )}
         </Text>
 
         {FEATURES.map((f) => {
@@ -45,10 +49,10 @@ export default function CustomizeScreen() {
             <View key={f.key} style={styles.row}>
               <View style={styles.rowText}>
                 <View style={styles.rowTitleLine}>
-                  <Text style={styles.rowLabel}>{f.label}</Text>
-                  {!isLive && <Text style={styles.soon}>SOON</Text>}
+                  <Text style={styles.rowLabel}>{t(f.label, f.labelDe)}</Text>
+                  {!isLive && <Text style={styles.soon}>{t('SOON', 'BALD')}</Text>}
                 </View>
-                <Text style={styles.rowDesc}>{f.description}</Text>
+                <Text style={styles.rowDesc}>{t(f.description, f.descriptionDe)}</Text>
               </View>
               <Switch
                 value={enabled}
@@ -56,26 +60,39 @@ export default function CustomizeScreen() {
                 disabled={!isLive}
                 trackColor={{ false: Colors.border, true: Colors.text }}
                 thumbColor={Colors.white}
-                accessibilityLabel={`Toggle ${f.label}`}
+                accessibilityLabel={t(`Toggle ${f.label}`, `${f.labelDe} umschalten`)}
               />
             </View>
           );
         })}
 
         <Text style={styles.footer}>
-          more arrives over time. each piece is optional and can be switched off again
-          whenever you like.
+          {t(
+            'more arrives over time. each piece is optional and can be switched off again whenever you like.',
+            'Mit der Zeit kommt mehr. Jede Funktion ist optional und kann jederzeit wieder deaktiviert werden.',
+          )}
         </Text>
+
+        <TouchableOpacity
+          style={styles.accountRow}
+          onPress={() => router.push('/settings/preferences')}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel={t('Personalization and learned preferences', 'Personalisierung und gelernte Praferenzen')}
+        >
+          <Text style={styles.accountLabel}>{t('personalization', 'Personalisierung')}</Text>
+          <Text style={styles.accountArrow}>-{'>'}</Text>
+        </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.accountRow}
           onPress={() => router.push('/account')}
           activeOpacity={0.8}
           accessibilityRole="button"
-          accessibilityLabel="Account and data"
+          accessibilityLabel={t('Account and data', 'Konto und Daten')}
         >
-          <Text style={styles.accountLabel}>account &amp; data</Text>
-          <Text style={styles.accountArrow}>→</Text>
+          <Text style={styles.accountLabel}>{t('account & data', 'Konto & Daten')}</Text>
+          <Text style={styles.accountArrow}>-{'>'}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

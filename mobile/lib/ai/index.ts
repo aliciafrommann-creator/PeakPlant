@@ -8,5 +8,9 @@
  */
 
 export { nullAI as ai } from './null';
-export type { IAIPersonalization } from './interface';
+// Date Discovery: deterministic curated recommender today; swap to
+// anthropicDiscovery once supabase/functions/discover is deployed.
+export { nullDiscovery as discovery } from './null';
+export type { IAIPersonalization, IDateDiscovery } from './interface';
 export type { AIContext, CardSuggestion, ReflectionPrompt, MomentSuggestion } from './types';
+export type { DateConstraints, DateRecommendation, RecommendationFact } from '../discovery/types';

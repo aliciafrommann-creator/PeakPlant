@@ -1,4 +1,4 @@
-import type { Memory, MomentCard, Space, SpaceMember, SpaceType } from '../types';
+import type { Memory, MomentCard, Space, SpaceMember, SpaceType, SavedDate, SavedDateStatus, DateFeedback, Ritual } from '../types';
 
 export interface IMemoryRepository {
   getAll(spaceId: string): Promise<Memory[]>;
@@ -30,4 +30,32 @@ export interface ISpaceRepository {
   create(input: CreateSpaceInput): Promise<Space>;
   /** Mock join-by-code: links the user into the matching space (or a new one). */
   joinByCode(code: string, userId: string, userName: string): Promise<Space>;
+}
+
+export interface ISavedDateRepository {
+  getAll(spaceId: string): Promise<SavedDate[]>;
+  save(item: Omit<SavedDate, 'id' | 'savedAt'>): Promise<SavedDate>;
+  update(
+    id: string,
+    updates: Partial<
+      Pick<SavedDate, 'status' | 'plannedFor' | 'planningNotes' | 'completedAt' | 'memoryId'>
+    >,
+  ): Promise<SavedDate>;
+  remove(id: string): Promise<void>;
+}
+
+export interface IDateFeedbackRepository {
+  getAll(spaceId: string): Promise<DateFeedback[]>;
+  getByMoment(spaceId: string, momentId: string): Promise<DateFeedback | null>;
+  save(item: Omit<DateFeedback, 'id' | 'createdAt'>): Promise<DateFeedback>;
+}
+
+export interface IRitualRepository {
+  getAll(spaceId: string): Promise<Ritual[]>;
+  create(item: Omit<Ritual, 'id' | 'createdAt'>): Promise<Ritual>;
+  update(
+    id: string,
+    updates: Partial<Pick<Ritual, 'title' | 'note' | 'cadence' | 'lastRevisitedAt'>>,
+  ): Promise<Ritual>;
+  remove(id: string): Promise<void>;
 }

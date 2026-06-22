@@ -47,6 +47,24 @@ If text credibly signals immediate danger (self-harm, abuse, coercion), the app
 resource path. PeakPlant does not diagnose, score risk, contact third parties
 automatically, or use that input for future personalization.
 
+**Implemented** (`lib/ai/safety.ts`, `assessSafety`): a deterministic, offline,
+EN/DE phrase detector runs BEFORE any AI/recommendation response in the Ask
+PeakPlant flow (`app/ask/index.tsx`). On a crisis match it shows a neutral help
+message (emergency 112 + Telefonseelsorge 0800 111 0 111 / 0800 111 0 222) and
+returns early — no recommendations, no model call. The input is never stored,
+logged, or returned in the decision (enforced by a test). The detector is
+conservative toward false positives (showing help to someone who didn't need it
+is low-harm). 11 tests cover EN/DE self-harm, abuse, coercion, case-insensitivity,
+and the no-echo guarantee.
+
+## AI kill switches
+
+`lib/ai/safety.ts` exposes `AI_KILL_SWITCHES` + `aiSurfaceEnabled(surface)` — a
+runtime switch per AI surface (`askPeakPlant`, `liveRecommendations`,
+`reflectionPrompts`). All default OFF for the beta, so only the deterministic
+recommender runs. Turning a surface on is gated on the Edge Function being
+deployed and an eval pass (see Release governance).
+
 ## AI authority boundary
 
 The model has **no authority** to take real-world actions. It cannot publish,
@@ -80,8 +98,32 @@ deterministic authorization + constraints
 - Production monitoring covers fallbacks, unsafe-output reports, crisis routing,
   excluded-signal use, latency, and cost — each with a kill switch.
 
+## Date Discovery rules (PP-029/PP-030)
+
+Discovery adds a second AI surface — `IDateDiscovery` — with its own safety
+constraints on top of the above:
+
+- **No fabrication.** Every fact on a recommendation card carries a provenance
+  label (`curated`, `estimated`, `ai-interpretation`, `needs-confirmation`). The
+  AI may reason and personalize over curated data but must never invent venue
+  names, opening hours, prices, or availability. The recommender returns an empty
+  list when over-constrained rather than fabricating.
+- **Constraints are ephemeral.** `DateConstraints` lives for one request; it is
+  never stored as a durable profile (PP-030).
+- **Partner places not ranked higher.** Ranking is by signal match only — being
+  a partner place carries zero ranking weight (PP-016).
+- **Provenance `verified-live` is prohibited** in the MVP. That label may only
+  be used once a live API call in the same request has confirmed the fact.
+- **The `discover` Edge Function** is the only component that may hold provider
+  keys. The mobile client falls back to the deterministic `nullDiscovery`
+  recommender when the function is unavailable.
+- **No sensitive discovery inferences.** The Discovery AI must not infer or store
+  relationship status, health/dietary needs beyond explicit user input, or
+  intimacy attributes from any behavioral signal.
+
 ## MVP status
 
-No live AI is wired in the MVP. When added, it lands behind `lib/ai/`
-(interface + provider stub, mirroring the repository pattern) and must satisfy
-this policy before shipping.
+The deterministic `nullDiscovery` recommender (`lib/discovery/recommend.ts`) is
+live and tested. The `discover` Edge Function stub (`supabase/functions/discover/`)
+returns HTTP 501 until deployed — clients fall back to `nullDiscovery`. When the
+live AI is wired, it must satisfy this full policy before shipping (PP-023).

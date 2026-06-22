@@ -14,6 +14,7 @@ import { TogetherCard } from '../../components/together/TogetherCard';
 import { PlaceItem } from '../../components/together/PlaceItem';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useAppStore } from '../../lib/store';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import { ai } from '../../lib/ai';
 import { momentsForSpaceType, momentById, LOCAL_PLACES } from '../../lib/together';
 import type { MomentSuggestion } from '../../lib/ai';
@@ -22,6 +23,7 @@ export default function TogetherScreen() {
   const { activeSpace } = useSpaces();
   const goals = useAppStore((s) => s.goals);
   const placesEnabled = useAppStore((s) => s.features.localShops);
+  const { t } = useLanguage();
 
   const candidates = activeSpace ? momentsForSpaceType(activeSpace.type) : [];
   const [suggestion, setSuggestion] = useState<MomentSuggestion | null>(null);
@@ -49,23 +51,25 @@ export default function TogetherScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           accessibilityRole="button"
-          accessibilityLabel="Back"
+          accessibilityLabel={t('Back', 'Zuruck')}
         >
-          <Text style={styles.backText}>← BACK</Text>
+          <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerLabel}>TO DO TOGETHER</Text>
+        <Text style={styles.headerLabel}>{t('TO DO TOGETHER', 'GEMEINSAM TUN')}</Text>
         <View style={{ width: 60 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.intro}>
-          small things to do together — out in the world, then preserve them as moments.
-          never a must.
+          {t(
+            'small things to do together — out in the world, then preserve them as moments. never a must.',
+            'kleine Dinge, die ihr gemeinsam tun konnt - draussen in der Welt, dann als Momente bewahren. Nie ein Muss.',
+          )}
         </Text>
 
         {suggested && (
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>SUGGESTED FOR YOU</Text>
+            <Text style={styles.sectionLabel}>{t('SUGGESTED FOR YOU', 'FUR EUCH EMPFOHLEN')}</Text>
             <TogetherCard
               moment={suggested}
               onPress={() => router.push(`/together/${suggested.id}`)}
@@ -77,7 +81,7 @@ export default function TogetherScreen() {
         )}
 
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>MORE IDEAS</Text>
+          <Text style={styles.sectionLabel}>{t('MORE IDEAS', 'WEITERE IDEEN')}</Text>
           <View style={styles.list}>
             {rest.map((m) => (
               <TogetherCard
@@ -91,14 +95,17 @@ export default function TogetherScreen() {
 
         {placesEnabled && (
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>LOCAL PLACES · INNSBRUCK</Text>
+            <Text style={styles.sectionLabel}>{t('LOCAL PLACES', 'LOKALE ORTE')}</Text>
             <View>
               {partnerPlaces.map((p) => (
                 <PlaceItem key={p.id} place={p} />
               ))}
             </View>
             <Text style={styles.placesNote}>
-              partner places offer a small perk. you never have to buy anything to share a moment.
+              {t(
+                'partner places offer a small perk. you never have to buy anything to share a moment.',
+                'Partnerorte bieten einen kleinen Vorteil. Ihr muss nichts kaufen, um einen Moment zu teilen.',
+              )}
             </Text>
           </View>
         )}

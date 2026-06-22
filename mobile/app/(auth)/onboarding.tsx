@@ -12,11 +12,13 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { ONBOARDING_GOALS } from '../../lib/seed';
 import { useAppStore } from '../../lib/store';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 
 export default function OnboardingScreen() {
   const storeGoals = useAppStore((s) => s.goals);
   const setGoals = useAppStore((s) => s.setGoals);
   const [selectedGoals, setSelectedGoals] = useState<string[]>(storeGoals);
+  const { t } = useLanguage();
 
   const toggleGoal = (id: string) => {
     setSelectedGoals((prev) =>
@@ -33,28 +35,38 @@ export default function OnboardingScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Text style={styles.label}>GETTING STARTED</Text>
-          <Text style={styles.title}>what are you{'\n'}growing toward?</Text>
+          <Text style={styles.label}>{t('GETTING STARTED', 'ERSTE SCHRITTE')}</Text>
+          <Text style={styles.title}>
+            {t('what are you\ngrowing toward?', 'worauf wollt\nihr hinwachsen?')}
+          </Text>
           <Text style={styles.subtitle}>
-            choose what feels true. you can always change this.
+            {t(
+              'choose what feels true. you can always change this.',
+              'wahlt, was sich richtig anfuhlt. ihr konnt es jederzeit andern.',
+            )}
           </Text>
         </View>
 
         <View style={styles.goals}>
           {ONBOARDING_GOALS.map((goal) => {
             const selected = selectedGoals.includes(goal.id);
+            const label = t(goal.label, goal.labelDe);
+            const description = t(goal.description, goal.descriptionDe);
             return (
               <TouchableOpacity
                 key={goal.id}
                 style={[styles.goalItem, selected && styles.goalSelected]}
                 onPress={() => toggleGoal(goal.id)}
                 activeOpacity={0.8}
+                accessibilityRole="checkbox"
+                accessibilityLabel={`${label}: ${description}`}
+                accessibilityState={{ checked: selected }}
               >
                 <Text style={[styles.goalLabel, selected && styles.goalLabelSelected]}>
-                  {goal.label}
+                  {label}
                 </Text>
                 <Text style={[styles.goalDesc, selected && styles.goalDescSelected]}>
-                  {goal.description}
+                  {description}
                 </Text>
               </TouchableOpacity>
             );
@@ -62,11 +74,22 @@ export default function OnboardingScreen() {
         </View>
 
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.continueButton} onPress={goNext} activeOpacity={0.8}>
-            <Text style={styles.continueText}>CONTINUE</Text>
+          <TouchableOpacity
+            style={styles.continueButton}
+            onPress={goNext}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel={t('Continue', 'Weiter')}
+          >
+            <Text style={styles.continueText}>{t('CONTINUE', 'WEITER')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={goNext} activeOpacity={0.7}>
-            <Text style={styles.skip}>skip for now</Text>
+          <TouchableOpacity
+            onPress={goNext}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={t('Skip for now', 'Vorerst uberspringen')}
+          >
+            <Text style={styles.skip}>{t('skip for now', 'vorerst uberspringen')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

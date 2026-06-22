@@ -16,8 +16,21 @@ function formatDate(iso: string): string {
 }
 
 export function MemoryListItem({ memory, card, onPress }: MemoryListItemProps) {
+  const label = [
+    card ? `card ${String(card.number).padStart(2, '0')}` : null,
+    memory.note,
+    formatDate(memory.createdAt),
+  ]
+    .filter(Boolean)
+    .join('. ');
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={onPress}
+      activeOpacity={0.8}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+    >
       <View style={styles.accent} />
       <View style={styles.content}>
         {card && <Text style={styles.cardNum}>#{String(card.number).padStart(2, '0')}</Text>}

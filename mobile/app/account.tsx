@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../constants/colors';
@@ -14,10 +15,12 @@ import { Spacing } from '../constants/spacing';
 import { isSupabaseConfigured } from '../lib/supabase/client';
 import { signOut, deleteAccount } from '../lib/supabase/auth';
 import { useAppStore } from '../lib/store';
+import { useLanguage } from '../lib/hooks/useLanguage';
 
 export default function AccountScreen() {
   const reset = useAppStore((s) => s.reset);
   const [busy, setBusy] = useState(false);
+  const { t } = useLanguage();
 
   const handleSignOut = async () => {
     setBusy(true);
@@ -32,12 +35,15 @@ export default function AccountScreen() {
 
   const confirmDelete = () => {
     Alert.alert(
-      'delete your account?',
-      'this permanently removes your account, your spaces where you are the only member, and your moments. this cannot be undone.',
+      t('delete your account?', 'Konto loschen?'),
+      t(
+        'this permanently removes your account, your spaces where you are the only member, and your moments. this cannot be undone.',
+        'Dein Konto, deine Spaces (wo du das einzige Mitglied bist) und deine Momente werden dauerhaft geloscht. Das kann nicht ruckgangig gemacht werden.',
+      ),
       [
-        { text: 'cancel', style: 'cancel' },
+        { text: t('cancel', 'abbrechen'), style: 'cancel' },
         {
-          text: 'delete',
+          text: t('delete', 'loschen'),
           style: 'destructive',
           onPress: handleDelete,
         },
@@ -53,7 +59,10 @@ export default function AccountScreen() {
       router.replace('/');
     } catch (e) {
       setBusy(false);
-      Alert.alert('could not delete', e instanceof Error ? e.message : 'please try again.');
+      Alert.alert(
+        t('could not delete', 'Loschen fehlgeschlagen'),
+        e instanceof Error ? e.message : t('please try again.', 'Bitte versuche es erneut.'),
+      );
     }
   };
 
@@ -63,17 +72,20 @@ export default function AccountScreen() {
         <TouchableOpacity
           onPress={() => router.back()}
           accessibilityRole="button"
-          accessibilityLabel="Close"
+          accessibilityLabel={t('Close', 'Schliessen')}
         >
-          <Text style={styles.close}>CLOSE</Text>
+          <Text style={styles.close}>{t('CLOSE', 'SCHLIESSEN')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>ACCOUNT & DATA</Text>
+        <Text style={styles.headerTitle}>{t('ACCOUNT & DATA', 'KONTO & DATEN')}</Text>
         <View style={{ width: 44 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.lead}>
-          your diary is private to your spaces. you're always in control of your data.
+          {t(
+            'your diary is private to your spaces. you\'re always in control of your data.',
+            'Dein Tagebuch ist privat fur deinen Space. Du hast jederzeit die Kontrolle uber deine Daten.',
+          )}
         </Text>
 
         <TouchableOpacity
@@ -82,36 +94,43 @@ export default function AccountScreen() {
           disabled={busy}
           activeOpacity={0.8}
           accessibilityRole="button"
-          accessibilityLabel="Sign out"
+          accessibilityLabel={t('Sign out', 'Abmelden')}
         >
           <View style={styles.rowText}>
-            <Text style={styles.rowLabel}>sign out</Text>
-            <Text style={styles.rowDesc}>you can sign back in any time.</Text>
+            <Text style={styles.rowLabel}>{t('sign out', 'abmelden')}</Text>
+            <Text style={styles.rowDesc}>{t('you can sign back in any time.', 'Du kannst dich jederzeit wieder anmelden.')}</Text>
           </View>
-          <Text style={styles.arrow}>→</Text>
+          {busy ? (
+            <ActivityIndicator color={Colors.accent} size="small" />
+          ) : (
+            <Text style={styles.arrow}>-{'>'}</Text>
+          )}
         </TouchableOpacity>
 
         <View style={styles.dangerZone}>
-          <Text style={styles.dangerLabel}>DANGER ZONE</Text>
+          <Text style={styles.dangerLabel}>{t('DANGER ZONE', 'GEFAHRENZONE')}</Text>
           <TouchableOpacity
             style={styles.dangerRow}
             onPress={confirmDelete}
             disabled={busy}
             activeOpacity={0.8}
             accessibilityRole="button"
-            accessibilityLabel="Delete account"
+            accessibilityLabel={t('Delete account', 'Konto loschen')}
           >
             <View style={styles.rowText}>
-              <Text style={styles.dangerText}>delete account</Text>
+              <Text style={styles.dangerText}>{t('delete account', 'Konto loschen')}</Text>
               <Text style={styles.rowDesc}>
-                permanently removes your account and your moments. cannot be undone.
+                {t(
+                  'permanently removes your account and your moments. cannot be undone.',
+                  'Loscht dein Konto und deine Momente dauerhaft. Kann nicht ruckgangig gemacht werden.',
+                )}
               </Text>
             </View>
           </TouchableOpacity>
         </View>
 
         <Text style={styles.footer}>
-          questions about your data? hello@peak-plant.com
+          {t('questions about your data? hello@peak-plant.com', 'Fragen zu deinen Daten? hello@peak-plant.com')}
         </Text>
       </ScrollView>
     </SafeAreaView>

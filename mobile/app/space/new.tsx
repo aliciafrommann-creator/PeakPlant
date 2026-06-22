@@ -16,22 +16,26 @@ import { Spacing } from '../../constants/spacing';
 import { spaceRepository } from '../../lib/repositories';
 import { getActiveUser } from '../../lib/session';
 import { useAppStore } from '../../lib/store';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { SpaceType } from '../../lib/types';
 
 export default function NewSpaceScreen() {
   const setActiveSpace = useAppStore((s) => s.setActiveSpace);
+  const { t } = useLanguage();
 
   const [type, setType] = useState<SpaceType>('friends');
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const create = async () => {
     if (!name.trim() || busy) return;
     setBusy(true);
+    setError(null);
     try {
       const user = await getActiveUser();
-      if (!user) throw new Error('Not signed in');
+      if (!user) throw new Error('not signed in');
       const space = await spaceRepository.create({
         type,
         name,
@@ -42,20 +46,23 @@ export default function NewSpaceScreen() {
       router.back();
     } catch {
       setBusy(false);
+      setError(t("couldn't create the space. please try again.", 'Space konnte nicht erstellt werden. Bitte versuche es erneut.'));
     }
   };
 
   const join = async () => {
     if (!code.trim() || busy) return;
     setBusy(true);
+    setError(null);
     try {
       const user = await getActiveUser();
-      if (!user) throw new Error('Not signed in');
+      if (!user) throw new Error('not signed in');
       const space = await spaceRepository.joinByCode(code, user.id, user.name);
       setActiveSpace(space.id);
       router.back();
     } catch {
       setBusy(false);
+      setError(t("that code didn't work. check it and try again.", 'Dieser Code hat nicht funktioniert. Prufe ihn und versuche es erneut.'));
     }
   };
 
@@ -69,39 +76,44 @@ export default function NewSpaceScreen() {
           <TouchableOpacity
             onPress={() => router.back()}
             accessibilityRole="button"
-            accessibilityLabel="Close"
+            accessibilityLabel={t('Close', 'Schliessen')}
           >
-            <Text style={styles.close}>CLOSE</Text>
+            <Text style={styles.close}>{t('CLOSE', 'SCHLIESSEN')}</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>NEW SPACE</Text>
+          <Text style={styles.headerTitle}>{t('NEW SPACE', 'NEUER SPACE')}</Text>
           <View style={{ width: 44 }} />
         </View>
 
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <Text style={styles.lead}>
-            a space is shared with the people in it. you can be in as many as you like.
+            {t(
+              'a space is shared with the people in it. you can be in as many as you like.',
+              'Ein Space wird mit den Personen darin geteilt. Du kannst in so vielen sein, wie du mochtest.',
+            )}
           </Text>
 
           <View style={styles.section}>
-            <Text style={styles.label}>WHAT KIND OF SPACE?</Text>
+            <Text style={styles.label}>{t('WHAT KIND OF SPACE?', 'WELCHE ART VON SPACE?')}</Text>
             <View style={styles.typeRow}>
-              {(['couple', 'friends'] as SpaceType[]).map((t) => {
-                const active = type === t;
+              {(['couple', 'friends'] as SpaceType[]).map((spaceType) => {
+                const active = type === spaceType;
                 return (
                   <TouchableOpacity
-                    key={t}
+                    key={spaceType}
                     style={[styles.typeChip, active ? styles.typeActive : styles.typeIdle]}
-                    onPress={() => setType(t)}
+                    onPress={() => setType(spaceType)}
                     activeOpacity={0.85}
                     accessibilityRole="button"
                     accessibilityState={{ selected: active }}
-                    accessibilityLabel={t === 'couple' ? 'A couple' : 'Friends'}
+                    accessibilityLabel={spaceType === 'couple' ? t('A couple', 'Ein Paar') : t('Friends', 'Freunde')}
                   >
                     <Text style={[styles.typeText, active && styles.typeTextActive]}>
-                      {t === 'couple' ? 'a couple' : 'friends'}
+                      {spaceType === 'couple' ? t('a couple', 'ein Paar') : t('friends', 'Freunde')}
                     </Text>
                     <Text style={[styles.typeHint, active && styles.typeHintActive]}>
-                      {t === 'couple' ? 'just the two of you' : 'a small group'}
+                      {spaceType === 'couple'
+                        ? t('just the two of you', 'nur ihr zwei')
+                        : t('a small group', 'eine kleine Gruppe')}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -110,10 +122,12 @@ export default function NewSpaceScreen() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.label}>NAME</Text>
+            <Text style={styles.label}>{t('NAME', 'NAME')}</Text>
             <TextInput
               style={styles.input}
-              placeholder={type === 'couple' ? 'e.g. you & them' : 'e.g. the saturday people'}
+              placeholder={type === 'couple'
+                ? t('e.g. you & them', 'z.B. ihr & er/sie')
+                : t('e.g. the saturday people', 'z.B. die Samstagsmenschen')}
               placeholderTextColor={Colors.textFaint}
               value={name}
               onChangeText={setName}
@@ -127,19 +141,19 @@ export default function NewSpaceScreen() {
             disabled={!name.trim() || busy}
             activeOpacity={0.85}
             accessibilityRole="button"
-            accessibilityLabel="Create space"
+            accessibilityLabel={t('Create space', 'Space erstellen')}
           >
-            <Text style={styles.primaryText}>CREATE SPACE</Text>
+            <Text style={styles.primaryText}>{t('CREATE SPACE', 'SPACE ERSTELLEN')}</Text>
           </TouchableOpacity>
 
           <View style={styles.divider}>
             <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>OR JOIN ONE</Text>
+            <Text style={styles.dividerText}>{t('OR JOIN ONE', 'ODER EINEM BEITRETEN')}</Text>
             <View style={styles.dividerLine} />
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.label}>INVITE CODE</Text>
+            <Text style={styles.label}>{t('INVITE CODE', 'EINLADUNGSCODE')}</Text>
             <TextInput
               style={styles.input}
               placeholder="PEAK-0000"
@@ -157,10 +171,16 @@ export default function NewSpaceScreen() {
             disabled={!code.trim() || busy}
             activeOpacity={0.85}
             accessibilityRole="button"
-            accessibilityLabel="Join with code"
+            accessibilityLabel={t('Join with code', 'Mit Code beitreten')}
           >
-            <Text style={styles.secondaryText}>JOIN WITH CODE</Text>
+            <Text style={styles.secondaryText}>{t('JOIN WITH CODE', 'MIT CODE BEITRETEN')}</Text>
           </TouchableOpacity>
+
+          {error && (
+            <Text style={styles.error} accessibilityLiveRegion="polite">
+              {error}
+            </Text>
+          )}
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
@@ -225,4 +245,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   secondaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
+  error: { fontSize: 13, fontWeight: '400', color: '#b42318', lineHeight: 19 },
 });

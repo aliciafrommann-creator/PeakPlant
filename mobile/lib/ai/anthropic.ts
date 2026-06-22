@@ -22,7 +22,8 @@
 
 import type { MomentCard } from '../types';
 import type { TogetherMoment } from '../together';
-import type { IAIPersonalization } from './interface';
+import type { DateConstraints, DateRecommendation } from '../discovery/types';
+import type { IAIPersonalization, IDateDiscovery } from './interface';
 import type { AIContext, CardSuggestion, ReflectionPrompt, MomentSuggestion } from './types';
 
 export const anthropicAI: IAIPersonalization = {
@@ -38,5 +39,26 @@ export const anthropicAI: IAIPersonalization = {
 
   async suggestMoment(_context: AIContext, _candidates: TogetherMoment[]): Promise<MomentSuggestion> {
     throw new Error('Anthropic AI not configured.');
+  },
+};
+
+/**
+ * Date Discovery via the (future) `discover` Supabase Edge Function.
+ *
+ * The function will: validate constraints → retrieve curated candidates →
+ * call Claude with structured output to personalize/rank → server-side web
+ * search ONLY to verify freshness (hours/temporary closures), with citations →
+ * post-validate (reject any fabricated venue/fact; attach provenance) → fall
+ * back to the deterministic `nullDiscovery` if validation fails. ANTHROPIC_API_KEY
+ * lives only in the Edge Function's secrets — never on the client.
+ */
+export const anthropicDiscovery: IDateDiscovery = {
+  async recommend(_constraints: DateConstraints): Promise<DateRecommendation[]> {
+    throw new Error(
+      'Date Discovery AI not configured. Deploy supabase/functions/discover and swap nullDiscovery in lib/ai/index.ts.',
+    );
+  },
+  explain(rec: DateRecommendation) {
+    return { signalsUsed: rec.signalsUsed, signalsNotUsed: rec.signalsNotUsed };
   },
 };

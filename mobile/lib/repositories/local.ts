@@ -1,5 +1,7 @@
 import { storage } from '../storage';
-import type { Memory, MomentCard, Space, SpaceMember } from '../types';
+import type { Memory, MomentCard, Space, SpaceMember, SavedDate, DateFeedback, Ritual } from '../types';
+import { sanitiseTip } from '../privacy/boundaries';
+import { savedDateCache, memoryCache } from '../cache';
 import {
   SEED_MEMORIES,
   SEED_CARDS,
@@ -11,13 +13,18 @@ import type {
   IMemoryRepository,
   ICardRepository,
   ISpaceRepository,
+  ISavedDateRepository,
+  IDateFeedbackRepository,
+  IRitualRepository,
   CreateSpaceInput,
 } from './interfaces';
+import { generateInviteCode, normalizeInviteCode } from '../invite';
 
 const MEMORIES_KEY = 'memories';
 const ACTIVATIONS_KEY = 'cardActivations';
 const SPACES_KEY = 'spaces';
 const MEMBERS_KEY = 'spaceMembers';
+const SAVED_DATES_KEY = 'savedDates';
 
 function generateId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -27,14 +34,6 @@ function now(): string {
   return new Date().toISOString();
 }
 
-function generateInviteCode(): string {
-  // 6 chars from an unambiguous alphabet (~1e9 combos) — a 4-digit code was
-  // brute-forceable to join a stranger's private space.
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 6; i++) code += alphabet[Math.floor(Math.random() * alphabet.length)];
-  return `PEAK-${code}`;
-}
 
 async function loadActivations(): Promise<Record<string, string[]>> {
   return (await storage.get<Record<string, string[]>>(ACTIVATIONS_KEY)) ?? SEED_ACTIVATIONS;
@@ -42,11 +41,16 @@ async function loadActivations(): Promise<Record<string, string[]>> {
 
 export const localMemoryRepository: IMemoryRepository = {
   async getAll(spaceId: string): Promise<Memory[]> {
+    const cacheKey = `memories:${spaceId}`;
+    const cached = memoryCache.get(cacheKey) as Memory[] | null;
+    if (cached) return cached;
     const stored = await storage.get<Memory[]>(MEMORIES_KEY);
     const memories = stored ?? SEED_MEMORIES;
-    return memories
+    const result = memories
       .filter((m) => m.spaceId === spaceId)
       .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    memoryCache.set(cacheKey, result);
+    return result;
   },
 
   async getById(id: string): Promise<Memory | null> {
@@ -65,6 +69,7 @@ export const localMemoryRepository: IMemoryRepository = {
       updatedAt: now(),
     };
     await storage.set(MEMORIES_KEY, [...memories, newMemory]);
+    memoryCache.invalidatePrefix('memories:');
     return newMemory;
   },
 
@@ -76,6 +81,7 @@ export const localMemoryRepository: IMemoryRepository = {
     const updated: Memory = { ...memories[idx], ...updates, updatedAt: now() };
     memories[idx] = updated;
     await storage.set(MEMORIES_KEY, memories);
+    memoryCache.invalidatePrefix('memories:');
     return updated;
   },
 
@@ -83,6 +89,7 @@ export const localMemoryRepository: IMemoryRepository = {
     const stored = await storage.get<Memory[]>(MEMORIES_KEY);
     const memories = stored ?? [...SEED_MEMORIES];
     await storage.set(MEMORIES_KEY, memories.filter((m) => m.id !== id));
+    memoryCache.invalidatePrefix('memories:');
   },
 };
 
@@ -170,7 +177,7 @@ export const localSpaceRepository: ISpaceRepository = {
   async joinByCode(code: string, userId: string, userName: string): Promise<Space> {
     const spaces = await loadSpaces();
     const members = await loadMembers();
-    const normalized = code.trim().toUpperCase();
+    const normalized = normalizeInviteCode(code);
     let space = spaces.find((s) => s.inviteCode.toUpperCase() === normalized) ?? null;
 
     if (!space) {
@@ -198,5 +205,118 @@ export const localSpaceRepository: ISpaceRepository = {
       await storage.set(MEMBERS_KEY, [...members, member]);
     }
     return space;
+  },
+};
+
+export const localSavedDateRepository: ISavedDateRepository = {
+  async getAll(spaceId: string): Promise<SavedDate[]> {
+    const cacheKey = `saved:${spaceId}`;
+    const cached = savedDateCache.get(cacheKey) as SavedDate[] | null;
+    if (cached) return cached;
+    const stored = await storage.get<SavedDate[]>(SAVED_DATES_KEY);
+    const result = (stored ?? [])
+      .filter((d) => d.spaceId === spaceId)
+      .sort((a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime());
+    savedDateCache.set(cacheKey, result);
+    return result;
+  },
+
+  async save(item: Omit<SavedDate, 'id' | 'savedAt'>): Promise<SavedDate> {
+    const stored = await storage.get<SavedDate[]>(SAVED_DATES_KEY);
+    const all = stored ?? [];
+    const entry: SavedDate = { ...item, id: generateId('sd'), savedAt: now() };
+    await storage.set(SAVED_DATES_KEY, [...all, entry]);
+    savedDateCache.invalidatePrefix('saved:');
+    return entry;
+  },
+
+  async update(
+    id: string,
+    updates: Partial<
+      Pick<SavedDate, 'status' | 'plannedFor' | 'planningNotes' | 'completedAt' | 'memoryId'>
+    >,
+  ): Promise<SavedDate> {
+    const stored = await storage.get<SavedDate[]>(SAVED_DATES_KEY);
+    const all = stored ?? [];
+    const idx = all.findIndex((d) => d.id === id);
+    if (idx === -1) throw new Error(`SavedDate ${id} not found`);
+    const updated: SavedDate = { ...all[idx], ...updates };
+    all[idx] = updated;
+    await storage.set(SAVED_DATES_KEY, all);
+    savedDateCache.invalidatePrefix('saved:');
+    return updated;
+  },
+
+  async remove(id: string): Promise<void> {
+    const stored = await storage.get<SavedDate[]>(SAVED_DATES_KEY);
+    const all = stored ?? [];
+    await storage.set(SAVED_DATES_KEY, all.filter((d) => d.id !== id));
+    savedDateCache.invalidatePrefix('saved:');
+  },
+};
+
+const FEEDBACK_KEY = 'dateFeedback';
+
+export const localDateFeedbackRepository: IDateFeedbackRepository = {
+  async getAll(spaceId: string): Promise<DateFeedback[]> {
+    const stored = await storage.get<DateFeedback[]>(FEEDBACK_KEY);
+    return (stored ?? []).filter((f) => f.spaceId === spaceId);
+  },
+
+  async getByMoment(spaceId: string, momentId: string): Promise<DateFeedback | null> {
+    const stored = await storage.get<DateFeedback[]>(FEEDBACK_KEY);
+    return (stored ?? []).find((f) => f.spaceId === spaceId && f.momentId === momentId) ?? null;
+  },
+
+  async save(item: Omit<DateFeedback, 'id' | 'createdAt'>): Promise<DateFeedback> {
+    const stored = await storage.get<DateFeedback[]>(FEEDBACK_KEY);
+    const all = stored ?? [];
+    const entry: DateFeedback = {
+      ...item,
+      tip: sanitiseTip(item.tip),
+      id: generateId('fb'),
+      createdAt: now(),
+    };
+    await storage.set(FEEDBACK_KEY, [...all, entry]);
+    return entry;
+  },
+};
+
+const RITUALS_KEY = 'rituals';
+
+export const localRitualRepository: IRitualRepository = {
+  async getAll(spaceId: string): Promise<Ritual[]> {
+    const stored = await storage.get<Ritual[]>(RITUALS_KEY);
+    return (stored ?? [])
+      .filter((r) => r.spaceId === spaceId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  },
+
+  async create(item: Omit<Ritual, 'id' | 'createdAt'>): Promise<Ritual> {
+    const stored = await storage.get<Ritual[]>(RITUALS_KEY);
+    const all = stored ?? [];
+    const entry: Ritual = { ...item, id: generateId('ritual'), createdAt: now() };
+    await storage.set(RITUALS_KEY, [...all, entry]);
+    return entry;
+  },
+
+  async update(
+    id: string,
+    updates: Partial<Pick<Ritual, 'title' | 'note' | 'cadence' | 'lastRevisitedAt'>>,
+  ): Promise<Ritual> {
+    const stored = await storage.get<Ritual[]>(RITUALS_KEY);
+    const all = stored ?? [];
+    const idx = all.findIndex((r) => r.id === id);
+    if (idx === -1) throw new Error(`Ritual ${id} not found`);
+    const updated: Ritual = { ...all[idx], ...updates };
+    all[idx] = updated;
+    await storage.set(RITUALS_KEY, all);
+    return updated;
+  },
+
+  async remove(id: string): Promise<void> {
+    const stored = await storage.get<Ritual[]>(RITUALS_KEY);
+    const all = stored ?? [];
+    await storage.set(RITUALS_KEY, all.filter((r) => r.id !== id));
   },
 };

@@ -1,18 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
-import { SEED_EDITIONS } from '../../lib/seed';
+import { SEED_EDITIONS, DECK_SIZE_RANGE } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { useBiometric } from '../../lib/hooks/useBiometric';
+import { useLanguage } from '../../lib/hooks/useLanguage';
+import { ShopLink } from '../../components/edition/ShopLink';
 import type { Edition } from '../../lib/types';
 
 export default function GrowScreen() {
   const { activeSpace } = useSpaces();
+  const { authenticate } = useBiometric();
+  const { t } = useLanguage();
   const [progress, setProgress] = useState<Record<string, number>>({});
 
-  // For each available edition, how many cards this space has preserved.
   useEffect(() => {
     if (!activeSpace?.id) {
       setProgress({});
@@ -32,18 +36,31 @@ export default function GrowScreen() {
     };
   }, [activeSpace?.id]);
 
+  const handleEditionPress = useCallback(async (item: Edition) => {
+    if (item.status !== 'available') return;
+    if (item.sensitive) {
+      const granted = await authenticate(t('unlock your private diary', 'privates Tagebuch entsperren'));
+      if (!granted) return;
+    }
+    router.push(`/editions/${item.id}`);
+  }, [authenticate, t]);
+
   function renderEdition({ item }: { item: Edition }) {
     const available = item.status === 'available';
     const done = progress[item.id] ?? 0;
     return (
       <TouchableOpacity
-        style={[styles.card, !available && styles.cardUpcoming]}
-        onPress={() => available && router.push(`/editions/${item.id}`)}
+        style={[
+          styles.card,
+          { borderLeftWidth: 3, borderLeftColor: item.color },
+          !available && styles.cardUpcoming,
+        ]}
+        onPress={() => void handleEditionPress(item)}
         disabled={!available}
         activeOpacity={0.85}
         accessibilityRole="button"
         accessibilityState={{ disabled: !available }}
-        accessibilityLabel={`${item.name}, ${available ? 'open edition' : 'coming soon'}`}
+        accessibilityLabel={`${item.name}, ${available ? t('open edition', 'Edition offnen') : t('coming soon', 'demnachst')}`}
       >
         <Text style={styles.symbol}>{item.symbol}</Text>
         <View style={styles.cardBody}>
@@ -52,9 +69,15 @@ export default function GrowScreen() {
           <Text style={styles.desc} numberOfLines={2}>{item.description}</Text>
           <Text style={available ? styles.meta : styles.metaSoon}>
             {available
-              ? `${done} of ${item.cardCount} preserved`
-              : 'coming soon'}
+              ? t(`${done} of ${item.cardCount} preserved`, `${done} von ${item.cardCount} bewahrt`)
+              : t(
+                  `${DECK_SIZE_RANGE.min}-${DECK_SIZE_RANGE.max} cards - coming soon`,
+                  `${DECK_SIZE_RANGE.min}-${DECK_SIZE_RANGE.max} Karten - demnachst`,
+                )}
           </Text>
+          {item.sensitive && available && (
+            <Text style={styles.privateBadge}>{t('private - device only', 'privat - nur auf dem Gerat')}</Text>
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -68,14 +91,17 @@ export default function GrowScreen() {
         renderItem={renderEdition}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.kicker}>EDITIONS</Text>
-            <Text style={styles.title}>grow</Text>
+            <Text style={styles.kicker}>{t('EDITIONS', 'EDITIONEN')}</Text>
+            <Text style={styles.title}>{t('grow', 'wachsen')}</Text>
             <Text style={styles.lead}>
-              each edition is a deck of moments to collect together. open one,
-              then scan the card you finished to preserve it.
+              {t(
+                'each edition is a deck of moments to collect together. open one, then scan the card you finished to preserve it.',
+                'jede Edition ist ein Stapel Momente, die ihr gemeinsam sammelt. Offnet eine, scannt dann die fertige Karte, um sie zu bewahren.',
+              )}
             </Text>
           </View>
         }
+        ListFooterComponent={<ShopLink variant="inline" />}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
       />
@@ -132,5 +158,13 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: Colors.textFaint,
     marginTop: 4,
+  },
+  privateBadge: {
+    fontSize: 9,
+    fontWeight: '400',
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+    color: Colors.accent,
+    marginTop: 2,
   },
 });
