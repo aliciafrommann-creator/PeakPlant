@@ -148,22 +148,22 @@ export default function CreateMemoryScreen() {
             activeOpacity={0.8}
             onPress={pickPhoto}
             accessibilityRole="button"
-            accessibilityLabel={photoUri ? 'Change photo' : 'Add a photo (optional)'}
+            accessibilityLabel={photoUri ? t('Change photo', 'Foto andern') : t('Add a photo (optional)', 'Foto hinzufugen (optional)')}
           >
             {photoUri ? (
               <Image source={{ uri: photoUri }} style={styles.photoPreview} />
             ) : (
               <View style={styles.photoPlaceholder}>
                 <Text style={styles.photoIcon}>○</Text>
-                <Text style={styles.photoText}>ADD PHOTO</Text>
-                <Text style={styles.photoHint}>optional</Text>
+                <Text style={styles.photoText}>{t('ADD PHOTO', 'FOTO HINZUFUGEN')}</Text>
+                <Text style={styles.photoHint}>{t('optional', 'optional')}</Text>
               </View>
             )}
           </TouchableOpacity>
 
           {/* Note input */}
           <View style={styles.noteSection}>
-            <Text style={styles.noteLabel}>YOUR NOTE</Text>
+            <Text style={styles.noteLabel}>{t('YOUR NOTE', 'DEINE NOTIZ')}</Text>
             <TextInput
               style={styles.noteInput}
               placeholder={notePlaceholder}
