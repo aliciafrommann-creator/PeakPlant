@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,20 +7,42 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { useSpaces } from '../../lib/hooks/useSpaces';
 import { momentById, placeById } from '../../lib/together';
 import { experienceTags } from '../../lib/discovery/experience';
+import { feedbackRepository } from '../../lib/repositories';
+import { aggregateRatings, ratingsForMoment } from '../../lib/discovery/ratings';
+import type { RatingSummary } from '../../lib/discovery/ratings';
 
 export default function TogetherDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const placesEnabled = useAppStore((s) => s.features.localShops);
   const { t } = useLanguage();
+  const { activeSpace } = useSpaces();
   const moment = momentById(id);
   const place = placesEnabled ? placeById(moment?.placeId) : undefined;
+
+  const [summary, setSummary] = useState<RatingSummary | null>(null);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (!activeSpace || !id) return;
+      let alive = true;
+      feedbackRepository
+        .getAll(activeSpace.id)
+        .then((all) => {
+          if (!alive) return;
+          setSummary(aggregateRatings(ratingsForMoment(all, id)));
+        })
+        .catch(() => { /* best-effort: no rating block rather than a crash */ });
+      return () => { alive = false; };
+    }, [activeSpace, id]),
+  );
 
   if (!moment) {
     return (
@@ -77,6 +99,28 @@ export default function TogetherDetailScreen() {
             </View>
           );
         })()}
+
+        {summary && summary.count > 0 && (
+          <View style={styles.ratingBlock}>
+            <Text style={styles.ratingLabel}>{t('YOUR SPACE TRIED THIS', 'IHR HABT DAS PROBIERT')}</Text>
+            <View style={styles.ratingRow}>
+              <Text style={styles.ratingStars}>
+                {'★'.repeat(Math.round(summary.average))}{'☆'.repeat(5 - Math.round(summary.average))}
+              </Text>
+              <Text style={styles.ratingMeta}>
+                {summary.average} · {summary.count === 1
+                  ? t('once', 'einmal')
+                  : t(`${summary.count} times`, `${summary.count}-mal`)}
+              </Text>
+            </View>
+            {summary.latestTip ? (
+              <Text style={styles.ratingTip}>{'"'}{summary.latestTip}{'"'}</Text>
+            ) : null}
+            <Text style={styles.ratingNote}>
+              {t('from your own feedback — stays private to your space', 'aus eurem eigenen Feedback - bleibt privat in eurem Space')}
+            </Text>
+          </View>
+        )}
 
         {place && (
           <View style={styles.placeCard}>
@@ -152,6 +196,18 @@ const styles = StyleSheet.create({
   },
   tagText: { fontSize: 12, fontWeight: '400', color: Colors.textMuted, letterSpacing: 0.2 },
   experienceNote: { fontSize: 10, fontWeight: '300', color: Colors.textFaint, fontStyle: 'italic' },
+  ratingBlock: {
+    backgroundColor: Colors.backgroundCream,
+    padding: Spacing.lg,
+    gap: Spacing.xs,
+    marginTop: Spacing.md,
+  },
+  ratingLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.accent },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  ratingStars: { fontSize: 16, color: Colors.accent, letterSpacing: 2 },
+  ratingMeta: { fontSize: 13, fontWeight: '400', color: Colors.textMuted },
+  ratingTip: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, fontStyle: 'italic', lineHeight: 19 },
+  ratingNote: { fontSize: 10, fontWeight: '300', color: Colors.textFaint, fontStyle: 'italic' },
   placeCard: {
     backgroundColor: Colors.backgroundCream,
     padding: Spacing.lg,
