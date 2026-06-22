@@ -9,6 +9,16 @@ const ACTIVE_SPACE_KEY = 'activeSpaceId';
 const FEATURES_KEY = 'enabledFeatures';
 const LANGUAGE_KEY = 'language';
 
+/**
+ * UI-preference writes are fire-and-forget: the in-memory state already updated,
+ * so a failed persist only means the choice won't survive a restart. We log it
+ * instead of swallowing it (storage.set now throws on failure) so it surfaces in
+ * dev without crashing the interaction.
+ */
+function warnWriteFailed(e: unknown): void {
+  console.warn('[store] could not persist preference:', e);
+}
+
 interface AppState {
   hydrated: boolean;
   onboarded: boolean;
@@ -46,23 +56,23 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   setLanguage: (lang) => {
     set({ language: lang });
-    void storage.set(LANGUAGE_KEY, lang);
+    void storage.set(LANGUAGE_KEY, lang).catch(warnWriteFailed);
   },
 
   setGoals: (goals) => {
     set({ goals });
-    void storage.set(GOALS_KEY, goals);
+    void storage.set(GOALS_KEY, goals).catch(warnWriteFailed);
   },
 
   setActiveSpace: (id) => {
     set({ activeSpaceId: id });
-    void storage.set(ACTIVE_SPACE_KEY, id);
+    void storage.set(ACTIVE_SPACE_KEY, id).catch(warnWriteFailed);
   },
 
   toggleFeature: (key, enabled) => {
     const features = { ...get().features, [key]: enabled };
     set({ features });
-    void storage.set(FEATURES_KEY, features);
+    void storage.set(FEATURES_KEY, features).catch(warnWriteFailed);
   },
 
   completeOnboarding: async () => {

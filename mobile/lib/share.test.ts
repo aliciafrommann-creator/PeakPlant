@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { composeShareText } from './shareText';
+import { composeShareText, composeInviteText } from './shareText';
 import type { Memory, MomentCard } from './types';
 
 const memory: Memory = {
@@ -46,5 +46,33 @@ describe('composeShareText', () => {
   it('separates paragraphs with a blank line', () => {
     const text = composeShareText(memory, card);
     expect(text.split('\n\n').length).toBe(3);
+  });
+});
+
+describe('composeInviteText', () => {
+  it('always includes the invite code verbatim', () => {
+    const text = composeInviteText('PEAK-ABC123', 'you & me');
+    expect(text).toContain('PEAK-ABC123');
+  });
+
+  it('names the space when provided', () => {
+    const text = composeInviteText('PEAK-ABC123', 'you & me');
+    expect(text).toContain('you & me');
+  });
+
+  it('works without a space name', () => {
+    const text = composeInviteText('PEAK-ABC123');
+    expect(text).toContain('PEAK-ABC123');
+    expect(text).toContain('PeakPlant');
+  });
+
+  it('trims surrounding whitespace from the code', () => {
+    const text = composeInviteText('  PEAK-ABC123  ');
+    expect(text).toContain('Your invite code: PEAK-ABC123\n');
+  });
+
+  it('tells the recipient how to redeem the code', () => {
+    const text = composeInviteText('PEAK-ABC123');
+    expect(text.toLowerCase()).toContain('join with code');
   });
 });

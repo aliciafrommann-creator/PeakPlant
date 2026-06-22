@@ -25,13 +25,15 @@ export default function NewSpaceScreen() {
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const create = async () => {
     if (!name.trim() || busy) return;
     setBusy(true);
+    setError(null);
     try {
       const user = await getActiveUser();
-      if (!user) throw new Error('Not signed in');
+      if (!user) throw new Error('not signed in');
       const space = await spaceRepository.create({
         type,
         name,
@@ -42,20 +44,23 @@ export default function NewSpaceScreen() {
       router.back();
     } catch {
       setBusy(false);
+      setError("couldn't create the space. please try again.");
     }
   };
 
   const join = async () => {
     if (!code.trim() || busy) return;
     setBusy(true);
+    setError(null);
     try {
       const user = await getActiveUser();
-      if (!user) throw new Error('Not signed in');
+      if (!user) throw new Error('not signed in');
       const space = await spaceRepository.joinByCode(code, user.id, user.name);
       setActiveSpace(space.id);
       router.back();
     } catch {
       setBusy(false);
+      setError("that code didn't work. check it and try again.");
     }
   };
 
@@ -161,6 +166,12 @@ export default function NewSpaceScreen() {
           >
             <Text style={styles.secondaryText}>JOIN WITH CODE</Text>
           </TouchableOpacity>
+
+          {error && (
+            <Text style={styles.error} accessibilityLiveRegion="polite">
+              {error}
+            </Text>
+          )}
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
@@ -225,4 +236,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   secondaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
+  error: { fontSize: 13, fontWeight: '400', color: '#b42318', lineHeight: 19 },
 });

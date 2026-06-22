@@ -34,8 +34,9 @@ export default function CustomizeScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.lead}>
-          make peakplant yours. turn things on when they feel right — nothing here is
-          required, and collecting moments always works.
+          make peakplant yours. a few gentle helpers are on to start — switch off
+          anything you don't want. nothing here is required, and collecting moments
+          always works.
         </Text>
 
         {FEATURES.map((f) => {

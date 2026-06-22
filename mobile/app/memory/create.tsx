@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
+  Alert,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -25,6 +26,7 @@ export default function CreateMemoryScreen() {
   const [note, setNote] = useState('');
   const [photoUri, setPhotoUri] = useState<string | undefined>(undefined);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { activeSpace } = useSpaces();
   const { createMemory } = useMemories(activeSpace?.id);
 
@@ -50,8 +52,18 @@ export default function CreateMemoryScreen() {
   };
 
   const handleSave = async () => {
-    if (!note.trim() || !activeSpace) return;
+    if (!note.trim()) return;
+    if (!activeSpace) {
+      setError(
+        t(
+          'no active space — set one up first, then preserve this moment.',
+          'kein aktiver Raum — richte zuerst einen ein, dann halte diesen Moment fest.',
+        ),
+      );
+      return;
+    }
     setSaving(true);
+    setError(null);
     try {
       const memory = await createMemory({
         cardId: selectedCardId,
@@ -60,8 +72,39 @@ export default function CreateMemoryScreen() {
       });
       router.replace(`/memory/${memory.id}`);
     } catch (_e) {
+      // The write failed — tell the user so they don't lose the moment thinking
+      // it was saved. Their note stays in the field so they can retry.
       setSaving(false);
+      setError(
+        t(
+          "couldn't save this moment. check your connection and try again.",
+          'der Moment konnte nicht gespeichert werden. prüfe deine Verbindung und versuche es erneut.',
+        ),
+      );
     }
+  };
+
+  const handleClose = () => {
+    const hasContent = note.trim().length > 0 || !!photoUri;
+    if (!hasContent || saving) {
+      router.back();
+      return;
+    }
+    Alert.alert(
+      t('discard this moment?', 'diesen Moment verwerfen?'),
+      t(
+        "your note hasn't been saved yet.",
+        'deine Notiz wurde noch nicht gespeichert.',
+      ),
+      [
+        { text: t('keep editing', 'weiter bearbeiten'), style: 'cancel' },
+        {
+          text: t('discard', 'verwerfen'),
+          style: 'destructive',
+          onPress: () => router.back(),
+        },
+      ],
+    );
   };
 
   return (
@@ -71,13 +114,22 @@ export default function CreateMemoryScreen() {
     >
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Text style={styles.backText}>CLOSE</Text>
+          <TouchableOpacity
+            onPress={handleClose}
+            accessibilityRole="button"
+            accessibilityLabel={t('Close', 'Schließen')}
+          >
+            <Text style={styles.backText}>{t('CLOSE', 'SCHLIESSEN')}</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>PRESERVE MOMENT</Text>
-          <TouchableOpacity onPress={handleSave} disabled={!note.trim() || saving}>
+          <Text style={styles.headerTitle}>{t('PRESERVE MOMENT', 'MOMENT FESTHALTEN')}</Text>
+          <TouchableOpacity
+            onPress={handleSave}
+            disabled={!note.trim() || saving}
+            accessibilityRole="button"
+            accessibilityLabel={t('Save moment', 'Moment speichern')}
+          >
             <Text style={[styles.saveText, (!note.trim() || saving) && styles.saveDisabled]}>
-              SAVE
+              {saving ? t('SAVING…', 'SPEICHERT…') : t('SAVE', 'SPEICHERN')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -124,8 +176,17 @@ export default function CreateMemoryScreen() {
             />
           </View>
 
+          {error && (
+            <Text style={styles.error} accessibilityLiveRegion="polite">
+              {error}
+            </Text>
+          )}
+
           <Text style={styles.privateNote}>
-            a moment worth keeping. this stays private.
+            {t(
+              'a moment worth keeping. this stays private.',
+              'ein Moment, den es sich zu bewahren lohnt. das bleibt privat.',
+            )}
           </Text>
         </ScrollView>
       </SafeAreaView>
@@ -237,5 +298,12 @@ const styles = StyleSheet.create({
     color: Colors.textFaint,
     letterSpacing: 0.5,
     fontStyle: 'italic',
+  },
+  error: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: '#b42318',
+    lineHeight: 19,
+    letterSpacing: 0.1,
   },
 });

@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
+  Share,
+  ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
@@ -14,6 +16,8 @@ import { useAppStore } from '../../lib/store';
 import { isSupabaseConfigured } from '../../lib/supabase/client';
 import { spaceRepository } from '../../lib/repositories';
 import { getActiveUser } from '../../lib/session';
+import { composeInviteText } from '../../lib/shareText';
+import type { Space } from '../../lib/types';
 
 const FIRST_SPACE = SEED_SPACES[0];
 
@@ -21,34 +25,68 @@ export default function InviteScreen() {
   const completeOnboarding = useAppStore((s) => s.completeOnboarding);
   const setActiveSpace = useAppStore((s) => s.setActiveSpace);
 
-  const enter = async () => {
-    if (isSupabaseConfigured) {
-      // Backend mode: create a real couple space for the signed-in user.
+  // Local-first: the seeded space already has a real, shareable code. Backend:
+  // we create the couple space up front so the code shown here is real (no more
+  // misleading "— — — —" placeholder).
+  const [space, setSpace] = useState<Space | null>(isSupabaseConfigured ? null : FIRST_SPACE);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const createBackendSpace = useCallback(async () => {
+    setCreating(true);
+    setError(null);
+    try {
       const user = await getActiveUser();
       if (!user) {
         router.replace('/(auth)/sign-in');
         return;
       }
-      try {
-        const space = await spaceRepository.create({
-          type: 'couple',
-          name: user.name ? `${user.name}'s space` : 'Our space',
-          ownerUserId: user.id,
-          ownerName: user.name,
-        });
-        setActiveSpace(space.id);
-        await completeOnboarding();
-        router.replace('/(tabs)/us');
-      } catch {
-        // Stay on the screen; the user can retry.
-      }
+      const created = await spaceRepository.create({
+        type: 'couple',
+        name: user.name ? `${user.name}'s space` : 'Our space',
+        ownerUserId: user.id,
+        ownerName: user.name,
+      });
+      setSpace(created);
+      setActiveSpace(created.id);
+    } catch {
+      setError("couldn't set up your space. tap retry to try again.");
+    } finally {
+      setCreating(false);
+    }
+  }, [setActiveSpace]);
+
+  useEffect(() => {
+    if (isSupabaseConfigured) void createBackendSpace();
+  }, [createBackendSpace]);
+
+  const onShare = async () => {
+    if (!space) return;
+    try {
+      await Share.share({ message: composeInviteText(space.inviteCode, space.name) });
+    } catch {
+      // The OS share sheet was dismissed or unavailable — nothing to recover.
+    }
+  };
+
+  const enter = async () => {
+    // In backend mode a failed creation leaves no space — CONTINUE becomes retry.
+    if (isSupabaseConfigured && !space) {
+      await createBackendSpace();
       return;
     }
-    // Local-first mode: use the seeded space.
-    setActiveSpace(FIRST_SPACE.id);
-    await completeOnboarding();
-    router.replace('/(tabs)/us');
+    setError(null);
+    try {
+      if (space) setActiveSpace(space.id);
+      await completeOnboarding();
+      router.replace('/(tabs)/us');
+    } catch {
+      setError("couldn't finish setup. please try again.");
+    }
   };
+
+  const code = space?.inviteCode;
+  const canShare = !!code;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -64,11 +102,13 @@ export default function InviteScreen() {
 
         <View style={styles.codeContainer}>
           <Text style={styles.codeLabel}>YOUR CODE</Text>
-          <Text style={styles.code}>{isSupabaseConfigured ? '— — — —' : FIRST_SPACE.inviteCode}</Text>
+          {creating && !code ? (
+            <ActivityIndicator color={Colors.accent} style={styles.codeLoading} />
+          ) : (
+            <Text style={styles.code}>{code ?? '— — — —'}</Text>
+          )}
           <Text style={styles.codeHint}>
-            {isSupabaseConfigured
-              ? 'your space gets its own code once you continue — find it in the space switcher.'
-              : 'your partner enters this when they set up their account'}
+            your partner enters this when they set up their account.
           </Text>
         </View>
 
@@ -78,13 +118,35 @@ export default function InviteScreen() {
           <View style={styles.dividerLine} />
         </View>
 
-        <TouchableOpacity style={styles.shareButton} activeOpacity={0.8}>
-          <Text style={styles.shareText}>SHARE LINK</Text>
+        <TouchableOpacity
+          style={[styles.shareButton, !canShare && styles.disabled]}
+          activeOpacity={0.8}
+          onPress={onShare}
+          disabled={!canShare}
+          accessibilityRole="button"
+          accessibilityLabel="Share invite link"
+        >
+          <Text style={styles.shareText}>SHARE INVITE</Text>
         </TouchableOpacity>
 
+        {error && (
+          <Text style={styles.error} accessibilityLiveRegion="polite">
+            {error}
+          </Text>
+        )}
+
         <View style={styles.bottom}>
-          <TouchableOpacity style={styles.continueButton} onPress={enter} activeOpacity={0.8}>
-            <Text style={styles.continueText}>CONTINUE FOR NOW</Text>
+          <TouchableOpacity
+            style={[styles.continueButton, creating && styles.disabled]}
+            onPress={enter}
+            activeOpacity={0.8}
+            disabled={creating}
+            accessibilityRole="button"
+            accessibilityLabel={isSupabaseConfigured && !space ? 'Retry' : 'Continue'}
+          >
+            <Text style={styles.continueText}>
+              {isSupabaseConfigured && !space && !creating ? 'RETRY' : 'CONTINUE FOR NOW'}
+            </Text>
           </TouchableOpacity>
           <Text style={styles.hint}>
             your partner can join later using the code above
@@ -145,6 +207,10 @@ const styles = StyleSheet.create({
     color: Colors.white,
     letterSpacing: 8,
   },
+  codeLoading: {
+    alignSelf: 'flex-start',
+    marginVertical: Spacing.sm,
+  },
   codeHint: {
     fontSize: 12,
     fontWeight: '300',
@@ -179,6 +245,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: 3,
     color: Colors.text,
+  },
+  disabled: { opacity: 0.4 },
+  error: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: '#b42318',
+    lineHeight: 19,
   },
   bottom: {
     marginTop: 'auto',
