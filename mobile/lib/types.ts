@@ -134,8 +134,18 @@ export interface Goal {
   description: string;
 }
 
-/** Lifecycle of a saved date idea — progresses forward; never auto-advances. */
-export type SavedDateStatus = 'idea' | 'saved' | 'planned' | 'completed' | 'dismissed';
+/**
+ * Lifecycle of a saved date idea — moves only on explicit user action, never
+ * auto-advances. `cancelled` = a plan that was called off. The legal moves
+ * between these are defined in lib/savedDates/status.ts.
+ */
+export type SavedDateStatus =
+  | 'idea'
+  | 'saved'
+  | 'planned'
+  | 'cancelled'
+  | 'completed'
+  | 'dismissed';
 
 /**
  * A date idea the user saved from the Discover feed for their space.
@@ -154,6 +164,8 @@ export interface SavedDate {
   status: SavedDateStatus;
   savedAt: string;
   plannedFor?: string;
+  /** Optional free-text logistics for a plan (who's booking, what to bring). */
+  planningNotes?: string;
   completedAt?: string;
   memoryId?: string;
 }

@@ -221,7 +221,9 @@ export const localSavedDateRepository: ISavedDateRepository = {
 
   async update(
     id: string,
-    updates: Partial<Pick<SavedDate, 'status' | 'plannedFor' | 'completedAt' | 'memoryId'>>,
+    updates: Partial<
+      Pick<SavedDate, 'status' | 'plannedFor' | 'planningNotes' | 'completedAt' | 'memoryId'>
+    >,
   ): Promise<SavedDate> {
     const stored = await storage.get<SavedDate[]>(SAVED_DATES_KEY);
     const all = stored ?? [];

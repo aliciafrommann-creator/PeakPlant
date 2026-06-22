@@ -220,6 +220,7 @@ function mapSavedDate(r: any): SavedDate {
     status: r.status,
     savedAt: r.saved_at,
     plannedFor: r.planned_for ?? undefined,
+    planningNotes: r.planning_notes ?? undefined,
     completedAt: r.completed_at ?? undefined,
     memoryId: r.memory_id ?? undefined,
   };
@@ -257,11 +258,16 @@ export const supabaseSavedDateRepository: ISavedDateRepository = {
 
   async update(
     id: string,
-    updates: Partial<Pick<SavedDate, 'status' | 'plannedFor' | 'completedAt' | 'memoryId'>>,
+    updates: Partial<
+      Pick<SavedDate, 'status' | 'plannedFor' | 'planningNotes' | 'completedAt' | 'memoryId'>
+    >,
   ): Promise<SavedDate> {
     const patch: Record<string, unknown> = {};
     if (updates.status !== undefined) patch.status = updates.status;
+    // planned_for is free-text in the app (e.g. "this Saturday"); migration 0006
+    // relaxes the column to text to match. Requires 0006 applied (backend mode).
     if (updates.plannedFor !== undefined) patch.planned_for = updates.plannedFor;
+    if (updates.planningNotes !== undefined) patch.planning_notes = updates.planningNotes;
     if (updates.completedAt !== undefined) patch.completed_at = updates.completedAt;
     if (updates.memoryId !== undefined) patch.memory_id = updates.memoryId;
     const { data, error } = await db().from('saved_dates').update(patch).eq('id', id).select().single();

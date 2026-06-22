@@ -37,7 +37,9 @@ export interface ISavedDateRepository {
   save(item: Omit<SavedDate, 'id' | 'savedAt'>): Promise<SavedDate>;
   update(
     id: string,
-    updates: Partial<Pick<SavedDate, 'status' | 'plannedFor' | 'completedAt' | 'memoryId'>>,
+    updates: Partial<
+      Pick<SavedDate, 'status' | 'plannedFor' | 'planningNotes' | 'completedAt' | 'memoryId'>
+    >,
   ): Promise<SavedDate>;
   remove(id: string): Promise<void>;
 }

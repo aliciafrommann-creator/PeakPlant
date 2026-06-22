@@ -26,6 +26,9 @@ const STATUS_WEIGHT: Record<SavedDateStatus, number> = {
   planned: 2,
   saved: 1,
   idea: 0,
+  // A plan called off is mildly negative — weaker than an outright dismissal,
+  // since the idea itself may still appeal; the timing just didn't work.
+  cancelled: -1,
   dismissed: -2,
 };
 

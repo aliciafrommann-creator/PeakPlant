@@ -19,6 +19,7 @@ import { Spacing } from '../../constants/spacing';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { savedDateRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { transitionEffect } from '../../lib/savedDates/status';
 import type { SavedDate } from '../../lib/types';
 
 export default function SavedDatesScreen() {
@@ -29,6 +30,7 @@ export default function SavedDatesScreen() {
     idea: t('idea', 'Idee'),
     saved: t('saved', 'gespeichert'),
     planned: t('planned', 'geplant'),
+    cancelled: t('called off', 'abgesagt'),
     completed: t('done', 'erledigt'),
     dismissed: t('dismissed', 'verworfen'),
   };
@@ -37,6 +39,7 @@ export default function SavedDatesScreen() {
   const [loading, setLoading] = useState(true);
   const [planningId, setPlanningId] = useState<string | null>(null);
   const [planText, setPlanText] = useState('');
+  const [planNotes, setPlanNotes] = useState('');
   const [planBusy, setPlanBusy] = useState(false);
 
   const load = useCallback(async () => {
@@ -56,7 +59,14 @@ export default function SavedDatesScreen() {
 
   const openPlan = useCallback((d: SavedDate) => {
     setPlanText(d.plannedFor ?? '');
+    setPlanNotes(d.planningNotes ?? '');
     setPlanningId(d.id);
+  }, []);
+
+  const closePlan = useCallback(() => {
+    setPlanningId(null);
+    setPlanText('');
+    setPlanNotes('');
   }, []);
 
   const confirmPlan = useCallback(async () => {
@@ -66,9 +76,9 @@ export default function SavedDatesScreen() {
       await savedDateRepository.update(planningId, {
         status: 'planned',
         plannedFor: planText.trim(),
+        planningNotes: planNotes.trim() || undefined,
       });
-      setPlanningId(null);
-      setPlanText('');
+      closePlan();
       void load();
     } catch {
       Alert.alert(
@@ -78,7 +88,26 @@ export default function SavedDatesScreen() {
     } finally {
       setPlanBusy(false);
     }
-  }, [planningId, planText, planBusy, load, t]);
+  }, [planningId, planText, planNotes, planBusy, load, closePlan, t]);
+
+  const cancelPlan = useCallback(
+    async (d: SavedDate) => {
+      const effect = transitionEffect('cancelled');
+      try {
+        await savedDateRepository.update(d.id, {
+          status: 'cancelled',
+          ...(effect.clearPlannedFor ? { plannedFor: undefined, planningNotes: undefined } : {}),
+        });
+        void load();
+      } catch {
+        Alert.alert(
+          t('something went wrong', 'etwas ist schiefgelaufen'),
+          t('could not update this idea. please try again.', 'Idee konnte nicht aktualisiert werden.'),
+        );
+      }
+    },
+    [load, t],
+  );
 
   const markDone = useCallback(
     async (d: SavedDate) => {
@@ -195,13 +224,16 @@ export default function SavedDatesScreen() {
                 <Text style={styles.metaItem}>
                   {d.priceBand === 'free' ? t('free', 'kostenlos') : d.priceBand}
                 </Text>
-                {d.plannedFor && (
+                {d.plannedFor && d.status === 'planned' && (
                   <>
                     <Text style={styles.metaDot}>·</Text>
                     <Text style={[styles.metaItem, styles.plannedFor]}>{d.plannedFor}</Text>
                   </>
                 )}
               </View>
+              {d.planningNotes && d.status === 'planned' && (
+                <Text style={styles.notes}>{d.planningNotes}</Text>
+              )}
               <View style={styles.actions}>
                 {d.status !== 'completed' && (
                   <TouchableOpacity
@@ -220,7 +252,19 @@ export default function SavedDatesScreen() {
                     accessibilityRole="button"
                     accessibilityLabel={t(`Plan ${d.title}`, `${d.title} planen`)}
                   >
-                    <Text style={styles.actionPlanText}>{t('PLAN', 'PLANEN')}</Text>
+                    <Text style={styles.actionPlanText}>
+                      {d.status === 'planned' ? t('RE-PLAN', 'UMPLANEN') : t('PLAN', 'PLANEN')}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                {d.status === 'planned' && (
+                  <TouchableOpacity
+                    style={styles.actionDismiss}
+                    onPress={() => void cancelPlan(d)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t(`Call off the plan for ${d.title}`, `Plan fur ${d.title} absagen`)}
+                  >
+                    <Text style={styles.actionDismissText}>{t('CALL OFF', 'ABSAGEN')}</Text>
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
@@ -242,7 +286,7 @@ export default function SavedDatesScreen() {
         visible={planningId !== null}
         transparent
         animationType="slide"
-        onRequestClose={() => setPlanningId(null)}
+        onRequestClose={closePlan}
       >
         <KeyboardAvoidingView
           style={styles.modalBackdrop}
@@ -250,7 +294,7 @@ export default function SavedDatesScreen() {
         >
           <TouchableOpacity
             style={StyleSheet.absoluteFill}
-            onPress={() => setPlanningId(null)}
+            onPress={closePlan}
             accessibilityLabel={t('Close', 'Schliessen')}
           />
           <View style={styles.sheet}>
@@ -265,13 +309,22 @@ export default function SavedDatesScreen() {
               value={planText}
               onChangeText={setPlanText}
               autoFocus
+              returnKeyType="next"
+            />
+            <TextInput
+              style={styles.sheetNotes}
+              placeholder={t('notes (optional) — who books, what to bring...', 'Notizen (optional) - wer bucht, was mitbringen...')}
+              placeholderTextColor={Colors.textFaint}
+              value={planNotes}
+              onChangeText={setPlanNotes}
+              multiline
               returnKeyType="done"
               onSubmitEditing={confirmPlan}
             />
             <View style={styles.sheetActions}>
               <TouchableOpacity
                 style={styles.sheetCancel}
-                onPress={() => setPlanningId(null)}
+                onPress={closePlan}
                 accessibilityRole="button"
               >
                 <Text style={styles.sheetCancelText}>{t('CANCEL', 'ABBRECHEN')}</Text>
@@ -365,6 +418,7 @@ const styles = StyleSheet.create({
   metaItem: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
   metaDot: { fontSize: 12, color: Colors.textFaint },
   plannedFor: { color: Colors.accent, fontWeight: '500' },
+  notes: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, fontStyle: 'italic', lineHeight: 17 },
   actions: {
     flexDirection: 'row',
     gap: Spacing.sm,
@@ -422,6 +476,16 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
     paddingVertical: Spacing.sm,
     marginTop: Spacing.sm,
+  },
+  sheetNotes: {
+    fontSize: 14,
+    fontWeight: '300',
+    color: Colors.text,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    paddingVertical: Spacing.sm,
+    minHeight: 40,
+    textAlignVertical: 'top',
   },
   sheetActions: {
     flexDirection: 'row',
