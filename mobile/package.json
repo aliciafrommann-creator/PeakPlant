@@ -8,6 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint 'app/**/*.{ts,tsx}' 'lib/**/*.{ts,tsx}'",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -41,6 +42,8 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.45",
+    "eslint": "^8.57.0",
+    "eslint-config-expo": "^7.0.0",
     "vitest": "^2.1.9"
   }
 }
