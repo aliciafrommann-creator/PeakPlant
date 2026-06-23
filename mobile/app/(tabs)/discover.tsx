@@ -26,6 +26,7 @@ import { summarizeLearning, affinityWeights } from '../../lib/discovery/learning
 import { enrichWithLiveWeather } from '../../lib/discovery/weatherContext';
 import type { SavedDate } from '../../lib/types';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 
 /** Device clock → coarse time of day. Honest, location-free contextual signal. */
 function currentTimeOfDay(): TimeOfDay {
@@ -69,6 +70,8 @@ export default function DiscoverScreen() {
 
   const streak = computeWeeklyStreak(memories.map((m) => m.createdAt));
   const timeOfDay = useMemo(currentTimeOfDay, []);
+  const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
+    useWeeklyChallenge(activeSpace?.id);
 
   // Fetch live weather once (Open-Meteo, no key). Used as a gentle default when
   // the user hasn't picked a weather chip. Best-effort: silent no-op on failure.
@@ -231,7 +234,32 @@ export default function DiscoverScreen() {
           />
         )}
 
+        {/* Section toggle: All Ideas / Local Places */}
+        <View style={styles.sectionToggle}>
+          <TouchableOpacity
+            style={[styles.toggleChip, styles.toggleChipActive]}
+            accessibilityRole="button"
+            accessibilityState={{ selected: true }}
+          >
+            <Text style={[styles.toggleChipText, styles.toggleChipTextActive]}>
+              {t('ALL IDEAS', 'ALLE IDEEN')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.toggleChip}
+            onPress={() => router.push('/together')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
+          >
+            <Text style={styles.toggleChipText}>
+              {t('LOCAL PLACES', 'ORTE IN DER NÄHE')} {'->'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.titleBlock}>
+          <Text style={styles.generatorLabel}>{t('LASST EUCH ÜBERRASCHEN · DATE GENERATOR', 'LASST EUCH ÜBERRASCHEN · DATE GENERATOR')}</Text>
           <Text style={styles.title}>{t('what could you do\ntogether?', 'was könntet\nihr zusammen tun?')}</Text>
           <Text style={styles.subtitle}>
             {t(
@@ -392,6 +420,66 @@ export default function DiscoverScreen() {
               <Text style={styles.linkArrow}>{'->'}</Text>
             </TouchableOpacity>
           )}
+        </View>
+
+        {/* Weekly challenge */}
+        <View style={styles.challengeSection}>
+          <View style={styles.challengeHeader}>
+            <Text style={styles.challengeSectionLabel}>
+              {t('THIS WEEK', 'DIESE WOCHE')}
+            </Text>
+            {chillyCount > 0 && (
+              <Text style={styles.chillyCounter}>
+                {t(`${chillyCount} challenge${chillyCount !== 1 ? 's' : ''} done`, `${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''} geschafft`)} {'✓'}
+              </Text>
+            )}
+          </View>
+
+          <View style={styles.challengeCard}>
+            <Text style={styles.challengePrompt}>
+              {t('a little extra energy today?', 'ein bisschen extra Energie heute?')}
+            </Text>
+            <Text style={styles.challengeTitle}>{weekly.title}</Text>
+            <Text style={styles.challengeSubtitle}>{weekly.subtitle}</Text>
+
+            {challengeProgress?.complete ? (
+              <View style={styles.challengeDone}>
+                <Text style={styles.challengeDoneBadge}>{weekly.badge}</Text>
+                <Text style={styles.challengeDoneText}>
+                  {t('challenge complete!', 'Challenge geschafft!')}
+                </Text>
+              </View>
+            ) : enrolled && challengeProgress ? (
+              <View style={styles.challengeProgress}>
+                <View style={styles.challengeProgressBar}>
+                  <View
+                    style={[
+                      styles.challengeProgressFill,
+                      { width: `${Math.min(100, (challengeProgress.count / challengeProgress.goal) * 100)}%` },
+                    ]}
+                  />
+                </View>
+                <Text style={styles.challengeProgressText}>
+                  {t(
+                    `${challengeProgress.count} of ${challengeProgress.goal} moments`,
+                    `${challengeProgress.count} von ${challengeProgress.goal} Momenten`,
+                  )}
+                </Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.challengeAccept}
+                onPress={() => void acceptChallenge()}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Accept the weekly challenge', 'Wöchentliche Challenge annehmen')}
+              >
+                <Text style={styles.challengeAcceptText}>
+                  {t('ACCEPT CHALLENGE', 'CHALLENGE ANNEHMEN')}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
 
         <Text style={styles.tagline}>
@@ -607,5 +695,136 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     lineHeight: 22,
     letterSpacing: 0.3,
+  },
+
+  // Section toggle (All Ideas / Local Places)
+  sectionToggle: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.lg,
+  },
+  toggleChip: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  toggleChipActive: {
+    backgroundColor: Colors.text,
+    borderColor: Colors.text,
+  },
+  toggleChipText: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 1.5,
+    color: Colors.textMuted,
+  },
+  toggleChipTextActive: {
+    color: Colors.white,
+  },
+
+  // Date generator label
+  generatorLabel: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2.5,
+    color: Colors.accent,
+    textTransform: 'uppercase',
+  },
+
+  // Weekly challenge
+  challengeSection: {
+    marginTop: Spacing.xxl,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+    paddingTop: Spacing.lg,
+  },
+  challengeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.screen,
+    marginBottom: Spacing.md,
+  },
+  challengeSectionLabel: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2.5,
+    color: Colors.textFaint,
+    textTransform: 'uppercase',
+  },
+  chillyCounter: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 1,
+    color: Colors.accent,
+  },
+  challengeCard: {
+    backgroundColor: Colors.backgroundCream,
+    marginHorizontal: Spacing.screen,
+    padding: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  challengePrompt: {
+    fontSize: 11,
+    fontWeight: '400',
+    letterSpacing: 0.5,
+    color: Colors.textFaint,
+    fontStyle: 'italic',
+  },
+  challengeTitle: {
+    fontSize: 20,
+    fontWeight: '300',
+    color: Colors.text,
+    letterSpacing: -0.3,
+  },
+  challengeSubtitle: {
+    fontSize: 13,
+    fontWeight: '300',
+    color: Colors.textMuted,
+    lineHeight: 19,
+  },
+  challengeDone: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingTop: Spacing.sm,
+  },
+  challengeDoneBadge: { fontSize: 22 },
+  challengeDoneText: {
+    fontSize: 12,
+    fontWeight: '500',
+    letterSpacing: 1,
+    color: Colors.text,
+  },
+  challengeProgress: { gap: Spacing.sm, paddingTop: Spacing.sm },
+  challengeProgressBar: {
+    height: 2,
+    backgroundColor: Colors.border,
+  },
+  challengeProgressFill: {
+    height: 2,
+    backgroundColor: Colors.accent,
+  },
+  challengeProgressText: {
+    fontSize: 11,
+    fontWeight: '400',
+    letterSpacing: 0.5,
+    color: Colors.textMuted,
+  },
+  challengeAccept: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: Colors.text,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Spacing.sm,
+  },
+  challengeAcceptText: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 2,
+    color: Colors.text,
   },
 });
