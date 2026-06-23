@@ -54,6 +54,14 @@
         {
           "faceIDPermission": "Allow PeakPlant to use Face ID to keep your private diary secure."
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow PeakPlant to use your location only when you ask to find nearby date places.",
+          "isIosBackgroundLocationEnabled": false,
+          "isAndroidBackgroundLocationEnabled": false
+        }
       ]
     ],
     "scheme": "peakplant",

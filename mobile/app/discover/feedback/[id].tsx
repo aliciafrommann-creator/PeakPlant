@@ -18,7 +18,7 @@ import { Spacing } from '../../../constants/spacing';
 import { useLanguage } from '../../../lib/hooks/useLanguage';
 import { useSpaces } from '../../../lib/hooks/useSpaces';
 import { feedbackRepository } from '../../../lib/repositories';
-import type { DateFeedback } from '../../../lib/types';
+import { acknowledgeSelection, confirmSuccess } from '../../../lib/haptics';
 
 const MAX_TIP = 280;
 
@@ -58,6 +58,7 @@ export default function FeedbackScreen() {
         rating,
         tip: tip.trim() || undefined,
       });
+      await confirmSuccess();
     } catch {
       Alert.alert(
         t('could not save feedback', 'Feedback konnte nicht gespeichert werden'),
@@ -108,7 +109,10 @@ export default function FeedbackScreen() {
             {STARS.map((s) => (
               <TouchableOpacity
                 key={s}
-                onPress={() => setRating(s)}
+                onPress={() => {
+                  setRating(s);
+                  void acknowledgeSelection();
+                }}
                 accessibilityRole="button"
                 accessibilityLabel={t(`${s} star${s > 1 ? 's' : ''}`, `${s} Stern${s > 1 ? 'e' : ''}`)}
                 style={styles.starBtn}
@@ -124,8 +128,8 @@ export default function FeedbackScreen() {
             <Text style={styles.sectionLabel}>{t('PRACTICAL TIP', 'PRAKTISCHER TIPP')}</Text>
             <Text style={styles.tipNote}>
               {t(
-                'optional · what worked, what to bring, how long it really took — may be shown to others later.',
-                'optional · was hat geklappt, was mitbringen, wie lange es wirklich dauerte — kann spater anderen angezeigt werden.',
+                'optional · what worked, what to bring, how long it really took. private on this device for now.',
+                'optional · was hat geklappt, was mitbringen, wie lange es wirklich dauerte. Bleibt vorerst privat auf diesem Gerät.',
               )}
             </Text>
             <TextInput
@@ -145,8 +149,8 @@ export default function FeedbackScreen() {
 
           <Text style={styles.privacyNote}>
             {t(
-              'your diary memory is separate and stays private. this rating is about the experience, not the moment.',
-              'deine Tagebucherinnerung ist getrennt und bleibt privat. Diese Bewertung gilt dem Erlebnis, nicht dem Moment.',
+              'your diary memory stays separate and private. PeakPlant will ask before any future community sharing.',
+              'Eure Tagebucherinnerung bleibt getrennt und privat. Vor einer späteren Community-Freigabe fragt PeakPlant ausdrücklich nach.',
             )}
           </Text>
         </ScrollView>

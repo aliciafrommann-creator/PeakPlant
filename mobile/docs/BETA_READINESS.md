@@ -94,12 +94,14 @@ device. On-device QA (below) is a release blocker.
 
 ## 4. Deterministic / curated (🔵 — must stay labeled in UI)
 
-- Discovery recommendations are a deterministic `nullDiscovery` over curated
-  local content. The UI labels them "curated · checked <date>". **No live data.**
-- "Local places" (Innsbruck) and partner perks are curated, not live.
-- Time-of-day context is the **device clock**; **weather is now live** (Open-Meteo,
-  Innsbruck) and folded into the recommender. Location is still fixed to Innsbruck
-  (no GPS until `expo-location`).
+- Discovery recommendations are deterministic-first over curated local content.
+  The UI labels them "curated · checked <date>".
+- "Local places" starts with curated Innsbruck places and partner perks. The
+  Places tab now has an optional, user-triggered live search: foreground
+  location once, Supabase Edge Function, Google Places key server-side only,
+  24h device cache, and a conservative per-device monthly guardrail.
+- Time-of-day context is the **device clock**; **weather is live** (Open-Meteo,
+  Innsbruck) and folded into the recommender.
 
 ## 5. Stubbed / not built (🔴)
 
@@ -110,13 +112,17 @@ device. On-device QA (below) is a release blocker.
 - 🟡 Live **weather** is wired: Open-Meteo (no API key) via the `weatherProvider`
   swap. The Ask flow and the Discover tab fold the live condition into the
   recommendation constraints (a manual weather chip always wins; silent no-op on
-  failure). Innsbruck coords are used until `expo-location` lands. On-device
-  verification of the live fetch is pending.
-- 🔴 Live providers: places, events, maps, routing, transit, booking
-  (interfaces + null adapters built; real provider swap-in documented). These
-  belong server-side (keys in the Edge Function, never the client) and need
-  provider API keys before they can be wired — see §6.
-- 🔴 Map view / location search / radius / clustering.
+  failure). On-device verification of the live fetch is pending.
+- 🟡 Live **places** are wired behind a user tap: `expo-location` foreground
+  permission, device cache, local monthly guardrail, Supabase `discover`
+  `mode: live_places`, Google Places server secret, and optional Anthropic
+  ranking that can only sort provider-returned places. On-device verification
+  with real keys is pending.
+- 🔴 Events, routing, transit, booking, and public community search are still
+  absent.
+- 🔵 Innsbruck map view is built with OpenStreetMap tiles and a connection-safe
+  list fallback. Live provider places are added as a layer when the user asks;
+  clustering is not built.
 - 🔴 **Cross-space community**: ratings/reviews/tips aggregated across couples,
   plus moderation. (Per-space feedback IS captured and surfaced to the owning
   couple; a shared community average needs a backend + moderation — post-beta.)
@@ -243,7 +249,8 @@ Full detail in `IOS_TESTFLIGHT.md`. Summary:
 ## 14. Verification at this checkpoint
 
 - ✅ `tsc --noEmit` — 0 errors.
-- ✅ `vitest run` — 249/249 across 26 files (added AI ranking merge: 10;
+- ✅ `vitest run` — 260/260 across 28 files (including planned-date calendar
+  export and curated map helpers; added AI ranking merge: 10;
   Open-Meteo weather: 15; weather enrichment: 5).
   - QR parse/resolve (20) · recommendations (18) · learning (10) · experience (11)
   - status machine (9) · share/links (11) · feedback repository (5) · ratings (8)

@@ -28,6 +28,7 @@ import { enrichWithLiveWeather } from '../../lib/discovery/weatherContext';
 import type { SavedDate } from '../../lib/types';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
+import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
 
 /** Device clock → coarse time of day. Honest, location-free contextual signal. */
 function currentTimeOfDay(): TimeOfDay {
@@ -179,6 +180,7 @@ export default function DiscoverScreen() {
   }, [constraints, excludeIds.length]);
 
   const toggleShortcut = useCallback((key: string) => {
+    void acknowledgeSelection();
     setExcludeIds([]);
     setActive((prev) => {
       const next = new Set(prev);
@@ -189,7 +191,8 @@ export default function DiscoverScreen() {
       if (key === 'cheap') next.delete('free');
       if (key === 'calm') next.delete('play');
       if (key === 'play') next.delete('calm');
-      next.has(key) ? next.delete(key) : next.add(key);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   }, []);
@@ -220,6 +223,7 @@ export default function DiscoverScreen() {
           estDurationMin: rec.estDurationMin,
           status: 'saved',
         });
+        await confirmSuccess();
       } catch {
         // Roll back the optimistic flip and tell the user — a silently dropped
         // save looks identical to success and is exactly what confused testers.
@@ -289,13 +293,13 @@ export default function DiscoverScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.toggleChip}
-            onPress={() => router.push('/together')}
+            onPress={() => router.push('/(tabs)/community')}
             activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
           >
             <Text style={styles.toggleChipText}>
-              {t('LOCAL PLACES', 'ORTE IN DER NÄHE')} {'->'}
+              {t('PLACES MAP', 'ORTE-KARTE')} {'->'}
             </Text>
           </TouchableOpacity>
         </View>

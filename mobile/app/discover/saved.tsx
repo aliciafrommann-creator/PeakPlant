@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -23,11 +23,15 @@ import { transitionEffect } from '../../lib/savedDates/status';
 import { shareSavedDate } from '../../lib/share';
 import { shareCalendarEvent } from '../../lib/calendarShare';
 import { ideaLink } from '../../lib/links';
+import { formatPlanDate, parsePlanDate } from '../../lib/calendar';
+import { confirmSuccess } from '../../lib/haptics';
 import type { SavedDate } from '../../lib/types';
 
 export default function SavedDatesScreen() {
+  const { plan } = useLocalSearchParams<{ plan?: string }>();
   const { activeSpace } = useSpaces();
   const { t } = useLanguage();
+  const autoOpenedPlan = useRef<string | null>(null);
 
   const STATUS_LABEL: Record<string, string> = {
     idea: t('idea', 'Idee'),
@@ -66,6 +70,14 @@ export default function SavedDatesScreen() {
     setPlanningId(d.id);
   }, []);
 
+  useEffect(() => {
+    if (!plan || loading || autoOpenedPlan.current === plan) return;
+    const requested = dates.find((date) => date.id === plan);
+    if (!requested) return;
+    autoOpenedPlan.current = plan;
+    openPlan(requested);
+  }, [dates, loading, openPlan, plan]);
+
   const closePlan = useCallback(() => {
     setPlanningId(null);
     setPlanText('');
@@ -74,13 +86,25 @@ export default function SavedDatesScreen() {
 
   const confirmPlan = useCallback(async () => {
     if (!planningId || !planText.trim() || planBusy) return;
+    const parsed = parsePlanDate(planText);
+    if (!parsed) {
+      Alert.alert(
+        t('choose a clear date', 'wähle ein klares Datum'),
+        t(
+          'Use a quick choice below or enter YYYY-MM-DD, for example 2026-07-04.',
+          'Nutze unten eine Schnellauswahl oder gib JJJJ-MM-TT ein, zum Beispiel 2026-07-04.',
+        ),
+      );
+      return;
+    }
     setPlanBusy(true);
     try {
       await savedDateRepository.update(planningId, {
         status: 'planned',
-        plannedFor: planText.trim(),
+        plannedFor: formatPlanDate(parsed),
         planningNotes: planNotes.trim() || undefined,
       });
+      await confirmSuccess();
       closePlan();
       void load();
     } catch {
@@ -132,6 +156,7 @@ export default function SavedDatesScreen() {
             ),
           },
         });
+        await confirmSuccess();
       } catch {
         Alert.alert(
           t('something went wrong', 'etwas ist schiefgelaufen'),
@@ -186,11 +211,60 @@ export default function SavedDatesScreen() {
           link: ideaLink(d.momentId),
         });
       } catch {
-        // Share sheet dismissed or unavailable.
+        Alert.alert(
+          t('could not open the calendar export', 'Kalender-Export konnte nicht geöffnet werden'),
+          t('Please check the planned date and try again.', 'Prüfe das geplante Datum und versuche es erneut.'),
+        );
       }
     },
-    [],
+    [t],
   );
+
+  const preserveCompleted = useCallback((d: SavedDate) => {
+    if (d.memoryId) {
+      router.push(`/memory/${d.memoryId}`);
+      return;
+    }
+    router.push({
+      pathname: '/memory/create',
+      params: {
+        savedDateId: d.id,
+        savedDateTitle: d.title,
+        savedDateMomentId: d.momentId,
+        prefillNote: t(
+          `we did it: ${d.title}`,
+          `wir haben es gemacht: ${d.title}`,
+        ),
+      },
+    });
+  }, [t]);
+
+  const quickDates = useMemo(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const saturday = new Date();
+    let untilSaturday = (6 - saturday.getDay() + 7) % 7;
+    if (untilSaturday === 0) untilSaturday = 7;
+    saturday.setDate(saturday.getDate() + untilSaturday);
+    const nextWeekend = new Date(saturday);
+    nextWeekend.setDate(nextWeekend.getDate() + 7);
+    return [
+      { label: t('TOMORROW', 'MORGEN'), value: formatPlanDate(tomorrow) },
+      { label: t('SATURDAY', 'SAMSTAG'), value: formatPlanDate(saturday) },
+      { label: t('NEXT WEEKEND', 'NÄCHSTES WOCHENENDE'), value: formatPlanDate(nextWeekend) },
+    ];
+  }, [t]);
+
+  const displayPlanDate = useCallback((value: string) => {
+    const date = parsePlanDate(value);
+    return date
+      ? date.toLocaleDateString(t('en-GB', 'de-DE'), {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+      })
+      : value;
+  }, [t]);
 
   const planningDate = dates.find((d) => d.id === planningId);
 
@@ -259,7 +333,9 @@ export default function SavedDatesScreen() {
                 {d.plannedFor && d.status === 'planned' && (
                   <>
                     <Text style={styles.metaDot}>·</Text>
-                    <Text style={[styles.metaItem, styles.plannedFor]}>{d.plannedFor}</Text>
+                    <Text style={[styles.metaItem, styles.plannedFor]}>
+                      {displayPlanDate(d.plannedFor)}
+                    </Text>
                   </>
                 )}
               </View>
@@ -267,48 +343,83 @@ export default function SavedDatesScreen() {
                 <Text style={styles.notes}>{d.planningNotes}</Text>
               )}
               <View style={styles.actions}>
-                {d.status !== 'completed' && (
+                {(d.status === 'saved' || d.status === 'idea' || d.status === 'cancelled') && (
+                  <TouchableOpacity
+                    style={styles.actionDone}
+                    onPress={() => openPlan(d)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t(`Plan ${d.title}`, `${d.title} planen`)}
+                  >
+                    <Text style={styles.actionDoneText}>{t('PLAN THIS DATE', 'DIESES DATE PLANEN')}</Text>
+                  </TouchableOpacity>
+                )}
+                {(d.status === 'saved' || d.status === 'idea' || d.status === 'cancelled') && (
+                  <TouchableOpacity
+                    style={styles.actionPlan}
+                    onPress={() => void markDone(d)}
+                    accessibilityRole="button"
+                    accessibilityLabel={t(`Mark ${d.title} as done`, `${d.title} als erledigt markieren`)}
+                  >
+                    <Text style={styles.actionPlanText}>{t('WE DID THIS', 'WIR HABEN DAS GEMACHT')}</Text>
+                  </TouchableOpacity>
+                )}
+                {d.status === 'planned' && (
                   <TouchableOpacity
                     style={styles.actionDone}
                     onPress={() => void markDone(d)}
                     accessibilityRole="button"
                     accessibilityLabel={t(`Mark ${d.title} as done`, `${d.title} als erledigt markieren`)}
                   >
-                    <Text style={styles.actionDoneText}>{t('DONE -> PRESERVE', 'ERLEDIGT -> FESTHALTEN')}</Text>
+                    <Text style={styles.actionDoneText}>{t('DONE → PRESERVE', 'ERLEDIGT → FESTHALTEN')}</Text>
                   </TouchableOpacity>
                 )}
-                {d.status !== 'completed' && (
+                {d.status === 'planned' && (
                   <TouchableOpacity
                     style={styles.actionPlan}
-                    onPress={() => openPlan(d)}
+                    onPress={() => void addToCalendar(d)}
                     accessibilityRole="button"
-                    accessibilityLabel={t(`Plan ${d.title}`, `${d.title} planen`)}
+                    accessibilityLabel={t(`Add ${d.title} to calendar`, `${d.title} zum Kalender hinzufügen`)}
                   >
-                    <Text style={styles.actionPlanText}>
-                      {d.status === 'planned' ? t('RE-PLAN', 'UMPLANEN') : t('PLAN', 'PLANEN')}
+                    <Text style={styles.actionPlanText}>{t('ADD TO CALENDAR', 'ZUM KALENDER')}</Text>
+                  </TouchableOpacity>
+                )}
+                {d.status === 'planned' && (
+                  <View style={styles.tertiaryRow}>
+                    <TouchableOpacity
+                      style={styles.actionDismiss}
+                      onPress={() => openPlan(d)}
+                      accessibilityRole="button"
+                      accessibilityLabel={t(`Re-plan ${d.title}`, `${d.title} umplanen`)}
+                    >
+                      <Text style={styles.actionDismissText}>{t('RE-PLAN', 'UMPLANEN')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.actionDismiss}
+                      onPress={() => void cancelPlan(d)}
+                      accessibilityRole="button"
+                      accessibilityLabel={t(`Call off the plan for ${d.title}`, `Plan für ${d.title} absagen`)}
+                    >
+                      <Text style={styles.actionDismissText}>{t('CALL OFF', 'ABSAGEN')}</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                {d.status === 'completed' && (
+                  <TouchableOpacity
+                    style={styles.actionDone}
+                    onPress={() => preserveCompleted(d)}
+                    accessibilityRole="button"
+                    accessibilityLabel={d.memoryId
+                      ? t(`View memory for ${d.title}`, `Moment zu ${d.title} ansehen`)
+                      : t(`Preserve ${d.title}`, `${d.title} festhalten`)}
+                  >
+                    <Text style={styles.actionDoneText}>
+                      {d.memoryId
+                        ? t('VIEW YOUR MEMORY', 'EUREN MOMENT ANSEHEN')
+                        : t('PRESERVE YOUR MEMORY', 'EUREN MOMENT FESTHALTEN')}
                     </Text>
                   </TouchableOpacity>
                 )}
-                {d.status === 'planned' && (
-                  <TouchableOpacity
-                    style={styles.actionDismiss}
-                    onPress={() => void addToCalendar(d)}
-                    accessibilityRole="button"
-                    accessibilityLabel={t(`Add ${d.title} to calendar`, `${d.title} zum Kalender hinzufugen`)}
-                  >
-                    <Text style={styles.actionDismissText}>{t('CALENDAR', 'KALENDER')}</Text>
-                  </TouchableOpacity>
-                )}
-                {d.status === 'planned' && (
-                  <TouchableOpacity
-                    style={styles.actionDismiss}
-                    onPress={() => void cancelPlan(d)}
-                    accessibilityRole="button"
-                    accessibilityLabel={t(`Call off the plan for ${d.title}`, `Plan fur ${d.title} absagen`)}
-                  >
-                    <Text style={styles.actionDismissText}>{t('CALL OFF', 'ABSAGEN')}</Text>
-                  </TouchableOpacity>
-                )}
+                <View style={styles.tertiaryRow}>
                 <TouchableOpacity
                   style={styles.actionDismiss}
                   onPress={() => void share(d)}
@@ -325,6 +436,7 @@ export default function SavedDatesScreen() {
                 >
                   <Text style={styles.actionDismissText}>{t('REMOVE', 'ENTFERNEN')}</Text>
                 </TouchableOpacity>
+                </View>
               </View>
             </View>
           ))}
@@ -352,9 +464,28 @@ export default function SavedDatesScreen() {
             {planningDate && (
               <Text style={styles.sheetIdea}>{planningDate.title}</Text>
             )}
+            <View style={styles.quickDates}>
+              {quickDates.map((option) => {
+                const selected = planText === option.value;
+                return (
+                  <TouchableOpacity
+                    key={option.value}
+                    style={[styles.quickDate, selected && styles.quickDateSelected]}
+                    onPress={() => setPlanText(option.value)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                    accessibilityLabel={option.label}
+                  >
+                    <Text style={[styles.quickDateText, selected && styles.quickDateTextSelected]}>
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
             <TextInput
               style={styles.sheetInput}
-              placeholder={t('e.g. this Saturday, June 28...', 'z.B. diesen Samstag, 28. Juni...')}
+              placeholder={t('YYYY-MM-DD, e.g. 2026-07-04', 'JJJJ-MM-TT, z.B. 2026-07-04')}
               placeholderTextColor={Colors.textFaint}
               value={planText}
               onChangeText={setPlanText}
@@ -470,25 +601,22 @@ const styles = StyleSheet.create({
   plannedFor: { color: Colors.text, fontWeight: '500' },
   notes: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, fontStyle: 'italic', lineHeight: 17 },
   actions: {
-    flexDirection: 'row',
     gap: Spacing.sm,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
     paddingTop: Spacing.md,
     marginTop: Spacing.xs,
-    flexWrap: 'wrap',
   },
   actionDone: {
     height: 40,
-    flex: 1,
-    minWidth: 120,
+    width: '100%',
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
   },
   actionDoneText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.white },
   actionPlan: {
-    height: 40,
+    minHeight: 44,
     paddingHorizontal: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.accent,
@@ -497,12 +625,13 @@ const styles = StyleSheet.create({
   },
   actionPlanText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   actionDismiss: {
-    height: 40,
+    minHeight: 44,
     paddingHorizontal: Spacing.md,
     justifyContent: 'center',
     alignItems: 'center',
   },
   actionDismissText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textFaint },
+  tertiaryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.xs },
   // Modal / sheet
   modalBackdrop: {
     flex: 1,
@@ -518,6 +647,17 @@ const styles = StyleSheet.create({
   },
   sheetTitle: { fontSize: 18, fontWeight: '200', color: Colors.text, letterSpacing: -0.2 },
   sheetIdea: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, marginTop: -Spacing.sm },
+  quickDates: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
+  quickDate: {
+    minHeight: 40,
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  quickDateSelected: { backgroundColor: Colors.text, borderColor: Colors.text },
+  quickDateText: { fontSize: 9, fontWeight: '500', letterSpacing: 1.5, color: Colors.textMuted },
+  quickDateTextSelected: { color: Colors.white },
   sheetInput: {
     fontSize: 18,
     fontWeight: '300',
