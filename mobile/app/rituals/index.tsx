@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   ctaText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   scroll: { padding: Spacing.screen, gap: Spacing.md, paddingBottom: Spacing.xxxl },
   card: { backgroundColor: Colors.backgroundCream, padding: Spacing.lg, gap: Spacing.sm },
-  cardCadence: { fontSize: 8, fontWeight: '500', letterSpacing: 1.5, color: Colors.accent },
+  cardCadence: { fontSize: 8, fontWeight: '500', letterSpacing: 1.5, color: Colors.textSubtle },
   cardTitle: { fontSize: 20, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
   cardNote: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19, fontStyle: 'italic' },
   cardRevisited: { fontSize: 11, fontWeight: '300', color: Colors.textFaint },
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   actionGhost: { height: 40, paddingHorizontal: Spacing.md, justifyContent: 'center', alignItems: 'center' },
   actionGhostText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textFaint },
   addRow: { paddingVertical: Spacing.md, alignItems: 'center' },
-  addText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  addText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.45)' },
   sheet: {
     backgroundColor: Colors.background,

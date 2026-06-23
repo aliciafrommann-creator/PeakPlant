@@ -11,7 +11,7 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { ShopLink } from '../../components/edition/ShopLink';
 import type { Edition } from '../../lib/types';
 
-export default function GrowScreen() {
+export default function EditionsScreen() {
   const { activeSpace } = useSpaces();
   const { authenticate } = useBiometric();
   const { t } = useLanguage();
@@ -60,7 +60,7 @@ export default function GrowScreen() {
         activeOpacity={0.85}
         accessibilityRole="button"
         accessibilityState={{ disabled: !available }}
-        accessibilityLabel={`${item.name}, ${available ? t('open edition', 'Edition offnen') : t('coming soon', 'demnachst')}`}
+        accessibilityLabel={`${item.name}, ${available ? t('open edition', 'Edition öffnen') : t('coming soon', 'demnächst')}`}
       >
         <Text style={styles.symbol}>{item.symbol}</Text>
         <View style={styles.cardBody}>
@@ -72,11 +72,11 @@ export default function GrowScreen() {
               ? t(`${done} of ${item.cardCount} preserved`, `${done} von ${item.cardCount} bewahrt`)
               : t(
                   `${DECK_SIZE_RANGE.min}-${DECK_SIZE_RANGE.max} cards - coming soon`,
-                  `${DECK_SIZE_RANGE.min}-${DECK_SIZE_RANGE.max} Karten - demnachst`,
+                  `${DECK_SIZE_RANGE.min}-${DECK_SIZE_RANGE.max} Karten - demnächst`,
                 )}
           </Text>
           {item.sensitive && available && (
-            <Text style={styles.privateBadge}>{t('private - device only', 'privat - nur auf dem Gerat')}</Text>
+            <Text style={styles.privateBadge}>{t('private - device only', 'privat - nur auf dem Gerät')}</Text>
           )}
         </View>
       </TouchableOpacity>
@@ -91,12 +91,25 @@ export default function GrowScreen() {
         renderItem={renderEdition}
         ListHeaderComponent={
           <View style={styles.header}>
-            <Text style={styles.kicker}>{t('EDITIONS', 'EDITIONEN')}</Text>
-            <Text style={styles.title}>{t('grow', 'wachsen')}</Text>
+            <View style={styles.headerTop}>
+              <View>
+                <Text style={styles.kicker}>{t('EDITIONS', 'EDITIONEN')}</Text>
+                <Text style={styles.title}>{t('your collections', 'eure Sammlungen')}</Text>
+              </View>
+              <TouchableOpacity
+                style={styles.scanButton}
+                onPress={() => router.push('/(tabs)/scan')}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Scan a card', 'Karte scannen')}
+              >
+                <Text style={styles.scanButtonText}>{t('SCAN CARD', 'KARTE SCANNEN')}</Text>
+              </TouchableOpacity>
+            </View>
             <Text style={styles.lead}>
               {t(
                 'each edition is a deck of moments to collect together. open one, then scan the card you finished to preserve it.',
-                'jede Edition ist ein Stapel Momente, die ihr gemeinsam sammelt. Offnet eine, scannt dann die fertige Karte, um sie zu bewahren.',
+                'jede Edition ist ein Stapel Momente, die ihr gemeinsam sammelt. Öffnet eine, scannt dann die fertige Karte, um sie zu bewahren.',
               )}
             </Text>
           </View>
@@ -116,16 +129,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.lg,
     paddingBottom: Spacing.lg,
-    gap: 4,
+    gap: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    marginBottom: Spacing.md,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
   },
   kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
-  title: { fontSize: 28, fontWeight: '200', color: Colors.text, letterSpacing: -0.5 },
+  title: { fontSize: 28, fontWeight: '300', color: Colors.text, letterSpacing: -0.5 },
   lead: {
     fontSize: 14,
     fontWeight: '300',
     color: Colors.textMuted,
     lineHeight: 21,
-    marginTop: Spacing.sm,
+  },
+  scanButton: {
+    height: 36,
+    paddingHorizontal: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.text,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scanButtonText: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2,
+    color: Colors.text,
   },
   card: {
     flexDirection: 'row',
@@ -141,7 +175,7 @@ const styles = StyleSheet.create({
   symbol: { fontSize: 28 },
   cardBody: { flex: 1, gap: 3 },
   editionLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
-  name: { fontSize: 20, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
+  name: { fontSize: 20, fontWeight: '300', color: Colors.text, letterSpacing: -0.3 },
   desc: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
   meta: {
     fontSize: 10,

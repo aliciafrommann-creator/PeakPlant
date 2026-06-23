@@ -20,6 +20,14 @@ export interface LivePlace {
   address: string;
   lat: number;
   lng: number;
+  /** Provider category/type, e.g. "cafe", "park", "museum". */
+  category?: string;
+  /** External map URL from the provider, when available. */
+  mapsUrl?: string;
+  /** Optional AI-written explanation. Must be based only on provider-returned facts. */
+  aiWhy?: string;
+  /** Short, truthful signals used by the optional AI ranking. */
+  signalsUsed?: string[];
   /** 'live' = from a real API this request; 'cached' = stale but validated. */
   provenance: 'live' | 'cached';
   /** ISO timestamp of the last successful fetch from this source. */

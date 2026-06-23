@@ -93,7 +93,7 @@ export default function InviteScreen() {
       const joined = await spaceRepository.joinByCode(code, user.id, user.name);
       setActiveSpace(joined.id);
       await completeOnboarding();
-      router.replace('/(tabs)/discover');
+      router.replace('/(tabs)/home');
     } catch {
       setError(t("that code didn't work. check it with your partner and try again.", 'Dieser Code hat nicht funktioniert. Prufe ihn mit deinem Partner und versuche es erneut.'));
       setJoining(false);
@@ -114,7 +114,7 @@ export default function InviteScreen() {
     try {
       if (space) setActiveSpace(space.id);
       await completeOnboarding();
-      router.replace('/(tabs)/discover');
+      router.replace('/(tabs)/home');
     } catch {
       setError(t("couldn't finish setup. please try again.", 'Einrichtung konnte nicht abgeschlossen werden. Bitte versuche es erneut.'));
     }
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '500',
     letterSpacing: 3,
-    color: Colors.accent,
+    color: Colors.textSubtle,
   },
   title: {
     fontSize: 34,

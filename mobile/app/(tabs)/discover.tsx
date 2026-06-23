@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/colors';
@@ -26,6 +27,8 @@ import { summarizeLearning, affinityWeights } from '../../lib/discovery/learning
 import { enrichWithLiveWeather } from '../../lib/discovery/weatherContext';
 import type { SavedDate } from '../../lib/types';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
+import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
 
 /** Device clock → coarse time of day. Honest, location-free contextual signal. */
 function currentTimeOfDay(): TimeOfDay {
@@ -35,18 +38,39 @@ function currentTimeOfDay(): TimeOfDay {
   return 'evening';
 }
 
-/** Mood/shortcut chips — each maps to a slice of DateConstraints. */
+/** Filter chips, grouped so they read intentionally (not a random pile). */
 type Shortcut = { key: string; label: string; labelDe: string; patch: Partial<DateConstraints> };
-const SHORTCUTS: Shortcut[] = [
-  { key: 'quick', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
-  { key: 'free', label: 'free', labelDe: 'gratis', patch: { maxBudget: 'free' } },
-  { key: 'cheap', label: 'easy spend', labelDe: 'günstig', patch: { maxBudget: '€€' } },
-  { key: 'outdoor', label: 'outdoors', labelDe: 'draußen', patch: { indoorOutdoor: 'outdoor' } },
-  { key: 'indoor', label: 'stay in', labelDe: 'drinnen', patch: { indoorOutdoor: 'indoor' } },
-  { key: 'rain', label: 'rainy day', labelDe: 'Regentag', patch: { weather: 'rain' } },
-  { key: 'calm', label: 'calm', labelDe: 'ruhig', patch: { categories: ['calm'] } },
-  { key: 'play', label: 'playful', labelDe: 'verspielt', patch: { categories: ['play'] } },
+type FilterGroup = { label: string; labelDe: string; options: Shortcut[] };
+const FILTER_GROUPS: FilterGroup[] = [
+  {
+    label: 'how long', labelDe: 'wie lang',
+    options: [
+      { key: 'quick', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
+    ],
+  },
+  {
+    label: 'budget', labelDe: 'Budget',
+    options: [
+      { key: 'free', label: 'free', labelDe: 'gratis', patch: { maxBudget: 'free' } },
+      { key: 'cheap', label: 'easy spend', labelDe: 'günstig', patch: { maxBudget: '€€' } },
+    ],
+  },
+  {
+    label: 'where', labelDe: 'wo',
+    options: [
+      { key: 'outdoor', label: 'outdoors', labelDe: 'draußen', patch: { indoorOutdoor: 'outdoor' } },
+      { key: 'indoor', label: 'stay in', labelDe: 'drinnen', patch: { indoorOutdoor: 'indoor' } },
+    ],
+  },
+  {
+    label: 'vibe', labelDe: 'Stimmung',
+    options: [
+      { key: 'calm', label: 'calm', labelDe: 'ruhig', patch: { categories: ['calm'] } },
+      { key: 'play', label: 'playful', labelDe: 'verspielt', patch: { categories: ['play'] } },
+    ],
+  },
 ];
+const SHORTCUTS: Shortcut[] = FILTER_GROUPS.flatMap((g) => g.options);
 
 export default function DiscoverScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
@@ -65,10 +89,19 @@ export default function DiscoverScreen() {
   const [recs, setRecs] = useState<DateRecommendation[]>([]);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState<SavedDate[]>([]);
+  const [savedMomentIds, setSavedMomentIds] = useState<Set<string>>(new Set());
   const [liveWeather, setLiveWeather] = useState<Weather | undefined>(undefined);
+
+  // Keep the "already saved" set in sync with what's loaded for this space, so
+  // the SAVE button can reflect saved state immediately (and across re-focus).
+  useEffect(() => {
+    setSavedMomentIds(new Set(saved.map((s) => s.momentId)));
+  }, [saved]);
 
   const streak = computeWeeklyStreak(memories.map((m) => m.createdAt));
   const timeOfDay = useMemo(currentTimeOfDay, []);
+  const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
+    useWeeklyChallenge(activeSpace?.id);
 
   // Fetch live weather once (Open-Meteo, no key). Used as a gentle default when
   // the user hasn't picked a weather chip. Best-effort: silent no-op on failure.
@@ -147,6 +180,7 @@ export default function DiscoverScreen() {
   }, [constraints, excludeIds.length]);
 
   const toggleShortcut = useCallback((key: string) => {
+    void acknowledgeSelection();
     setExcludeIds([]);
     setActive((prev) => {
       const next = new Set(prev);
@@ -157,7 +191,8 @@ export default function DiscoverScreen() {
       if (key === 'cheap') next.delete('free');
       if (key === 'calm') next.delete('play');
       if (key === 'play') next.delete('calm');
-      next.has(key) ? next.delete(key) : next.add(key);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   }, []);
@@ -175,6 +210,9 @@ export default function DiscoverScreen() {
   const saveDate = useCallback(
     async (rec: DateRecommendation) => {
       if (!activeSpace) return;
+      if (savedMomentIds.has(rec.momentId)) return; // already saved
+      // Optimistic: flip the button to "saved" immediately so the tap is felt.
+      setSavedMomentIds((prev) => new Set(prev).add(rec.momentId));
       try {
         await savedDateRepository.save({
           spaceId: activeSpace.id,
@@ -185,11 +223,22 @@ export default function DiscoverScreen() {
           estDurationMin: rec.estDurationMin,
           status: 'saved',
         });
+        await confirmSuccess();
       } catch {
-        // save is best-effort; the user can try again from the saved screen
+        // Roll back the optimistic flip and tell the user — a silently dropped
+        // save looks identical to success and is exactly what confused testers.
+        setSavedMomentIds((prev) => {
+          const next = new Set(prev);
+          next.delete(rec.momentId);
+          return next;
+        });
+        Alert.alert(
+          t('Could not save', 'Konnte nicht speichern'),
+          t('Please try again in a moment.', 'Bitte versuche es gleich noch einmal.'),
+        );
       }
     },
-    [activeSpace],
+    [activeSpace, savedMomentIds, t],
   );
 
   const primary = recs.find((r) => !r.isAlternative);
@@ -231,7 +280,32 @@ export default function DiscoverScreen() {
           />
         )}
 
+        {/* Section toggle: All Ideas / Local Places */}
+        <View style={styles.sectionToggle}>
+          <TouchableOpacity
+            style={[styles.toggleChip, styles.toggleChipActive]}
+            accessibilityRole="button"
+            accessibilityState={{ selected: true }}
+          >
+            <Text style={[styles.toggleChipText, styles.toggleChipTextActive]}>
+              {t('ALL IDEAS', 'ALLE IDEEN')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.toggleChip}
+            onPress={() => router.push('/(tabs)/community')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
+          >
+            <Text style={styles.toggleChipText}>
+              {t('PLACES MAP', 'ORTE-KARTE')} {'->'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.titleBlock}>
+          <Text style={styles.generatorLabel}>{t('LASST EUCH ÜBERRASCHEN · DATE GENERATOR', 'LASST EUCH ÜBERRASCHEN · DATE GENERATOR')}</Text>
           <Text style={styles.title}>{t('what could you do\ntogether?', 'was könntet\nihr zusammen tun?')}</Text>
           <Text style={styles.subtitle}>
             {t(
@@ -241,24 +315,31 @@ export default function DiscoverScreen() {
           </Text>
         </View>
 
-        {/* Quick filters */}
-        <View style={styles.chips}>
-          {SHORTCUTS.map((s) => {
-            const on = active.has(s.key);
-            return (
-              <TouchableOpacity
-                key={s.key}
-                style={[styles.chip, on && styles.chipOn]}
-                onPress={() => toggleShortcut(s.key)}
-                activeOpacity={0.85}
-                accessibilityRole="button"
-                accessibilityState={{ selected: on }}
-                accessibilityLabel={t(s.label, s.labelDe)}
-              >
-                <Text style={[styles.chipText, on && styles.chipTextOn]}>{t(s.label, s.labelDe)}</Text>
-              </TouchableOpacity>
-            );
-          })}
+        {/* Grouped filters */}
+        <View style={styles.filterGroups}>
+          {FILTER_GROUPS.map((g) => (
+            <View key={g.label} style={styles.filterGroup}>
+              <Text style={styles.filterGroupLabel}>{t(g.label, g.labelDe).toUpperCase()}</Text>
+              <View style={styles.chips}>
+                {g.options.map((s) => {
+                  const on = active.has(s.key);
+                  return (
+                    <TouchableOpacity
+                      key={s.key}
+                      style={[styles.chip, on && styles.chipOn]}
+                      onPress={() => toggleShortcut(s.key)}
+                      activeOpacity={0.85}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: on }}
+                      accessibilityLabel={t(s.label, s.labelDe)}
+                    >
+                      <Text style={[styles.chipText, on && styles.chipTextOn]}>{t(s.label, s.labelDe)}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          ))}
         </View>
 
         {loading ? (
@@ -272,7 +353,10 @@ export default function DiscoverScreen() {
               rec={primary}
               onOpen={() => router.push(`/together/${primary.momentId}`)}
               onSave={() => void saveDate(primary)}
+              saved={savedMomentIds.has(primary.momentId)}
+              onViewSaved={() => router.push('/discover/saved')}
               saveLabel={t('SAVE', 'MERKEN')}
+              savedLabel={t('SAVED ✓ — VIEW', 'GEMERKT ✓ — ANSEHEN')}
               seeLabel={t('SEE THIS IDEA ->', 'DIESE IDEE ANSEHEN ->')}
               whyLabel={t('WHY THIS', 'WARUM DIES')}
               notUsedPrefix={t('not used:', 'nicht verwendet:')}
@@ -353,7 +437,10 @@ export default function DiscoverScreen() {
             accessibilityRole="button"
             accessibilityLabel={t('Saved date ideas', 'Gemerkte Ideen')}
           >
-            <Text style={styles.linkText}>{t('saved ideas', 'gemerkte Ideen')}</Text>
+            <Text style={styles.linkText}>
+              {t('saved ideas', 'gemerkte Ideen')}
+              {saved.length > 0 ? ` (${saved.length})` : ''}
+            </Text>
             <Text style={styles.linkArrow}>{'->'}</Text>
           </TouchableOpacity>
           {missionsEnabled && (
@@ -394,6 +481,66 @@ export default function DiscoverScreen() {
           )}
         </View>
 
+        {/* Weekly challenge */}
+        <View style={styles.challengeSection}>
+          <View style={styles.challengeHeader}>
+            <Text style={styles.challengeSectionLabel}>
+              {t('THIS WEEK', 'DIESE WOCHE')}
+            </Text>
+            {chillyCount > 0 && (
+              <Text style={styles.chillyCounter}>
+                {t(`${chillyCount} challenge${chillyCount !== 1 ? 's' : ''} done`, `${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''} geschafft`)} {'✓'}
+              </Text>
+            )}
+          </View>
+
+          <View style={styles.challengeCard}>
+            <Text style={styles.challengePrompt}>
+              {t('a little extra energy today?', 'ein bisschen extra Energie heute?')}
+            </Text>
+            <Text style={styles.challengeTitle}>{weekly.title}</Text>
+            <Text style={styles.challengeSubtitle}>{weekly.subtitle}</Text>
+
+            {challengeProgress?.complete ? (
+              <View style={styles.challengeDone}>
+                <Text style={styles.challengeDoneBadge}>{weekly.badge}</Text>
+                <Text style={styles.challengeDoneText}>
+                  {t('challenge complete!', 'Challenge geschafft!')}
+                </Text>
+              </View>
+            ) : enrolled && challengeProgress ? (
+              <View style={styles.challengeProgress}>
+                <View style={styles.challengeProgressBar}>
+                  <View
+                    style={[
+                      styles.challengeProgressFill,
+                      { width: `${Math.min(100, (challengeProgress.count / challengeProgress.goal) * 100)}%` },
+                    ]}
+                  />
+                </View>
+                <Text style={styles.challengeProgressText}>
+                  {t(
+                    `${challengeProgress.count} of ${challengeProgress.goal} moments`,
+                    `${challengeProgress.count} von ${challengeProgress.goal} Momenten`,
+                  )}
+                </Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={styles.challengeAccept}
+                onPress={() => void acceptChallenge()}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Accept the weekly challenge', 'Wöchentliche Challenge annehmen')}
+              >
+                <Text style={styles.challengeAcceptText}>
+                  {t('ACCEPT CHALLENGE', 'CHALLENGE ANNEHMEN')}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+
         <Text style={styles.tagline}>
           {activeSpace?.type === 'friends'
             ? t(
@@ -414,8 +561,11 @@ function RecommendationCard({
   rec,
   onOpen,
   onSave,
+  saved,
+  onViewSaved,
   compact,
   saveLabel = 'SAVE',
+  savedLabel = 'SAVED ✓',
   seeLabel = 'SEE THIS IDEA ->',
   whyLabel = 'WHY THIS',
   notUsedPrefix = 'not used:',
@@ -425,8 +575,11 @@ function RecommendationCard({
   rec: DateRecommendation;
   onOpen: () => void;
   onSave?: () => void;
+  saved?: boolean;
+  onViewSaved?: () => void;
   compact?: boolean;
   saveLabel?: string;
+  savedLabel?: string;
   seeLabel?: string;
   whyLabel?: string;
   notUsedPrefix?: string;
@@ -469,14 +622,25 @@ function RecommendationCard({
       <View style={styles.cardFooter}>
         <Text style={styles.cta}>{seeLabel}</Text>
         {onSave && !compact && (
-          <TouchableOpacity
-            onPress={(e) => { e.stopPropagation?.(); onSave(); }}
-            accessibilityRole="button"
-            accessibilityLabel={saveLabel}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          >
-            <Text style={styles.save}>{saveLabel}</Text>
-          </TouchableOpacity>
+          saved ? (
+            <TouchableOpacity
+              onPress={(e) => { e.stopPropagation?.(); onViewSaved?.(); }}
+              accessibilityRole="button"
+              accessibilityLabel={savedLabel}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Text style={styles.savedDone}>{savedLabel}</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={(e) => { e.stopPropagation?.(); onSave(); }}
+              accessibilityRole="button"
+              accessibilityLabel={saveLabel}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Text style={styles.save}>{saveLabel}</Text>
+            </TouchableOpacity>
+          )
         )}
       </View>
     </TouchableOpacity>
@@ -504,16 +668,29 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     textTransform: 'uppercase',
   },
-  settings: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  settings: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textSubtle },
   titleBlock: { paddingHorizontal: Spacing.screen, paddingTop: Spacing.xl, gap: Spacing.sm },
   title: { fontSize: 30, fontWeight: '200', color: Colors.text, letterSpacing: -0.5, lineHeight: 36 },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
+  filterGroups: {
+    paddingTop: Spacing.lg,
+    gap: Spacing.md,
+  },
+  filterGroup: {
+    gap: Spacing.sm,
+  },
+  filterGroupLabel: {
+    fontSize: 8,
+    fontWeight: '500',
+    letterSpacing: 2,
+    color: Colors.textFaint,
+    paddingHorizontal: Spacing.screen,
+  },
   chips: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.sm,
     paddingHorizontal: Spacing.screen,
-    paddingTop: Spacing.lg,
   },
   chip: {
     paddingHorizontal: Spacing.md,
@@ -553,7 +730,7 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.border,
     paddingTop: Spacing.md,
   },
-  whyLabel: { fontSize: 8, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  whyLabel: { fontSize: 8, fontWeight: '500', letterSpacing: 2, color: Colors.textSubtle },
   whyText: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
   notUsed: { fontSize: 10, fontWeight: '300', color: Colors.textFaint, fontStyle: 'italic', marginTop: 2 },
   provenance: {
@@ -564,8 +741,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cta: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  cta: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   save: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
+  savedDone: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
   actionRow: { flexDirection: 'row', gap: Spacing.sm, paddingHorizontal: Spacing.screen, marginTop: Spacing.md },
   actionBtn: {
     height: 44,
@@ -607,5 +785,136 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     lineHeight: 22,
     letterSpacing: 0.3,
+  },
+
+  // Section toggle (All Ideas / Local Places)
+  sectionToggle: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.lg,
+  },
+  toggleChip: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  toggleChipActive: {
+    backgroundColor: Colors.text,
+    borderColor: Colors.text,
+  },
+  toggleChipText: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 1.5,
+    color: Colors.textMuted,
+  },
+  toggleChipTextActive: {
+    color: Colors.white,
+  },
+
+  // Date generator label
+  generatorLabel: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2.5,
+    color: Colors.accent,
+    textTransform: 'uppercase',
+  },
+
+  // Weekly challenge
+  challengeSection: {
+    marginTop: Spacing.xxl,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+    paddingTop: Spacing.lg,
+  },
+  challengeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.screen,
+    marginBottom: Spacing.md,
+  },
+  challengeSectionLabel: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2.5,
+    color: Colors.textFaint,
+    textTransform: 'uppercase',
+  },
+  chillyCounter: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 1,
+    color: Colors.accent,
+  },
+  challengeCard: {
+    backgroundColor: Colors.backgroundCream,
+    marginHorizontal: Spacing.screen,
+    padding: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  challengePrompt: {
+    fontSize: 11,
+    fontWeight: '400',
+    letterSpacing: 0.5,
+    color: Colors.textFaint,
+    fontStyle: 'italic',
+  },
+  challengeTitle: {
+    fontSize: 20,
+    fontWeight: '300',
+    color: Colors.text,
+    letterSpacing: -0.3,
+  },
+  challengeSubtitle: {
+    fontSize: 13,
+    fontWeight: '300',
+    color: Colors.textMuted,
+    lineHeight: 19,
+  },
+  challengeDone: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingTop: Spacing.sm,
+  },
+  challengeDoneBadge: { fontSize: 22 },
+  challengeDoneText: {
+    fontSize: 12,
+    fontWeight: '500',
+    letterSpacing: 1,
+    color: Colors.text,
+  },
+  challengeProgress: { gap: Spacing.sm, paddingTop: Spacing.sm },
+  challengeProgressBar: {
+    height: 2,
+    backgroundColor: Colors.border,
+  },
+  challengeProgressFill: {
+    height: 2,
+    backgroundColor: Colors.accent,
+  },
+  challengeProgressText: {
+    fontSize: 11,
+    fontWeight: '400',
+    letterSpacing: 0.5,
+    color: Colors.textMuted,
+  },
+  challengeAccept: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: Colors.text,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Spacing.sm,
+  },
+  challengeAcceptText: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 2,
+    color: Colors.text,
   },
 });
