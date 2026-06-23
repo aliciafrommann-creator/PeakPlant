@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   symbol: { fontSize: 36, marginBottom: Spacing.sm },
-  editionLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.accent },
+  editionLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textSubtle },
   title: { fontSize: 36, fontWeight: '200', color: Colors.white, letterSpacing: -0.5 },
   description: {
     fontSize: 14,

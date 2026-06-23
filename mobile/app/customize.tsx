@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     fontSize: 8,
     fontWeight: '500',
     letterSpacing: 2,
-    color: Colors.accent,
+    color: Colors.textSubtle,
     borderWidth: 1,
     borderColor: Colors.accent,
     paddingHorizontal: 5,

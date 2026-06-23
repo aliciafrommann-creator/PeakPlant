@@ -9,6 +9,9 @@
     "runtimeVersion": {
       "policy": "appVersion"
     },
+    "updates": {
+      "url": "https://u.expo.dev/d346781d-c0f6-4826-a8f3-381a52a6670d"
+    },
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -18,6 +21,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.peakplant.app",
+      "buildNumber": "1",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -27,10 +31,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#1A1A1A"
       },
-      "package": "com.peakplant.app"
+      "package": "com.peakplant.app",
+      "versionCode": 1
     },
     "plugins": [
       "expo-router",
+      "expo-updates",
       [
         "expo-camera",
         {

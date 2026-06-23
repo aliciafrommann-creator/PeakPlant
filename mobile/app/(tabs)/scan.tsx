@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  permissionButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.accent },
+  permissionButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
   bottom: { paddingHorizontal: Spacing.screen, paddingVertical: Spacing.xl, gap: Spacing.lg },
   divider: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   dividerLine: { flex: 1, height: 1, backgroundColor: Colors.border },

@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '500',
     letterSpacing: 3,
-    color: Colors.accent,
+    color: Colors.textSubtle,
   },
   title: {
     fontSize: 34,

@@ -20,11 +20,11 @@ function Spinner() {
 
 /**
  * The home a fully-set-up user lands on — resuming a deep-linked card if one
- * was captured before the auth/onboarding gate, otherwise the Discover tab.
+ * was captured before the auth/onboarding gate, otherwise the couple-space Home tab.
  */
 function resumeHome(): string {
   const cardId = consumePendingCard();
-  return cardId ? `/card/${cardId}` : '/(tabs)/discover';
+  return cardId ? `/card/${cardId}` : '/(tabs)/home';
 }
 
 export default function Index() {

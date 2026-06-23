@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '500',
     letterSpacing: 1.5,
-    color: Colors.accent,
+    color: Colors.textSubtle,
   },
   disabled: { opacity: 0.3 },
   photo: {
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontWeight: '500',
     letterSpacing: 3,
-    color: Colors.accent,
+    color: Colors.textSubtle,
   },
   prompt: {
     fontSize: 22,
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
   backLink: {
     fontSize: 12,
     fontWeight: '300',
-    color: Colors.accent,
+    color: Colors.textSubtle,
     letterSpacing: 0.5,
   },
 });

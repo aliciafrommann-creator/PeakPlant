@@ -27,6 +27,15 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
+        name="home"
+        options={{
+          title: 'Together',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="heart-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="discover"
         options={{
           title: 'Discover',
@@ -35,34 +44,39 @@ export default function TabsLayout() {
           ),
         }}
       />
+      <Tabs.Screen
+        name="editions"
+        options={{
+          title: 'Editions',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="layers-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="community"
+        options={{
+          title: 'Community',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="people-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Me',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
+          ),
+        }}
+      />
+
+      {/* Hidden from tab bar but still navigable */}
+      <Tabs.Screen name="scan" options={{ href: null }} />
+      <Tabs.Screen name="moments" options={{ href: null }} />
+      <Tabs.Screen name="grow" options={{ href: null }} />
       <Tabs.Screen name="us" options={{ href: null }} />
-      <Tabs.Screen
-        name="moments"
-        options={{
-          title: 'Moments',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="journal-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="scan"
-        options={{
-          title: 'Scan',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="scan-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="grow"
-        options={{
-          title: 'Grow',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="leaf-outline" size={size} color={color} />
-          ),
-        }}
-      />
     </Tabs>
   );
 }

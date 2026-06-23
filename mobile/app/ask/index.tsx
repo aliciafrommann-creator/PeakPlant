@@ -26,6 +26,7 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { useHasFeature } from '../../lib/hooks/useEntitlement';
 import { askGateway } from '../../lib/ai/askGateway';
 import { assessSafety } from '../../lib/ai/safety';
 import { enrichWithLiveWeather } from '../../lib/discovery/weatherContext';
@@ -44,6 +45,7 @@ interface Message {
 export default function AskScreen() {
   const { t } = useLanguage();
   const { activeSpace } = useSpaces();
+  const { allowed: canUseAI } = useHasFeature('ai_ask_peakplant');
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -60,6 +62,10 @@ export default function AskScreen() {
   const handleSend = useCallback(async () => {
     const text = input.trim();
     if (!text || loading) return;
+    if (!canUseAI) {
+      router.push('/plus');
+      return;
+    }
     setInput('');
 
     const userMessage: Message = { role: 'user', text };
@@ -129,7 +135,7 @@ export default function AskScreen() {
       setLoading(false);
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
     }
-  }, [input, loading, activeSpace, t]);
+  }, [input, loading, activeSpace, t, canUseAI]);
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -199,6 +205,12 @@ export default function AskScreen() {
           )}
         </ScrollView>
 
+        {!canUseAI && (
+          <TouchableOpacity style={styles.plusBanner} onPress={() => router.push('/plus')} accessibilityRole="button">
+            <Text style={styles.plusBannerText}>{t('Ask PeakPlant is a Plus feature', 'Ask PeakPlant ist ein Plus-Feature')}</Text>
+            <Text style={styles.plusBannerLink}>{t('Upgrade →', 'Upgraden →')}</Text>
+          </TouchableOpacity>
+        )}
         <View style={styles.inputRow}>
           <TextInput
             style={styles.input}
@@ -277,7 +289,7 @@ const styles = StyleSheet.create({
   recMeta: { flexDirection: 'row', gap: 6, alignItems: 'center' },
   recMetaText: { fontSize: 11, fontWeight: '400', color: Colors.textMuted },
   recMetaDot: { fontSize: 11, color: Colors.textFaint },
-  recWhy: { fontSize: 11, fontWeight: '300', color: Colors.accent, lineHeight: 17 },
+  recWhy: { fontSize: 11, fontWeight: '300', color: Colors.textSubtle, lineHeight: 17 },
   sourceLabel: {
     fontSize: 9,
     fontWeight: '400',
@@ -312,4 +324,16 @@ const styles = StyleSheet.create({
   },
   sendBtnDisabled: { opacity: 0.3 },
   sendBtnText: { fontSize: 14, fontWeight: '500', color: Colors.white },
+  plusBanner: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.screen,
+    paddingVertical: Spacing.sm,
+    backgroundColor: Colors.backgroundCream,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+  },
+  plusBannerText: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
+  plusBannerLink: { fontSize: 12, fontWeight: '500', color: Colors.text, letterSpacing: 0.3 },
 });
