@@ -37,7 +37,7 @@ export default function HomeScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { memories, loading } = useMemories(activeSpace?.id);
   const { t } = useLanguage();
-  const { latestNote } = useNotes(activeSpace?.id);
+  const { latestNote, latestFromPartner } = useNotes(activeSpace?.id);
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -227,39 +227,46 @@ export default function HomeScreen() {
               </View>
             )}
 
-            {/* Notes nudge — love message to partner */}
-            {activeSpace && (
-              <TouchableOpacity
-                style={styles.notesRow}
-                onPress={() => router.push('/note/compose')}
-                activeOpacity={0.85}
-                accessibilityRole="button"
-                accessibilityLabel={t(
-                  'Write a note to your partner',
-                  'Schreib deinem Partner eine Notiz',
-                )}
-              >
-                <View style={styles.notesLeft}>
-                  <Text style={styles.notesIcon}>✉</Text>
-                  <View style={styles.notesTextBlock}>
-                    <Text style={styles.notesTitle}>
-                      {latestNote
-                        ? t('YOUR LAST NOTE', 'DEINE LETZTE NOTIZ')
-                        : t('WRITE A NOTE', 'SCHREIB EINE NOTIZ')}
-                    </Text>
-                    <Text style={styles.notesBody} numberOfLines={2}>
-                      {latestNote
-                        ? latestNote.text
-                        : t(
-                            'tell your partner something...',
-                            'sag deinem Partner etwas...',
-                          )}
-                    </Text>
-                  </View>
-                </View>
-                <Text style={styles.notesArrow}>→</Text>
-              </TouchableOpacity>
-            )}
+            {/* Notes nudge — a note from the partner takes priority over your own */}
+            {activeSpace &&
+              (() => {
+                const shown = latestFromPartner ?? latestNote;
+                const fromPartner = !!latestFromPartner;
+                const title = fromPartner
+                  ? t('FROM YOUR PARTNER', 'VON DEINEM PARTNER')
+                  : shown
+                    ? t('YOUR LAST NOTE', 'DEINE LETZTE NOTIZ')
+                    : t('WRITE A NOTE', 'SCHREIB EINE NOTIZ');
+                return (
+                  <TouchableOpacity
+                    style={[styles.notesRow, fromPartner && styles.notesRowPartner]}
+                    onPress={() => router.push('/note/compose')}
+                    activeOpacity={0.85}
+                    accessibilityRole="button"
+                    accessibilityLabel={t(
+                      'Write a note to your partner',
+                      'Schreib deinem Partner eine Notiz',
+                    )}
+                  >
+                    <View style={styles.notesLeft}>
+                      <Text style={styles.notesIcon}>{fromPartner ? '♥' : '✉'}</Text>
+                      <View style={styles.notesTextBlock}>
+                        <Text
+                          style={[styles.notesTitle, fromPartner && styles.notesTitlePartner]}
+                        >
+                          {title}
+                        </Text>
+                        <Text style={styles.notesBody} numberOfLines={2}>
+                          {shown
+                            ? shown.text
+                            : t('tell your partner something...', 'sag deinem Partner etwas...')}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text style={styles.notesArrow}>→</Text>
+                  </TouchableOpacity>
+                );
+              })()}
 
             {/* All moments feed header */}
             {recentMemories.length > 0 && (
@@ -511,6 +518,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
     gap: Spacing.md,
+  },
+  notesRowPartner: {
+    backgroundColor: Colors.backgroundCream,
+  },
+  notesTitlePartner: {
+    color: Accents.blossom,
   },
   notesLeft: {
     flexDirection: 'row',

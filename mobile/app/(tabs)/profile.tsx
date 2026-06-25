@@ -38,7 +38,7 @@ export default function ProfileScreen() {
           <Text style={styles.kicker}>{t('PROFILE', 'PROFIL')}</Text>
           <Text style={styles.title}>{t('you', 'du')}</Text>
         </View>
-        <PeakBloom size="sm" />
+        <PeakBloom size="sm" animate={false} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

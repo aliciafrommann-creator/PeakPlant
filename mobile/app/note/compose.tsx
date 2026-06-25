@@ -17,6 +17,7 @@ import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useNotes } from '../../lib/hooks/useNotes';
+import { confirmSuccess } from '../../lib/haptics';
 
 const MAX_CHARS = 280;
 
@@ -35,6 +36,7 @@ export default function ComposeNoteScreen() {
     setSending(true);
     try {
       await sendNote(text);
+      void confirmSuccess();
       router.back();
     } catch {
       Alert.alert(

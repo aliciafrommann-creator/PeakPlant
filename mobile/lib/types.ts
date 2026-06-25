@@ -91,6 +91,21 @@ export interface User {
 }
 
 /**
+ * A short, dedicated note one member leaves for their space — a love message
+ * to the partner. Space-scoped under the same RLS as memories: both members
+ * read every note, only the author writes their own. `authorId`/`authorName`
+ * let the UI distinguish "your note" from "from your partner".
+ */
+export interface PartnerNote {
+  id: string;
+  spaceId: string;
+  text: string;
+  authorId?: string;
+  authorName?: string;
+  createdAt: string;
+}
+
+/**
  * `available` editions have their cards in the catalog and can be opened today.
  * `upcoming` editions are on the public roadmap but not shipped yet — shown so
  * a space can see what's coming, but not openable.

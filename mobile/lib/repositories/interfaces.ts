@@ -10,6 +10,7 @@ import type {
   PublicPlaceSpot,
   PublicPlaceFeedback,
   Ritual,
+  PartnerNote,
 } from '../types';
 
 export interface IMemoryRepository {
@@ -81,6 +82,12 @@ export interface IPublicPlaceFeedbackRepository {
   saveSpot(item: Omit<PublicPlaceSpot, 'createdAt'>): Promise<PublicPlaceSpot>;
   getByPlaceIds(placeIds: string[]): Promise<PublicPlaceFeedback[]>;
   save(item: Omit<PublicPlaceFeedback, 'id' | 'createdAt'>): Promise<PublicPlaceFeedback>;
+}
+
+export interface INoteRepository {
+  getAll(spaceId: string): Promise<PartnerNote[]>;
+  create(item: Omit<PartnerNote, 'id' | 'createdAt'>): Promise<PartnerNote>;
+  remove(id: string): Promise<void>;
 }
 
 export interface IRitualRepository {
