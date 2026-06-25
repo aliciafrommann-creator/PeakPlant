@@ -163,6 +163,14 @@ export interface SavedDate {
   estDurationMin: number;
   status: SavedDateStatus;
   savedAt: string;
+  /** Optional live/public place snapshot. Kept separate from private notes. */
+  placeId?: string;
+  placeName?: string;
+  placeAddress?: string;
+  placeLat?: number;
+  placeLng?: number;
+  placeCategory?: string;
+  placeMapsUrl?: string;
   plannedFor?: string;
   /** Optional free-text logistics for a plan (who's booking, what to bring). */
   planningNotes?: string;
@@ -213,6 +221,22 @@ export interface DateFeedback {
   rating: 1 | 2 | 3 | 4 | 5;
   /** Optional practical tip (max 280 chars). No diary content here. */
   tip?: string;
+  createdAt: string;
+}
+
+/**
+ * Public, anonymized map spot. This stores venue facts needed to show a pin; it
+ * carries no user, space, partner, diary, plan-note, or photo data.
+ */
+export interface PublicPlaceSpot {
+  id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  category?: string;
+  mapsUrl?: string;
+  sourceId?: string;
   createdAt: string;
 }
 

@@ -7,6 +7,7 @@ import type {
   SavedDate,
   SavedDateStatus,
   DateFeedback,
+  PublicPlaceSpot,
   PublicPlaceFeedback,
   Ritual,
 } from '../types';
@@ -49,7 +50,21 @@ export interface ISavedDateRepository {
   update(
     id: string,
     updates: Partial<
-      Pick<SavedDate, 'status' | 'plannedFor' | 'planningNotes' | 'completedAt' | 'memoryId'>
+      Pick<
+        SavedDate,
+        | 'status'
+        | 'plannedFor'
+        | 'planningNotes'
+        | 'completedAt'
+        | 'memoryId'
+        | 'placeId'
+        | 'placeName'
+        | 'placeAddress'
+        | 'placeLat'
+        | 'placeLng'
+        | 'placeCategory'
+        | 'placeMapsUrl'
+      >
     >,
   ): Promise<SavedDate>;
   remove(id: string): Promise<void>;
@@ -62,6 +77,8 @@ export interface IDateFeedbackRepository {
 }
 
 export interface IPublicPlaceFeedbackRepository {
+  getSpots(): Promise<PublicPlaceSpot[]>;
+  saveSpot(item: Omit<PublicPlaceSpot, 'createdAt'>): Promise<PublicPlaceSpot>;
   getByPlaceIds(placeIds: string[]): Promise<PublicPlaceFeedback[]>;
   save(item: Omit<PublicPlaceFeedback, 'id' | 'createdAt'>): Promise<PublicPlaceFeedback>;
 }

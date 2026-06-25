@@ -2,11 +2,15 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
   Linking,
+  Modal,
+  Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -29,12 +33,13 @@ import { searchLivePlacesNear, type LivePlaceSearchFailure } from '../../lib/dis
 import {
   DEFAULT_LIVE_PLACE_RADIUS_KM,
   PILOT_CITIES,
+  publicSpotToLocalPlace,
   livePlaceToLocalPlace,
   type PilotCity,
 } from '../../lib/discovery/livePlaces';
 import type { LivePlace } from '../../lib/discovery/providers/interface';
 import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
-import type { DateFeedback, PublicPlaceFeedback } from '../../lib/types';
+import type { DateFeedback, PublicPlaceFeedback, PublicPlaceSpot } from '../../lib/types';
 
 type MapMessage =
   | { type: 'map-ready' }
@@ -56,6 +61,12 @@ function aggregatePublicFeedback(rows: PublicPlaceFeedback[]) {
   );
   const average = Math.round((rows.reduce((sum, row) => sum + row.rating, 0) / rows.length) * 10) / 10;
   return { count: rows.length, average, latestTip: sorted.find((row) => row.tip)?.tip };
+}
+
+function uniquePlaces(places: LocalPlace[]): LocalPlace[] {
+  const byId = new Map<string, LocalPlace>();
+  for (const place of places) byId.set(place.id, place);
+  return [...byId.values()];
 }
 
 function liveFailureMessage(
@@ -107,10 +118,15 @@ export default function PlacesScreen() {
   const [selectedId, setSelectedId] = useState(firstPlaceId);
   const [feedback, setFeedback] = useState<DateFeedback[]>([]);
   const [publicFeedback, setPublicFeedback] = useState<PublicPlaceFeedback[]>([]);
+  const [publicSpots, setPublicSpots] = useState<PublicPlaceSpot[]>([]);
   const [mapReady, setMapReady] = useState(false);
   const [mapUnavailable, setMapUnavailable] = useState(false);
   const [livePlaces, setLivePlaces] = useState<LivePlace[]>([]);
   const [liveLoading, setLiveLoading] = useState(false);
+  const [ratingVisible, setRatingVisible] = useState(false);
+  const [publicRating, setPublicRating] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
+  const [publicTip, setPublicTip] = useState('');
+  const [publicSharing, setPublicSharing] = useState(false);
   const [liveStatus, setLiveStatus] = useState<LiveStatus>({
     kind: 'idle',
     message: '',
@@ -148,9 +164,28 @@ export default function PlacesScreen() {
     return () => clearTimeout(timer);
   }, [selectedId]);
 
+  useEffect(() => {
+    let alive = true;
+    publicPlaceFeedbackRepository
+      .getSpots()
+      .then((spots) => {
+        if (alive) setPublicSpots(spots);
+      })
+      .catch(() => {
+        if (alive) setPublicSpots([]);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const displayPlaces = useMemo(
-    () => [...LOCAL_PLACES, ...livePlaces.map(livePlaceToLocalPlace)],
-    [livePlaces],
+    () => uniquePlaces([
+      ...LOCAL_PLACES,
+      ...publicSpots.map(publicSpotToLocalPlace),
+      ...livePlaces.map(livePlaceToLocalPlace),
+    ]),
+    [livePlaces, publicSpots],
   );
 
   useEffect(() => {
@@ -224,6 +259,22 @@ export default function PlacesScreen() {
       );
     }
   }, [livePlaces, t]);
+
+  const publicSpotForPlace = useCallback((place: LocalPlace | undefined): Omit<PublicPlaceSpot, 'createdAt'> | null => {
+    if (!place || typeof place.lat !== 'number' || typeof place.lng !== 'number') return null;
+    const live = livePlaces.find((item) => item.id === place.id);
+    const existing = publicSpots.find((item) => item.id === place.id);
+    return {
+      id: place.id,
+      name: place.name,
+      address: place.area,
+      lat: place.lat,
+      lng: place.lng,
+      category: place.category,
+      mapsUrl: live?.mapsUrl ?? existing?.mapsUrl,
+      sourceId: live?.sourceId ?? existing?.sourceId ?? 'peakplant-community',
+    };
+  }, [livePlaces, publicSpots]);
 
   const searchAtCoords = useCallback(async ({
     coords,
@@ -322,6 +373,7 @@ export default function PlacesScreen() {
       return;
     }
     const linkedMoment = linkedMoments[0];
+    const spot = publicSpotForPlace(selected);
     try {
       const saved = await savedDateRepository.save({
         spaceId: activeSpace.id,
@@ -334,6 +386,13 @@ export default function PlacesScreen() {
         priceBand: linkedMoment?.priceBand ?? selected.priceBand,
         estDurationMin: linkedMoment?.avgDurationMin ?? 75,
         status: 'saved',
+        placeId: spot?.id,
+        placeName: spot?.name,
+        placeAddress: spot?.address,
+        placeLat: spot?.lat,
+        placeLng: spot?.lng,
+        placeCategory: spot?.category,
+        placeMapsUrl: spot?.mapsUrl,
       });
       await confirmSuccess();
       router.push({ pathname: '/discover/saved', params: { plan: saved.id } });
@@ -343,11 +402,57 @@ export default function PlacesScreen() {
         t('Please try again in a moment.', 'Bitte versuche es gleich noch einmal.'),
       );
     }
-  }, [activeSpace, linkedMoments, selected, t]);
+  }, [activeSpace, linkedMoments, publicSpotForPlace, selected, t]);
+
+  const openPublicRating = useCallback(() => {
+    const spot = publicSpotForPlace(selected);
+    if (!spot) {
+      Alert.alert(
+        t('Find a real place first', 'Finde zuerst einen echten Ort'),
+        t('Search live places or pick a community spot, then you can add a rating to the map.', 'Suche Live-Orte oder wähle einen Community-Spot, dann kannst du eine Bewertung zur Karte hinzufügen.'),
+      );
+      return;
+    }
+    setPublicRating(null);
+    setPublicTip('');
+    setRatingVisible(true);
+  }, [publicSpotForPlace, selected, t]);
+
+  const submitPublicRating = useCallback(async () => {
+    const spot = publicSpotForPlace(selected);
+    if (!spot || !publicRating || publicSharing) return;
+    setPublicSharing(true);
+    try {
+      await publicPlaceFeedbackRepository.saveSpot(spot);
+      await publicPlaceFeedbackRepository.save({
+        placeId: spot.id,
+        rating: publicRating,
+        tip: publicTip.trim() || undefined,
+      });
+      const [spots, rows] = await Promise.all([
+        publicPlaceFeedbackRepository.getSpots(),
+        publicPlaceFeedbackRepository.getByPlaceIds([...displayPlaces.map((place) => place.id), spot.id]),
+      ]);
+      setPublicSpots(spots);
+      setPublicFeedback(rows);
+      setRatingVisible(false);
+      setPublicRating(null);
+      setPublicTip('');
+      await confirmSuccess();
+    } catch {
+      Alert.alert(
+        t('Could not share this spot', 'Spot konnte nicht geteilt werden'),
+        t('Please try again in a moment.', 'Bitte versuche es gleich noch einmal.'),
+      );
+    } finally {
+      setPublicSharing(false);
+    }
+  }, [displayPlaces, publicRating, publicSharing, publicSpotForPlace, publicTip, selected, t]);
 
   if (!selected) return null;
   const selectedHasDirections = Boolean(selectedLivePlace?.mapsUrl ?? directionsUrl(selected));
   const selectedIsSearchPrompt = !selectedLivePlace && selected.provenance === 'needs-confirmation';
+  const selectedCanBeShared = Boolean(publicSpotForPlace(selected));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -611,6 +716,20 @@ export default function PlacesScreen() {
                 {selectedLivePlace ? t('PLAN THIS PLACE', 'DIESEN ORT PLANEN') : t('PLAN THIS IDEA', 'DIESE IDEE PLANEN')}
               </Text>
             </TouchableOpacity>
+            {selectedCanBeShared ? (
+              <TouchableOpacity
+                style={styles.tertiaryButton}
+                onPress={openPublicRating}
+                accessibilityRole="button"
+                accessibilityLabel={t(`Rate ${selected.name} anonymously`, `${selected.name} anonym bewerten`)}
+              >
+                <Text style={styles.tertiaryButtonText}>
+                  {publicSummary.count > 0
+                    ? t('ADD YOUR RATING', 'DEINE BEWERTUNG HINZUFÜGEN')
+                    : t('ADD / RATE ON MAP', 'AUF KARTE HINZUFÜGEN / BEWERTEN')}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
           </View>
         </View>
 
@@ -659,6 +778,78 @@ export default function PlacesScreen() {
           )}
         </Text>
       </ScrollView>
+
+      <Modal
+        visible={ratingVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setRatingVisible(false)}
+      >
+        <KeyboardAvoidingView
+          style={styles.modalBackdrop}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <TouchableOpacity
+            style={StyleSheet.absoluteFill}
+            onPress={() => setRatingVisible(false)}
+            accessibilityLabel={t('Close', 'Schließen')}
+          />
+          <View style={styles.sheet}>
+            <Text style={styles.sheetKicker}>{t('ANONYMOUS MAP TIP', 'ANONYMER MAP-TIPP')}</Text>
+            <Text style={styles.sheetTitle}>{selected.name.toLowerCase()}</Text>
+            <Text style={styles.sheetNote}>
+              {t(
+                'Only this spot, stars and optional practical tip become public. Your space, memory and identity stay private.',
+                'Nur dieser Spot, Sterne und optionaler praktischer Tipp werden öffentlich. Space, Erinnerung und Identität bleiben privat.',
+              )}
+            </Text>
+            <View style={styles.sheetStars}>
+              {([1, 2, 3, 4, 5] as const).map((star) => (
+                <TouchableOpacity
+                  key={star}
+                  onPress={() => setPublicRating(star)}
+                  accessibilityRole="button"
+                  accessibilityLabel={t(`${star} stars`, `${star} Sterne`)}
+                >
+                  <Text style={[styles.sheetStar, publicRating != null && star <= publicRating && styles.sheetStarOn]}>
+                    {publicRating != null && star <= publicRating ? '★' : '☆'}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <TextInput
+              style={styles.sheetInput}
+              value={publicTip}
+              onChangeText={setPublicTip}
+              maxLength={280}
+              multiline
+              placeholder={t('tiny practical tip…', 'kleiner praktischer Tipp…')}
+              placeholderTextColor={Colors.textFaint}
+            />
+            <View style={styles.sheetActions}>
+              <TouchableOpacity
+                style={styles.sheetCancel}
+                onPress={() => setRatingVisible(false)}
+                accessibilityRole="button"
+              >
+                <Text style={styles.sheetCancelText}>{t('CANCEL', 'ABBRECHEN')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.sheetConfirm, (!publicRating || publicSharing) && styles.sheetConfirmDisabled]}
+                onPress={() => void submitPublicRating()}
+                disabled={!publicRating || publicSharing}
+                accessibilityRole="button"
+              >
+                {publicSharing ? (
+                  <ActivityIndicator color={Colors.white} size="small" />
+                ) : (
+                  <Text style={styles.sheetConfirmText}>{t('SHARE ANONYMOUSLY', 'ANONYM TEILEN')}</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -817,6 +1008,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   secondaryButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  tertiaryButton: {
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tertiaryButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
   ideas: {
     marginTop: Spacing.xl,
     borderTopWidth: 1,
@@ -852,4 +1049,51 @@ const styles = StyleSheet.create({
     color: Colors.textSubtle,
     lineHeight: 17,
   },
+  modalBackdrop: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.45)',
+  },
+  sheet: {
+    backgroundColor: Colors.background,
+    paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.xxxl,
+    gap: Spacing.md,
+  },
+  sheetKicker: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
+  sheetTitle: { fontSize: 24, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
+  sheetNote: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18 },
+  sheetStars: { flexDirection: 'row', gap: Spacing.md },
+  sheetStar: { fontSize: 34, color: Colors.border },
+  sheetStarOn: { color: Colors.accent },
+  sheetInput: {
+    fontSize: 15,
+    fontWeight: '300',
+    color: Colors.text,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    paddingVertical: Spacing.sm,
+    minHeight: 70,
+    textAlignVertical: 'top',
+  },
+  sheetActions: { flexDirection: 'row', gap: Spacing.sm, marginTop: Spacing.sm },
+  sheetCancel: {
+    height: 44,
+    paddingHorizontal: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sheetCancelText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
+  sheetConfirm: {
+    height: 44,
+    flex: 1,
+    backgroundColor: Colors.text,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sheetConfirmDisabled: { opacity: 0.35 },
+  sheetConfirmText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
 });

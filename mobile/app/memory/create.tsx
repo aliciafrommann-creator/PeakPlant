@@ -23,13 +23,33 @@ import { savedDateRepository } from '../../lib/repositories';
 import { SEED_CARDS } from '../../lib/seed';
 
 export default function CreateMemoryScreen() {
-  const { cardId, prefillNote, savedDateId, savedDateTitle, savedDateMomentId } =
+  const {
+    cardId,
+    prefillNote,
+    savedDateId,
+    savedDateTitle,
+    savedDateMomentId,
+    placeId,
+    placeName,
+    placeAddress,
+    placeLat,
+    placeLng,
+    placeCategory,
+    placeMapsUrl,
+  } =
     useLocalSearchParams<{
       cardId?: string;
       prefillNote?: string;
       savedDateId?: string;
       savedDateTitle?: string;
       savedDateMomentId?: string;
+      placeId?: string;
+      placeName?: string;
+      placeAddress?: string;
+      placeLat?: string;
+      placeLng?: string;
+      placeCategory?: string;
+      placeMapsUrl?: string;
     }>();
   const [note, setNote] = useState(typeof prefillNote === 'string' ? prefillNote : '');
   const [photoUri, setPhotoUri] = useState<string | undefined>(undefined);
@@ -93,6 +113,13 @@ export default function CreateMemoryScreen() {
             memoryId: memory.id,
             title: savedDateTitle ?? '',
             momentId: savedDateMomentId ?? '',
+            placeId: placeId ?? '',
+            placeName: placeName ?? '',
+            placeAddress: placeAddress ?? '',
+            placeLat: placeLat ?? '',
+            placeLng: placeLng ?? '',
+            placeCategory: placeCategory ?? '',
+            placeMapsUrl: placeMapsUrl ?? '',
           },
         });
       } else {

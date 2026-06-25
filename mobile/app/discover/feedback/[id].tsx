@@ -19,6 +19,7 @@ import { useLanguage } from '../../../lib/hooks/useLanguage';
 import { useSpaces } from '../../../lib/hooks/useSpaces';
 import { feedbackRepository, publicPlaceFeedbackRepository } from '../../../lib/repositories';
 import { acknowledgeSelection, confirmSuccess } from '../../../lib/haptics';
+import type { PublicPlaceSpot } from '../../../lib/types';
 
 const MAX_TIP = 280;
 
@@ -28,12 +29,37 @@ function placeIdFromMomentId(momentId?: string): string | undefined {
   return undefined;
 }
 
+function parsePlaceNumber(value?: string): number | undefined {
+  if (!value) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
 export default function FeedbackScreen() {
-  const { id: savedDateId, memoryId, title, momentId } = useLocalSearchParams<{
+  const {
+    id: savedDateId,
+    memoryId,
+    title,
+    momentId,
+    placeId: explicitPlaceId,
+    placeName,
+    placeAddress,
+    placeLat,
+    placeLng,
+    placeCategory,
+    placeMapsUrl,
+  } = useLocalSearchParams<{
     id: string;
     memoryId: string;
     title?: string;
     momentId?: string;
+    placeId?: string;
+    placeName?: string;
+    placeAddress?: string;
+    placeLat?: string;
+    placeLng?: string;
+    placeCategory?: string;
+    placeMapsUrl?: string;
   }>();
   const { t } = useLanguage();
   const { activeSpace } = useSpaces();
@@ -42,7 +68,22 @@ export default function FeedbackScreen() {
   const [tip, setTip] = useState('');
   const [shareAnonymously, setShareAnonymously] = useState(false);
   const [saving, setSaving] = useState(false);
-  const placeId = useMemo(() => placeIdFromMomentId(momentId), [momentId]);
+  const placeId = useMemo(() => explicitPlaceId || placeIdFromMomentId(momentId), [explicitPlaceId, momentId]);
+  const placeSpot = useMemo<Omit<PublicPlaceSpot, 'createdAt'> | null>(() => {
+    const lat = parsePlaceNumber(placeLat);
+    const lng = parsePlaceNumber(placeLng);
+    if (!placeId || !placeName || lat == null || lng == null) return null;
+    return {
+      id: placeId,
+      name: placeName,
+      address: placeAddress ?? '',
+      lat,
+      lng,
+      category: placeCategory,
+      mapsUrl: placeMapsUrl,
+      sourceId: placeId.startsWith('google:') ? 'google-places-text-search' : 'peakplant-community',
+    };
+  }, [placeAddress, placeCategory, placeId, placeLat, placeLng, placeMapsUrl, placeName]);
 
   const goToMemory = () => {
     if (memoryId) {
@@ -67,6 +108,9 @@ export default function FeedbackScreen() {
         tip: tip.trim() || undefined,
       });
       if (shareAnonymously && placeId) {
+        if (placeSpot) {
+          await publicPlaceFeedbackRepository.saveSpot(placeSpot).catch(() => undefined);
+        }
         await publicPlaceFeedbackRepository.save({
           placeId,
           rating,

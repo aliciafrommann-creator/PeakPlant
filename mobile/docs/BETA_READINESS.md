@@ -120,8 +120,10 @@ device. On-device QA (below) is a release blocker.
   ranking that can only sort provider-returned places. On-device verification
   with real keys is pending.
 - 🔴 Events, routing, transit, and booking are still absent.
-- 🟡 Anonymous public place tips are built as explicit opt-in feedback and need
-  migration `0009_public_place_feedback.sql` applied before cross-device sharing.
+- 🟡 Anonymous public place tips and public map pins are built as explicit opt-in
+  sharing and need migrations `0009_public_place_feedback.sql` +
+  `0010_public_place_spots_and_saved_snapshot.sql` applied before cross-device
+  sharing.
 - 🔵 Live Places map view is built with CARTO/OpenStreetMap tiles and a connection-safe
   list fallback. Live provider places are added as a layer when the user asks;
   clustering is not built.
@@ -168,8 +170,9 @@ filters (Android) in `app.json` before the print run.
    the public keys are wired in `eas.json`. Remaining: a device test of the live
    auth/upload/delete path against the migrated project (the pgTAP RLS suite is
    written; run it against the live project before public testers).
-   Apply `0009_public_place_feedback.sql` before expecting anonymous place tips
-   to sync across devices.
+   Apply `0009_public_place_feedback.sql` and
+   `0010_public_place_spots_and_saved_snapshot.sql` before expecting anonymous
+   place tips/map pins to sync across devices.
 3. 🔑 `app.json`: bundle id, version, camera usage strings (EN/DE), associated
    domains/intent filters if using HTTPS card links. (Bundle ids, version,
    camera strings, and EAS project id are already set; HTTPS associated domains

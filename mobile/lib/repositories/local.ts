@@ -6,6 +6,7 @@ import type {
   SpaceMember,
   SavedDate,
   DateFeedback,
+  PublicPlaceSpot,
   PublicPlaceFeedback,
   Ritual,
 } from '../types';
@@ -243,7 +244,21 @@ export const localSavedDateRepository: ISavedDateRepository = {
   async update(
     id: string,
     updates: Partial<
-      Pick<SavedDate, 'status' | 'plannedFor' | 'planningNotes' | 'completedAt' | 'memoryId'>
+      Pick<
+        SavedDate,
+        | 'status'
+        | 'plannedFor'
+        | 'planningNotes'
+        | 'completedAt'
+        | 'memoryId'
+        | 'placeId'
+        | 'placeName'
+        | 'placeAddress'
+        | 'placeLat'
+        | 'placeLng'
+        | 'placeCategory'
+        | 'placeMapsUrl'
+      >
     >,
   ): Promise<SavedDate> {
     const stored = await storage.get<SavedDate[]>(SAVED_DATES_KEY);
@@ -267,6 +282,7 @@ export const localSavedDateRepository: ISavedDateRepository = {
 
 const FEEDBACK_KEY = 'dateFeedback';
 const PUBLIC_PLACE_FEEDBACK_KEY = 'publicPlaceFeedback';
+const PUBLIC_PLACE_SPOTS_KEY = 'publicPlaceSpots';
 
 export const localDateFeedbackRepository: IDateFeedbackRepository = {
   async getAll(spaceId: string): Promise<DateFeedback[]> {
@@ -294,6 +310,23 @@ export const localDateFeedbackRepository: IDateFeedbackRepository = {
 };
 
 export const localPublicPlaceFeedbackRepository: IPublicPlaceFeedbackRepository = {
+  async getSpots(): Promise<PublicPlaceSpot[]> {
+    const stored = await storage.get<PublicPlaceSpot[]>(PUBLIC_PLACE_SPOTS_KEY);
+    return (stored ?? [])
+      .filter((spot) => Number.isFinite(spot.lat) && Number.isFinite(spot.lng))
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  },
+
+  async saveSpot(item: Omit<PublicPlaceSpot, 'createdAt'>): Promise<PublicPlaceSpot> {
+    const stored = await storage.get<PublicPlaceSpot[]>(PUBLIC_PLACE_SPOTS_KEY);
+    const all = stored ?? [];
+    const existing = all.find((spot) => spot.id === item.id);
+    if (existing) return existing;
+    const entry: PublicPlaceSpot = { ...item, createdAt: now() };
+    await storage.set(PUBLIC_PLACE_SPOTS_KEY, [...all, entry]);
+    return entry;
+  },
+
   async getByPlaceIds(placeIds: string[]): Promise<PublicPlaceFeedback[]> {
     const ids = new Set(placeIds);
     const stored = await storage.get<PublicPlaceFeedback[]>(PUBLIC_PLACE_FEEDBACK_KEY);

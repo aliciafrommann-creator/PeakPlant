@@ -93,6 +93,42 @@ describe('localPublicPlaceFeedbackRepository', () => {
     mockStorage.set.mockResolvedValue(undefined);
   });
 
+  it('stores public place spots without user or space data', async () => {
+    const spot = await localPublicPlaceFeedbackRepository.saveSpot({
+      id: 'google:spot-1',
+      name: 'Tiny Cafe',
+      address: 'Somewhere 1',
+      lat: 47.2,
+      lng: 11.4,
+      category: 'cafe',
+      mapsUrl: 'https://maps.example/spot',
+      sourceId: 'google-places-text-search',
+    });
+    expect(spot.id).toBe('google:spot-1');
+    const stored = mockStorage.set.mock.calls[0][1] as unknown[];
+    expect(Object.keys(stored[0] as Record<string, unknown>)).toEqual(
+      expect.arrayContaining(['id', 'name', 'address', 'lat', 'lng', 'createdAt']),
+    );
+    expect(Object.keys(stored[0] as Record<string, unknown>)).not.toEqual(
+      expect.arrayContaining(['spaceId', 'userId', 'note', 'photoUri']),
+    );
+  });
+
+  it('deduplicates public spots by id', async () => {
+    mockStorage.get.mockResolvedValue([
+      { id: 'google:spot-1', name: 'Tiny Cafe', address: '', lat: 47.2, lng: 11.4, createdAt: '2026-06-01T00:00:00Z' },
+    ]);
+    const spot = await localPublicPlaceFeedbackRepository.saveSpot({
+      id: 'google:spot-1',
+      name: 'Tiny Cafe renamed',
+      address: '',
+      lat: 47.2,
+      lng: 11.4,
+    });
+    expect(spot.name).toBe('Tiny Cafe');
+    expect(mockStorage.set).not.toHaveBeenCalled();
+  });
+
   it('stores only anonymized place feedback fields', async () => {
     const entry = await localPublicPlaceFeedbackRepository.save({
       placeId: 'google:place-1',

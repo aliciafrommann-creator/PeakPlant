@@ -1,4 +1,5 @@
 import { LOCAL_PLACES, type LocalPlace, type PriceBand, type Provenance } from '../together';
+import type { PublicPlaceSpot } from '../types';
 import type { GeoCoords, LivePlace } from './providers/interface';
 
 export const DEFAULT_LIVE_PLACE_QUERY = 'romantic cafes parks museums viewpoints date spots';
@@ -93,5 +94,22 @@ export function livePlaceToLocalPlace(place: LivePlace): LocalPlace {
     lastVerifiedAt: place.fetchedAt.slice(0, 10),
     lat: place.lat,
     lng: place.lng,
+  };
+}
+
+export function publicSpotToLocalPlace(spot: PublicPlaceSpot): LocalPlace {
+  return {
+    id: spot.id,
+    name: spot.name,
+    category: spot.category ?? 'community spot',
+    area: spot.address || 'shared anonymously',
+    isPartner: false,
+    priceBand: DEFAULT_LIVE_PRICE_BAND,
+    accessibility: [],
+    tags: ['community', spot.category ?? 'spot'],
+    provenance: 'verified-live',
+    lastVerifiedAt: spot.createdAt.slice(0, 10),
+    lat: spot.lat,
+    lng: spot.lng,
   };
 }
