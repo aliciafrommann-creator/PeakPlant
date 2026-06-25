@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { SEED_EDITIONS, DECK_SIZE_RANGE } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -118,8 +119,8 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.lg,
     gap: 4,
   },
-  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
-  title: { fontSize: 28, fontWeight: '200', color: Colors.text, letterSpacing: -0.5 },
+  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Sections.grow },
+  title: { ...Typography.editorial, fontSize: 32, lineHeight: 38 },
   lead: {
     fontSize: 14,
     fontWeight: '300',
@@ -136,6 +137,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.backgroundWarm,
     borderWidth: 1,
     borderColor: Colors.border,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   cardUpcoming: { opacity: 0.55 },
   symbol: { fontSize: 28 },

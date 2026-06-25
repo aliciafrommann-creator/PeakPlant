@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { router } from 'expo-router';
-import { Colors } from '../../constants/colors';
+import { Colors, Sections } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { ChallengeCard } from '../../components/challenge/ChallengeCard';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -107,6 +107,6 @@ const styles = StyleSheet.create({
   content: { padding: Spacing.screen, gap: Spacing.xl, paddingBottom: Spacing.xxxl },
   intro: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
   section: { gap: Spacing.md },
-  sectionLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
+  sectionLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Sections.grow },
   list: { gap: Spacing.md },
 });

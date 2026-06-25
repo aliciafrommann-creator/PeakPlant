@@ -8,8 +8,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { ProgressBar } from '../../components/challenge/ProgressBar';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
@@ -125,14 +126,16 @@ const styles = StyleSheet.create({
   headerLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.text },
   content: { padding: Spacing.screen, gap: Spacing.sm, paddingBottom: Spacing.xxxl },
   badge: { fontSize: 40, minHeight: 28 },
-  duration: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle, marginTop: Spacing.sm },
-  title: { fontSize: 30, fontWeight: '200', color: Colors.text, letterSpacing: -0.4, lineHeight: 36 },
+  duration: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Sections.grow, marginTop: Spacing.sm },
+  title: { ...Typography.editorial, fontSize: 32, lineHeight: 38 },
   subtitle: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 24, marginTop: 4 },
   progressCard: {
     backgroundColor: Colors.backgroundCream,
     padding: Spacing.lg,
     marginTop: Spacing.lg,
     gap: Spacing.sm,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   done: { fontSize: 13, fontWeight: '300', color: Colors.text, fontStyle: 'italic' },
   primary: {
@@ -141,6 +144,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.lg,
+    borderRadius: Radii.pill,
   },
   primaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },
   secondary: {
@@ -150,6 +154,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.lg,
+    borderRadius: Radii.pill,
   },
   secondaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.textMuted },
   note: {
