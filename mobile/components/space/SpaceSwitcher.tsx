@@ -15,19 +15,30 @@ function typeLabel(type: Space['type']): string {
   return type === 'couple' ? 'COUPLE' : 'FRIENDS';
 }
 
-/** Each space gets its own warm identity colour, stable by position. */
+/** Each space gets its own warm identity colour, stable by position.
+ *  All on-brand: terracotta sunset → gold bloom → raspberry/orange pops. */
 const SPACE_COLORS = [
-  Accents.apricot,
-  Accents.cobalt,
-  Accents.sage,
-  Accents.lilac,
-  Accents.evening,
   Accents.chili,
+  Accents.blossom,
   Accents.sunflower,
+  Accents.ember,
+  Accents.apricot,
+  Accents.terracotta,
+  Accents.sage,
 ] as const;
 
 function colorForSpace(index: number): string {
   return SPACE_COLORS[index % SPACE_COLORS.length];
+}
+
+/** Pick black or white text for legibility on a given fill colour. */
+function readableOn(hex: string): string {
+  const h = hex.replace('#', '');
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+  return luminance > 165 ? Colors.text : Colors.white;
 }
 
 /** Couple/friends get a small glyph so each card reads as a place, not a tab. */
@@ -45,6 +56,7 @@ export function SpaceSwitcher({ spaces, activeSpaceId, onSelect }: SpaceSwitcher
       {spaces.map((space, index) => {
         const active = space.id === activeSpaceId;
         const color = colorForSpace(index);
+        const onColor = readableOn(color);
         return (
           <TouchableOpacity
             key={space.id}
@@ -61,15 +73,20 @@ export function SpaceSwitcher({ spaces, activeSpaceId, onSelect }: SpaceSwitcher
             accessibilityLabel={`${space.name}, ${typeLabel(space.type).toLowerCase()} space`}
           >
             <View style={styles.chipTop}>
-              <Text style={[styles.glyph, { color: active ? Colors.white : color }]}>
+              <Text style={[styles.glyph, { color: active ? onColor : color }]}>
                 {glyphFor(space.type)}
               </Text>
-              <Text style={[styles.chipType, active ? styles.chipTypeActive : { color }]}>
+              <Text
+                style={[
+                  styles.chipType,
+                  { color: active ? onColor : color, opacity: active ? 0.85 : 1 },
+                ]}
+              >
                 {typeLabel(space.type)}
               </Text>
             </View>
             <Text
-              style={[styles.chipName, active && styles.chipNameActive]}
+              style={[styles.chipName, active && { color: onColor }]}
               numberOfLines={1}
             >
               {space.name.toLowerCase()}
@@ -130,17 +147,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 2,
   },
-  chipTypeActive: {
-    color: 'rgba(255,255,255,0.85)',
-  },
   chipName: {
     fontSize: 15,
     fontWeight: '500',
     color: Colors.text,
     letterSpacing: 0.1,
-  },
-  chipNameActive: {
-    color: Colors.white,
   },
   chipNew: {
     borderWidth: 1,

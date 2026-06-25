@@ -690,7 +690,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.backgroundWarm,
     borderRadius: 999,
   },
-  chipOn: { backgroundColor: DISCOVER, borderColor: DISCOVER },
+  chipOn: { backgroundColor: Colors.accent, borderColor: Colors.accent },
   chipText: { fontSize: 12, fontWeight: '500', color: Colors.textMuted, letterSpacing: 0.3 },
   chipTextOn: { color: Colors.white },
   loading: { alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.xxl },

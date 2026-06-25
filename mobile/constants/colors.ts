@@ -45,12 +45,16 @@ export const Colors = {
 export const Accents = {
   chili: '#CF4B2C', // sun-faded tomato — primary actions, energy
   apricot: '#E08A4F', // burnt orange — warmth, intimacy
-  sunflower: '#E3B23C', // pale butter/sun yellow — highlights, saved
-  sage: '#7C8A66', // washed olive/botanical — growth (used sparingly)
-  evening: '#5A6B89', // faded cornflower / evening blue — reflective, airy
-  lilac: '#9385AE', // soft dusk lilac — quiet emphasis
-  cobalt: '#3C5A93', // warm cobalt — structure, planning
+  sunflower: '#E3B23C', // pale butter/sun yellow — the card bloom, highlights
+  ember: '#E2683C', // bold warm orange — a pop drawn from the edition art
+  blossom: '#D9477E', // hot raspberry pink — the boldest edition-art pop
+  terracotta: '#B5532E', // deep clay — grounded warmth
+  sage: '#7C8A66', // washed olive/botanical — growth (the one earthy nod)
   cream: '#EFE6D4', // sun-bleached cream — soft fills
+  // Cool tones retired from prominent UI — kept for any legacy reference.
+  evening: '#5A6B89',
+  lilac: '#9385AE',
+  cobalt: '#3C5A93',
 } as const;
 
 /**
@@ -59,14 +63,14 @@ export const Accents = {
  * deliberately un-green-dominant — sage appears only where growth is the point.
  */
 export const Sections = {
-  discover: Accents.evening, // airy, sunlit, optimistic
-  saved: Accents.cobalt, // organised but alive
+  discover: Accents.sunflower, // sunlit gold — the card bloom, optimistic
+  saved: Accents.ember, // warm orange — organised but alive
   together: Accents.apricot, // warm, lived-in
-  moments: Accents.evening, // filmic, reflective
-  grow: Accents.sage, // botanical, collectible
+  moments: Accents.apricot, // golden-hour, filmic
+  grow: Accents.sage, // botanical, collectible (the one earthy nod)
   rituals: Accents.sage, // calm, grounded
   scan: Colors.backgroundDark, // focused, camera-native
-  community: Accents.lilac, // social, soft
+  community: Accents.blossom, // social — the bold raspberry pop
 } as const;
 
 /** Semantic status colours. Green stays reserved for success only. */
