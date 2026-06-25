@@ -215,3 +215,16 @@ export interface DateFeedback {
   tip?: string;
   createdAt: string;
 }
+
+/**
+ * Explicitly shared, anonymized place feedback. This is intentionally separate
+ * from DateFeedback and from the private diary memory: only a rating, optional
+ * practical tip, place id, and timestamp are public.
+ */
+export interface PublicPlaceFeedback {
+  id: string;
+  placeId: string;
+  rating: 1 | 2 | 3 | 4 | 5;
+  tip?: string;
+  createdAt: string;
+}

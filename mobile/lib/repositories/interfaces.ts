@@ -1,4 +1,15 @@
-import type { Memory, MomentCard, Space, SpaceMember, SpaceType, SavedDate, SavedDateStatus, DateFeedback, Ritual } from '../types';
+import type {
+  Memory,
+  MomentCard,
+  Space,
+  SpaceMember,
+  SpaceType,
+  SavedDate,
+  SavedDateStatus,
+  DateFeedback,
+  PublicPlaceFeedback,
+  Ritual,
+} from '../types';
 
 export interface IMemoryRepository {
   getAll(spaceId: string): Promise<Memory[]>;
@@ -48,6 +59,11 @@ export interface IDateFeedbackRepository {
   getAll(spaceId: string): Promise<DateFeedback[]>;
   getByMoment(spaceId: string, momentId: string): Promise<DateFeedback | null>;
   save(item: Omit<DateFeedback, 'id' | 'createdAt'>): Promise<DateFeedback>;
+}
+
+export interface IPublicPlaceFeedbackRepository {
+  getByPlaceIds(placeIds: string[]): Promise<PublicPlaceFeedback[]>;
+  save(item: Omit<PublicPlaceFeedback, 'id' | 'createdAt'>): Promise<PublicPlaceFeedback>;
 }
 
 export interface IRitualRepository {

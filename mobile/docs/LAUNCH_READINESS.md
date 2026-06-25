@@ -21,7 +21,7 @@ Legend: ✅ done & verified (tsc/tests/build) · 🟡 built, needs on-device tes
 **Platform (customizable, opt-in)**
 - ✅ Feature flags + Customize screen (turn features on/off; core never gated).
 - ✅ Shared rhythm: gentle weekly streak, themed (🌶️ couples / 🌻 friends).
-- ✅ Moments to do together + local places (Innsbruck) with partner perks.
+- ✅ Moments to do together + Live Places prompts (no partner/perk claims unless verified).
 - ✅ Challenges: finite, badge-not-score, join/leave, progress.
 
 **Backend (Supabase, EU/Frankfurt)**
@@ -75,7 +75,7 @@ Per PeakPlant's product thesis and the rejected/deferred decisions:
 - Public feed, followers, social graph, ranking (R-002).
 - Voucher economics, redemption fees, monthly billing, business portal,
   sponsored challenges (Doc 09's commercial engine). PeakPlant's revenue is the
-  **first-party shop** (website) + **local partner perks** (display only) — no
+  **first-party shop** (website) + future **verified local partnerships** — no
   platform-collected payments in the pilot.
 - Communities, shared feed, rituals — feature-flagged "soon", not built yet.
 - Maps/discovery, push notifications — not in the pilot scope.

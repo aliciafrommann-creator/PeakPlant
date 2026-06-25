@@ -1,5 +1,14 @@
 import { storage } from '../storage';
-import type { Memory, MomentCard, Space, SpaceMember, SavedDate, DateFeedback, Ritual } from '../types';
+import type {
+  Memory,
+  MomentCard,
+  Space,
+  SpaceMember,
+  SavedDate,
+  DateFeedback,
+  PublicPlaceFeedback,
+  Ritual,
+} from '../types';
 import { sanitiseTip } from '../privacy/boundaries';
 import { savedDateCache, memoryCache } from '../cache';
 import {
@@ -15,6 +24,7 @@ import type {
   ISpaceRepository,
   ISavedDateRepository,
   IDateFeedbackRepository,
+  IPublicPlaceFeedbackRepository,
   IRitualRepository,
   CreateSpaceInput,
 } from './interfaces';
@@ -256,6 +266,7 @@ export const localSavedDateRepository: ISavedDateRepository = {
 };
 
 const FEEDBACK_KEY = 'dateFeedback';
+const PUBLIC_PLACE_FEEDBACK_KEY = 'publicPlaceFeedback';
 
 export const localDateFeedbackRepository: IDateFeedbackRepository = {
   async getAll(spaceId: string): Promise<DateFeedback[]> {
@@ -278,6 +289,29 @@ export const localDateFeedbackRepository: IDateFeedbackRepository = {
       createdAt: now(),
     };
     await storage.set(FEEDBACK_KEY, [...all, entry]);
+    return entry;
+  },
+};
+
+export const localPublicPlaceFeedbackRepository: IPublicPlaceFeedbackRepository = {
+  async getByPlaceIds(placeIds: string[]): Promise<PublicPlaceFeedback[]> {
+    const ids = new Set(placeIds);
+    const stored = await storage.get<PublicPlaceFeedback[]>(PUBLIC_PLACE_FEEDBACK_KEY);
+    return (stored ?? [])
+      .filter((f) => ids.has(f.placeId))
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  },
+
+  async save(item: Omit<PublicPlaceFeedback, 'id' | 'createdAt'>): Promise<PublicPlaceFeedback> {
+    const stored = await storage.get<PublicPlaceFeedback[]>(PUBLIC_PLACE_FEEDBACK_KEY);
+    const all = stored ?? [];
+    const entry: PublicPlaceFeedback = {
+      ...item,
+      tip: sanitiseTip(item.tip),
+      id: generateId('pfb'),
+      createdAt: now(),
+    };
+    await storage.set(PUBLIC_PLACE_FEEDBACK_KEY, [...all, entry]);
     return entry;
   },
 };

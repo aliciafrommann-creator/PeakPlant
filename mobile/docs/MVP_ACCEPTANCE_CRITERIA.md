@@ -19,8 +19,8 @@ The MVP is a polished, local-first foundation. No real backend required.
       loss/threat framing; switch-off-able.
 - [x] Moments to do together (opt-in): AI-suggested real-world ideas per space,
       with a list + detail; gated by the `missions` feature.
-- [x] Local places (opt-in): Innsbruck places with partner perks highlighted;
-      gated by `localShops`; participation never requires a purchase.
+- [x] Local places (opt-in): generic place intents + live provider search;
+      no partner/perk claims unless the venue relationship is verified.
 - [x] Challenges (opt-in): finite, badge-not-score goals per space; join/leave;
       progress counts moments preserved after joining; gated by `challenges`.
 - [x] Quality: `tsc --noEmit`, `vitest run` (pure logic), and `expo export`

@@ -281,7 +281,7 @@ async function handleLivePlaces(body: Record<string, unknown>): Promise<Response
       error: 'not_configured',
       reason: 'not_configured',
       places: [],
-      message: 'GOOGLE_PLACES_API_KEY is not set. Client will use curated places.',
+      message: 'GOOGLE_PLACES_API_KEY is not set. Client will show live-search prompts only.',
     });
   }
 

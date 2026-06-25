@@ -24,12 +24,16 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
   return `<!doctype html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     integrity="sha256-p4NxAoJBhIINfQ3ynhJb+uPCCp7D5L4itfPpAqjQH3Q=" crossorigin="" />
   <style>
     html, body, #map { height: 100%; width: 100%; margin: 0; background: #f9f6ef; }
     .leaflet-control-attribution { font: 9px system-ui, sans-serif; }
+    .leaflet-control-zoom a {
+      color: #1A1A1A;
+      border-color: rgba(26,26,26,.12);
+    }
     .peak-pin {
       width: 24px; height: 24px; border-radius: 50%;
       background: #1A1A1A; border: 3px solid #ffffff;
@@ -46,10 +50,18 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
   <script>
     const points = ${safeJson(points)};
     const selectedId = ${safeJson(selectedId ?? null)};
-    const map = L.map('map', { zoomControl: false, attributionControl: true });
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const map = L.map('map', {
+      zoomControl: true,
+      attributionControl: true,
+      dragging: true,
+      tap: true,
+      touchZoom: true,
+      scrollWheelZoom: false
+    });
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd',
       maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
+      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
     }).addTo(map);
     const bounds = [];
     points.forEach((point) => {
@@ -60,7 +72,9 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
       marker.on('click', () => window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'select-place', id: point.id })));
       bounds.push([point.lat, point.lng]);
     });
-    if (bounds.length) map.fitBounds(bounds, { padding: [28, 28], maxZoom: 13 });
+    const selected = points.find((point) => point.id === selectedId);
+    if (selected) map.setView([selected.lat, selected.lng], 14);
+    else if (bounds.length) map.fitBounds(bounds, { padding: [28, 28], maxZoom: 13 });
     else map.setView([47.2692, 11.4041], 12);
     window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'map-ready' }));
   </script>

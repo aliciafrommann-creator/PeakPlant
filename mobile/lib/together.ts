@@ -2,9 +2,9 @@ import type { SpaceType } from './types';
 
 /**
  * "Moments to do together" — small real-world things a space can do together,
- * optionally tied to a local place. This is the first revenue surface beyond
- * product sales: local partner places offer a small perk. Nothing here ever
- * requires a purchase to participate (PP-020 guardrail).
+ * optionally tied to a local place intent. The MVP catalog must not pretend to
+ * have real partner venues or always-fresh venue data: specific venues come
+ * from live providers, while these static entries are generic search prompts.
  *
  * Phase 2 (Date Discovery) enriches each moment/place with structured fields
  * (duration, budget, indoor/outdoor, time-of-day, weather fit, energy) so the
@@ -58,9 +58,12 @@ export interface LocalPlace {
   name: string;
   category: string;
   area: string;
+  /** True only after a real venue agreement exists. Never use for wishlist leads. */
   isPartner: boolean;
-  /** Partner-only: a small, transparent perk. Never required to take part. */
+  /** Verified partner-only: a small, transparent perk. Never required to take part. */
   perk?: string;
+  /** Query used to find real, current places from a live provider. */
+  liveQuery?: string;
   // ── Phase 2 structured fields (curated) ──
   priceBand: PriceBand;
   /** Short accessibility notes, e.g. 'step-free', 'quiet'. */
@@ -68,102 +71,91 @@ export interface LocalPlace {
   /** Free-text descriptors for filtering/search. */
   tags: string[];
   provenance: Provenance;
-  /** ISO date this entry was last hand-verified. */
+  /** ISO date for real entries; generic prompts use `live-search-required`. */
   lastVerifiedAt: string;
   /** Coordinates land with the Places API (Phase 3); omitted while curated. */
   lat?: number;
   lng?: number;
 }
 
-const VERIFIED = '2026-06-01';
-
 export const LOCAL_PLACES: LocalPlace[] = [
   {
     id: 'pl-1',
-    name: 'Café Katzung',
-    category: 'café',
-    area: 'Innsbruck · Altstadt',
-    isPartner: true,
-    perk: 'a shared slice of cake on us',
+    name: 'a quiet cafe nearby',
+    category: 'cafe',
+    area: 'based on your location',
+    isPartner: false,
+    liveQuery: 'quiet cozy cafe for a date',
     priceBand: '€€',
     accessibility: ['step-free', 'quiet'],
     tags: ['coffee', 'cosy', 'conversation', 'classic'],
-    provenance: 'curated',
-    lastVerifiedAt: VERIFIED,
-    lat: 47.2681634,
-    lng: 11.3931386,
+    provenance: 'needs-confirmation',
+    lastVerifiedAt: 'live-search-required',
   },
   {
     id: 'pl-2',
-    name: 'Hofgarten',
+    name: 'a green walk nearby',
     category: 'park',
-    area: 'Innsbruck · Saggen',
+    area: 'based on your location',
     isPartner: false,
+    liveQuery: 'beautiful park garden walk date spot',
     priceBand: 'free',
     accessibility: ['step-free', 'dog-friendly'],
     tags: ['nature', 'walk', 'green', 'calm'],
-    provenance: 'curated',
-    lastVerifiedAt: VERIFIED,
-    lat: 47.271399,
-    lng: 11.3971442,
+    provenance: 'needs-confirmation',
+    lastVerifiedAt: 'live-search-required',
   },
   {
     id: 'pl-3',
-    name: 'Markthalle',
+    name: 'a local market nearby',
     category: 'market',
-    area: 'Innsbruck · Innrain',
-    isPartner: true,
-    perk: '2 for 1 fresh juice',
+    area: 'based on your location',
+    isPartner: false,
+    liveQuery: 'local food market date spot',
     priceBand: '€€',
     accessibility: ['step-free'],
     tags: ['food', 'local', 'fresh', 'lively'],
-    provenance: 'curated',
-    lastVerifiedAt: VERIFIED,
-    lat: 47.267186,
-    lng: 11.3895995,
+    provenance: 'needs-confirmation',
+    lastVerifiedAt: 'live-search-required',
   },
   {
     id: 'pl-4',
-    name: 'Nordkette viewpoint',
+    name: 'a viewpoint nearby',
     category: 'outdoors',
-    area: 'above Innsbruck',
+    area: 'based on your location',
     isPartner: false,
+    liveQuery: 'viewpoint scenic overlook sunset date spot',
     priceBand: '€€€',
     accessibility: ['cable-car access'],
     tags: ['view', 'mountains', 'sunset', 'awe'],
-    provenance: 'curated',
-    lastVerifiedAt: VERIFIED,
-    lat: 47.3169606,
-    lng: 11.4055396,
+    provenance: 'needs-confirmation',
+    lastVerifiedAt: 'live-search-required',
   },
   {
     id: 'pl-5',
-    name: 'Die Bäckerei',
+    name: 'a creative workshop nearby',
     category: 'culture',
-    area: 'Innsbruck · Wilten',
-    isPartner: true,
-    perk: 'free filter coffee with any workshop',
+    area: 'based on your location',
+    isPartner: false,
+    liveQuery: 'creative workshop pottery art class date spot',
     priceBand: '€€',
     accessibility: ['step-free'],
     tags: ['creative', 'workshop', 'community', 'making'],
-    provenance: 'curated',
-    lastVerifiedAt: VERIFIED,
-    lat: 47.2688441,
-    lng: 11.4047938,
+    provenance: 'needs-confirmation',
+    lastVerifiedAt: 'live-search-required',
   },
   {
     id: 'pl-6',
-    name: 'Baggersee',
+    name: 'a swim or lake spot nearby',
     category: 'lake',
-    area: 'Rossau',
+    area: 'based on your location',
     isPartner: false,
+    liveQuery: 'lake swimming spot outdoor date',
     priceBand: 'free',
     accessibility: ['dog-friendly'],
     tags: ['swim', 'water', 'summer', 'play'],
-    provenance: 'curated',
-    lastVerifiedAt: VERIFIED,
-    lat: 47.2654976,
-    lng: 11.4419156,
+    provenance: 'needs-confirmation',
+    lastVerifiedAt: 'live-search-required',
   },
 ];
 

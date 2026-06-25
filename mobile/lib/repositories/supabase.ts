@@ -7,16 +7,18 @@
 import { supabase } from '../supabase/client';
 import { deleteMemoryPhoto, uploadMemoryPhoto, signedPhotoUrl } from '../supabase/storage';
 import { SEED_CARDS } from '../seed';
-import type { Memory, MomentCard, Space, SpaceMember, SavedDate } from '../types';
+import type { Memory, MomentCard, Space, SpaceMember, SavedDate, PublicPlaceFeedback } from '../types';
 import type {
   IMemoryRepository,
   ICardRepository,
   ISpaceRepository,
   ISavedDateRepository,
+  IPublicPlaceFeedbackRepository,
   CreateSpaceInput,
 } from './interfaces';
 import { buildCreateSpaceRpcArgs } from './spaceCreation';
 import { generateInviteCode, normalizeInviteCode } from '../invite';
+import { sanitiseTip } from '../privacy/boundaries';
 
 function db() {
   if (!supabase) throw new Error('Supabase not configured');
@@ -265,5 +267,43 @@ export const supabaseSavedDateRepository: ISavedDateRepository = {
   async remove(id: string): Promise<void> {
     const { error } = await db().from('saved_dates').delete().eq('id', id);
     if (error) throw error;
+  },
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapPublicPlaceFeedback(r: any): PublicPlaceFeedback {
+  return {
+    id: r.id,
+    placeId: r.place_id,
+    rating: r.rating,
+    tip: r.tip ?? undefined,
+    createdAt: r.created_at,
+  };
+}
+
+export const supabasePublicPlaceFeedbackRepository: IPublicPlaceFeedbackRepository = {
+  async getByPlaceIds(placeIds: string[]): Promise<PublicPlaceFeedback[]> {
+    if (placeIds.length === 0) return [];
+    const { data, error } = await db()
+      .from('public_place_feedback')
+      .select('id,place_id,rating,tip,created_at')
+      .in('place_id', placeIds)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data ?? []).map(mapPublicPlaceFeedback);
+  },
+
+  async save(item: Omit<PublicPlaceFeedback, 'id' | 'createdAt'>): Promise<PublicPlaceFeedback> {
+    const { data, error } = await db()
+      .from('public_place_feedback')
+      .insert({
+        place_id: item.placeId,
+        rating: item.rating,
+        tip: sanitiseTip(item.tip),
+      })
+      .select('id,place_id,rating,tip,created_at')
+      .single();
+    if (error) throw error;
+    return mapPublicPlaceFeedback(data);
   },
 };

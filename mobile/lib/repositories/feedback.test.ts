@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { localDateFeedbackRepository } from './local';
+import { localDateFeedbackRepository, localPublicPlaceFeedbackRepository } from './local';
 
 vi.mock('../storage', () => ({
   storage: {
@@ -14,6 +14,8 @@ const mockStorage = storage as unknown as { get: ReturnType<typeof vi.fn>; set: 
 
 describe('localDateFeedbackRepository', () => {
   beforeEach(() => {
+    mockStorage.get.mockClear();
+    mockStorage.set.mockClear();
     mockStorage.get.mockResolvedValue(null);
     mockStorage.set.mockResolvedValue(undefined);
   });
@@ -80,5 +82,42 @@ describe('localDateFeedbackRepository', () => {
     // These private-content field names must never appear in a feedback record.
     const forbidden = ['note', 'reflection', 'diary', 'prompt', 'answer', 'message'];
     for (const f of forbidden) expect(keys).not.toContain(f);
+  });
+});
+
+describe('localPublicPlaceFeedbackRepository', () => {
+  beforeEach(() => {
+    mockStorage.get.mockClear();
+    mockStorage.set.mockClear();
+    mockStorage.get.mockResolvedValue(null);
+    mockStorage.set.mockResolvedValue(undefined);
+  });
+
+  it('stores only anonymized place feedback fields', async () => {
+    const entry = await localPublicPlaceFeedbackRepository.save({
+      placeId: 'google:place-1',
+      rating: 5,
+      tip: 'sunny table outside worked well',
+    });
+    expect(entry.id).toMatch(/^pfb-/);
+    expect(entry.placeId).toBe('google:place-1');
+    expect(entry.tip).toBe('sunny table outside worked well');
+    const stored = mockStorage.set.mock.calls[0][1] as unknown[];
+    expect(Object.keys(stored[0] as Record<string, unknown>)).toEqual(
+      expect.arrayContaining(['id', 'placeId', 'rating', 'tip', 'createdAt']),
+    );
+    expect(Object.keys(stored[0] as Record<string, unknown>)).not.toEqual(
+      expect.arrayContaining(['spaceId', 'userId', 'note', 'photoUri']),
+    );
+  });
+
+  it('filters public place feedback by place id', async () => {
+    mockStorage.get.mockResolvedValue([
+      { id: 'pfb-1', placeId: 'google:a', rating: 5, createdAt: '2026-06-02T00:00:00Z' },
+      { id: 'pfb-2', placeId: 'google:b', rating: 3, createdAt: '2026-06-01T00:00:00Z' },
+    ]);
+    const rows = await localPublicPlaceFeedbackRepository.getByPlaceIds(['google:b']);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].id).toBe('pfb-2');
   });
 });

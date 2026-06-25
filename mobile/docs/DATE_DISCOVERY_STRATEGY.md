@@ -14,16 +14,16 @@ PeakPlant is **not** "a card scanner with a diary." The repository reveals a del
 architected **private relationship platform**: a space-scoped diary at the core (couple or
 friends), fed by physical card editions, with an *additive feature-flag platform* already
 carrying four live optional layers (shared rhythm/streaks, moments-to-do-together,
-local partner places, challenges) and three more scaffolded (rituals, communities, feed).
+live/provider places, challenges) and three more scaffolded (rituals, communities, feed).
 Crucially for this brief, **Date Discovery already exists in embryonic form**: `lib/together.ts`
 defines `TogetherMoment` activity ideas and `LocalPlace` venues (a curated Innsbruck set with
-partner perks), a deterministic goal→category recommender (`pickTogetherMoment`), and an AI
+generic place intents), a deterministic goal→category recommender (`pickTogetherMoment`), and an AI
 abstraction (`lib/ai/`) whose stub explicitly lists `location`, `time of day`, `weather` as
 **`signalsNotUsed`** — i.e. an intended geo/temporal recommender that has not been built.
 
 The single most important strategic finding: **Date Discovery is a sanctioned extension, not a
-pivot.** Decision **PP-022** already authorizes "moments to do together → local partner places,
-with a small transparent perk, never requiring a purchase." **PP-013/PP-014** already define a
+pivot.** Decision **PP-022** now treats partner venues as future verified relationships only;
+current places are generic intents or live provider results. **PP-013/PP-014** already define a
 server-side, opt-in, explainable AI. The smallest validating version of Date Discovery can be
 built almost entirely by *enriching `together.ts` data and wiring the already-designed AI
 interface* — no new product thesis required.
@@ -105,7 +105,7 @@ For each: goal · entry · key screens · primary action · states present/missi
 10. **Preserve a moment** — `memory/create.tsx`. **Core flow.** Note required, photo optional. **Silent save failure** (`catch {_e}`), **no success confirmation**, no discard guard, footer hardcoded English. Highest-priority UX risk.
 11. **View diary (list + detail + edition diary)** — `(tabs)/moments.tsx`, `memory/[id].tsx`, `editions/[id].tsx`. Best loading/empty handling is on `moments`. **No edit/delete of a memory anywhere.** Share is best-effort (swallowed).
 12. **Collect editions / roadmap** — `(tabs)/grow.tsx`. Sensitive editions gated by biometric (`useBiometric`). Shop link as flywheel.
-13. **Moments-to-do-together (proto-discovery)** — `app/together/index.tsx` + `[id].tsx`. AI-suggested + curated ideas + Innsbruck partner places with 🌶️ perk. *Friction:* English-only, hardcoded "INNSBRUCK", no loading/empty/error, commerce tone slightly off the diary core.
+13. **Moments-to-do-together (proto-discovery)** — `app/together/index.tsx` + `[id].tsx`. AI-suggested + curated ideas + generic place intents/live provider search. *Friction addressed:* no hardcoded partner/place claims; live search must keep provider facts honest.
 14. **Challenges** — `app/challenges/*`. Join/leave (one-tap, no confirm), badge on completion.
 15. **Shared rhythm / streak** — surfaced on Us tab via `StreakBanner`.
 16. **Customize platform** — `app/customize.tsx`. 7 toggles (4 on by default, 3 "SOON" placeholders, `localShops` has no visible consumer screen). Gateway to account.
