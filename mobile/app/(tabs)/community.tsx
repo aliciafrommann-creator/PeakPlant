@@ -12,8 +12,9 @@ import {
 } from 'react-native';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { feedbackRepository } from '../../lib/repositories';
@@ -30,6 +31,8 @@ import { DEFAULT_LIVE_PLACE_RADIUS_KM, livePlaceToLocalPlace } from '../../lib/d
 import type { LivePlace } from '../../lib/discovery/providers/interface';
 import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
 import type { DateFeedback } from '../../lib/types';
+
+const PLACES = Sections.community; // lilac — shared, social, a little playful
 
 type MapMessage =
   | { type: 'map-ready' }
@@ -505,8 +508,8 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.lg,
     gap: Spacing.sm,
   },
-  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textSubtle },
-  title: { fontSize: 28, fontWeight: '300', color: Colors.text, letterSpacing: -0.5 },
+  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: PLACES },
+  title: { ...Typography.editorial, fontSize: 32, lineHeight: 38 },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
   livePanel: {
     marginHorizontal: Spacing.screen,
@@ -514,15 +517,18 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: Spacing.md,
     backgroundColor: Colors.backgroundCream,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   liveCopy: { gap: Spacing.xs },
-  liveKicker: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.accent },
+  liveKicker: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: PLACES },
   liveText: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18 },
   liveButton: {
     minHeight: 48,
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   liveButtonDisabled: { opacity: 0.7 },
   liveButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
@@ -533,6 +539,8 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.screen,
     backgroundColor: Colors.backgroundCream,
     overflow: 'hidden',
+    borderRadius: Radii.lg,
+    ...Shadows.card,
   },
   map: { flex: 1, backgroundColor: Colors.backgroundCream },
   mapLoading: {
@@ -567,6 +575,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.border,
+    borderRadius: Radii.pill,
   },
   placeChipActive: { backgroundColor: Colors.text, borderColor: Colors.text },
   placeChipText: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
@@ -576,6 +585,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: Spacing.sm,
     backgroundColor: Colors.backgroundCream,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   placeHead: {
     flexDirection: 'row',
@@ -584,7 +595,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   placeTitleBlock: { flex: 1, gap: 2 },
-  placeName: { fontSize: 22, fontWeight: '300', color: Colors.text },
+  placeName: { ...Typography.editorial, fontSize: 23, lineHeight: 28 },
   placeArea: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
   partner: {
     fontSize: 8,
@@ -631,6 +642,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   primaryButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
   ideas: {

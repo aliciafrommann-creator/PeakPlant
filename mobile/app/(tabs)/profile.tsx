@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useMemories } from '../../lib/hooks/useMemories';
@@ -97,19 +98,21 @@ const styles = StyleSheet.create({
     color: Colors.textFaint,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '300',
-    color: Colors.text,
-    letterSpacing: -0.5,
+    ...Typography.editorial,
+    fontSize: 32,
+    lineHeight: 38,
   },
   content: {
     paddingBottom: Spacing.xxxl,
   },
   spaceBlock: {
-    paddingHorizontal: Spacing.screen,
-    paddingVertical: Spacing.xl,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    marginHorizontal: Spacing.screen,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.md,
+    padding: Spacing.lg,
+    backgroundColor: Colors.backgroundCream,
+    borderRadius: Radii.lg,
+    ...Shadows.subtle,
     gap: 4,
   },
   spaceKicker: {
@@ -121,10 +124,9 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   spaceName: {
-    fontSize: 22,
-    fontWeight: '300',
-    color: Colors.text,
-    letterSpacing: -0.3,
+    ...Typography.editorial,
+    fontSize: 24,
+    lineHeight: 30,
   },
   spaceType: {
     fontSize: 11,
@@ -143,10 +145,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statNum: {
-    fontSize: 28,
-    fontWeight: '200',
-    color: Colors.text,
-    letterSpacing: -0.5,
+    ...Typography.editorial,
+    fontSize: 30,
+    lineHeight: 34,
   },
   statLabel: {
     fontSize: 9,
