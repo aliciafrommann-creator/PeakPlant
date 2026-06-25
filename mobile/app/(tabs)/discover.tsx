@@ -13,9 +13,10 @@ import { router, useFocusEffect } from 'expo-router';
 import { Colors, Sections } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
+import { Ionicons } from '@expo/vector-icons';
 import { Logo } from '../../components/ui/Logo';
 import { PressableScale } from '../../components/ui/PressableScale';
-import { SpaceSwitcher } from '../../components/space/SpaceSwitcher';
+import { SpacePicker } from '../../components/space/SpacePicker';
 import { StreakBanner } from '../../components/space/StreakBanner';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
@@ -95,6 +96,7 @@ export default function DiscoverScreen() {
   const [saved, setSaved] = useState<SavedDate[]>([]);
   const [savedMomentIds, setSavedMomentIds] = useState<Set<string>>(new Set());
   const [liveWeather, setLiveWeather] = useState<Weather | undefined>(undefined);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   // Keep the "already saved" set in sync with what's loaded for this space, so
   // the SAVE button can reflect saved state immediately (and across re-focus).
@@ -254,9 +256,18 @@ export default function DiscoverScreen() {
         <View style={styles.header}>
           <Logo size="sm" />
           <View style={styles.headerRight}>
-            <Text style={styles.spaceName}>
-              {(activeSpace?.name ?? 'your space').toLowerCase()}
-            </Text>
+            <TouchableOpacity
+              style={styles.spaceTrigger}
+              onPress={() => setPickerOpen(true)}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel={t('Switch, add or share a space', 'Space wechseln, hinzufügen oder teilen')}
+            >
+              <Text style={styles.spaceName} numberOfLines={1}>
+                {(activeSpace?.name ?? 'your space').toLowerCase()}
+              </Text>
+              <Ionicons name="chevron-down" size={15} color={Colors.textMuted} />
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => router.push('/customize')}
               accessibilityRole="button"
@@ -267,13 +278,16 @@ export default function DiscoverScreen() {
           </View>
         </View>
 
-        {spaces.length >= 1 && (
-          <SpaceSwitcher
-            spaces={spaces}
-            activeSpaceId={activeSpace?.id}
-            onSelect={setActiveSpace}
-          />
-        )}
+        <SpacePicker
+          visible={pickerOpen}
+          spaces={spaces}
+          activeSpaceId={activeSpace?.id}
+          onSelect={(id) => {
+            setActiveSpace(id);
+            setPickerOpen(false);
+          }}
+          onClose={() => setPickerOpen(false)}
+        />
 
         {streaksEnabled && activeSpace && (
           <StreakBanner
@@ -666,12 +680,14 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
   },
   headerRight: { alignItems: 'flex-end', gap: 4 },
+  spaceTrigger: { flexDirection: 'row', alignItems: 'center', gap: 4, maxWidth: 200 },
   spaceName: {
     fontSize: 11,
     fontWeight: '400',
     letterSpacing: 2,
     color: Colors.textMuted,
     textTransform: 'uppercase',
+    flexShrink: 1,
   },
   settings: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textSubtle },
   titleBlock: { paddingHorizontal: Spacing.screen, paddingTop: Spacing.xl, gap: Spacing.sm },

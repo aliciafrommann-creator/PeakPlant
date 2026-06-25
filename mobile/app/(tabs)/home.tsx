@@ -18,8 +18,9 @@ import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useNotes } from '../../lib/hooks/useNotes';
 import { MemoryCard } from '../../components/memory/MemoryCard';
-import { SpaceSwitcher } from '../../components/space/SpaceSwitcher';
+import { SpacePicker } from '../../components/space/SpacePicker';
 import { PressableScale } from '../../components/ui/PressableScale';
+import { Ionicons } from '@expo/vector-icons';
 import { FloatingActionButton } from '../../components/ui/FloatingActionButton';
 import { PeakBloom } from '../../components/ui/PeakBloom';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
@@ -39,6 +40,7 @@ export default function HomeScreen() {
   const { t } = useLanguage();
   const { latestNote, latestFromPartner } = useNotes(activeSpace?.id);
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   useEffect(() => {
     if (!activeSpace?.id) {
@@ -87,30 +89,39 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
+      {/* Header — the space name is the dropdown trigger (Instagram-style) */}
       <View style={styles.header}>
-        <View style={styles.headerText}>
+        <TouchableOpacity
+          style={styles.headerText}
+          onPress={() => setPickerOpen(true)}
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel={t('Switch, add or share a space', 'Space wechseln, hinzufügen oder teilen')}
+          accessibilityHint={t('Opens the space picker', 'Öffnet die Space-Auswahl')}
+        >
           <View style={styles.kickerRow}>
             <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
             <Text style={styles.kicker}>{spaceLabel}</Text>
           </View>
-          <Text style={styles.spaceName} numberOfLines={1}>
-            {(activeSpace?.name ?? 'your space').toLowerCase()}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => router.push('/space/new')}
-          accessibilityRole="button"
-          accessibilityLabel={t('Add a new space', 'Neuen Space hinzufügen')}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-        >
-          <Text style={styles.headerAction}>{t('+ SPACE', '+ SPACE')}</Text>
+          <View style={styles.nameRow}>
+            <Text style={styles.spaceName} numberOfLines={1}>
+              {(activeSpace?.name ?? 'your space').toLowerCase()}
+            </Text>
+            <Ionicons name="chevron-down" size={18} color={Colors.textMuted} style={styles.chevron} />
+          </View>
         </TouchableOpacity>
       </View>
 
-      {spaces.length > 1 && (
-        <SpaceSwitcher spaces={spaces} activeSpaceId={activeSpace?.id} onSelect={setActiveSpace} />
-      )}
+      <SpacePicker
+        visible={pickerOpen}
+        spaces={spaces}
+        activeSpaceId={activeSpace?.id}
+        onSelect={(id) => {
+          setActiveSpace(id);
+          setPickerOpen(false);
+        }}
+        onClose={() => setPickerOpen(false)}
+      />
 
       <FlatList
         data={recentMemories}
@@ -348,17 +359,14 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     color: TOGETHER,
   },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   spaceName: {
     ...Typography.editorial,
     fontSize: 30,
     lineHeight: 34,
+    flexShrink: 1,
   },
-  headerAction: {
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 2,
-    color: Colors.accent,
-  },
+  chevron: { marginTop: 4 },
 
   list: { paddingBottom: 150 },
 
