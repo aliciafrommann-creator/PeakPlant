@@ -25,6 +25,7 @@ describe('place map', () => {
   it('builds an attributed map with selectable markers', () => {
     const html = buildPlaceMapHtml([place], place.id);
     expect(html).toContain('openstreetmap.org');
+    expect(html).toContain('basemaps.cartocdn.com');
     expect(html).toContain('select-place');
     expect(html).toContain('"p-1"');
     expect(html).toContain('selected');

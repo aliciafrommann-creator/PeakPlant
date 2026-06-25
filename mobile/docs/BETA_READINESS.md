@@ -96,8 +96,9 @@ device. On-device QA (below) is a release blocker.
 
 - Discovery recommendations are deterministic-first over curated local content.
   The UI labels them "curated · checked <date>".
-- "Local places" starts with curated Innsbruck places and partner perks. The
-  Places tab now has an optional, user-triggered live search: foreground
+- "Local places" now uses generic place intents plus user-triggered live search;
+  it does **not** claim partner venues or perks without real agreements. The
+  Places tab supports foreground
   location once, Supabase Edge Function, Google Places key server-side only,
   24h device cache, and a conservative per-device monthly guardrail.
 - Time-of-day context is the **device clock**; **weather is live** (Open-Meteo,
@@ -118,9 +119,12 @@ device. On-device QA (below) is a release blocker.
   `mode: live_places`, Google Places server secret, and optional Anthropic
   ranking that can only sort provider-returned places. On-device verification
   with real keys is pending.
-- 🔴 Events, routing, transit, booking, and public community search are still
-  absent.
-- 🔵 Innsbruck map view is built with OpenStreetMap tiles and a connection-safe
+- 🔴 Events, routing, transit, and booking are still absent.
+- 🟡 Anonymous public place tips and public map pins are built as explicit opt-in
+  sharing and need migrations `0009_public_place_feedback.sql` +
+  `0010_public_place_spots_and_saved_snapshot.sql` applied before cross-device
+  sharing.
+- 🔵 Live Places map view is built with CARTO/OpenStreetMap tiles and a connection-safe
   list fallback. Live provider places are added as a layer when the user asks;
   clustering is not built.
 - 🔴 **Cross-space community**: ratings/reviews/tips aggregated across couples,
@@ -166,6 +170,9 @@ filters (Android) in `app.json` before the print run.
    the public keys are wired in `eas.json`. Remaining: a device test of the live
    auth/upload/delete path against the migrated project (the pgTAP RLS suite is
    written; run it against the live project before public testers).
+   Apply `0009_public_place_feedback.sql` and
+   `0010_public_place_spots_and_saved_snapshot.sql` before expecting anonymous
+   place tips/map pins to sync across devices.
 3. 🔑 `app.json`: bundle id, version, camera usage strings (EN/DE), associated
    domains/intent filters if using HTTPS card links. (Bundle ids, version,
    camera strings, and EAS project id are already set; HTTPS associated domains

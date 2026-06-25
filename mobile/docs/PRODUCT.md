@@ -18,8 +18,8 @@ visible long after the conversation or experience has ended.
 
 The app is organized as one relationship loop across three pillars:
 
-1. **Discover** — "what could we do together?" — curated date ideas and local
-   partner places, surfaced by a deterministic recommender and (later) a
+1. **Discover** — "what could we do together?" — curated date ideas plus live
+   provider-backed places or generic place intents, surfaced by a deterministic recommender and (later) a
    server-side AI. Replaces the former static Us tab. Every suggestion is
    explained ("why this?"), filterable, and honest about what signals were or
    were not used.

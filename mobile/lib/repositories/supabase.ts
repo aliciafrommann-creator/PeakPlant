@@ -7,16 +7,26 @@
 import { supabase } from '../supabase/client';
 import { deleteMemoryPhoto, uploadMemoryPhoto, signedPhotoUrl } from '../supabase/storage';
 import { SEED_CARDS } from '../seed';
-import type { Memory, MomentCard, Space, SpaceMember, SavedDate } from '../types';
+import type {
+  Memory,
+  MomentCard,
+  Space,
+  SpaceMember,
+  SavedDate,
+  PublicPlaceSpot,
+  PublicPlaceFeedback,
+} from '../types';
 import type {
   IMemoryRepository,
   ICardRepository,
   ISpaceRepository,
   ISavedDateRepository,
+  IPublicPlaceFeedbackRepository,
   CreateSpaceInput,
 } from './interfaces';
 import { buildCreateSpaceRpcArgs } from './spaceCreation';
 import { generateInviteCode, normalizeInviteCode } from '../invite';
+import { sanitiseTip } from '../privacy/boundaries';
 
 function db() {
   if (!supabase) throw new Error('Supabase not configured');
@@ -208,6 +218,13 @@ function mapSavedDate(r: any): SavedDate {
     savedAt: r.saved_at,
     plannedFor: r.planned_for ?? undefined,
     planningNotes: r.planning_notes ?? undefined,
+    placeId: r.place_id ?? undefined,
+    placeName: r.place_name ?? undefined,
+    placeAddress: r.place_address ?? undefined,
+    placeLat: typeof r.place_lat === 'number' ? r.place_lat : undefined,
+    placeLng: typeof r.place_lng === 'number' ? r.place_lng : undefined,
+    placeCategory: r.place_category ?? undefined,
+    placeMapsUrl: r.place_maps_url ?? undefined,
     completedAt: r.completed_at ?? undefined,
     memoryId: r.memory_id ?? undefined,
   };
@@ -236,6 +253,13 @@ export const supabaseSavedDateRepository: ISavedDateRepository = {
         price_band: item.priceBand,
         est_duration_min: item.estDurationMin,
         status: item.status,
+        place_id: item.placeId,
+        place_name: item.placeName,
+        place_address: item.placeAddress,
+        place_lat: item.placeLat,
+        place_lng: item.placeLng,
+        place_category: item.placeCategory,
+        place_maps_url: item.placeMapsUrl,
       })
       .select()
       .single();
@@ -246,7 +270,21 @@ export const supabaseSavedDateRepository: ISavedDateRepository = {
   async update(
     id: string,
     updates: Partial<
-      Pick<SavedDate, 'status' | 'plannedFor' | 'planningNotes' | 'completedAt' | 'memoryId'>
+      Pick<
+        SavedDate,
+        | 'status'
+        | 'plannedFor'
+        | 'planningNotes'
+        | 'completedAt'
+        | 'memoryId'
+        | 'placeId'
+        | 'placeName'
+        | 'placeAddress'
+        | 'placeLat'
+        | 'placeLng'
+        | 'placeCategory'
+        | 'placeMapsUrl'
+      >
     >,
   ): Promise<SavedDate> {
     const patch: Record<string, unknown> = {};
@@ -255,6 +293,13 @@ export const supabaseSavedDateRepository: ISavedDateRepository = {
     // relaxes the column to text to match. Requires 0006 applied (backend mode).
     if (updates.plannedFor !== undefined) patch.planned_for = updates.plannedFor;
     if (updates.planningNotes !== undefined) patch.planning_notes = updates.planningNotes;
+    if (updates.placeId !== undefined) patch.place_id = updates.placeId;
+    if (updates.placeName !== undefined) patch.place_name = updates.placeName;
+    if (updates.placeAddress !== undefined) patch.place_address = updates.placeAddress;
+    if (updates.placeLat !== undefined) patch.place_lat = updates.placeLat;
+    if (updates.placeLng !== undefined) patch.place_lng = updates.placeLng;
+    if (updates.placeCategory !== undefined) patch.place_category = updates.placeCategory;
+    if (updates.placeMapsUrl !== undefined) patch.place_maps_url = updates.placeMapsUrl;
     if (updates.completedAt !== undefined) patch.completed_at = updates.completedAt;
     if (updates.memoryId !== undefined) patch.memory_id = updates.memoryId;
     const { data, error } = await db().from('saved_dates').update(patch).eq('id', id).select().single();
@@ -265,5 +310,87 @@ export const supabaseSavedDateRepository: ISavedDateRepository = {
   async remove(id: string): Promise<void> {
     const { error } = await db().from('saved_dates').delete().eq('id', id);
     if (error) throw error;
+  },
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapPublicPlaceSpot(r: any): PublicPlaceSpot {
+  return {
+    id: r.id,
+    name: r.name,
+    address: r.address,
+    lat: Number(r.lat),
+    lng: Number(r.lng),
+    category: r.category ?? undefined,
+    mapsUrl: r.maps_url ?? undefined,
+    sourceId: r.source_id ?? undefined,
+    createdAt: r.created_at,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapPublicPlaceFeedback(r: any): PublicPlaceFeedback {
+  return {
+    id: r.id,
+    placeId: r.place_id,
+    rating: r.rating,
+    tip: r.tip ?? undefined,
+    createdAt: r.created_at,
+  };
+}
+
+export const supabasePublicPlaceFeedbackRepository: IPublicPlaceFeedbackRepository = {
+  async getSpots(): Promise<PublicPlaceSpot[]> {
+    const { data, error } = await db()
+      .from('public_place_spots')
+      .select('id,name,address,lat,lng,category,maps_url,source_id,created_at')
+      .order('created_at', { ascending: false })
+      .limit(120);
+    if (error) throw error;
+    return (data ?? []).map(mapPublicPlaceSpot).filter((spot) => Number.isFinite(spot.lat) && Number.isFinite(spot.lng));
+  },
+
+  async saveSpot(item: Omit<PublicPlaceSpot, 'createdAt'>): Promise<PublicPlaceSpot> {
+    const { data, error } = await db()
+      .from('public_place_spots')
+      .upsert({
+        id: item.id,
+        name: item.name,
+        address: item.address,
+        lat: item.lat,
+        lng: item.lng,
+        category: item.category,
+        maps_url: item.mapsUrl,
+        source_id: item.sourceId,
+      }, { onConflict: 'id' })
+      .select('id,name,address,lat,lng,category,maps_url,source_id,created_at')
+      .single();
+    if (error) throw error;
+    return mapPublicPlaceSpot(data);
+  },
+
+  async getByPlaceIds(placeIds: string[]): Promise<PublicPlaceFeedback[]> {
+    if (placeIds.length === 0) return [];
+    const { data, error } = await db()
+      .from('public_place_feedback')
+      .select('id,place_id,rating,tip,created_at')
+      .in('place_id', placeIds)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data ?? []).map(mapPublicPlaceFeedback);
+  },
+
+  async save(item: Omit<PublicPlaceFeedback, 'id' | 'createdAt'>): Promise<PublicPlaceFeedback> {
+    const { data, error } = await db()
+      .from('public_place_feedback')
+      .insert({
+        place_id: item.placeId,
+        rating: item.rating,
+        tip: sanitiseTip(item.tip),
+      })
+      .select('id,place_id,rating,tip,created_at')
+      .single();
+    if (error) throw error;
+    return mapPublicPlaceFeedback(data);
   },
 };

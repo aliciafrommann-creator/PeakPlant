@@ -22,7 +22,7 @@ describe('momentsForSpaceType', () => {
 describe('lookups', () => {
   it('finds a moment and a place by id', () => {
     expect(momentById('tm-1')?.title).toBe('one slow coffee');
-    expect(placeById('pl-1')?.name).toBe('Café Katzung');
+    expect(placeById('pl-1')?.name).toBe('a quiet cafe nearby');
   });
 
   it('returns undefined for unknown or missing ids', () => {
@@ -57,9 +57,12 @@ describe('data integrity', () => {
     }
   });
 
-  it('only partner places carry a perk', () => {
+  it('does not claim venue partnerships without a verified deal', () => {
+    expect(LOCAL_PLACES.some((p) => p.isPartner)).toBe(false);
     for (const p of LOCAL_PLACES) {
-      if (p.perk) expect(p.isPartner).toBe(true);
+      expect(p.perk).toBeUndefined();
+      expect(p.provenance).toBe('needs-confirmation');
+      expect(p.liveQuery).toBeTruthy();
     }
   });
 });

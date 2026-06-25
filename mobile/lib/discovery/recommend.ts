@@ -3,10 +3,9 @@
  *
  * Pure (no RN/Expo/network imports) so it's unit-tested in node and reused as
  * the offline / fallback path behind the AI interface (`nullAI.recommendDates`).
- * It never invents venues or facts: it only filters and ranks the curated
- * `TOGETHER_MOMENTS` + `LOCAL_PLACES`, and every fact it emits is labelled with
- * its provenance. Partner places are NEVER ranked higher for being partners —
- * ranking is not for sale (PP-016).
+ * It never invents venues or facts: it only filters and ranks curated moments
+ * plus generic place intents. Real venue names come from live providers, and
+ * every fact it emits is labelled with its provenance.
  */
 
 import {
@@ -133,7 +132,7 @@ function buildFacts(moment: TogetherMoment, place?: LocalPlace): RecommendationF
       provenance: place.provenance,
     });
     if (place.perk) {
-      facts.push({ label: 'partner perk', value: place.perk, provenance: 'curated' });
+      facts.push({ label: 'verified partner perk', value: place.perk, provenance: 'curated' });
     }
   } else {
     facts.push({ label: 'where', value: 'anywhere that feels right', provenance: 'curated' });

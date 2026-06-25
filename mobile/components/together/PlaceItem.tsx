@@ -1,34 +1,24 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import type { LocalPlace } from '../../lib/together';
 
 export function PlaceItem({ place }: { place: LocalPlace }) {
-  const openMaps = () => {
-    const q = encodeURIComponent(`${place.name} ${place.area}`);
-    const url = place.lat && place.lng
-      ? `geo:${place.lat},${place.lng}?q=${q}`
-      : `https://maps.google.com/?q=${q}`;
-    void Linking.openURL(url);
-  };
-
   return (
-    <TouchableOpacity
+    <View
       style={styles.container}
-      onPress={openMaps}
-      activeOpacity={0.85}
-      accessibilityRole="button"
-      accessibilityLabel={`${place.name}, ${place.area}${place.perk ? `, partner perk: ${place.perk}` : ''}. Tap to open in Maps.`}
+      accessibilityRole="text"
+      accessibilityLabel={`${place.name}, ${place.area}${place.perk ? `, verified perk: ${place.perk}` : ''}`}
     >
       <View style={styles.head}>
         <Text style={styles.name}>{place.name.toLowerCase()}</Text>
         {place.isPartner && <Text style={styles.partner}>PARTNER</Text>}
-        <Text style={styles.mapIcon}>↗</Text>
       </View>
       <Text style={styles.area}>{place.area}</Text>
       {place.perk && <Text style={styles.perk}>🌶️ {place.perk}</Text>}
-    </TouchableOpacity>
+      {place.liveQuery && <Text style={styles.hint}>live search: {place.liveQuery}</Text>}
+    </View>
   );
 }
 
@@ -60,11 +50,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     paddingVertical: 1,
   },
-  mapIcon: {
-    fontSize: 12,
-    color: Colors.textFaint,
-    marginLeft: 'auto',
-  },
   area: {
     fontSize: 11,
     fontWeight: '300',
@@ -75,6 +60,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '300',
     color: Colors.accent,
+    marginTop: 2,
+  },
+  hint: {
+    fontSize: 11,
+    fontWeight: '300',
+    color: Colors.textFaint,
     marginTop: 2,
   },
 });

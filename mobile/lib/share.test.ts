@@ -5,7 +5,7 @@ import {
   composeIdeaShareText,
   composeDatePlanShareText,
 } from './shareText';
-import { cardLink, ideaLink, APP_BASE_URL } from './links';
+import { cardLink, ideaLink, placeLink, APP_BASE_URL } from './links';
 import type { Memory, MomentCard, SavedDate } from './types';
 
 const memory: Memory = {
@@ -87,6 +87,7 @@ describe('links', () => {
   it('builds stable card and idea links under the public origin', () => {
     expect(cardLink('card-04')).toBe(`${APP_BASE_URL}/c/card-04`);
     expect(ideaLink('tm-8')).toBe(`${APP_BASE_URL}/i/tm-8`);
+    expect(placeLink('google:abc')).toBe(`${APP_BASE_URL}/places/google%3Aabc`);
   });
 
   it('url-encodes ids defensively', () => {

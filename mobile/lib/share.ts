@@ -1,7 +1,7 @@
 import { Share } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import { composeShareText, composeIdeaShareText, composeDatePlanShareText } from './shareText';
-import { ideaLink } from './links';
+import { ideaLink, placeLink } from './links';
 import type { Memory, MomentCard, SavedDate } from './types';
 
 export { composeShareText };
@@ -37,7 +37,9 @@ export async function shareMemory(memory: Memory, card?: MomentCard): Promise<vo
  * stable link are sent — never private notes or space data.
  */
 export async function shareSavedDate(saved: SavedDate): Promise<void> {
-  const link = ideaLink(saved.momentId);
+  const link = saved.momentId.startsWith('place:')
+    ? placeLink(saved.momentId.slice('place:'.length))
+    : ideaLink(saved.momentId);
   const message =
     saved.status === 'planned'
       ? composeDatePlanShareText(saved, link)

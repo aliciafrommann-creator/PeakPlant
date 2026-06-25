@@ -23,3 +23,8 @@ export function cardLink(cardId: string): string {
 export function ideaLink(momentId: string): string {
   return `${APP_BASE_URL}/i/${encodeURIComponent(momentId)}`;
 }
+
+/** Link to a live/provider place (opens the Places surface in-app when supported). */
+export function placeLink(placeId: string): string {
+  return `${APP_BASE_URL}/places/${encodeURIComponent(placeId)}`;
+}

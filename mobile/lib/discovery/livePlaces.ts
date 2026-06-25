@@ -1,4 +1,5 @@
 import { LOCAL_PLACES, type LocalPlace, type PriceBand, type Provenance } from '../together';
+import type { PublicPlaceSpot } from '../types';
 import type { GeoCoords, LivePlace } from './providers/interface';
 
 export const DEFAULT_LIVE_PLACE_QUERY = 'romantic cafes parks museums viewpoints date spots';
@@ -9,6 +10,22 @@ export const DEFAULT_LIVE_PLACE_LIMIT = 6;
 export const MAX_LIVE_PLACE_LIMIT = 8;
 export const LIVE_PLACES_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 export const DEFAULT_MONTHLY_LIVE_PLACE_SEARCH_LIMIT = 12;
+
+export interface PilotCity {
+  id: string;
+  label: string;
+  coords: GeoCoords;
+}
+
+/**
+ * Pilot cities are not static venue catalogs. They are only safe location seeds
+ * for live provider searches, so the returned places stay current.
+ */
+export const PILOT_CITIES: PilotCity[] = [
+  { id: 'innsbruck', label: 'Innsbruck', coords: { lat: 47.2692, lng: 11.4041 } },
+  { id: 'vienna', label: 'Vienna', coords: { lat: 48.2082, lng: 16.3738 } },
+  { id: 'munich', label: 'Munich', coords: { lat: 48.1351, lng: 11.5820 } },
+];
 
 const DEFAULT_LIVE_PRICE_BAND: PriceBand = LOCAL_PLACES.find((place) => place.priceBand !== 'free')?.priceBand ?? 'free';
 
@@ -77,5 +94,22 @@ export function livePlaceToLocalPlace(place: LivePlace): LocalPlace {
     lastVerifiedAt: place.fetchedAt.slice(0, 10),
     lat: place.lat,
     lng: place.lng,
+  };
+}
+
+export function publicSpotToLocalPlace(spot: PublicPlaceSpot): LocalPlace {
+  return {
+    id: spot.id,
+    name: spot.name,
+    category: spot.category ?? 'community spot',
+    area: spot.address || 'shared anonymously',
+    isPartner: false,
+    priceBand: DEFAULT_LIVE_PRICE_BAND,
+    accessibility: [],
+    tags: ['community', spot.category ?? 'spot'],
+    provenance: 'verified-live',
+    lastVerifiedAt: spot.createdAt.slice(0, 10),
+    lat: spot.lat,
+    lng: spot.lng,
   };
 }
