@@ -43,7 +43,7 @@ export default function TogetherScreen() {
 
   const suggested = suggestion ? momentById(suggestion.momentId) : undefined;
   const rest = candidates.filter((m) => m.id !== suggested?.id);
-  const partnerPlaces = [...LOCAL_PLACES].sort((a, b) => Number(b.isPartner) - Number(a.isPartner));
+  const placePrompts = LOCAL_PLACES;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -97,14 +97,14 @@ export default function TogetherScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>{t('LOCAL PLACES', 'LOKALE ORTE')}</Text>
             <View>
-              {partnerPlaces.map((p) => (
+              {placePrompts.map((p) => (
                 <PlaceItem key={p.id} place={p} />
               ))}
             </View>
             <Text style={styles.placesNote}>
               {t(
-                'partner places offer a small perk. you never have to buy anything to share a moment.',
-                'Partnerorte bieten einen kleinen Vorteil. Ihr muss nichts kaufen, um einen Moment zu teilen.',
+                'these are search prompts, not venue claims. use Live Places to pull current real spots.',
+                'Das sind Suchvorlagen, keine behaupteten Orte. Nutze Live-Orte, um aktuelle echte Spots zu ziehen.',
               )}
             </Text>
           </View>

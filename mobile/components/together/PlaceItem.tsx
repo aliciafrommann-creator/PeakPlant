@@ -9,7 +9,7 @@ export function PlaceItem({ place }: { place: LocalPlace }) {
     <View
       style={styles.container}
       accessibilityRole="text"
-      accessibilityLabel={`${place.name}, ${place.area}${place.perk ? `, partner perk: ${place.perk}` : ''}`}
+      accessibilityLabel={`${place.name}, ${place.area}${place.perk ? `, verified perk: ${place.perk}` : ''}`}
     >
       <View style={styles.head}>
         <Text style={styles.name}>{place.name.toLowerCase()}</Text>
@@ -17,6 +17,7 @@ export function PlaceItem({ place }: { place: LocalPlace }) {
       </View>
       <Text style={styles.area}>{place.area}</Text>
       {place.perk && <Text style={styles.perk}>🌶️ {place.perk}</Text>}
+      {place.liveQuery && <Text style={styles.hint}>live search: {place.liveQuery}</Text>}
     </View>
   );
 }
@@ -59,6 +60,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '300',
     color: Colors.accent,
+    marginTop: 2,
+  },
+  hint: {
+    fontSize: 11,
+    fontWeight: '300',
+    color: Colors.textFaint,
     marginTop: 2,
   },
 });

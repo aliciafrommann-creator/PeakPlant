@@ -45,8 +45,9 @@ relationship scores, or guilt-based notifications.
 ### Fixed in this patch
 
 1. The main `Community` tab was a coming-soon dead end. It is now a useful
-   `Places / Orte` surface with an OpenStreetMap view, curated Innsbruck places,
-   directions, linked ideas, and the device's own private feedback.
+   `Places / Orte` surface with an interactive map, generic place prompts,
+   live provider places, directions, linked ideas, private feedback, and
+   explicit opt-in anonymous place tips.
 2. Idea detail jumped directly to memory creation. It now gives one clear
    status-aware path: plan, open plan, preserve, or view the resulting memory.
 3. Saving and planning were separate screens without a handoff. Opening planning
@@ -63,7 +64,7 @@ relationship scores, or guilt-based notifications.
 
 ### Still intentionally not faked
 
-- The map contains curated PeakPlant places plus optional live provider places
+- The map contains generic place prompts plus optional live provider places
   only after a user tap. It still does not claim live availability/open hours.
 - There is no background GPS tracking, booking, transit, or routing provider.
 - Feedback is local to the current device and space-scoped; it is not a
@@ -81,9 +82,10 @@ relationship scores, or guilt-based notifications.
    completion, confusion, and abandonment at each transition.
 2. Move feedback to a Supabase repository before presenting it as shared between
    partners or devices.
-3. Add moderated public place tips only as a separate opt-in publishing action.
-4. Add a real places provider server-side if PeakPlant expands beyond Innsbruck;
-   never ship provider secrets in the app.
+3. Apply the public-place-feedback migration and add moderation/reporting before
+   broad public rollout.
+4. Expand pilot cities via live provider search; never ship provider secrets in
+   the app.
 5. Add privacy-safe funnel analytics only after consent:
    `idea_opened`, `idea_saved`, `date_planned`, `calendar_shared`,
    `date_completed`, `memory_created`, `feedback_saved`.

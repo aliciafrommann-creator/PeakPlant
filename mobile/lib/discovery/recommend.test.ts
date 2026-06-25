@@ -117,12 +117,11 @@ describe('recommendDates', () => {
     expect(next.every((r) => r.momentId !== first.momentId)).toBe(true);
   });
 
-  it('does not boost partner places in ranking', () => {
+  it('does not depend on unverified partner claims for ranking', () => {
     // With no preferences, the top pick is the first eligible moment (tm-1),
-    // proving partner-ness is not a ranking factor.
+    // proving venue-commercial metadata is not a ranking factor.
     const recs = recommendDates({ spaceType: 'couple' });
     expect(recs[0].momentId).toBe(TOGETHER_MOMENTS.filter((m) => m.spaceTypes.includes('couple'))[0].id);
-    // sanity: partner places exist in the catalog
-    expect(LOCAL_PLACES.some((p) => p.isPartner)).toBe(true);
+    expect(LOCAL_PLACES.some((p) => p.isPartner)).toBe(false);
   });
 });

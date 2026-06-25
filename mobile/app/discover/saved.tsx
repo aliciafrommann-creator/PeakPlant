@@ -22,7 +22,7 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { transitionEffect } from '../../lib/savedDates/status';
 import { shareSavedDate } from '../../lib/share';
 import { shareCalendarEvent } from '../../lib/calendarShare';
-import { ideaLink } from '../../lib/links';
+import { ideaLink, placeLink } from '../../lib/links';
 import { formatPlanDate, parsePlanDate } from '../../lib/calendar';
 import { confirmSuccess } from '../../lib/haptics';
 import type { SavedDate } from '../../lib/types';
@@ -150,6 +150,13 @@ export default function SavedDatesScreen() {
             savedDateId: d.id,
             savedDateTitle: d.title,
             savedDateMomentId: d.momentId,
+            placeId: d.placeId,
+            placeName: d.placeName,
+            placeAddress: d.placeAddress,
+            placeLat: d.placeLat != null ? String(d.placeLat) : undefined,
+            placeLng: d.placeLng != null ? String(d.placeLng) : undefined,
+            placeCategory: d.placeCategory,
+            placeMapsUrl: d.placeMapsUrl,
             prefillNote: t(
               `we did it: ${d.title}`,
               `wir haben es gemacht: ${d.title}`,
@@ -205,10 +212,13 @@ export default function SavedDatesScreen() {
   const addToCalendar = useCallback(
     async (d: SavedDate) => {
       try {
+        const link = d.momentId.startsWith('place:')
+          ? placeLink(d.momentId.slice('place:'.length))
+          : ideaLink(d.momentId);
         await shareCalendarEvent({
           title: d.title,
           dateText: d.plannedFor,
-          link: ideaLink(d.momentId),
+          link,
         });
       } catch {
         Alert.alert(
@@ -231,6 +241,13 @@ export default function SavedDatesScreen() {
         savedDateId: d.id,
         savedDateTitle: d.title,
         savedDateMomentId: d.momentId,
+        placeId: d.placeId,
+        placeName: d.placeName,
+        placeAddress: d.placeAddress,
+        placeLat: d.placeLat != null ? String(d.placeLat) : undefined,
+        placeLng: d.placeLng != null ? String(d.placeLng) : undefined,
+        placeCategory: d.placeCategory,
+        placeMapsUrl: d.placeMapsUrl,
         prefillNote: t(
           `we did it: ${d.title}`,
           `wir haben es gemacht: ${d.title}`,

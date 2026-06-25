@@ -10,6 +10,7 @@ import {
   localSpaceRepository,
   localSavedDateRepository,
   localDateFeedbackRepository,
+  localPublicPlaceFeedbackRepository,
   localRitualRepository,
 } from './local';
 import {
@@ -17,6 +18,7 @@ import {
   supabaseCardRepository,
   supabaseSpaceRepository,
   supabaseSavedDateRepository,
+  supabasePublicPlaceFeedbackRepository,
 } from './supabase';
 
 export const memoryRepository = isSupabaseConfigured ? supabaseMemoryRepository : localMemoryRepository;
@@ -28,6 +30,12 @@ export const savedDateRepository = isSupabaseConfigured
 
 // Feedback is local-only for the beta; community integration is post-beta.
 export const feedbackRepository = localDateFeedbackRepository;
+
+// Explicit opt-in anonymous place feedback can be public when the Supabase
+// migration is applied; otherwise screens catch failures and keep private flow.
+export const publicPlaceFeedbackRepository = isSupabaseConfigured
+  ? supabasePublicPlaceFeedbackRepository
+  : localPublicPlaceFeedbackRepository;
 
 // Rituals are local-only for the beta; the supabase adapter + migration are
 // post-beta (rituals are private, space-scoped — no cross-device need yet).

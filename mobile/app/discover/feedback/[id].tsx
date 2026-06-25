@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -17,24 +17,73 @@ import { Colors } from '../../../constants/colors';
 import { Spacing } from '../../../constants/spacing';
 import { useLanguage } from '../../../lib/hooks/useLanguage';
 import { useSpaces } from '../../../lib/hooks/useSpaces';
-import { feedbackRepository } from '../../../lib/repositories';
+import { feedbackRepository, publicPlaceFeedbackRepository } from '../../../lib/repositories';
 import { acknowledgeSelection, confirmSuccess } from '../../../lib/haptics';
+import type { PublicPlaceSpot } from '../../../lib/types';
 
 const MAX_TIP = 280;
 
+function placeIdFromMomentId(momentId?: string): string | undefined {
+  if (!momentId) return undefined;
+  if (momentId.startsWith('place:')) return momentId.slice('place:'.length);
+  return undefined;
+}
+
+function parsePlaceNumber(value?: string): number | undefined {
+  if (!value) return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
 export default function FeedbackScreen() {
-  const { id: savedDateId, memoryId, title, momentId } = useLocalSearchParams<{
+  const {
+    id: savedDateId,
+    memoryId,
+    title,
+    momentId,
+    placeId: explicitPlaceId,
+    placeName,
+    placeAddress,
+    placeLat,
+    placeLng,
+    placeCategory,
+    placeMapsUrl,
+  } = useLocalSearchParams<{
     id: string;
     memoryId: string;
     title?: string;
     momentId?: string;
+    placeId?: string;
+    placeName?: string;
+    placeAddress?: string;
+    placeLat?: string;
+    placeLng?: string;
+    placeCategory?: string;
+    placeMapsUrl?: string;
   }>();
   const { t } = useLanguage();
   const { activeSpace } = useSpaces();
 
   const [rating, setRating] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
   const [tip, setTip] = useState('');
+  const [shareAnonymously, setShareAnonymously] = useState(false);
   const [saving, setSaving] = useState(false);
+  const placeId = useMemo(() => explicitPlaceId || placeIdFromMomentId(momentId), [explicitPlaceId, momentId]);
+  const placeSpot = useMemo<Omit<PublicPlaceSpot, 'createdAt'> | null>(() => {
+    const lat = parsePlaceNumber(placeLat);
+    const lng = parsePlaceNumber(placeLng);
+    if (!placeId || !placeName || lat == null || lng == null) return null;
+    return {
+      id: placeId,
+      name: placeName,
+      address: placeAddress ?? '',
+      lat,
+      lng,
+      category: placeCategory,
+      mapsUrl: placeMapsUrl,
+      sourceId: placeId.startsWith('google:') ? 'google-places-text-search' : 'peakplant-community',
+    };
+  }, [placeAddress, placeCategory, placeId, placeLat, placeLng, placeMapsUrl, placeName]);
 
   const goToMemory = () => {
     if (memoryId) {
@@ -58,6 +107,16 @@ export default function FeedbackScreen() {
         rating,
         tip: tip.trim() || undefined,
       });
+      if (shareAnonymously && placeId) {
+        if (placeSpot) {
+          await publicPlaceFeedbackRepository.saveSpot(placeSpot).catch(() => undefined);
+        }
+        await publicPlaceFeedbackRepository.save({
+          placeId,
+          rating,
+          tip: tip.trim() || undefined,
+        }).catch(() => undefined);
+      }
       await confirmSuccess();
     } catch {
       Alert.alert(
@@ -147,10 +206,37 @@ export default function FeedbackScreen() {
             </Text>
           </View>
 
+          {placeId ? (
+            <View style={styles.publicShareBlock}>
+              <TouchableOpacity
+                style={[styles.publicShareToggle, shareAnonymously && styles.publicShareToggleOn]}
+                onPress={() => setShareAnonymously((current) => !current)}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: shareAnonymously }}
+                accessibilityLabel={t(
+                  'Share this place feedback anonymously',
+                  'Dieses Orte-Feedback anonym teilen',
+                )}
+              >
+                <Text style={[styles.publicShareText, shareAnonymously && styles.publicShareTextOn]}>
+                  {shareAnonymously
+                    ? t('✓ SHARE ANONYMOUS PLACE TIP', '✓ ANONYMEN ORTE-TIPP TEILEN')
+                    : t('SHARE ANONYMOUS PLACE TIP', 'ANONYMEN ORTE-TIPP TEILEN')}
+                </Text>
+              </TouchableOpacity>
+              <Text style={styles.publicShareNote}>
+                {t(
+                  'Only the stars, optional practical tip and place are shared. Your memory, space and partner stay private.',
+                  'Nur Sterne, optionaler praktischer Tipp und Ort werden geteilt. Erinnerung, Space und Partner bleiben privat.',
+                )}
+              </Text>
+            </View>
+          ) : null}
+
           <Text style={styles.privacyNote}>
             {t(
-              'your diary memory stays separate and private. PeakPlant will ask before any future community sharing.',
-              'Eure Tagebucherinnerung bleibt getrennt und privat. Vor einer späteren Community-Freigabe fragt PeakPlant ausdrücklich nach.',
+              'your diary memory stays separate and private. anonymous place sharing only happens when you turn it on above.',
+              'Eure Tagebucherinnerung bleibt getrennt und privat. Anonymes Orte-Teilen passiert nur, wenn du es oben aktivierst.',
             )}
           </Text>
         </ScrollView>
@@ -212,6 +298,27 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   charCount: { fontSize: 10, fontWeight: '300', color: Colors.textFaint, alignSelf: 'flex-end' },
+  publicShareBlock: {
+    gap: Spacing.sm,
+    padding: Spacing.md,
+    backgroundColor: Colors.backgroundCream,
+  },
+  publicShareToggle: {
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  publicShareToggleOn: { backgroundColor: Colors.text, borderColor: Colors.text },
+  publicShareText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
+  publicShareTextOn: { color: Colors.white },
+  publicShareNote: {
+    fontSize: 11,
+    fontWeight: '300',
+    color: Colors.textFaint,
+    lineHeight: 17,
+  },
   privacyNote: {
     fontSize: 11,
     fontWeight: '300',
