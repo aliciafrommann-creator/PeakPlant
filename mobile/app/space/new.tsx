@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
 import { spaceRepository } from '../../lib/repositories';
 import { getActiveUser } from '../../lib/session';
 import { useAppStore } from '../../lib/store';
@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   primaryDisabled: { opacity: 0.35 },
   primaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.white },
@@ -243,6 +244,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   secondaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
   error: { fontSize: 13, fontWeight: '400', color: '#b42318', lineHeight: 19 },

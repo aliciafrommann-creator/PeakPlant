@@ -127,10 +127,10 @@ export default function CardDetailScreen() {
         </Animated.View>
       )}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.back()} accessibilityRole="button" accessibilityLabel={t('Back', 'Zurück')}>
           <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURÜCK')}</Text>
         </TouchableOpacity>
-        <Text style={styles.headerLabel} numberOfLines={1}>{groupLabel.toUpperCase()}</Text>
+        <Text style={styles.headerLabel} numberOfLines={2}>{groupLabel.toUpperCase()}</Text>
         <View style={{ width: 60 }} />
       </View>
 
