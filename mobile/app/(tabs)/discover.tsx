@@ -41,34 +41,34 @@ function currentTimeOfDay(): TimeOfDay {
 }
 
 /** Filter chips, grouped so they read intentionally (not a random pile). */
-type Shortcut = { key: string; label: string; labelDe: string; patch: Partial<DateConstraints> };
+type Shortcut = { key: string; emoji: string; label: string; labelDe: string; patch: Partial<DateConstraints> };
 type FilterGroup = { label: string; labelDe: string; options: Shortcut[] };
 const FILTER_GROUPS: FilterGroup[] = [
   {
     label: 'how long', labelDe: 'wie lang',
     options: [
-      { key: 'quick', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
+      { key: 'quick', emoji: '⚡', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
     ],
   },
   {
     label: 'budget', labelDe: 'Budget',
     options: [
-      { key: 'free', label: 'free', labelDe: 'gratis', patch: { maxBudget: 'free' } },
-      { key: 'cheap', label: 'easy spend', labelDe: 'günstig', patch: { maxBudget: '€€' } },
+      { key: 'free', emoji: '✨', label: 'free', labelDe: 'gratis', patch: { maxBudget: 'free' } },
+      { key: 'cheap', emoji: '💸', label: 'easy spend', labelDe: 'günstig', patch: { maxBudget: '€€' } },
     ],
   },
   {
     label: 'where', labelDe: 'wo',
     options: [
-      { key: 'outdoor', label: 'outdoors', labelDe: 'draußen', patch: { indoorOutdoor: 'outdoor' } },
-      { key: 'indoor', label: 'stay in', labelDe: 'drinnen', patch: { indoorOutdoor: 'indoor' } },
+      { key: 'outdoor', emoji: '🌤️', label: 'outdoors', labelDe: 'draußen', patch: { indoorOutdoor: 'outdoor' } },
+      { key: 'indoor', emoji: '🛋️', label: 'stay in', labelDe: 'drinnen', patch: { indoorOutdoor: 'indoor' } },
     ],
   },
   {
     label: 'vibe', labelDe: 'Stimmung',
     options: [
-      { key: 'calm', label: 'calm', labelDe: 'ruhig', patch: { categories: ['calm'] } },
-      { key: 'play', label: 'playful', labelDe: 'verspielt', patch: { categories: ['play'] } },
+      { key: 'calm', emoji: '🌙', label: 'calm', labelDe: 'ruhig', patch: { categories: ['calm'] } },
+      { key: 'play', emoji: '🎲', label: 'playful', labelDe: 'verspielt', patch: { categories: ['play'] } },
     ],
   },
 ];
@@ -292,7 +292,7 @@ export default function DiscoverScreen() {
             accessibilityState={{ selected: true }}
           >
             <Text style={[styles.toggleChipText, styles.toggleChipTextActive]}>
-              {t('ALL IDEAS', 'ALLE IDEEN')}
+              {t('💡 ALL IDEAS', '💡 ALLE IDEEN')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -303,7 +303,7 @@ export default function DiscoverScreen() {
             accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
           >
             <Text style={styles.toggleChipText}>
-              {t('PLACES MAP', 'ORTE-KARTE')} {'->'}
+              {t('🗺️ PLACES MAP', '🗺️ ORTE-KARTE')} {'->'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -337,7 +337,9 @@ export default function DiscoverScreen() {
                 accessibilityState={{ selected: on }}
                 accessibilityLabel={t(s.label, s.labelDe)}
               >
-                <Text style={[styles.chipText, on && styles.chipTextOn]}>{t(s.label, s.labelDe)}</Text>
+                <Text style={[styles.chipText, on && styles.chipTextOn]}>
+                  {s.emoji}  {t(s.label, s.labelDe)}
+                </Text>
               </TouchableOpacity>
             );
           })}
@@ -434,7 +436,7 @@ export default function DiscoverScreen() {
               accessibilityRole="button"
               accessibilityLabel={t('Ask PeakPlant for personalised ideas', 'PeakPlant nach personalisierten Ideen fragen')}
             >
-              <Text style={styles.linkPillText}>{t('ask peakplant', 'peakplant fragen')}</Text>
+              <Text style={styles.linkPillText}>{t('💬 ask peakplant', '💬 peakplant fragen')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.linkPill}
@@ -444,7 +446,7 @@ export default function DiscoverScreen() {
               accessibilityLabel={t('Saved date ideas', 'Gemerkte Ideen')}
             >
               <Text style={styles.linkPillText}>
-                {t('saved', 'gemerkt')}
+                {t('🔖 saved', '🔖 gemerkt')}
                 {saved.length > 0 ? ` · ${saved.length}` : ''}
               </Text>
             </TouchableOpacity>
@@ -456,7 +458,7 @@ export default function DiscoverScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={t('Browse all ideas and local places', 'Alle Ideen und Orte in der Nahe')}
               >
-                <Text style={styles.linkPillText}>{t('all ideas', 'alle Ideen')}</Text>
+                <Text style={styles.linkPillText}>{t('🧭 all ideas', '🧭 alle Ideen')}</Text>
               </TouchableOpacity>
             )}
             {challengesEnabled && (
@@ -467,7 +469,7 @@ export default function DiscoverScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={t('Challenges', 'Herausforderungen')}
               >
-                <Text style={styles.linkPillText}>{t('challenges', 'Challenges')}</Text>
+                <Text style={styles.linkPillText}>{t('🔥 challenges', '🔥 Challenges')}</Text>
               </TouchableOpacity>
             )}
             {ritualsEnabled && (
@@ -478,7 +480,7 @@ export default function DiscoverScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={t('Rituals', 'Rituale')}
               >
-                <Text style={styles.linkPillText}>{t('rituals', 'Rituale')}</Text>
+                <Text style={styles.linkPillText}>{t('🌿 rituals', '🌿 Rituale')}</Text>
               </TouchableOpacity>
             )}
           </ScrollView>
@@ -683,15 +685,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   chip: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 11,
     borderWidth: 1,
     borderColor: Colors.border,
     backgroundColor: Colors.backgroundWarm,
     borderRadius: 999,
+    ...Shadows.subtle,
   },
   chipOn: { backgroundColor: Colors.accent, borderColor: Colors.accent },
-  chipText: { fontSize: 12, fontWeight: '500', color: Colors.textMuted, letterSpacing: 0.3 },
+  chipText: { fontSize: 13, fontWeight: '600', color: Colors.text, letterSpacing: 0.2 },
   chipTextOn: { color: Colors.white },
   loading: { alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.xxl },
   loadingText: { fontSize: 12, fontWeight: '300', color: Colors.textFaint, letterSpacing: 0.5 },

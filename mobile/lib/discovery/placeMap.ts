@@ -12,14 +12,35 @@ function safeJson(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
 }
 
+/** Playful, on-brand pin identity per category: a warm fill + a glyph.
+ *  The map should feel alive — every pin says what it is at a glance. */
+const CATEGORY_STYLE: Record<string, { emoji: string; color: string }> = {
+  food: { emoji: '🍴', color: '#CF4B2C' },
+  cafe: { emoji: '☕', color: '#B5532E' },
+  market: { emoji: '🧺', color: '#E2683C' },
+  calm: { emoji: '🍵', color: '#E3B23C' },
+  park: { emoji: '🌳', color: '#7C8A66' },
+  outdoors: { emoji: '⛰️', color: '#7C8A66' },
+  lake: { emoji: '💧', color: '#E08A4F' },
+  culture: { emoji: '🎭', color: '#D9477E' },
+  create: { emoji: '🎨', color: '#D9477E' },
+  play: { emoji: '🎲', color: '#E2683C' },
+};
+const DEFAULT_STYLE = { emoji: '📍', color: '#3D3830' };
+
 export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): string {
-  const points = mappablePlaces(places).map((place) => ({
-    id: place.id,
-    name: place.name,
-    lat: place.lat,
-    lng: place.lng,
-    partner: place.isPartner,
-  }));
+  const points = mappablePlaces(places).map((place) => {
+    const style = CATEGORY_STYLE[place.category] ?? DEFAULT_STYLE;
+    return {
+      id: place.id,
+      name: place.name,
+      lat: place.lat,
+      lng: place.lng,
+      partner: place.isPartner,
+      emoji: style.emoji,
+      color: place.isPartner ? '#CF4B2C' : style.color,
+    };
+  });
 
   return `<!doctype html>
 <html>
@@ -35,12 +56,15 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
       border-color: rgba(26,26,26,.12);
     }
     .peak-pin {
-      width: 24px; height: 24px; border-radius: 50%;
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; line-height: 1;
       background: #3D3830; border: 3px solid #FAF7F0;
-      box-shadow: 0 2px 10px rgba(0,0,0,.14);
+      box-shadow: 0 3px 10px rgba(0,0,0,.18);
+      transition: transform .12s ease;
     }
-    .peak-pin.partner { background: #CF4B2C; border-color: #FAF7F0; }
-    .peak-pin.selected { width: 30px; height: 30px; margin: -3px; border-width: 4px; border-color: #CF4B2C; background: #1E1C1A; }
+    .peak-pin.partner { border-color: #E3B23C; box-shadow: 0 0 0 2px rgba(227,178,60,.45), 0 3px 10px rgba(0,0,0,.18); }
+    .peak-pin.selected { width: 40px; height: 40px; margin: -4px; font-size: 19px; border-width: 4px; border-color: #FAF7F0; box-shadow: 0 0 0 3px #CF4B2C, 0 6px 16px rgba(0,0,0,.24); transform: translateY(-2px); }
   </style>
 </head>
 <body>
@@ -67,7 +91,8 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
     points.forEach((point) => {
       const classes = ['peak-pin', point.partner ? 'partner' : '', point.id === selectedId ? 'selected' : '']
         .filter(Boolean).join(' ');
-      const icon = L.divIcon({ className: '', html: '<div class="' + classes + '"></div>', iconSize: [30, 30], iconAnchor: [15, 15] });
+      const html = '<div class="' + classes + '" style="background:' + point.color + '">' + point.emoji + '</div>';
+      const icon = L.divIcon({ className: '', html: html, iconSize: [40, 40], iconAnchor: [20, 20] });
       const marker = L.marker([point.lat, point.lng], { icon, title: point.name }).addTo(map);
       marker.on('click', () => window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'select-place', id: point.id })));
       bounds.push([point.lat, point.lng]);

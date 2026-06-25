@@ -22,12 +22,12 @@ export default function ProfileScreen() {
   const { memories } = useMemories(activeSpace?.id);
   const { chillyCount } = useWeeklyChallenge(activeSpace?.id);
 
-  const links: { label: string; route: string }[] = [
-    { label: t('customize peakplant', 'PeakPlant anpassen'), route: '/customize' },
-    { label: t('account & data', 'Konto & Daten'), route: '/account' },
-    { label: t('language & preferences', 'Sprache & Einstellungen'), route: '/settings/preferences' },
-    { label: t('ask peakplant', 'PeakPlant fragen'), route: '/ask' },
-    { label: t('peakplant plus', 'PeakPlant Plus'), route: '/plus' },
+  const links: { emoji: string; label: string; route: string }[] = [
+    { emoji: '🎨', label: t('customize peakplant', 'PeakPlant anpassen'), route: '/customize' },
+    { emoji: '🔐', label: t('account & data', 'Konto & Daten'), route: '/account' },
+    { emoji: '🌍', label: t('language & preferences', 'Sprache & Einstellungen'), route: '/settings/preferences' },
+    { emoji: '💬', label: t('ask peakplant', 'PeakPlant fragen'), route: '/ask' },
+    { emoji: '✨', label: t('peakplant plus', 'PeakPlant Plus'), route: '/plus' },
   ];
 
   return (
@@ -62,7 +62,7 @@ export default function ProfileScreen() {
         )}
 
         <View style={styles.linksBlock}>
-          {links.map(({ label, route }) => (
+          {links.map(({ emoji, label, route }) => (
             <TouchableOpacity
               key={route}
               style={styles.linkRow}
@@ -71,7 +71,10 @@ export default function ProfileScreen() {
               accessibilityRole="button"
               accessibilityLabel={label}
             >
-              <Text style={styles.linkText}>{label}</Text>
+              <Text style={styles.linkText}>
+                <Text style={styles.linkEmoji}>{emoji}  </Text>
+                {label}
+              </Text>
               <Text style={styles.linkArrow}>{'->'}</Text>
             </TouchableOpacity>
           ))}
@@ -178,6 +181,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '300',
     color: Colors.text,
+  },
+  linkEmoji: {
+    fontSize: 16,
   },
   linkArrow: {
     fontSize: 18,
