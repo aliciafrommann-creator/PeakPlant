@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../constants/colors';
-import { Spacing } from '../constants/spacing';
+import { Spacing, Radii } from '../constants/spacing';
 import { isSupabaseConfigured } from '../lib/supabase/client';
 import { signOut, deleteAccount } from '../lib/supabase/auth';
 import { useAppStore } from '../lib/store';
@@ -167,6 +167,9 @@ const styles = StyleSheet.create({
   dangerZone: {
     marginTop: Spacing.xl,
     gap: Spacing.sm,
+    backgroundColor: 'rgba(180,35,24,0.06)',
+    borderRadius: Radii.md,
+    padding: Spacing.lg,
   },
   dangerLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: '#b42318' },
   dangerRow: {

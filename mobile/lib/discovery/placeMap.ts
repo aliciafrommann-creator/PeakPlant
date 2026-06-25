@@ -32,11 +32,11 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
     .leaflet-control-attribution { font: 9px system-ui, sans-serif; }
     .peak-pin {
       width: 24px; height: 24px; border-radius: 50%;
-      background: #1A1A1A; border: 3px solid #ffffff;
-      box-shadow: 0 2px 10px rgba(0,0,0,.25);
+      background: #3D3830; border: 3px solid #FAF7F0;
+      box-shadow: 0 2px 10px rgba(0,0,0,.14);
     }
-    .peak-pin.partner { background: #C9A96E; }
-    .peak-pin.selected { width: 30px; height: 30px; margin: -3px; border-width: 4px; }
+    .peak-pin.partner { background: #CF4B2C; border-color: #FAF7F0; }
+    .peak-pin.selected { width: 30px; height: 30px; margin: -3px; border-width: 4px; border-color: #CF4B2C; background: #1E1C1A; }
   </style>
 </head>
 <body>
@@ -47,9 +47,10 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
     const points = ${safeJson(points)};
     const selectedId = ${safeJson(selectedId ?? null)};
     const map = L.map('map', { zoomControl: false, attributionControl: true });
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
-      attribution: '&copy; OpenStreetMap contributors'
+      subdomains: 'abcd',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
     }).addTo(map);
     const bounds = [];
     points.forEach((point) => {

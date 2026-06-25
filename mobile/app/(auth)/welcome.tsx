@@ -8,7 +8,8 @@ import {
 } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { Logo } from '../../components/ui/Logo';
 
 export default function WelcomeScreen() {
@@ -71,8 +72,8 @@ const styles = StyleSheet.create({
     lineHeight: 58,
   },
   hero2: {
+    ...Typography.editorial,
     fontSize: 52,
-    fontWeight: '200',
     color: Colors.accent,
     letterSpacing: -1,
     lineHeight: 58,
@@ -95,6 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   beginText: {
     fontSize: 11,

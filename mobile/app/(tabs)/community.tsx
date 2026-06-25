@@ -345,7 +345,7 @@ export default function PlacesScreen() {
           )}
         </View>
         <Text style={styles.attribution}>
-          {t('map © OpenStreetMap contributors', 'Karte © OpenStreetMap-Mitwirkende')}
+          {t('map © OpenStreetMap · CARTO Voyager', 'Karte © OpenStreetMap · CARTO Voyager')}
         </Text>
 
         <ScrollView
