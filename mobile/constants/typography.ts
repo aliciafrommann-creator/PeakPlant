@@ -1,16 +1,39 @@
+import { Platform } from 'react-native';
+
+/** Platform editorial serif — no bundled font asset required. */
+const serif = Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' });
+
 export const Typography = {
+  /** Big editorial moment — screen openings, onboarding statements. Serif. */
+  display: {
+    fontFamily: serif,
+    fontSize: 40,
+    fontWeight: '500' as const,
+    letterSpacing: -0.8,
+    color: '#1E1C1A',
+    lineHeight: 44,
+  },
+  /** Editorial title — idea/memory titles, section openings. Serif. */
+  editorial: {
+    fontFamily: serif,
+    fontSize: 26,
+    fontWeight: '500' as const,
+    letterSpacing: -0.4,
+    color: '#1E1C1A',
+    lineHeight: 32,
+  },
   hero: {
     fontSize: 42,
     fontWeight: '300' as const,
     letterSpacing: -0.5,
-    color: '#1A1A1A',
+    color: '#1E1C1A',
     lineHeight: 50,
   },
   heading: {
     fontSize: 28,
     fontWeight: '400' as const,
     letterSpacing: -0.3,
-    color: '#1A1A1A',
+    color: '#1E1C1A',
     lineHeight: 34,
   },
   subheading: {

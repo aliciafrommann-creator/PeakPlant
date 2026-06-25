@@ -9,16 +9,21 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { router } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { SpaceSwitcher } from '../../components/space/SpaceSwitcher';
+import { PressableScale } from '../../components/ui/PressableScale';
+import { FloatingActionButton } from '../../components/ui/FloatingActionButton';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import type { Memory } from '../../lib/types';
+
+const TOGETHER = Sections.together; // warm apricot — "our space"
 
 export default function HomeScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
@@ -72,16 +77,20 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <View>
-          <Text style={styles.spaceName}>
+        <View style={styles.headerText}>
+          <View style={styles.kickerRow}>
+            <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
+            <Text style={styles.kicker}>{spaceLabel.toUpperCase()}</Text>
+          </View>
+          <Text style={styles.spaceName} numberOfLines={1}>
             {(activeSpace?.name ?? 'your space').toLowerCase()}
           </Text>
-          <Text style={styles.spaceLabel}>{spaceLabel}</Text>
         </View>
         <TouchableOpacity
           onPress={() => router.push('/space/new')}
           accessibilityRole="button"
           accessibilityLabel={t('Add a new space', 'Neuen Space hinzufügen')}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <Text style={styles.headerAction}>{t('+ SPACE', '+ SPACE')}</Text>
         </TouchableOpacity>
@@ -114,12 +123,10 @@ export default function HomeScreen() {
                   contentContainerStyle={styles.editionRow}
                 >
                   {activeEditions.map((e) => (
-                    <TouchableOpacity
+                    <PressableScale
                       key={e.id}
                       style={[styles.editionChip, { borderLeftColor: e.color }]}
                       onPress={() => router.push(`/editions/${e.id}`)}
-                      activeOpacity={0.85}
-                      accessibilityRole="button"
                       accessibilityLabel={`${e.name}, ${editionProgress[e.id]} of ${e.cardCount} cards`}
                     >
                       <Text style={styles.editionSymbol}>{e.symbol}</Text>
@@ -129,7 +136,7 @@ export default function HomeScreen() {
                           {editionProgress[e.id]} / {e.cardCount}
                         </Text>
                       </View>
-                    </TouchableOpacity>
+                    </PressableScale>
                   ))}
                 </ScrollView>
               </View>
@@ -151,51 +158,49 @@ export default function HomeScreen() {
 
             {!loading && recentMemories.length === 0 && (
               <View style={styles.empty}>
+                <Text style={styles.emptyMark}>✦</Text>
                 <Text style={styles.emptyText}>
                   {t('your diary is empty.', 'euer Tagebuch ist leer.')}
                 </Text>
                 <Text style={styles.emptyHint}>
                   {t(
-                    'scan a card to unlock your first experience together.',
-                    'Karte scannen, um euer erstes gemeinsames Erlebnis freizuschalten.',
+                    'scan a card to unlock your first experience — or add a moment of your own.',
+                    'Karte scannen, um euer erstes Erlebnis freizuschalten — oder einen eigenen Moment festhalten.',
                   )}
                 </Text>
-                <TouchableOpacity
+                <PressableScale
                   style={styles.emptyCta}
                   onPress={() => router.push('/(tabs)/scan')}
-                  activeOpacity={0.85}
-                  accessibilityRole="button"
                   accessibilityLabel={t('Scan your first card', 'Erste Karte scannen')}
                 >
                   <Text style={styles.emptyCtaText}>
                     {t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
                   </Text>
-                </TouchableOpacity>
+                </PressableScale>
               </View>
             )}
           </>
         }
       />
 
+      {/* Upload a moment from anywhere — the entry point that was missing. */}
+      <FloatingActionButton
+        onPress={() => router.push('/memory/create')}
+        icon="camera-outline"
+        label={t('MOMENT', 'MOMENT')}
+        color={TOGETHER}
+        accessibilityLabel={t('Add a moment or upload a photo', 'Moment hinzufügen oder Foto hochladen')}
+        style={styles.fab}
+      />
+
       <View style={styles.addBar}>
-        <TouchableOpacity
-          style={[styles.addBtn, styles.addBtnFill]}
+        <PressableScale
+          style={styles.scanBar}
           onPress={() => router.push('/(tabs)/scan')}
-          activeOpacity={0.85}
-          accessibilityRole="button"
           accessibilityLabel={t('Scan a card', 'Karte scannen')}
         >
-          <Text style={styles.addBtnTextFill}>{t('SCAN CARD', 'KARTE SCANNEN')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.addBtn}
-          onPress={() => router.push('/memory/create')}
-          activeOpacity={0.85}
-          accessibilityRole="button"
-          accessibilityLabel={t('Add an experience manually', 'Erlebnis manuell eintragen')}
-        >
-          <Text style={styles.addBtnText}>{t('ADD EXPERIENCE', 'ERLEBNIS EINTRAGEN')}</Text>
-        </TouchableOpacity>
+          <Text style={styles.scanBarText}>{t('SCAN CARD', 'KARTE SCANNEN')}</Text>
+        </PressableScale>
       </View>
     </SafeAreaView>
   );
@@ -213,28 +218,28 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  spaceName: {
-    fontSize: 22,
-    fontWeight: '300',
-    color: Colors.text,
-    letterSpacing: -0.3,
-  },
-  spaceLabel: {
+  headerText: { flex: 1, paddingRight: Spacing.md },
+  kickerRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
+  kickerDot: { width: 7, height: 7, borderRadius: 4 },
+  kicker: {
     fontSize: 10,
-    fontWeight: '400',
+    fontWeight: '600',
     letterSpacing: 2,
-    color: Colors.textFaint,
-    textTransform: 'uppercase',
-    marginTop: 2,
+    color: Colors.textSubtle,
+  },
+  spaceName: {
+    ...Typography.editorial,
+    fontSize: 30,
+    lineHeight: 34,
   },
   headerAction: {
     fontSize: 10,
-    fontWeight: '500',
+    fontWeight: '600',
     letterSpacing: 2,
     color: Colors.textSubtle,
   },
   list: {
-    paddingBottom: 90,
+    paddingBottom: 150,
   },
   section: {
     paddingTop: Spacing.lg,
@@ -244,9 +249,9 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 9,
-    fontWeight: '500',
+    fontWeight: '600',
     letterSpacing: 2.5,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textTransform: 'uppercase',
     paddingHorizontal: Spacing.screen,
     marginBottom: Spacing.md,
@@ -266,18 +271,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     borderLeftWidth: 3,
+    borderRadius: Radii.sm,
   },
   editionSymbol: { fontSize: 20 },
   editionName: {
     fontSize: 13,
-    fontWeight: '300',
+    fontWeight: '400',
     color: Colors.text,
   },
   editionMeta: {
     fontSize: 10,
     fontWeight: '400',
     letterSpacing: 1,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
   },
   feedHeader: {
     flexDirection: 'row',
@@ -289,9 +295,9 @@ const styles = StyleSheet.create({
   },
   memoryCount: {
     fontSize: 10,
-    fontWeight: '400',
+    fontWeight: '500',
     letterSpacing: 1,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
   empty: {
@@ -300,15 +306,16 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.xxl,
     gap: Spacing.sm,
   },
+  emptyMark: { fontSize: 34, color: TOGETHER, marginBottom: Spacing.sm },
   emptyText: {
-    fontSize: 18,
-    fontWeight: '300',
-    color: Colors.textMuted,
+    ...Typography.editorial,
+    fontSize: 22,
+    color: Colors.text,
   },
   emptyHint: {
     fontSize: 13,
-    fontWeight: '300',
-    color: Colors.textFaint,
+    fontWeight: '400',
+    color: Colors.textSubtle,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -319,45 +326,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.lg,
+    borderRadius: Radii.pill,
   },
   emptyCtaText: {
     fontSize: 10,
-    fontWeight: '500',
+    fontWeight: '600',
     letterSpacing: 2.5,
     color: Colors.white,
+  },
+  fab: {
+    bottom: 54 + Spacing.lg, // float above the scan bar
   },
   addBar: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    flexDirection: 'row',
     borderTopWidth: 1,
     borderTopColor: Colors.border,
     backgroundColor: Colors.background,
   },
-  addBtn: {
-    flex: 1,
+  scanBar: {
     height: 54,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRightWidth: 1,
-    borderRightColor: Colors.border,
-  },
-  addBtnFill: {
     backgroundColor: Colors.text,
-    borderRightColor: Colors.text,
   },
-  addBtnText: {
-    fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 2,
-    color: Colors.text,
-  },
-  addBtnTextFill: {
-    fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 2,
+  scanBarText: {
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 2.5,
     color: Colors.white,
   },
 });

@@ -10,9 +10,11 @@ import {
   Alert,
 } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { Logo } from '../../components/ui/Logo';
+import { PressableScale } from '../../components/ui/PressableScale';
 import { SpaceSwitcher } from '../../components/space/SpaceSwitcher';
 import { StreakBanner } from '../../components/space/StreakBanner';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -71,6 +73,8 @@ const FILTER_GROUPS: FilterGroup[] = [
   },
 ];
 const SHORTCUTS: Shortcut[] = FILTER_GROUPS.flatMap((g) => g.options);
+
+const DISCOVER = Sections.discover; // airy evening-blue identity; actions stay chili
 
 export default function DiscoverScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
@@ -587,13 +591,13 @@ function RecommendationCard({
   checkedLabel?: string;
 }) {
   return (
-    <TouchableOpacity
+    <PressableScale
       style={[styles.card, compact && styles.cardCompact]}
       onPress={onOpen}
-      activeOpacity={0.9}
-      accessibilityRole="button"
+      scaleTo={compact ? 0.98 : 0.985}
       accessibilityLabel={`${rec.title}. ${rec.why}`}
     >
+      {!compact && <View style={styles.cardAccent} />}
       <Text style={styles.cardTitle}>{rec.title}</Text>
       <Text style={styles.cardConcept}>{rec.concept}</Text>
 
@@ -643,7 +647,7 @@ function RecommendationCard({
           )
         )}
       </View>
-    </TouchableOpacity>
+    </PressableScale>
   );
 }
 
@@ -670,8 +674,8 @@ const styles = StyleSheet.create({
   },
   settings: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textSubtle },
   titleBlock: { paddingHorizontal: Spacing.screen, paddingTop: Spacing.xl, gap: Spacing.sm },
-  title: { fontSize: 30, fontWeight: '200', color: Colors.text, letterSpacing: -0.5, lineHeight: 36 },
-  subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
+  title: { ...Typography.editorial, fontSize: 34, lineHeight: 38 },
+  subtitle: { fontSize: 14, fontWeight: '400', color: Colors.textSubtle, lineHeight: 21 },
   filterGroups: {
     paddingTop: Spacing.lg,
     gap: Spacing.md,
@@ -705,15 +709,32 @@ const styles = StyleSheet.create({
   loading: { alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.xxl },
   loadingText: { fontSize: 12, fontWeight: '300', color: Colors.textFaint, letterSpacing: 0.5 },
   card: {
-    backgroundColor: Colors.backgroundCream,
+    backgroundColor: Colors.surface,
     marginHorizontal: Spacing.screen,
     marginTop: Spacing.lg,
     padding: Spacing.lg,
+    paddingTop: Spacing.xl,
     gap: Spacing.md,
+    borderRadius: Radii.lg,
+    ...Shadows.card,
   },
-  cardCompact: { backgroundColor: Colors.backgroundWarm },
-  cardTitle: { fontSize: 22, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
-  cardConcept: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
+  cardCompact: {
+    backgroundColor: Colors.backgroundWarm,
+    paddingTop: Spacing.lg,
+    ...Shadows.subtle,
+  },
+  cardAccent: {
+    position: 'absolute',
+    top: 0,
+    left: Spacing.lg,
+    width: 40,
+    height: 4,
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
+    backgroundColor: DISCOVER,
+  },
+  cardTitle: { ...Typography.editorial, fontSize: 24, lineHeight: 29 },
+  cardConcept: { fontSize: 14, fontWeight: '400', color: Colors.textMuted, lineHeight: 21 },
   facts: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
   fact: { gap: 2 },
   factLabel: {
@@ -741,7 +762,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cta: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  cta: { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: Colors.accent },
   save: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
   savedDone: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
   actionRow: { flexDirection: 'row', gap: Spacing.sm, paddingHorizontal: Spacing.screen, marginTop: Spacing.md },
@@ -752,6 +773,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   actionText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   actionBtnGhost: { height: 44, paddingHorizontal: Spacing.lg, justifyContent: 'center', alignItems: 'center' },
@@ -799,6 +821,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderWidth: 1,
     borderColor: Colors.border,
+    borderRadius: Radii.pill,
   },
   toggleChipActive: {
     backgroundColor: Colors.text,
@@ -855,6 +878,8 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.screen,
     padding: Spacing.lg,
     gap: Spacing.sm,
+    borderRadius: Radii.lg,
+    ...Shadows.subtle,
   },
   challengePrompt: {
     fontSize: 11,
@@ -904,12 +929,13 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
   },
   challengeAccept: {
-    height: 40,
+    height: 44,
     borderWidth: 1,
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.sm,
+    borderRadius: Radii.pill,
   },
   challengeAcceptText: {
     fontSize: 10,
