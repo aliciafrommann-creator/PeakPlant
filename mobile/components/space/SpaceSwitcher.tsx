@@ -1,8 +1,8 @@
 import React from 'react';
 import { ScrollView, Text, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Colors, Accents } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import type { Space } from '../../lib/types';
 
 interface SpaceSwitcherProps {
@@ -15,6 +15,26 @@ function typeLabel(type: Space['type']): string {
   return type === 'couple' ? 'COUPLE' : 'FRIENDS';
 }
 
+/** Each space gets its own warm identity colour, stable by position. */
+const SPACE_COLORS = [
+  Accents.apricot,
+  Accents.cobalt,
+  Accents.sage,
+  Accents.lilac,
+  Accents.evening,
+  Accents.chili,
+  Accents.sunflower,
+] as const;
+
+function colorForSpace(index: number): string {
+  return SPACE_COLORS[index % SPACE_COLORS.length];
+}
+
+/** Couple/friends get a small glyph so each card reads as a place, not a tab. */
+function glyphFor(type: Space['type']): string {
+  return type === 'couple' ? '♥' : '✦';
+}
+
 export function SpaceSwitcher({ spaces, activeSpaceId, onSelect }: SpaceSwitcherProps) {
   return (
     <ScrollView
@@ -22,22 +42,36 @@ export function SpaceSwitcher({ spaces, activeSpaceId, onSelect }: SpaceSwitcher
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={styles.row}
     >
-      {spaces.map((space) => {
+      {spaces.map((space, index) => {
         const active = space.id === activeSpaceId;
+        const color = colorForSpace(index);
         return (
           <TouchableOpacity
             key={space.id}
-            style={[styles.chip, active ? styles.chipActive : styles.chipIdle]}
+            style={[
+              styles.chip,
+              active
+                ? [styles.chipActive, { backgroundColor: color }]
+                : styles.chipIdle,
+            ]}
             onPress={() => onSelect(space.id)}
-            activeOpacity={0.8}
+            activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityState={{ selected: active }}
             accessibilityLabel={`${space.name}, ${typeLabel(space.type).toLowerCase()} space`}
           >
-            <Text style={[styles.chipType, active && styles.chipTypeActive]}>
-              {typeLabel(space.type)}
-            </Text>
-            <Text style={[styles.chipName, active && styles.chipNameActive]} numberOfLines={1}>
+            <View style={styles.chipTop}>
+              <Text style={[styles.glyph, { color: active ? Colors.white : color }]}>
+                {glyphFor(space.type)}
+              </Text>
+              <Text style={[styles.chipType, active ? styles.chipTypeActive : { color }]}>
+                {typeLabel(space.type)}
+              </Text>
+            </View>
+            <Text
+              style={[styles.chipName, active && styles.chipNameActive]}
+              numberOfLines={1}
+            >
               {space.name.toLowerCase()}
             </Text>
           </TouchableOpacity>
@@ -47,7 +81,7 @@ export function SpaceSwitcher({ spaces, activeSpaceId, onSelect }: SpaceSwitcher
       <TouchableOpacity
         style={[styles.chip, styles.chipNew]}
         onPress={() => router.push('/space/new')}
-        activeOpacity={0.8}
+        activeOpacity={0.85}
         accessibilityRole="button"
         accessibilityLabel="Create or join a new space"
       >
@@ -67,33 +101,42 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   chip: {
-    minWidth: 132,
+    minWidth: 144,
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.md,
     justifyContent: 'center',
-    gap: 2,
+    gap: 6,
+    borderRadius: Radii.md,
   },
   chipIdle: {
     backgroundColor: Colors.backgroundWarm,
     borderWidth: 1,
     borderColor: Colors.border,
+    ...Shadows.subtle,
   },
   chipActive: {
-    backgroundColor: Colors.text,
+    ...Shadows.card,
+  },
+  chipTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  glyph: {
+    fontSize: 12,
   },
   chipType: {
     fontSize: 8,
-    fontWeight: '500',
+    fontWeight: '700',
     letterSpacing: 2,
-    color: Colors.textFaint,
   },
   chipTypeActive: {
-    color: Colors.accent,
+    color: 'rgba(255,255,255,0.85)',
   },
   chipName: {
-    fontSize: 13,
-    fontWeight: '300',
-    color: Colors.textMuted,
+    fontSize: 15,
+    fontWeight: '500',
+    color: Colors.text,
     letterSpacing: 0.1,
   },
   chipNameActive: {
@@ -103,7 +146,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     borderStyle: 'dashed',
-    minWidth: 110,
+    minWidth: 118,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   newInner: {
     flexDirection: 'row',
@@ -111,13 +156,13 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   newPlus: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '300',
-    color: Colors.textMuted,
+    color: Colors.accent,
   },
   newText: {
     fontSize: 12,
-    fontWeight: '300',
+    fontWeight: '400',
     color: Colors.textMuted,
     letterSpacing: 0.3,
   },

@@ -223,9 +223,9 @@ const styles = StyleSheet.create({
   kickerDot: { width: 7, height: 7, borderRadius: 4 },
   kicker: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
     letterSpacing: 2,
-    color: Colors.textSubtle,
+    color: TOGETHER,
   },
   spaceName: {
     ...Typography.editorial,
@@ -234,9 +234,9 @@ const styles = StyleSheet.create({
   },
   headerAction: {
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
     letterSpacing: 2,
-    color: Colors.textSubtle,
+    color: Colors.accent,
   },
   list: {
     paddingBottom: 150,

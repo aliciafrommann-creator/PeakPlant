@@ -319,32 +319,29 @@ export default function DiscoverScreen() {
           </Text>
         </View>
 
-        {/* Grouped filters */}
-        <View style={styles.filterGroups}>
-          {FILTER_GROUPS.map((g) => (
-            <View key={g.label} style={styles.filterGroup}>
-              <Text style={styles.filterGroupLabel}>{t(g.label, g.labelDe).toUpperCase()}</Text>
-              <View style={styles.chips}>
-                {g.options.map((s) => {
-                  const on = active.has(s.key);
-                  return (
-                    <TouchableOpacity
-                      key={s.key}
-                      style={[styles.chip, on && styles.chipOn]}
-                      onPress={() => toggleShortcut(s.key)}
-                      activeOpacity={0.85}
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: on }}
-                      accessibilityLabel={t(s.label, s.labelDe)}
-                    >
-                      <Text style={[styles.chipText, on && styles.chipTextOn]}>{t(s.label, s.labelDe)}</Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-          ))}
-        </View>
+        {/* Refine — one quiet scrolling row, not a wall of labelled groups */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chips}
+        >
+          {SHORTCUTS.map((s) => {
+            const on = active.has(s.key);
+            return (
+              <TouchableOpacity
+                key={s.key}
+                style={[styles.chip, on && styles.chipOn]}
+                onPress={() => toggleShortcut(s.key)}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityState={{ selected: on }}
+                accessibilityLabel={t(s.label, s.labelDe)}
+              >
+                <Text style={[styles.chipText, on && styles.chipTextOn]}>{t(s.label, s.labelDe)}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
 
         {loading ? (
           <View style={styles.loading}>
@@ -422,67 +419,69 @@ export default function DiscoverScreen() {
           </View>
         )}
 
-        {/* Pillar links — preserve access to the fuller surfaces */}
+        {/* Pillar links — a compact pill cluster, not a stack of full-width rows */}
         <View style={styles.links}>
-          <TouchableOpacity
-            style={styles.linkRow}
-            onPress={() => router.push('/ask')}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={t('Ask PeakPlant for personalised ideas', 'PeakPlant nach personalisierten Ideen fragen')}
+          <Text style={styles.linksLabel}>{t('MORE WAYS IN', 'MEHR WEGE REIN')}</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.linkPills}
           >
-            <Text style={styles.linkText}>{t('ask peakplant', 'peakplant fragen')}</Text>
-            <Text style={styles.linkArrow}>{'->'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.linkRow}
-            onPress={() => router.push('/discover/saved')}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={t('Saved date ideas', 'Gemerkte Ideen')}
-          >
-            <Text style={styles.linkText}>
-              {t('saved ideas', 'gemerkte Ideen')}
-              {saved.length > 0 ? ` (${saved.length})` : ''}
-            </Text>
-            <Text style={styles.linkArrow}>{'->'}</Text>
-          </TouchableOpacity>
-          {missionsEnabled && (
             <TouchableOpacity
-              style={styles.linkRow}
-              onPress={() => router.push('/together')}
+              style={styles.linkPill}
+              onPress={() => router.push('/ask')}
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel={t('Browse all ideas and local places', 'Alle Ideen und Orte in der Nahe')}
+              accessibilityLabel={t('Ask PeakPlant for personalised ideas', 'PeakPlant nach personalisierten Ideen fragen')}
             >
-              <Text style={styles.linkText}>{t('all ideas & local places', 'alle Ideen & Orte')}</Text>
-              <Text style={styles.linkArrow}>{'->'}</Text>
+              <Text style={styles.linkPillText}>{t('ask peakplant', 'peakplant fragen')}</Text>
             </TouchableOpacity>
-          )}
-          {challengesEnabled && (
             <TouchableOpacity
-              style={styles.linkRow}
-              onPress={() => router.push('/challenges')}
+              style={styles.linkPill}
+              onPress={() => router.push('/discover/saved')}
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel={t('Challenges', 'Herausforderungen')}
+              accessibilityLabel={t('Saved date ideas', 'Gemerkte Ideen')}
             >
-              <Text style={styles.linkText}>{t('challenges', 'Herausforderungen')}</Text>
-              <Text style={styles.linkArrow}>{'->'}</Text>
+              <Text style={styles.linkPillText}>
+                {t('saved', 'gemerkt')}
+                {saved.length > 0 ? ` · ${saved.length}` : ''}
+              </Text>
             </TouchableOpacity>
-          )}
-          {ritualsEnabled && (
-            <TouchableOpacity
-              style={styles.linkRow}
-              onPress={() => router.push('/rituals')}
-              activeOpacity={0.85}
-              accessibilityRole="button"
-              accessibilityLabel={t('Rituals', 'Rituale')}
-            >
-              <Text style={styles.linkText}>{t('rituals', 'Rituale')}</Text>
-              <Text style={styles.linkArrow}>{'->'}</Text>
-            </TouchableOpacity>
-          )}
+            {missionsEnabled && (
+              <TouchableOpacity
+                style={styles.linkPill}
+                onPress={() => router.push('/together')}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Browse all ideas and local places', 'Alle Ideen und Orte in der Nahe')}
+              >
+                <Text style={styles.linkPillText}>{t('all ideas', 'alle Ideen')}</Text>
+              </TouchableOpacity>
+            )}
+            {challengesEnabled && (
+              <TouchableOpacity
+                style={styles.linkPill}
+                onPress={() => router.push('/challenges')}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Challenges', 'Herausforderungen')}
+              >
+                <Text style={styles.linkPillText}>{t('challenges', 'Challenges')}</Text>
+              </TouchableOpacity>
+            )}
+            {ritualsEnabled && (
+              <TouchableOpacity
+                style={styles.linkPill}
+                onPress={() => router.push('/rituals')}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Rituals', 'Rituale')}
+              >
+                <Text style={styles.linkPillText}>{t('rituals', 'Rituale')}</Text>
+              </TouchableOpacity>
+            )}
+          </ScrollView>
         </View>
 
         {/* Weekly challenge */}
@@ -676,35 +675,23 @@ const styles = StyleSheet.create({
   titleBlock: { paddingHorizontal: Spacing.screen, paddingTop: Spacing.xl, gap: Spacing.sm },
   title: { ...Typography.editorial, fontSize: 34, lineHeight: 38 },
   subtitle: { fontSize: 14, fontWeight: '400', color: Colors.textSubtle, lineHeight: 21 },
-  filterGroups: {
-    paddingTop: Spacing.lg,
-    gap: Spacing.md,
-  },
-  filterGroup: {
-    gap: Spacing.sm,
-  },
-  filterGroupLabel: {
-    fontSize: 8,
-    fontWeight: '500',
-    letterSpacing: 2,
-    color: Colors.textFaint,
-    paddingHorizontal: Spacing.screen,
-  },
   chips: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: Spacing.sm,
     paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.lg,
+    alignItems: 'center',
   },
   chip: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderWidth: 1,
     borderColor: Colors.border,
+    backgroundColor: Colors.backgroundWarm,
     borderRadius: 999,
   },
-  chipOn: { backgroundColor: Colors.text, borderColor: Colors.text },
-  chipText: { fontSize: 12, fontWeight: '400', color: Colors.textMuted, letterSpacing: 0.3 },
+  chipOn: { backgroundColor: DISCOVER, borderColor: DISCOVER },
+  chipText: { fontSize: 12, fontWeight: '500', color: Colors.textMuted, letterSpacing: 0.3 },
   chipTextOn: { color: Colors.white },
   loading: { alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.xxl },
   loadingText: { fontSize: 12, fontWeight: '300', color: Colors.textFaint, letterSpacing: 0.5 },
@@ -785,20 +772,39 @@ const styles = StyleSheet.create({
   emptyHint: { fontSize: 13, fontWeight: '300', color: Colors.textFaint, marginBottom: Spacing.md },
   links: {
     marginTop: Spacing.xxl,
+    paddingTop: Spacing.lg,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
+    gap: Spacing.sm,
   },
-  linkRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  linksLabel: {
+    fontSize: 9,
+    fontWeight: '600',
+    letterSpacing: 2.5,
+    color: Colors.textFaint,
+    textTransform: 'uppercase',
     paddingHorizontal: Spacing.screen,
-    paddingVertical: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
   },
-  linkText: { fontSize: 15, fontWeight: '300', color: Colors.text },
-  linkArrow: { fontSize: 18, fontWeight: '200', color: Colors.textMuted },
+  linkPills: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.xs,
+  },
+  linkPill: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radii.pill,
+    backgroundColor: Colors.backgroundWarm,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  linkPillText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: Colors.text,
+    letterSpacing: 0.2,
+  },
   tagline: {
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.xxl,
