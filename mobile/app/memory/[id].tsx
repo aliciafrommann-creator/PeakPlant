@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
+import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -173,13 +174,7 @@ export default function MemoryDetailScreen() {
             </>
           ) : (
             <>
-              <TouchableOpacity
-                onPress={() => router.back()}
-                accessibilityRole="button"
-                accessibilityLabel={t('Back', 'Zuruck')}
-              >
-                <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
-              </TouchableOpacity>
+              <BackButton label={t('BACK', 'ZURUCK')} />
               <Text style={styles.headerLabel}>{t('MOMENT', 'MOMENT')}</Text>
               <TouchableOpacity
                 onPress={() => shareMemory(memory, card).catch(() => {})}

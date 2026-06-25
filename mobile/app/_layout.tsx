@@ -60,8 +60,12 @@ export default function RootLayout() {
             name="customize"
             options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
           />
+          {/* Settings sub-pages push within the flow (back-arrow), never a
+              second bottom-sheet over the customize modal. */}
+          <Stack.Screen name="account" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="settings/preferences" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen
-            name="account"
+            name="note/compose"
             options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
           />
           <Stack.Screen

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
+import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { useMemories } from '../../lib/hooks/useMemories';
@@ -67,13 +68,7 @@ export default function EditionScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.bar}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel={t('Back to editions', 'Zuruck zu Editionen')}
-        >
-          <Text style={styles.back}>{'<-'} {t('EDITIONS', 'EDITIONEN')}</Text>
-        </TouchableOpacity>
+        <BackButton label={t('EDITIONS', 'EDITIONEN')} />
       </View>
 
       <FlatList

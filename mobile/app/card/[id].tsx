@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
+import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
@@ -127,9 +128,7 @@ export default function CardDetailScreen() {
         </Animated.View>
       )}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} accessibilityRole="button" accessibilityLabel={t('Back', 'Zurück')}>
-          <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURÜCK')}</Text>
-        </TouchableOpacity>
+        <BackButton variant="close" label={t('CLOSE', 'SCHLIESSEN')} />
         <Text style={styles.headerLabel} numberOfLines={2}>{groupLabel.toUpperCase()}</Text>
         <View style={{ width: 60 }} />
       </View>

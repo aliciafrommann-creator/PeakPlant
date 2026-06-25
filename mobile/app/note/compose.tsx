@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { BackButton } from '../../components/ui/BackButton';
 import { Colors, Accents } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -50,14 +51,7 @@ export default function ComposeNoteScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          accessibilityRole="button"
-          accessibilityLabel={t('Go back', 'Zurück')}
-        >
-          <Text style={styles.back}>←</Text>
-        </TouchableOpacity>
+        <BackButton variant="close" width={32} />
         <Text style={styles.title}>{t('NOTE', 'NOTIZ')}</Text>
         <View style={styles.titleSpacer} />
       </View>
