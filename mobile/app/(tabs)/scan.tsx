@@ -59,7 +59,7 @@ export default function ScanScreen() {
             // rather than block a legitimate unlock on a storage hiccup.
           }
         }
-        router.push(`/card/${outcome.cardId}`);
+        router.push({ pathname: `/card/${outcome.cardId}`, params: { unlocked: 'true' } });
         return;
     }
   }, [t]);

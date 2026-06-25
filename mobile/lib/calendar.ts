@@ -19,9 +19,13 @@ export interface CalendarPlan {
 export function buildICS(plan: CalendarPlan, now: Date = new Date()): string {
   const uid = `peakplant-${now.getTime()}@peak-plant.com`;
   const stamp = formatICSDateTime(now);
-  const summary = escapeICS(plan.title);
+  // Include planned date text in SUMMARY so it's visible in any calendar app.
+  const summaryTitle = plan.dateText ? `${plan.title} (${plan.dateText})` : plan.title;
+  const summary = escapeICS(summaryTitle);
+  // Use parsed date for DTSTART if possible; otherwise today (user adjusts in calendar).
+  const startDate = plan.dateText ? (tryParseDateText(plan.dateText) ?? now) : now;
+  const endDate = new Date(startDate.getTime() + 86_400_000);
   const descParts: string[] = [];
-  if (plan.dateText) descParts.push(plan.dateText);
   if (plan.link) descParts.push(plan.link);
   const description = escapeICS(descParts.join('\\n'));
 
@@ -34,14 +38,35 @@ export function buildICS(plan: CalendarPlan, now: Date = new Date()): string {
     'BEGIN:VEVENT',
     `UID:${uid}`,
     `DTSTAMP:${stamp}`,
-    // Full-day event so we never assume a wrong time; user adjusts in calendar.
-    `DTSTART;VALUE=DATE:${formatICSDateOnly(now)}`,
-    `DTEND;VALUE=DATE:${formatICSDateOnly(new Date(now.getTime() + 86_400_000))}`,
+    `DTSTART;VALUE=DATE:${formatICSDateOnly(startDate)}`,
+    `DTEND;VALUE=DATE:${formatICSDateOnly(endDate)}`,
     `SUMMARY:${summary}`,
   ];
   if (description) lines.push(`DESCRIPTION:${description}`);
   lines.push('END:VEVENT', 'END:VCALENDAR');
   return lines.join('\r\n');
+}
+
+/** Best-effort parse of a free-text planned date (e.g. "this Saturday, 28 June"). */
+function tryParseDateText(text: string): Date | null {
+  const trimmed = text.trim();
+  const direct = new Date(trimmed);
+  if (!isNaN(direct.getTime())) return direct;
+
+  const lower = trimmed.toLowerCase();
+  const monthsEn = ['january','february','march','april','may','june','july','august','september','october','november','december'];
+  const monthsDe = ['januar','februar','märz','april','mai','juni','juli','august','september','oktober','november','dezember'];
+  let month = -1;
+  for (let i = 0; i < monthsEn.length; i++) {
+    if (lower.includes(monthsEn[i]) || lower.includes(monthsDe[i])) { month = i; break; }
+  }
+  if (month < 0) return null;
+  const dayMatch = lower.match(/\b(\d{1,2})\b/);
+  if (!dayMatch) return null;
+  const day = parseInt(dayMatch[1], 10);
+  const year = new Date().getFullYear();
+  const d = new Date(year, month, day);
+  return !isNaN(d.getTime()) && d.getDate() === day ? d : null;
 }
 
 function formatICSDateTime(d: Date): string {

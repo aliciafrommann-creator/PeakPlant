@@ -12,10 +12,14 @@ import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { useMemories } from '../../lib/hooks/useMemories';
+import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 
 export default function ProfileScreen() {
   const { activeSpace } = useSpaces();
   const { t } = useLanguage();
+  const { memories } = useMemories(activeSpace?.id);
+  const { chillyCount } = useWeeklyChallenge(activeSpace?.id);
 
   const links: { label: string; route: string }[] = [
     { label: t('customize peakplant', 'PeakPlant anpassen'), route: '/customize' },
@@ -42,6 +46,17 @@ export default function ProfileScreen() {
                 ? t('couple space', 'Paar-Space')
                 : t('friends space', 'Freunde-Space')}
             </Text>
+            <View style={styles.statsRow}>
+              <View style={styles.stat}>
+                <Text style={styles.statNum}>{memories.length}</Text>
+                <Text style={styles.statLabel}>{t('MOMENTS', 'MOMENTE')}</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.stat}>
+                <Text style={styles.statNum}>{chillyCount}</Text>
+                <Text style={styles.statLabel}>{t('CHALLENGES', 'CHALLENGES')}</Text>
+              </View>
+            </View>
           </View>
         )}
 
@@ -117,6 +132,33 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
     color: Colors.textMuted,
     textTransform: 'uppercase',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: Spacing.lg,
+    gap: Spacing.xl,
+  },
+  stat: {
+    alignItems: 'center',
+  },
+  statNum: {
+    fontSize: 28,
+    fontWeight: '200',
+    color: Colors.text,
+    letterSpacing: -0.5,
+  },
+  statLabel: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2,
+    color: Colors.textFaint,
+    marginTop: 2,
+  },
+  statDivider: {
+    width: 1,
+    height: 32,
+    backgroundColor: Colors.border,
   },
   linksBlock: {
     borderBottomWidth: 1,

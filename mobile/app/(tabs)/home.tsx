@@ -156,10 +156,21 @@ export default function HomeScreen() {
                 </Text>
                 <Text style={styles.emptyHint}>
                   {t(
-                    'scan a card or add an experience to begin.',
-                    'Karte scannen oder Erlebnis eintragen, um zu beginnen.',
+                    'scan a card to unlock your first experience together.',
+                    'Karte scannen, um euer erstes gemeinsames Erlebnis freizuschalten.',
                   )}
                 </Text>
+                <TouchableOpacity
+                  style={styles.emptyCta}
+                  onPress={() => router.push('/(tabs)/scan')}
+                  activeOpacity={0.85}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('Scan your first card', 'Erste Karte scannen')}
+                >
+                  <Text style={styles.emptyCtaText}>
+                    {t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
+                  </Text>
+                </TouchableOpacity>
               </View>
             )}
           </>
@@ -300,6 +311,20 @@ const styles = StyleSheet.create({
     color: Colors.textFaint,
     textAlign: 'center',
     lineHeight: 20,
+  },
+  emptyCta: {
+    height: 48,
+    paddingHorizontal: Spacing.xl,
+    backgroundColor: Colors.text,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Spacing.lg,
+  },
+  emptyCtaText: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 2.5,
+    color: Colors.white,
   },
   addBar: {
     position: 'absolute',

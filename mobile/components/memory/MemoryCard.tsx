@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { Memory, MomentCard } from '../../lib/types';
 
 interface MemoryCardProps {
@@ -10,19 +11,21 @@ interface MemoryCardProps {
   onPress?: () => void;
 }
 
-function formatDate(iso: string): string {
+function formatDate(iso: string, locale: string): string {
   const d = new Date(iso);
-  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toLowerCase();
+  const loc = locale === 'de' ? 'de-DE' : 'en-US';
+  return d.toLocaleDateString(loc, { month: 'long', day: 'numeric', year: 'numeric' }).toLowerCase();
 }
 
 export function MemoryCard({ memory, card, onPress }: MemoryCardProps) {
+  const { language } = useLanguage();
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={onPress}
       activeOpacity={0.85}
       accessibilityRole="button"
-      accessibilityLabel={`Moment${card ? ` for card ${card.number}` : ''}, ${formatDate(memory.createdAt)}`}
+      accessibilityLabel={`Moment${card ? ` for card ${card.number}` : ''}, ${formatDate(memory.createdAt, language)}`}
       accessibilityHint="Opens this moment"
     >
       {memory.photoUri && (
@@ -40,7 +43,7 @@ export function MemoryCard({ memory, card, onPress }: MemoryCardProps) {
         <Text style={styles.note} numberOfLines={3}>
           {memory.note}
         </Text>
-        <Text style={styles.date}>{formatDate(memory.createdAt)}</Text>
+        <Text style={styles.date}>{formatDate(memory.createdAt, language)}</Text>
       </View>
     </TouchableOpacity>
   );

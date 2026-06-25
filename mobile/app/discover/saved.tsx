@@ -267,6 +267,7 @@ export default function SavedDatesScreen() {
                 <Text style={styles.notes}>{d.planningNotes}</Text>
               )}
               <View style={styles.actions}>
+                {/* Primary: mark as done */}
                 {d.status !== 'completed' && (
                   <TouchableOpacity
                     style={styles.actionDone}
@@ -274,57 +275,64 @@ export default function SavedDatesScreen() {
                     accessibilityRole="button"
                     accessibilityLabel={t(`Mark ${d.title} as done`, `${d.title} als erledigt markieren`)}
                   >
-                    <Text style={styles.actionDoneText}>{t('DONE -> PRESERVE', 'ERLEDIGT -> FESTHALTEN')}</Text>
+                    <Text style={styles.actionDoneText}>{t('DONE → PRESERVE', 'ERLEDIGT → FESTHALTEN')}</Text>
                   </TouchableOpacity>
                 )}
+                {/* Secondary: plan + calendar */}
                 {d.status !== 'completed' && (
-                  <TouchableOpacity
-                    style={styles.actionPlan}
-                    onPress={() => openPlan(d)}
-                    accessibilityRole="button"
-                    accessibilityLabel={t(`Plan ${d.title}`, `${d.title} planen`)}
-                  >
-                    <Text style={styles.actionPlanText}>
-                      {d.status === 'planned' ? t('RE-PLAN', 'UMPLANEN') : t('PLAN', 'PLANEN')}
-                    </Text>
-                  </TouchableOpacity>
+                  <View style={styles.secondaryRow}>
+                    <TouchableOpacity
+                      style={styles.actionPlan}
+                      onPress={() => openPlan(d)}
+                      accessibilityRole="button"
+                      accessibilityLabel={t(`Plan ${d.title}`, `${d.title} planen`)}
+                    >
+                      <Text style={styles.actionPlanText}>
+                        {d.status === 'planned' ? t('RE-PLAN', 'UMPLANEN') : t('PLAN', 'PLANEN')}
+                      </Text>
+                    </TouchableOpacity>
+                    {d.status === 'planned' && (
+                      <TouchableOpacity
+                        style={styles.actionCalendar}
+                        onPress={() => void addToCalendar(d)}
+                        accessibilityRole="button"
+                        accessibilityLabel={t(`Add ${d.title} to calendar`, `${d.title} zum Kalender hinzufugen`)}
+                      >
+                        <Text style={styles.actionCalendarText}>{t('+ CALENDAR', '+ KALENDER')}</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
                 )}
-                {d.status === 'planned' && (
+                {/* Tertiary: quiet text links */}
+                <View style={styles.tertiaryRow}>
                   <TouchableOpacity
-                    style={styles.actionDismiss}
-                    onPress={() => void addToCalendar(d)}
+                    onPress={() => void share(d)}
                     accessibilityRole="button"
-                    accessibilityLabel={t(`Add ${d.title} to calendar`, `${d.title} zum Kalender hinzufugen`)}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   >
-                    <Text style={styles.actionDismissText}>{t('CALENDAR', 'KALENDER')}</Text>
+                    <Text style={styles.tertiaryLink}>{t('share', 'teilen')}</Text>
                   </TouchableOpacity>
-                )}
-                {d.status === 'planned' && (
+                  {d.status === 'planned' && (
+                    <>
+                      <Text style={styles.tertiaryDot}>·</Text>
+                      <TouchableOpacity
+                        onPress={() => void cancelPlan(d)}
+                        accessibilityRole="button"
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      >
+                        <Text style={styles.tertiaryLink}>{t('call off', 'absagen')}</Text>
+                      </TouchableOpacity>
+                    </>
+                  )}
+                  <Text style={styles.tertiaryDot}>·</Text>
                   <TouchableOpacity
-                    style={styles.actionDismiss}
-                    onPress={() => void cancelPlan(d)}
+                    onPress={() => void dismiss(d)}
                     accessibilityRole="button"
-                    accessibilityLabel={t(`Call off the plan for ${d.title}`, `Plan fur ${d.title} absagen`)}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   >
-                    <Text style={styles.actionDismissText}>{t('CALL OFF', 'ABSAGEN')}</Text>
+                    <Text style={[styles.tertiaryLink, styles.tertiaryDestructive]}>{t('remove', 'entfernen')}</Text>
                   </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                  style={styles.actionDismiss}
-                  onPress={() => void share(d)}
-                  accessibilityRole="button"
-                  accessibilityLabel={t(`Share ${d.title}`, `${d.title} teilen`)}
-                >
-                  <Text style={styles.actionDismissText}>{t('SHARE', 'TEILEN')}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.actionDismiss}
-                  onPress={() => void dismiss(d)}
-                  accessibilityRole="button"
-                  accessibilityLabel={t(`Remove ${d.title}`, `${d.title} entfernen`)}
-                >
-                  <Text style={styles.actionDismissText}>{t('REMOVE', 'ENTFERNEN')}</Text>
-                </TouchableOpacity>
+                </View>
               </View>
             </View>
           ))}
@@ -470,39 +478,50 @@ const styles = StyleSheet.create({
   plannedFor: { color: Colors.text, fontWeight: '500' },
   notes: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, fontStyle: 'italic', lineHeight: 17 },
   actions: {
-    flexDirection: 'row',
     gap: Spacing.sm,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
     paddingTop: Spacing.md,
     marginTop: Spacing.xs,
-    flexWrap: 'wrap',
   },
   actionDone: {
-    height: 40,
-    flex: 1,
-    minWidth: 120,
+    height: 44,
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  actionDoneText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.white },
+  actionDoneText: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.white },
+  secondaryRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
   actionPlan: {
     height: 40,
-    paddingHorizontal: Spacing.md,
+    flex: 1,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  actionPlanText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  actionCalendar: {
+    height: 40,
+    flex: 1,
     borderWidth: 1,
     borderColor: Colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  actionPlanText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.text },
-  actionDismiss: {
-    height: 40,
-    paddingHorizontal: Spacing.md,
-    justifyContent: 'center',
+  actionCalendarText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  tertiaryRow: {
+    flexDirection: 'row',
     alignItems: 'center',
+    gap: Spacing.sm,
+    paddingTop: Spacing.xs,
   },
-  actionDismissText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textFaint },
+  tertiaryLink: { fontSize: 11, fontWeight: '300', color: Colors.textFaint },
+  tertiaryDestructive: { color: Colors.textSubtle },
+  tertiaryDot: { fontSize: 11, color: Colors.border },
   // Modal / sheet
   modalBackdrop: {
     flex: 1,
