@@ -5,6 +5,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -79,6 +80,13 @@ export default function EditionScreen() {
         data={editionMemories}
         keyExtractor={(item) => item.id}
         renderItem={renderMemory}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading && editionMemories.length > 0}
+            onRefresh={refresh}
+            tintColor={Colors.accent}
+          />
+        }
         ListHeaderComponent={
           <View style={[styles.header, { backgroundColor: edition.color }]}>
             <Text style={styles.symbol}>{edition.symbol}</Text>

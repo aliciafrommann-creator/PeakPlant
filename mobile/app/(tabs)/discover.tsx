@@ -547,7 +547,7 @@ export default function DiscoverScreen() {
             ) : (
               <TouchableOpacity
                 style={styles.challengeAccept}
-                onPress={() => void acceptChallenge()}
+                onPress={() => void acceptChallenge().then(() => confirmSuccess())}
                 activeOpacity={0.85}
                 accessibilityRole="button"
                 accessibilityLabel={t('Accept the weekly challenge', 'Wöchentliche Challenge annehmen')}

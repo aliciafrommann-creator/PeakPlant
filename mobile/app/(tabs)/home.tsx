@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -26,6 +27,7 @@ import { FloatingActionButton } from '../../components/ui/FloatingActionButton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
+import { shareMemory } from '../../lib/share';
 import type { Memory } from '../../lib/types';
 
 const TOGETHER = Sections.together;
@@ -84,6 +86,7 @@ export default function HomeScreen() {
         memory={item}
         card={card}
         onPress={() => router.push(`/memory/${item.id}`)}
+        onLongPress={() => void shareMemory(item, card)}
       />
     );
   }
@@ -130,6 +133,13 @@ export default function HomeScreen() {
         renderItem={renderMemory}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.list}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading && recentMemories.length > 0}
+            onRefresh={refresh}
+            tintColor={Colors.accent}
+          />
+        }
         ListHeaderComponent={
           <>
             {/* Heartbeat stats — visible once there's content */}

@@ -17,6 +17,7 @@ import { useMemories } from '../../lib/hooks/useMemories';
 import { useChallenges } from '../../lib/hooks/useChallenges';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { challengeById, progressFor } from '../../lib/challenges';
+import { confirmSuccess, acknowledgeSelection } from '../../lib/haptics';
 
 export default function ChallengeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -24,6 +25,15 @@ export default function ChallengeDetailScreen() {
   const { memories } = useMemories(activeSpace?.id);
   const { enrollmentFor, join, leave } = useChallenges(activeSpace?.id);
   const { t } = useLanguage();
+
+  const handleJoin = async (challengeId: string) => {
+    await join(challengeId);
+    void confirmSuccess();
+  };
+  const handleLeave = async (challengeId: string) => {
+    await leave(challengeId);
+    void acknowledgeSelection();
+  };
 
   const challenge = challengeById(id);
 
@@ -81,7 +91,7 @@ export default function ChallengeDetailScreen() {
         {!enrollment ? (
           <TouchableOpacity
             style={styles.primary}
-            onPress={() => join(challenge.id)}
+            onPress={() => handleJoin(challenge.id)}
             activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityLabel={t('Take on this challenge', 'Diese Herausforderung annehmen')}
@@ -91,7 +101,7 @@ export default function ChallengeDetailScreen() {
         ) : (
           <TouchableOpacity
             style={styles.secondary}
-            onPress={() => leave(challenge.id)}
+            onPress={() => handleLeave(challenge.id)}
             activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityLabel={t('Leave this challenge', 'Herausforderung verlassen')}

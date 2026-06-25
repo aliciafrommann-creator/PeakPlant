@@ -15,6 +15,7 @@ import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { spaceRepository } from '../../lib/repositories';
 import { getActiveUser } from '../../lib/session';
+import { confirmSuccess } from '../../lib/haptics';
 import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { SpaceType } from '../../lib/types';
@@ -42,6 +43,7 @@ export default function NewSpaceScreen() {
         ownerUserId: user.id,
         ownerName: user.name,
       });
+      void confirmSuccess();
       setActiveSpace(space.id);
       router.back();
     } catch {
@@ -58,6 +60,7 @@ export default function NewSpaceScreen() {
       const user = await getActiveUser();
       if (!user) throw new Error('not signed in');
       const space = await spaceRepository.joinByCode(code, user.id, user.name);
+      void confirmSuccess();
       setActiveSpace(space.id);
       router.back();
     } catch {

@@ -21,6 +21,7 @@ import { SEED_CARDS } from '../../lib/seed';
 import { memoryRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { shareMemory } from '../../lib/share';
+import { confirmSuccess } from '../../lib/haptics';
 import type { Memory } from '../../lib/types';
 
 export default function MemoryDetailScreen() {
@@ -72,6 +73,7 @@ export default function MemoryDetailScreen() {
     setError(null);
     try {
       const updated = await memoryRepository.update(memory.id, { note: draftNote.trim() });
+      void confirmSuccess();
       setMemory(updated);
       setEditing(false);
     } catch {
@@ -97,6 +99,7 @@ export default function MemoryDetailScreen() {
           onPress: async () => {
             try {
               await memoryRepository.delete(memory.id);
+              void confirmSuccess();
               router.back();
             } catch {
               setError(t("couldn't delete this moment. please try again.", 'Dieser Moment konnte nicht geloscht werden. Bitte versuche es erneut.'));

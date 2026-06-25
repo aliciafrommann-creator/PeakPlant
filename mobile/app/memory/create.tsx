@@ -22,6 +22,7 @@ import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { savedDateRepository } from '../../lib/repositories';
+import { confirmSuccess } from '../../lib/haptics';
 import { SEED_CARDS } from '../../lib/seed';
 
 const MOMENT = Sections.together; // warm apricot — capturing "our" moment
@@ -102,6 +103,8 @@ export default function CreateMemoryScreen() {
         note: note.trim(),
         photoUri,
       });
+      // Preserving a moment is the app's most meaningful create — confirm it.
+      void confirmSuccess();
       // Close the loop: write memory id back to the saved date so learning
       // can confirm this was a real completed experience.
       if (savedDateId) {

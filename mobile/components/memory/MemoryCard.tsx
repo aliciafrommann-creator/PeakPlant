@@ -11,6 +11,8 @@ interface MemoryCardProps {
   memory: Memory;
   card?: MomentCard;
   onPress?: () => void;
+  /** Quick action (e.g. share) on long-press — Insta-style. */
+  onLongPress?: () => void;
 }
 
 function formatDate(iso: string, locale: string): string {
@@ -19,16 +21,17 @@ function formatDate(iso: string, locale: string): string {
   return d.toLocaleDateString(loc, { month: 'long', day: 'numeric', year: 'numeric' }).toLowerCase();
 }
 
-export function MemoryCard({ memory, card, onPress }: MemoryCardProps) {
+export function MemoryCard({ memory, card, onPress, onLongPress }: MemoryCardProps) {
   const { language } = useLanguage();
   const hasPhoto = !!memory.photoUri;
   return (
     <PressableScale
       style={styles.container}
       onPress={onPress}
+      onLongPress={onLongPress}
       scaleTo={0.985}
       accessibilityLabel={`Moment${card ? ` for card ${card.number}` : ''}, ${formatDate(memory.createdAt, language)}`}
-      accessibilityHint="Opens this moment"
+      accessibilityHint={onLongPress ? 'Opens this moment. Long-press to share.' : 'Opens this moment'}
     >
       {hasPhoto && (
         <Image source={{ uri: memory.photoUri }} style={styles.photo} accessibilityLabel="Moment photo" />
