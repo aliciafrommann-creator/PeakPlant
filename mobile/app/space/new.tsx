@@ -247,5 +247,5 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   secondaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
-  error: { fontSize: 13, fontWeight: '400', color: '#b42318', lineHeight: 19 },
+  error: { fontSize: 13, fontWeight: '400', color: Colors.danger, lineHeight: 19 },
 });

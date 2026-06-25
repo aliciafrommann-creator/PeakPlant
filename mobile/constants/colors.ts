@@ -33,6 +33,11 @@ export const Colors = {
   border: '#E4DFD7',
   borderDark: '#33302C',
 
+  // --- Semantic ---
+  /** Error/destructive text & borders. One canonical danger red app-wide
+   *  (replaces the ad-hoc '#b42318' that was hardcoded across many screens). */
+  danger: '#B42318',
+
   white: '#FFFFFF',
   black: '#000000',
 } as const;

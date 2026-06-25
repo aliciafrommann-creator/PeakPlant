@@ -18,12 +18,13 @@ import { getEdition, SEED_EDITION, SEED_CARDS } from '../../lib/seed';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { ShopLink } from '../../components/edition/ShopLink';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
+import { EmptyState } from '../../components/ui/EmptyState';
 import type { Memory } from '../../lib/types';
 
 export default function EditionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { activeSpace } = useSpaces();
-  const { memories, loading } = useMemories(activeSpace?.id);
+  const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
   const obscured = usePrivacyOverlay();
   const { t } = useLanguage();
 
@@ -110,7 +111,17 @@ export default function EditionScreen() {
           </View>
         }
         ListEmptyComponent={
-          loading ? null : (
+          loading ? null : error ? (
+            <EmptyState
+              title={t("couldn't load your diary.", 'euer Tagebuch konnte nicht geladen werden.')}
+              hint={t(
+                'your moments are safe — this is just a connection hiccup.',
+                'eure Momente sind sicher — das ist nur ein Verbindungsproblem.',
+              )}
+              ctaLabel={t('TRY AGAIN', 'ERNEUT VERSUCHEN')}
+              onCta={refresh}
+            />
+          ) : (
             <View style={styles.empty}>
               <Text style={styles.emptyText}>{t('no moments yet.', 'noch keine Momente.')}</Text>
               <Text style={styles.emptyHint}>

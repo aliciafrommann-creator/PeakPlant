@@ -11,6 +11,7 @@ import { router } from 'expo-router';
 import { Colors, Sections } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { ChallengeCard } from '../../components/challenge/ChallengeCard';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useChallenges } from '../../lib/hooks/useChallenges';
@@ -72,20 +73,38 @@ export default function ChallengesScreen() {
           </View>
         )}
 
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>
-            {joined.length > 0 ? t('MORE TO TRY', 'MEHR ZUM AUSPROBIEREN') : t('AVAILABLE', 'VERFUGBAR')}
-          </Text>
-          <View style={styles.list}>
-            {available.map((c) => (
-              <ChallengeCard
-                key={c.id}
-                challenge={c}
-                onPress={() => router.push(`/challenges/${c.id}`)}
-              />
-            ))}
+        {available.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>
+              {joined.length > 0 ? t('MORE TO TRY', 'MEHR ZUM AUSPROBIEREN') : t('AVAILABLE', 'VERFUGBAR')}
+            </Text>
+            <View style={styles.list}>
+              {available.map((c) => (
+                <ChallengeCard
+                  key={c.id}
+                  challenge={c}
+                  onPress={() => router.push(`/challenges/${c.id}`)}
+                />
+              ))}
+            </View>
           </View>
-        </View>
+        )}
+
+        {candidates.length === 0 && (
+          <EmptyState
+            mark="✦"
+            title={
+              activeSpace
+                ? t('no challenges yet.', 'noch keine Challenges.')
+                : t('pick a space first.', 'wähle zuerst einen Space.')
+            }
+            hint={
+              activeSpace
+                ? t('new shared goals arrive here regularly — check back soon.', 'neue gemeinsame Ziele erscheinen hier regelmäßig — schau bald wieder vorbei.')
+                : t('challenges are shared within a space.', 'Challenges werden in einem Space geteilt.')
+            }
+          />
+        )}
       </ScrollView>
     </SafeAreaView>
   );

@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
   codeInput: { fontSize: 28, letterSpacing: 5 },
   link: { fontSize: 12, fontWeight: '300', color: Colors.textSubtle, marginTop: Spacing.md },
   linkDisabled: { opacity: 0.4 },
-  error: { fontSize: 13, fontWeight: '300', color: '#b42318', marginBottom: Spacing.md },
+  error: { fontSize: 13, fontWeight: '300', color: Colors.danger, marginBottom: Spacing.md },
   bottom: { alignItems: 'flex-start' },
   button: {
     height: 52,

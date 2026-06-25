@@ -347,13 +347,13 @@ const styles = StyleSheet.create({
   clearBtn: {
     height: 44,
     borderWidth: 1,
-    borderColor: '#b42318',
+    borderColor: Colors.danger,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.md,
     borderRadius: Radii.pill,
   },
-  clearText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: '#b42318' },
+  clearText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.danger },
   learnToggleRow: {
     flexDirection: 'row',
     alignItems: 'center',

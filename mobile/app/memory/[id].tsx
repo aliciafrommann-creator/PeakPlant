@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
   error: {
     fontSize: 13,
     fontWeight: '400',
-    color: '#b42318',
+    color: Colors.danger,
     lineHeight: 19,
   },
   actions: {
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     color: Colors.textMuted,
   },
-  deleteText: { color: '#b42318' },
+  deleteText: { color: Colors.danger },
   notFound: {
     flex: 1,
     justifyContent: 'center',

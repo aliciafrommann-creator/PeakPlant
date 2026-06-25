@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   error: {
     fontSize: 13,
     fontWeight: '400',
-    color: '#b42318',
+    color: Colors.danger,
     lineHeight: 19,
   },
   bottom: {

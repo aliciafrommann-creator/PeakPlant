@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
   tertiaryCta: { minHeight: 44, justifyContent: 'center', alignItems: 'center' },
   tertiaryCtaText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
   savedState: { fontSize: 10, fontWeight: '500', letterSpacing: 1.5, color: Colors.text },
-  actionError: { fontSize: 12, fontWeight: '400', color: '#b42318', lineHeight: 18, textAlign: 'center' },
+  actionError: { fontSize: 12, fontWeight: '400', color: Colors.danger, lineHeight: 18, textAlign: 'center' },
   noPressure: {
     fontSize: 11,
     fontWeight: '300',

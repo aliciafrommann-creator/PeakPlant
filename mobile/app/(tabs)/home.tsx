@@ -7,6 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
@@ -22,7 +23,7 @@ import { SpacePicker } from '../../components/space/SpacePicker';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { Ionicons } from '@expo/vector-icons';
 import { FloatingActionButton } from '../../components/ui/FloatingActionButton';
-import { PeakBloom } from '../../components/ui/PeakBloom';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import type { Memory } from '../../lib/types';
@@ -36,7 +37,7 @@ function formatDateShort(iso: string): string {
 
 export default function HomeScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
-  const { memories, loading } = useMemories(activeSpace?.id);
+  const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
   const { t } = useLanguage();
   const { latestNote, latestFromPartner } = useNotes(activeSpace?.id);
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
@@ -286,29 +287,39 @@ export default function HomeScreen() {
               </View>
             )}
 
-            {/* Empty state with brand bloom */}
-            {!loading && recentMemories.length === 0 && (
-              <View style={styles.empty}>
-                <PeakBloom size="lg" style={styles.emptyBloom} />
-                <Text style={styles.emptyTitle}>
-                  {t('your space is waiting.', 'euer Space wartet.')}
-                </Text>
-                <Text style={styles.emptyHint}>
-                  {t(
-                    'scan a card to unlock your first experience — or capture a moment of your own.',
-                    'Karte scannen, um euer erstes Erlebnis freizuschalten — oder einen eigenen Moment festhalten.',
-                  )}
-                </Text>
-                <PressableScale
-                  style={styles.emptyCta}
-                  onPress={() => router.push('/(tabs)/scan')}
-                  accessibilityLabel={t('Scan your first card', 'Erste Karte scannen')}
-                >
-                  <Text style={styles.emptyCtaText}>
-                    {t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
-                  </Text>
-                </PressableScale>
+            {/* First paint while loading — no blank flash before content/empty. */}
+            {loading && recentMemories.length === 0 && (
+              <View style={styles.loading}>
+                <ActivityIndicator color={Colors.accent} />
               </View>
+            )}
+
+            {/* Load failure must NOT read as "no memories" — distinct, retryable. */}
+            {!loading && error && recentMemories.length === 0 && (
+              <EmptyState
+                mark="✦"
+                title={t("couldn't load your moments.", 'eure Momente konnten nicht geladen werden.')}
+                hint={t(
+                  'your memories are safe — this is just a connection hiccup.',
+                  'eure Erinnerungen sind sicher — das ist nur ein Verbindungsproblem.',
+                )}
+                ctaLabel={t('TRY AGAIN', 'ERNEUT VERSUCHEN')}
+                onCta={refresh}
+              />
+            )}
+
+            {/* True empty state with brand bloom */}
+            {!loading && !error && recentMemories.length === 0 && (
+              <EmptyState
+                mark="bloom"
+                title={t('your space is waiting.', 'euer Space wartet.')}
+                hint={t(
+                  'scan a card to unlock your first experience — or capture a moment of your own.',
+                  'Karte scannen, um euer erstes Erlebnis freizuschalten — oder einen eigenen Moment festhalten.',
+                )}
+                ctaLabel={t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
+                onCta={() => router.push('/(tabs)/scan')}
+              />
             )}
           </>
         }
@@ -566,41 +577,10 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.md,
   },
 
-  // Empty state
-  empty: {
-    alignItems: 'center',
-    paddingHorizontal: Spacing.screen,
+  // Loading
+  loading: {
     paddingTop: Spacing.xxl,
-    gap: Spacing.sm,
-  },
-  emptyBloom: { marginBottom: Spacing.md },
-  emptyTitle: {
-    ...Typography.editorial,
-    fontSize: 22,
-    color: Colors.text,
-    textAlign: 'center',
-  },
-  emptyHint: {
-    fontSize: 13,
-    fontWeight: '400',
-    color: Colors.textSubtle,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  emptyCta: {
-    height: 48,
-    paddingHorizontal: Spacing.xl,
-    backgroundColor: Colors.text,
-    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: Spacing.lg,
-    borderRadius: Radii.pill,
-  },
-  emptyCtaText: {
-    fontSize: 10,
-    fontWeight: '600',
-    letterSpacing: 2.5,
-    color: Colors.white,
   },
 
   // FAB + scan bar

@@ -171,13 +171,13 @@ const styles = StyleSheet.create({
     borderRadius: Radii.md,
     padding: Spacing.lg,
   },
-  dangerLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: '#b42318' },
+  dangerLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.danger },
   dangerRow: {
     paddingVertical: Spacing.md,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
   },
-  dangerText: { fontSize: 16, fontWeight: '400', color: '#b42318' },
+  dangerText: { fontSize: 16, fontWeight: '400', color: Colors.danger },
   footer: {
     fontSize: 11,
     fontWeight: '300',

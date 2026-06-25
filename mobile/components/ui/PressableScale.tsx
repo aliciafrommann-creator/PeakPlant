@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { acknowledgeSelection } from '../../lib/haptics';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
+import { Opacity } from '../../constants/spacing';
 
 interface PressableScaleProps {
   children: React.ReactNode;
@@ -72,7 +73,7 @@ export function PressableScale({
       <Animated.View
         style={[
           style,
-          { transform: [{ scale }], opacity: disabled ? 0.4 : 1 },
+          { transform: [{ scale }], opacity: disabled ? Opacity.disabled : 1 },
         ]}
       >
         {children}

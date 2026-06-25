@@ -9,6 +9,12 @@ export const Spacing = {
   screen: 24,
 } as const;
 
+/** Opacity tokens. One disabled value app-wide so every inert control reads
+ *  the same (previously 0.3–0.7 were used interchangeably). */
+export const Opacity = {
+  disabled: 0.4,
+} as const;
+
 /** Corner radii. Rounded but distinctive — not pill-everything. */
 export const Radii = {
   xs: 6,
