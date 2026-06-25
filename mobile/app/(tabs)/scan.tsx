@@ -1,12 +1,14 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Linking } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Linking, Animated, Easing } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
 import { resolveScan } from '../../lib/qr';
 import { getRedeemedTokens, markTokenRedeemed } from '../../lib/redeemedTokens';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
+import { confirmSuccess } from '../../lib/haptics';
 import { SEED_CARDS } from '../../lib/seed';
 
 const cardExists = (id: string) => SEED_CARDS.some((c) => c.id === id);
@@ -17,6 +19,26 @@ export default function ScanScreen() {
   const handled = useRef(false);
   const usedTokens = useRef<Set<string>>(new Set());
   const { t } = useLanguage();
+  const reducedMotion = useReducedMotion();
+  const pulse = useRef(new Animated.Value(0)).current;
+
+  // Gentle breathing pulse on the scan frame — signals "actively looking".
+  useEffect(() => {
+    if (reducedMotion) return;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 1, duration: 1200, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 0, duration: 1200, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse, reducedMotion]);
+
+  const frameStyle = {
+    opacity: pulse.interpolate({ inputRange: [0, 1], outputRange: [0.55, 1] }),
+    transform: [{ scale: pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.04] }) }],
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -50,6 +72,7 @@ export default function ScanScreen() {
       case 'ok':
         handled.current = true;
         setError(null);
+        void confirmSuccess();
         if (outcome.token) {
           try {
             await markTokenRedeemed(outcome.token);
@@ -84,12 +107,12 @@ export default function ScanScreen() {
         ) : null}
 
         <View style={styles.overlay} pointerEvents="box-none">
-          <View style={styles.scanFrame}>
+          <Animated.View style={[styles.scanFrame, frameStyle]}>
             <View style={[styles.corner, styles.cornerTL]} />
             <View style={[styles.corner, styles.cornerTR]} />
             <View style={[styles.corner, styles.cornerBL]} />
             <View style={[styles.corner, styles.cornerBR]} />
-          </View>
+          </Animated.View>
 
           {!granted ? (
             <View style={styles.permissionBox}>
@@ -216,13 +239,14 @@ const styles = StyleSheet.create({
     borderColor: Colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   permissionButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
   bottom: { paddingHorizontal: Spacing.screen, paddingVertical: Spacing.xl, gap: Spacing.lg },
   divider: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   dividerLine: { flex: 1, height: 1, backgroundColor: Colors.border },
   dividerText: { fontSize: 10, fontWeight: '400', letterSpacing: 2, color: Colors.textFaint },
-  demoButton: { height: 52, backgroundColor: Colors.text, justifyContent: 'center', alignItems: 'center' },
+  demoButton: { height: 52, backgroundColor: Colors.text, justifyContent: 'center', alignItems: 'center', borderRadius: Radii.pill },
   demoButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },
   hint: {
     fontSize: 11,

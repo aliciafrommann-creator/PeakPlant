@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'gold';
 
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
+    borderRadius: Radii.pill,
   },
   primary: {
     backgroundColor: Colors.text,

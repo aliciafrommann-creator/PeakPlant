@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
 import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { CardGroup, CardSection } from '../../lib/types';
@@ -209,12 +209,15 @@ const styles = StyleSheet.create({
   },
   cardVisual: {
     padding: 2,
+    borderRadius: Radii.lg,
+    overflow: 'hidden',
   },
   cardInner: {
     padding: Spacing.xl,
     aspectRatio: 0.7,
     justifyContent: 'space-between',
     gap: Spacing.md,
+    borderRadius: Radii.lg - 2,
   },
   cardEdition: {
     fontSize: 8,
@@ -295,6 +298,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   preserveText: {
     fontSize: 11,
