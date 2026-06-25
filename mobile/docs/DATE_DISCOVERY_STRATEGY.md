@@ -80,10 +80,12 @@ Spotify embed. Tables `orders`/`subscribers`/`community_questions` (service-role
 questions is the only anon-accessible table). **This is the flywheel endpoint** the app links to
 (`SHOP_URL`).
 
-### Confirmed ABSENT (so they cannot be assumed as product)
-No geolocation/`expo-location`, no maps/Places API, no notifications/`expo-notifications`,
-no calendar API, no weather, no transport/routing, no events/ticketing, no AI provider wired,
-no analytics SDK. (All verified by repo-wide grep.)
+### Confirmed present / absent (so they cannot be assumed as product)
+Present in this branch: curated map, OpenStreetMap display, optional foreground
+location, Supabase-backed Google Places search, and optional AI sorting over
+provider-returned places only. Still absent: background location, booking,
+transport/routing, events/ticketing, public community ratings, full device QA,
+and analytics SDK.
 
 ---
 

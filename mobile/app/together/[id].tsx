@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
+  ActivityIndicator,
   View,
   Text,
   StyleSheet,
@@ -15,9 +16,11 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { momentById, placeById } from '../../lib/together';
 import { experienceTags } from '../../lib/discovery/experience';
-import { feedbackRepository } from '../../lib/repositories';
+import { feedbackRepository, savedDateRepository } from '../../lib/repositories';
 import { aggregateRatings, ratingsForMoment } from '../../lib/discovery/ratings';
 import type { RatingSummary } from '../../lib/discovery/ratings';
+import { confirmSuccess } from '../../lib/haptics';
+import type { SavedDate } from '../../lib/types';
 
 export default function TogetherDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -28,21 +31,144 @@ export default function TogetherDetailScreen() {
   const place = placesEnabled ? placeById(moment?.placeId) : undefined;
 
   const [summary, setSummary] = useState<RatingSummary | null>(null);
+  const [savedDate, setSavedDate] = useState<SavedDate | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       if (!activeSpace || !id) return;
       let alive = true;
-      feedbackRepository
-        .getAll(activeSpace.id)
-        .then((all) => {
+      Promise.all([
+        feedbackRepository.getAll(activeSpace.id),
+        savedDateRepository.getAll(activeSpace.id),
+      ])
+        .then(([allFeedback, allDates]) => {
           if (!alive) return;
-          setSummary(aggregateRatings(ratingsForMoment(all, id)));
+          setSummary(aggregateRatings(ratingsForMoment(allFeedback, id)));
+          const matching = allDates
+            .filter((date) => date.momentId === id && date.status !== 'dismissed')
+            .sort((a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime());
+          setSavedDate(matching[0] ?? null);
         })
-        .catch(() => { /* best-effort: no rating block rather than a crash */ });
+        .catch(() => {
+          if (!alive) return;
+          setSummary(null);
+          setSavedDate(null);
+        });
       return () => { alive = false; };
     }, [activeSpace, id]),
   );
+
+  const ensureSaved = useCallback(async (): Promise<SavedDate | null> => {
+    if (!activeSpace || !moment) return null;
+    if (savedDate) return savedDate;
+    const created = await savedDateRepository.save({
+      spaceId: activeSpace.id,
+      momentId: moment.id,
+      title: moment.title,
+      concept: moment.idea,
+      priceBand: moment.priceBand,
+      estDurationMin: moment.avgDurationMin,
+      status: 'saved',
+    });
+    setSavedDate(created);
+    return created;
+  }, [activeSpace, moment, savedDate]);
+
+  const openSavedDates = useCallback((planId?: string) => {
+    if (planId) {
+      router.push({ pathname: '/discover/saved', params: { plan: planId } });
+    } else {
+      router.push('/discover/saved');
+    }
+  }, []);
+
+  const preserveDate = useCallback((date: SavedDate) => {
+    if (!moment) return;
+    router.push({
+      pathname: '/memory/create',
+      params: {
+        savedDateId: date.id,
+        savedDateTitle: date.title,
+        savedDateMomentId: date.momentId,
+        prefillNote: t(
+          `we did it: ${moment.title}`,
+          `wir haben es gemacht: ${moment.title}`,
+        ),
+      },
+    });
+  }, [moment, t]);
+
+  const handlePrimary = useCallback(async () => {
+    if (!moment || busy) return;
+    setBusy(true);
+    setActionError(null);
+    try {
+      const date = await ensureSaved();
+      if (!date) return;
+      if (date.status === 'completed') {
+        if (date.memoryId) router.push(`/memory/${date.memoryId}`);
+        else preserveDate(date);
+      } else if (date.status === 'planned') {
+        openSavedDates();
+      } else {
+        await confirmSuccess();
+        openSavedDates(date.id);
+      }
+    } catch {
+      setActionError(t(
+        'Could not save this idea. Please try again.',
+        'Die Idee konnte nicht gespeichert werden. Bitte versuche es erneut.',
+      ));
+    } finally {
+      setBusy(false);
+    }
+  }, [busy, ensureSaved, moment, openSavedDates, preserveDate, t]);
+
+  const handleDone = useCallback(async () => {
+    if (!moment || busy) return;
+    setBusy(true);
+    setActionError(null);
+    try {
+      const date = await ensureSaved();
+      if (!date) return;
+      const completed = date.status === 'completed'
+        ? date
+        : await savedDateRepository.update(date.id, {
+          status: 'completed',
+          completedAt: new Date().toISOString(),
+        });
+      setSavedDate(completed);
+      await confirmSuccess();
+      if (completed.memoryId) router.push(`/memory/${completed.memoryId}`);
+      else preserveDate(completed);
+    } catch {
+      setActionError(t(
+        'Could not update this idea. Please try again.',
+        'Die Idee konnte nicht aktualisiert werden. Bitte versuche es erneut.',
+      ));
+    } finally {
+      setBusy(false);
+    }
+  }, [busy, ensureSaved, moment, preserveDate, t]);
+
+  const handleSave = useCallback(async () => {
+    if (busy) return;
+    setBusy(true);
+    setActionError(null);
+    try {
+      const date = await ensureSaved();
+      if (date) await confirmSuccess();
+    } catch {
+      setActionError(t(
+        'Could not save this idea. Please try again.',
+        'Die Idee konnte nicht gespeichert werden. Bitte versuche es erneut.',
+      ));
+    } finally {
+      setBusy(false);
+    }
+  }, [busy, ensureSaved, t]);
 
   if (!moment) {
     return (
@@ -117,7 +243,10 @@ export default function TogetherDetailScreen() {
               <Text style={styles.ratingTip}>{'"'}{summary.latestTip}{'"'}</Text>
             ) : null}
             <Text style={styles.ratingNote}>
-              {t('from your own feedback — stays private to your space', 'aus eurem eigenen Feedback - bleibt privat in eurem Space')}
+              {t(
+                'from your own feedback — private on this device',
+                'aus eurem eigenen Feedback – privat auf diesem Gerät',
+              )}
             </Text>
           </View>
         )}
@@ -131,35 +260,86 @@ export default function TogetherDetailScreen() {
             </View>
             <Text style={styles.placeArea}>{place.area}</Text>
             {place.perk && <Text style={styles.perk}>{place.perk}</Text>}
+            <TouchableOpacity
+              style={styles.mapLink}
+              onPress={() => router.push({
+                pathname: '/(tabs)/community',
+                params: { place: place.id },
+              })}
+              accessibilityRole="button"
+              accessibilityLabel={t(`Show ${place.name} on the map`, `${place.name} auf der Karte zeigen`)}
+            >
+              <Text style={styles.mapLinkText}>{t('VIEW ON MAP →', 'AUF KARTE ZEIGEN →')}</Text>
+            </TouchableOpacity>
           </View>
         )}
 
         <Text style={styles.invite}>
           {t(
-            "when you've done it, preserve it as a moment in your diary.",
-            'Wenn ihr es erlebt habt, bewahrt es als Moment in eurem Tagebuch.',
+            'save it, make a plan, then keep the memory when it becomes yours.',
+            'Merkt es euch, macht einen Plan und bewahrt danach euren Moment.',
           )}
         </Text>
 
         <TouchableOpacity
           style={styles.cta}
-          onPress={() =>
-            router.push({
-              pathname: '/memory/create',
-              params: {
-                prefillNote: t(
-                  `${moment.title} - ${moment.idea}`,
-                  `${moment.title} - ${moment.idea}`,
-                ),
-              },
-            })
-          }
+          onPress={() => void handlePrimary()}
+          disabled={busy}
           activeOpacity={0.85}
           accessibilityRole="button"
-          accessibilityLabel={t('Preserve this as a moment in your diary', 'Als Moment im Tagebuch bewahren')}
+          accessibilityLabel={t('Continue with this idea', 'Mit dieser Idee weitermachen')}
         >
-          <Text style={styles.ctaText}>{t('PRESERVE THIS MOMENT', 'DIESEN MOMENT BEWAHREN')}</Text>
+          {busy ? (
+            <ActivityIndicator color={Colors.white} />
+          ) : (
+            <Text style={styles.ctaText}>
+              {savedDate?.status === 'completed'
+                ? savedDate.memoryId
+                  ? t('VIEW YOUR MEMORY', 'EUREN MOMENT ANSEHEN')
+                  : t('PRESERVE THIS MOMENT', 'DIESEN MOMENT BEWAHREN')
+                : savedDate?.status === 'planned'
+                  ? t('OPEN YOUR PLAN', 'EUREN PLAN ÖFFNEN')
+                  : t('PLAN THIS DATE', 'DIESES DATE PLANEN')}
+            </Text>
+          )}
         </TouchableOpacity>
+
+        {savedDate?.status !== 'completed' && (
+          <TouchableOpacity
+            style={styles.secondaryCta}
+            onPress={() => void handleDone()}
+            disabled={busy}
+            accessibilityRole="button"
+            accessibilityLabel={t('We already did this', 'Wir haben das schon gemacht')}
+          >
+            <Text style={styles.secondaryCtaText}>{t('WE ALREADY DID THIS', 'WIR HABEN DAS SCHON GEMACHT')}</Text>
+          </TouchableOpacity>
+        )}
+
+        {!savedDate ? (
+          <TouchableOpacity
+            style={styles.tertiaryCta}
+            onPress={() => void handleSave()}
+            disabled={busy}
+            accessibilityRole="button"
+            accessibilityLabel={t('Save for later', 'Für später merken')}
+          >
+            <Text style={styles.tertiaryCtaText}>{t('SAVE FOR LATER', 'FÜR SPÄTER MERKEN')}</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            style={styles.tertiaryCta}
+            onPress={() => openSavedDates()}
+            accessibilityRole="button"
+            accessibilityLabel={t('Open saved ideas', 'Gespeicherte Ideen öffnen')}
+          >
+            <Text style={styles.savedState}>{t('SAVED ✓ · VIEW YOUR LIST', 'GEMERKT ✓ · LISTE ANSEHEN')}</Text>
+          </TouchableOpacity>
+        )}
+
+        {actionError ? (
+          <Text style={styles.actionError} accessibilityLiveRegion="polite">{actionError}</Text>
+        ) : null}
 
         <Text style={styles.noPressure}>{t('no pressure. only if it feels right.', 'kein Muss. nur wenn es sich richtig anfuhlt.')}</Text>
       </ScrollView>
@@ -229,6 +409,8 @@ const styles = StyleSheet.create({
   },
   placeArea: { fontSize: 11, fontWeight: '300', color: Colors.textFaint, letterSpacing: 0.5 },
   perk: { fontSize: 13, fontWeight: '300', color: Colors.textSubtle, marginTop: 2 },
+  mapLink: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start', marginTop: Spacing.xs },
+  mapLinkText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   invite: {
     fontSize: 16,
     fontWeight: '200',
@@ -245,6 +427,18 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   ctaText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },
+  secondaryCta: {
+    minHeight: 48,
+    borderWidth: 1,
+    borderColor: Colors.text,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  secondaryCtaText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  tertiaryCta: { minHeight: 44, justifyContent: 'center', alignItems: 'center' },
+  tertiaryCtaText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
+  savedState: { fontSize: 10, fontWeight: '500', letterSpacing: 1.5, color: Colors.text },
+  actionError: { fontSize: 12, fontWeight: '400', color: '#b42318', lineHeight: 18, textAlign: 'center' },
   noPressure: {
     fontSize: 11,
     fontWeight: '300',

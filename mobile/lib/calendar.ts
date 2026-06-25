@@ -9,7 +9,7 @@
 
 export interface CalendarPlan {
   title: string;
-  /** Free-text date string the user entered (e.g. "this Saturday, 28 June"). Description only. */
+  /** Planned date. ISO (YYYY-MM-DD) is preferred; common EN/DE shortcuts are accepted. */
   dateText?: string;
   /** PeakPlant deep link for the idea — safe to include in a calendar description. */
   link?: string;
@@ -19,13 +19,16 @@ export interface CalendarPlan {
 export function buildICS(plan: CalendarPlan, now: Date = new Date()): string {
   const uid = `peakplant-${now.getTime()}@peak-plant.com`;
   const stamp = formatICSDateTime(now);
-  // Include planned date text in SUMMARY so it's visible in any calendar app.
-  const summaryTitle = plan.dateText ? `${plan.title} (${plan.dateText})` : plan.title;
-  const summary = escapeICS(summaryTitle);
-  // Use parsed date for DTSTART if possible; otherwise today (user adjusts in calendar).
-  const startDate = plan.dateText ? (tryParseDateText(plan.dateText) ?? now) : now;
-  const endDate = new Date(startDate.getTime() + 86_400_000);
+  const summary = escapeICS(plan.title);
+  const parsedStart = parsePlanDate(plan.dateText, now);
+  if (plan.dateText && !parsedStart) {
+    throw new Error('Unrecognised plan date');
+  }
+  const start = parsedStart ?? now;
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
   const descParts: string[] = [];
+  if (plan.dateText) descParts.push(plan.dateText);
   if (plan.link) descParts.push(plan.link);
   const description = escapeICS(descParts.join('\\n'));
 
@@ -38,8 +41,9 @@ export function buildICS(plan: CalendarPlan, now: Date = new Date()): string {
     'BEGIN:VEVENT',
     `UID:${uid}`,
     `DTSTAMP:${stamp}`,
-    `DTSTART;VALUE=DATE:${formatICSDateOnly(startDate)}`,
-    `DTEND;VALUE=DATE:${formatICSDateOnly(endDate)}`,
+    // Full-day event so we never assume a wrong time; user adjusts in calendar.
+    `DTSTART;VALUE=DATE:${formatICSDateOnly(start)}`,
+    `DTEND;VALUE=DATE:${formatICSDateOnly(end)}`,
     `SUMMARY:${summary}`,
   ];
   if (description) lines.push(`DESCRIPTION:${description}`);
@@ -47,36 +51,88 @@ export function buildICS(plan: CalendarPlan, now: Date = new Date()): string {
   return lines.join('\r\n');
 }
 
-/** Best-effort parse of a free-text planned date (e.g. "this Saturday, 28 June"). */
-function tryParseDateText(text: string): Date | null {
-  const trimmed = text.trim();
-  const direct = new Date(trimmed);
-  if (!isNaN(direct.getTime())) return direct;
-
-  const lower = trimmed.toLowerCase();
-  const monthsEn = ['january','february','march','april','may','june','july','august','september','october','november','december'];
-  const monthsDe = ['januar','februar','märz','april','mai','juni','juli','august','september','oktober','november','dezember'];
-  let month = -1;
-  for (let i = 0; i < monthsEn.length; i++) {
-    if (lower.includes(monthsEn[i]) || lower.includes(monthsDe[i])) { month = i; break; }
-  }
-  if (month < 0) return null;
-  const dayMatch = lower.match(/\b(\d{1,2})\b/);
-  if (!dayMatch) return null;
-  const day = parseInt(dayMatch[1], 10);
-  const year = new Date().getFullYear();
-  const d = new Date(year, month, day);
-  return !isNaN(d.getTime()) && d.getDate() === day ? d : null;
-}
-
 function formatICSDateTime(d: Date): string {
   return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
 }
 
 function formatICSDateOnly(d: Date): string {
-  return d.toISOString().slice(0, 10).replace(/-/g, '');
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, '0'),
+    String(d.getDate()).padStart(2, '0'),
+  ].join('');
 }
 
 function escapeICS(s: string): string {
   return s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,');
+}
+
+export function formatPlanDate(date: Date): string {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+/**
+ * Parse the deliberately small set of formats offered by the planner.
+ * Returning null lets the screen ask for a clearer date instead of exporting
+ * a calendar entry for the wrong day.
+ */
+export function parsePlanDate(value?: string, now: Date = new Date()): Date | null {
+  const raw = value?.trim();
+  if (!raw) return null;
+  const normalized = raw.toLocaleLowerCase('de-DE');
+
+  const iso = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) return validLocalDate(Number(iso[1]), Number(iso[2]), Number(iso[3]));
+
+  const european = normalized.match(/^(\d{1,2})[./](\d{1,2})[./](\d{4})$/);
+  if (european) {
+    return validLocalDate(Number(european[3]), Number(european[2]), Number(european[1]));
+  }
+
+  const base = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
+  if (normalized === 'today' || normalized === 'heute') return base;
+  if (normalized === 'tomorrow' || normalized === 'morgen') {
+    base.setDate(base.getDate() + 1);
+    return base;
+  }
+
+  const weekday = weekdayIndex(normalized);
+  if (weekday !== null) {
+    let daysAhead = (weekday - base.getDay() + 7) % 7;
+    const explicitlyNext = /\b(next|nächste|nächsten|naechste|naechsten)\b/.test(normalized);
+    if (explicitlyNext && daysAhead === 0) daysAhead = 7;
+    base.setDate(base.getDate() + daysAhead);
+    return base;
+  }
+
+  return null;
+}
+
+function validLocalDate(year: number, month: number, day: number): Date | null {
+  const date = new Date(year, month - 1, day, 12);
+  return date.getFullYear() === year
+    && date.getMonth() === month - 1
+    && date.getDate() === day
+    ? date
+    : null;
+}
+
+function weekdayIndex(value: string): number | null {
+  const weekdays: [number, string[]][] = [
+    [0, ['sunday', 'sonntag']],
+    [1, ['monday', 'montag']],
+    [2, ['tuesday', 'dienstag']],
+    [3, ['wednesday', 'mittwoch']],
+    [4, ['thursday', 'donnerstag']],
+    [5, ['friday', 'freitag']],
+    [6, ['saturday', 'samstag']],
+  ];
+  for (const [index, names] of weekdays) {
+    if (names.some((name) => value.includes(name))) return index;
+  }
+  return null;
 }

@@ -199,10 +199,10 @@ export interface Ritual {
 }
 
 /**
- * Public practical feedback left after completing a date idea.
+ * Practical feedback left after completing a date idea.
  * Intentionally separate from the private diary memory.
- * `tip` is the only user-text field — it is intended for future community
- * display and must never contain intimate diary content.
+ * Beta storage is private, device-local, and space-scoped. `tip` may become
+ * eligible for a future moderated community only after explicit consent.
  * `rating` is a simple 1-5 star score.
  */
 export interface DateFeedback {
@@ -211,7 +211,7 @@ export interface DateFeedback {
   spaceId: string;
   momentId: string;
   rating: 1 | 2 | 3 | 4 | 5;
-  /** Optional public practical tip (max 280 chars). No diary content here. */
+  /** Optional practical tip (max 280 chars). No diary content here. */
   tip?: string;
   createdAt: string;
 }

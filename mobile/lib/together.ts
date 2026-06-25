@@ -90,6 +90,8 @@ export const LOCAL_PLACES: LocalPlace[] = [
     tags: ['coffee', 'cosy', 'conversation', 'classic'],
     provenance: 'curated',
     lastVerifiedAt: VERIFIED,
+    lat: 47.2681634,
+    lng: 11.3931386,
   },
   {
     id: 'pl-2',
@@ -102,6 +104,8 @@ export const LOCAL_PLACES: LocalPlace[] = [
     tags: ['nature', 'walk', 'green', 'calm'],
     provenance: 'curated',
     lastVerifiedAt: VERIFIED,
+    lat: 47.271399,
+    lng: 11.3971442,
   },
   {
     id: 'pl-3',
@@ -115,6 +119,8 @@ export const LOCAL_PLACES: LocalPlace[] = [
     tags: ['food', 'local', 'fresh', 'lively'],
     provenance: 'curated',
     lastVerifiedAt: VERIFIED,
+    lat: 47.267186,
+    lng: 11.3895995,
   },
   {
     id: 'pl-4',
@@ -127,6 +133,8 @@ export const LOCAL_PLACES: LocalPlace[] = [
     tags: ['view', 'mountains', 'sunset', 'awe'],
     provenance: 'curated',
     lastVerifiedAt: VERIFIED,
+    lat: 47.3169606,
+    lng: 11.4055396,
   },
   {
     id: 'pl-5',
@@ -140,6 +148,8 @@ export const LOCAL_PLACES: LocalPlace[] = [
     tags: ['creative', 'workshop', 'community', 'making'],
     provenance: 'curated',
     lastVerifiedAt: VERIFIED,
+    lat: 47.2688441,
+    lng: 11.4047938,
   },
   {
     id: 'pl-6',
@@ -152,6 +162,8 @@ export const LOCAL_PLACES: LocalPlace[] = [
     tags: ['swim', 'water', 'summer', 'play'],
     provenance: 'curated',
     lastVerifiedAt: VERIFIED,
+    lat: 47.2654976,
+    lng: 11.4419156,
   },
 ];
 

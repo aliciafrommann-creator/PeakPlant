@@ -27,9 +27,13 @@ const CORS_HEADERS = {
 };
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
+const GOOGLE_TEXT_SEARCH_URL = 'https://places.googleapis.com/v1/places:searchText';
 const DEFAULT_MODEL = 'claude-haiku-4-5-20251001';
 const MAX_CANDIDATES = 8;
 const MAX_PICKS = 4;
+const MAX_LIVE_PLACES = 8;
+const DEFAULT_LIVE_PLACE_RADIUS_KM = 3;
+const MAX_LIVE_PLACE_RADIUS_KM = 8;
 
 interface Candidate {
   momentId: string;
@@ -41,6 +45,40 @@ interface Pick {
   momentId: string;
   why?: string;
   signalsUsed?: string[];
+}
+
+interface GeoCoords {
+  lat: number;
+  lng: number;
+}
+
+interface LivePlace {
+  id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  category?: string;
+  mapsUrl?: string;
+  aiWhy?: string;
+  signalsUsed?: string[];
+  provenance: 'live';
+  fetchedAt: string;
+  sourceId: string;
+}
+
+interface PlacePick {
+  placeId: string;
+  why?: string;
+  signalsUsed?: string[];
+}
+
+interface GoogleTextPlace {
+  id?: string;
+  displayName?: { text?: string };
+  formattedAddress?: string;
+  location?: { latitude?: number; longitude?: number };
+  primaryType?: string;
 }
 
 function json(body: unknown, status = 200): Response {
@@ -72,12 +110,271 @@ function cleanCandidates(input: unknown): Candidate[] {
   return out;
 }
 
+function asRecord(input: unknown): Record<string, unknown> {
+  return input && typeof input === 'object' ? input as Record<string, unknown> : {};
+}
+
+function cleanCoords(input: unknown): GeoCoords | null {
+  const record = asRecord(input);
+  const lat = Number(record.lat);
+  const lng = Number(record.lng);
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+  if (Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
+  return { lat, lng };
+}
+
+function clampNumber(value: unknown, fallback: number, min: number, max: number): number {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return fallback;
+  return Math.min(max, Math.max(min, num));
+}
+
+function cleanLivePlaceQuery(input: unknown): string {
+  const raw = typeof input === 'string'
+    ? input
+    : 'romantic cafes parks museums viewpoints date spots';
+  const clean = raw.replace(/\s+/g, ' ').trim();
+  return (clean || 'romantic cafes parks museums viewpoints date spots').slice(0, 100);
+}
+
+function googleMapsUrl(lat: number, lng: number): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${lat},${lng}`)}`;
+}
+
+function googlePlacesToLivePlaces(input: unknown, fetchedAt: string): LivePlace[] {
+  const places = Array.isArray((input as { places?: unknown })?.places)
+    ? (input as { places: GoogleTextPlace[] }).places
+    : [];
+  return places
+    .map((place) => {
+      const lat = Number(place.location?.latitude);
+      const lng = Number(place.location?.longitude);
+      const googleId = typeof place.id === 'string' ? place.id : '';
+      const name = typeof place.displayName?.text === 'string' ? place.displayName.text : '';
+      if (!googleId || !name || !Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      return {
+        id: `google:${googleId}`,
+        name: name.slice(0, 120),
+        address: typeof place.formattedAddress === 'string'
+          ? place.formattedAddress.slice(0, 180)
+          : 'near you',
+        lat,
+        lng,
+        category: typeof place.primaryType === 'string' ? place.primaryType : undefined,
+        mapsUrl: googleMapsUrl(lat, lng),
+        provenance: 'live' as const,
+        fetchedAt,
+        sourceId: 'google-places-text-search',
+      };
+    })
+    .filter((place): place is LivePlace => Boolean(place))
+    .slice(0, MAX_LIVE_PLACES);
+}
+
+async function rankLivePlacesWithAI(
+  apiKey: string | undefined,
+  model: string,
+  constraints: unknown,
+  places: LivePlace[],
+): Promise<LivePlace[]> {
+  if (!apiKey || places.length < 2) return places;
+
+  const placeIds = new Set(places.map((place) => place.id));
+  const tool = {
+    name: 'rank_live_places',
+    description: 'Return the best ordering of real provider-returned places with a warm reason for each.',
+    input_schema: {
+      type: 'object',
+      properties: {
+        picks: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              placeId: { type: 'string', description: 'One of the provided place ids.' },
+              why: { type: 'string', description: 'One warm, specific sentence (<180 chars).' },
+              signalsUsed: {
+                type: 'array',
+                items: { type: 'string' },
+              },
+            },
+            required: ['placeId', 'why'],
+          },
+        },
+      },
+      required: ['picks'],
+    },
+  };
+
+  const system =
+    'You help sort real nearby places for a date. You are given ONLY places ' +
+    'already returned by Google Places. STRICT RULES: choose only provided ' +
+    'placeIds; never invent a venue, address, price, rating or opening hour; ' +
+    'do not claim a place is open; keep each why warm and under 180 characters.';
+
+  const userContent =
+    'Constraints (JSON):\n' +
+    JSON.stringify(asRecord(constraints)) +
+    '\n\nPlaces (JSON):\n' +
+    JSON.stringify(places.map((place) => ({
+      placeId: place.id,
+      name: place.name,
+      address: place.address,
+      category: place.category,
+    })));
+
+  try {
+    const aiResp = await fetch(ANTHROPIC_URL, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 900,
+        system,
+        tools: [tool],
+        tool_choice: { type: 'tool', name: 'rank_live_places' },
+        messages: [{ role: 'user', content: userContent }],
+      }),
+    });
+    if (!aiResp.ok) return places;
+
+    const data = await aiResp.json();
+    const block = Array.isArray(data?.content)
+      ? data.content.find((b: { type?: string; name?: string }) => b.type === 'tool_use' && b.name === 'rank_live_places')
+      : undefined;
+    const rawPicks: unknown = block?.input?.picks;
+    const picks: PlacePick[] = Array.isArray(rawPicks)
+      ? (rawPicks as PlacePick[])
+          .filter((pick) => pick && typeof pick.placeId === 'string' && placeIds.has(pick.placeId))
+          .slice(0, places.length)
+      : [];
+    if (picks.length === 0) return places;
+
+    const byId = new Map(places.map((place) => [place.id, place]));
+    const ranked: LivePlace[] = [];
+    for (const pick of picks) {
+      const place = byId.get(pick.placeId);
+      if (!place) continue;
+      ranked.push({
+        ...place,
+        aiWhy: typeof pick.why === 'string' ? pick.why.slice(0, 220) : undefined,
+        signalsUsed: Array.isArray(pick.signalsUsed)
+          ? pick.signalsUsed.filter((signal): signal is string => typeof signal === 'string').slice(0, 5)
+          : undefined,
+      });
+      byId.delete(pick.placeId);
+    }
+    return [...ranked, ...byId.values()];
+  } catch {
+    return places;
+  }
+}
+
+async function handleLivePlaces(body: Record<string, unknown>): Promise<Response> {
+  const googleKey = Deno.env.get('GOOGLE_PLACES_API_KEY');
+  if (!googleKey) {
+    return json({
+      error: 'not_configured',
+      reason: 'not_configured',
+      places: [],
+      message: 'GOOGLE_PLACES_API_KEY is not set. Client will use curated places.',
+    });
+  }
+
+  const near = cleanCoords(body.near);
+  if (!near) return json({ error: 'bad_request', message: 'near.lat/lng required.' }, 400);
+
+  const query = cleanLivePlaceQuery(body.query);
+  const radiusKm = clampNumber(
+    body.radiusKm,
+    DEFAULT_LIVE_PLACE_RADIUS_KM,
+    0.5,
+    Number(Deno.env.get('LIVE_PLACES_MAX_RADIUS_KM')) || MAX_LIVE_PLACE_RADIUS_KM,
+  );
+  const limit = Math.round(clampNumber(
+    body.limit,
+    6,
+    1,
+    Math.min(MAX_LIVE_PLACES, Number(Deno.env.get('LIVE_PLACES_MAX_RESULTS')) || MAX_LIVE_PLACES),
+  ));
+  const fetchedAt = new Date().toISOString();
+
+  try {
+    const googleResp = await fetch(GOOGLE_TEXT_SEARCH_URL, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'X-Goog-Api-Key': googleKey,
+        'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.location,places.primaryType',
+      },
+      body: JSON.stringify({
+        textQuery: query,
+        maxResultCount: limit,
+        locationBias: {
+          circle: {
+            center: { latitude: near.lat, longitude: near.lng },
+            radius: radiusKm * 1000,
+          },
+        },
+      }),
+    });
+
+    if (googleResp.status === 429) {
+      return json({ error: 'rate_limited', reason: 'rate_limited', places: [] });
+    }
+    if (!googleResp.ok) {
+      return json({ error: 'network_error', reason: 'network_error', places: [], status: googleResp.status });
+    }
+
+    const googleData = await googleResp.json();
+    const places = googlePlacesToLivePlaces(googleData, fetchedAt);
+    if (places.length === 0) {
+      return json({ error: 'no_results', reason: 'no_results', places: [] });
+    }
+
+    const model = Deno.env.get('ANTHROPIC_MODEL') ?? DEFAULT_MODEL;
+    const ranked = await rankLivePlacesWithAI(
+      Deno.env.get('ANTHROPIC_API_KEY') ?? undefined,
+      model,
+      body.constraints,
+      places,
+    );
+
+    return json({
+      places: ranked,
+      source: 'google-places-text-search',
+      ai: ranked.some((place) => Boolean(place.aiWhy)),
+      fetchedAt,
+      radiusKm,
+      limit,
+    });
+  } catch {
+    return json({ error: 'network_error', reason: 'network_error', places: [] });
+  }
+}
+
 serve(async (req: Request) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: CORS_HEADERS });
   }
   if (req.method !== 'POST') {
     return json({ error: 'method_not_allowed' }, 405);
+  }
+
+  let rawBody: unknown;
+  try {
+    rawBody = await req.json();
+  } catch {
+    return json({ error: 'bad_request', message: 'Body must be JSON.' }, 400);
+  }
+
+  const recordBody = asRecord(rawBody);
+  if (recordBody.mode === 'live_places') {
+    return handleLivePlaces(recordBody);
   }
 
   const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
@@ -92,12 +389,7 @@ serve(async (req: Request) => {
     );
   }
 
-  let body: { constraints?: Record<string, unknown>; candidates?: unknown };
-  try {
-    body = await req.json();
-  } catch {
-    return json({ error: 'bad_request', message: 'Body must be JSON.' }, 400);
-  }
+  const body = recordBody as { constraints?: Record<string, unknown>; candidates?: unknown };
 
   const candidates = cleanCandidates(body.candidates);
   if (candidates.length === 0) {
