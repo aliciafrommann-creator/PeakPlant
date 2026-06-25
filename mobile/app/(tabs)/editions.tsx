@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { SEED_EDITIONS, DECK_SIZE_RANGE } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -149,11 +149,12 @@ const styles = StyleSheet.create({
   },
   scanButton: {
     height: 36,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   scanButtonText: {
     fontSize: 9,
@@ -170,6 +171,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.backgroundWarm,
     borderWidth: 1,
     borderColor: Colors.border,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   cardUpcoming: { opacity: 0.55 },
   symbol: { fontSize: 28 },

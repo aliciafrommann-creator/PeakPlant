@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.md,
+    borderRadius: Radii.pill,
   },
   scanButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.backgroundDark },
   diaryLabel: {

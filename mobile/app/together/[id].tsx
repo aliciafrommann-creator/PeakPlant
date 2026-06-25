@@ -9,8 +9,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -21,6 +22,8 @@ import { aggregateRatings, ratingsForMoment } from '../../lib/discovery/ratings'
 import type { RatingSummary } from '../../lib/discovery/ratings';
 import { confirmSuccess } from '../../lib/haptics';
 import type { SavedDate } from '../../lib/types';
+
+const TOGETHER = Sections.together;
 
 export default function TogetherDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -361,9 +364,9 @@ const styles = StyleSheet.create({
   backText: { fontSize: 10, fontWeight: '400', letterSpacing: 1.5, color: Colors.textMuted, width: 60 },
   headerLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.text },
   content: { padding: Spacing.screen, gap: Spacing.md, paddingBottom: Spacing.xxxl },
-  category: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textSubtle },
-  title: { fontSize: 30, fontWeight: '200', color: Colors.text, letterSpacing: -0.4, lineHeight: 36 },
-  idea: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 24 },
+  category: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: TOGETHER },
+  title: { ...Typography.editorial, fontSize: 32, lineHeight: 40 },
+  idea: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 26 },
   experience: { gap: Spacing.sm, marginTop: Spacing.md },
   experienceLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textFaint },
   tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
@@ -381,6 +384,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: Spacing.xs,
     marginTop: Spacing.md,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   ratingLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
@@ -393,6 +398,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: 4,
     marginTop: Spacing.md,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   placeLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
   placeHead: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
@@ -425,6 +432,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.sm,
+    borderRadius: Radii.pill,
   },
   ctaText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },
   secondaryCta: {
@@ -433,6 +441,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   secondaryCtaText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   tertiaryCta: { minHeight: 44, justifyContent: 'center', alignItems: 'center' },

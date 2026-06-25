@@ -15,7 +15,8 @@ import {
 } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { SEED_CARDS } from '../../lib/seed';
 import { memoryRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -308,11 +309,9 @@ const styles = StyleSheet.create({
     color: Colors.textSubtle,
   },
   prompt: {
+    ...Typography.editorial,
     fontSize: 22,
-    fontWeight: '200',
-    color: Colors.text,
     lineHeight: 30,
-    letterSpacing: -0.2,
     fontStyle: 'italic',
   },
   divider: {
@@ -320,11 +319,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.border,
   },
   note: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '300',
     color: Colors.text,
-    lineHeight: 26,
-    letterSpacing: 0.1,
+    lineHeight: 28,
+    letterSpacing: 0.05,
   },
   noteInput: {
     fontSize: 16,
@@ -355,7 +354,16 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.lg,
     marginTop: Spacing.sm,
   },
-  actionBtn: { paddingVertical: Spacing.xs },
+  actionBtn: {
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radii.pill,
+    minHeight: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   actionText: {
     fontSize: 10,
     fontWeight: '500',
