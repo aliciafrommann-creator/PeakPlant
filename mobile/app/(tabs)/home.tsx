@@ -6,29 +6,38 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Colors, Sections } from '../../constants/colors';
-import { Spacing, Radii } from '../../constants/spacing';
+import { Colors, Accents, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { useNotes } from '../../lib/hooks/useNotes';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { SpaceSwitcher } from '../../components/space/SpaceSwitcher';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { FloatingActionButton } from '../../components/ui/FloatingActionButton';
+import { PeakBloom } from '../../components/ui/PeakBloom';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import type { Memory } from '../../lib/types';
 
-const TOGETHER = Sections.together; // warm apricot — "our space"
+const TOGETHER = Sections.together;
+
+function formatDateShort(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }).toLowerCase();
+}
 
 export default function HomeScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { memories, loading } = useMemories(activeSpace?.id);
   const { t } = useLanguage();
+  const { latestNote } = useNotes(activeSpace?.id);
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -54,14 +63,16 @@ export default function HomeScreen() {
     (e) => e.status === 'available' && (editionProgress[e.id] ?? 0) > 0,
   );
 
+  const totalCards = Object.values(editionProgress).reduce((a, b) => a + b, 0);
+
   const recentMemories = [...memories].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 
   const spaceLabel =
     activeSpace?.type === 'couple'
-      ? t('couple space', 'Paar-Space')
-      : t('friends space', 'Freunde-Space');
+      ? t('COUPLE SPACE', 'PAAR-SPACE')
+      : t('FRIENDS SPACE', 'FREUNDE-SPACE');
 
   function renderMemory({ item }: { item: Memory }) {
     const card = SEED_CARDS.find((c) => c.id === item.cardId);
@@ -76,11 +87,12 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerText}>
           <View style={styles.kickerRow}>
             <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
-            <Text style={styles.kicker}>{spaceLabel.toUpperCase()}</Text>
+            <Text style={styles.kicker}>{spaceLabel}</Text>
           </View>
           <Text style={styles.spaceName} numberOfLines={1}>
             {(activeSpace?.name ?? 'your space').toLowerCase()}
@@ -97,11 +109,7 @@ export default function HomeScreen() {
       </View>
 
       {spaces.length > 1 && (
-        <SpaceSwitcher
-          spaces={spaces}
-          activeSpaceId={activeSpace?.id}
-          onSelect={setActiveSpace}
-        />
+        <SpaceSwitcher spaces={spaces} activeSpaceId={activeSpace?.id} onSelect={setActiveSpace} />
       )}
 
       <FlatList
@@ -112,59 +120,164 @@ export default function HomeScreen() {
         contentContainerStyle={styles.list}
         ListHeaderComponent={
           <>
-            {activeEditions.length > 0 && (
-              <View style={styles.section}>
+            {/* Heartbeat stats — visible once there's content */}
+            {memories.length > 0 && (
+              <View style={styles.heartbeat}>
+                <View style={styles.heartbeatStat}>
+                  <Text style={styles.heartbeatNum}>{memories.length}</Text>
+                  <Text style={styles.heartbeatLabel}>{t('MOMENTS', 'MOMENTE')}</Text>
+                </View>
+                {totalCards > 0 && (
+                  <>
+                    <View style={styles.heartbeatDiv} />
+                    <View style={styles.heartbeatStat}>
+                      <Text style={styles.heartbeatNum}>{totalCards}</Text>
+                      <Text style={styles.heartbeatLabel}>{t('CARDS', 'KARTEN')}</Text>
+                    </View>
+                  </>
+                )}
+                <View style={styles.heartbeatFill} />
+                <Text style={styles.heartbeatGlyph}>♥</Text>
+              </View>
+            )}
+
+            {/* Memory filmstrip — polaroid scroll */}
+            {recentMemories.length > 0 && (
+              <View style={styles.filmstripSection}>
                 <Text style={styles.sectionLabel}>
-                  {t('GROWING TOGETHER', 'ZUSAMMEN WACHSEN')}
+                  {t('RECENTLY TOGETHER', 'ZULETZT ZUSAMMEN')}
                 </Text>
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  contentContainerStyle={styles.editionRow}
+                  contentContainerStyle={styles.filmstrip}
                 >
-                  {activeEditions.map((e) => (
-                    <PressableScale
-                      key={e.id}
-                      style={[styles.editionChip, { borderLeftColor: e.color }]}
-                      onPress={() => router.push(`/editions/${e.id}`)}
-                      accessibilityLabel={`${e.name}, ${editionProgress[e.id]} of ${e.cardCount} cards`}
-                    >
-                      <Text style={styles.editionSymbol}>{e.symbol}</Text>
-                      <View>
-                        <Text style={styles.editionName}>{e.name.toLowerCase()}</Text>
-                        <Text style={styles.editionMeta}>
-                          {editionProgress[e.id]} / {e.cardCount}
-                        </Text>
-                      </View>
-                    </PressableScale>
-                  ))}
+                  {recentMemories.slice(0, 8).map((m) => {
+                    const card = SEED_CARDS.find((c) => c.id === m.cardId);
+                    return (
+                      <PressableScale
+                        key={m.id}
+                        style={styles.polaroid}
+                        onPress={() => router.push(`/memory/${m.id}`)}
+                        scaleTo={0.97}
+                        accessibilityLabel={`Moment ${formatDateShort(m.createdAt)}`}
+                      >
+                        {m.photoUri ? (
+                          <Image
+                            source={{ uri: m.photoUri }}
+                            style={styles.polaroidPhoto}
+                            accessibilityLabel="Moment photo"
+                          />
+                        ) : (
+                          <View style={styles.polaroidBlank}>
+                            <Text style={styles.polaroidMark}>✦</Text>
+                          </View>
+                        )}
+                        <View style={styles.polaroidCaption}>
+                          {card && (
+                            <Text style={styles.polaroidCard}>
+                              {String(card.number).padStart(2, '0')}
+                            </Text>
+                          )}
+                          <Text style={styles.polaroidDate}>{formatDateShort(m.createdAt)}</Text>
+                        </View>
+                      </PressableScale>
+                    );
+                  })}
                 </ScrollView>
               </View>
             )}
 
-            <View style={styles.feedHeader}>
-              <Text style={styles.sectionLabel}>
-                {t('RECENTLY TOGETHER', 'ZULETZT ZUSAMMEN')}
-              </Text>
-              <Text style={styles.memoryCount}>
-                {recentMemories.length > 0
-                  ? t(
-                      `${recentMemories.length} moment${recentMemories.length !== 1 ? 's' : ''}`,
-                      `${recentMemories.length} Moment${recentMemories.length !== 1 ? 'e' : ''}`,
-                    )
-                  : ''}
-              </Text>
-            </View>
+            {/* Active editions — editorial progress cards */}
+            {activeEditions.length > 0 && (
+              <View style={styles.editionsSection}>
+                <Text style={styles.sectionLabel}>
+                  {t('GROWING TOGETHER', 'ZUSAMMEN WACHSEN')}
+                </Text>
+                {activeEditions.map((e) => {
+                  const progress = editionProgress[e.id] ?? 0;
+                  const pct = Math.min(100, (progress / e.cardCount) * 100);
+                  return (
+                    <PressableScale
+                      key={e.id}
+                      style={[styles.editionCard, { borderLeftColor: e.color }]}
+                      onPress={() => router.push(`/editions/${e.id}`)}
+                      accessibilityLabel={`${e.name}, ${progress} von ${e.cardCount} Karten`}
+                    >
+                      <Text style={styles.editionSymbol}>{e.symbol}</Text>
+                      <View style={styles.editionText}>
+                        <Text style={styles.editionName}>{e.name.toLowerCase()}</Text>
+                        <Text style={styles.editionSub}>{e.subtitle}</Text>
+                        <View style={styles.progressTrack}>
+                          <View
+                            style={[
+                              styles.progressFill,
+                              { width: `${pct}%` as `${number}%`, backgroundColor: e.color },
+                            ]}
+                          />
+                        </View>
+                        <Text style={styles.editionProgress}>
+                          {progress} / {e.cardCount} {t('cards', 'Karten')}
+                        </Text>
+                      </View>
+                      <Text style={styles.editionArrow}>→</Text>
+                    </PressableScale>
+                  );
+                })}
+              </View>
+            )}
 
+            {/* Notes nudge — love message to partner */}
+            {activeSpace && (
+              <TouchableOpacity
+                style={styles.notesRow}
+                onPress={() => router.push('/note/compose')}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t(
+                  'Write a note to your partner',
+                  'Schreib deinem Partner eine Notiz',
+                )}
+              >
+                <View style={styles.notesLeft}>
+                  <Text style={styles.notesIcon}>✉</Text>
+                  <View style={styles.notesTextBlock}>
+                    <Text style={styles.notesTitle}>
+                      {latestNote
+                        ? t('YOUR LAST NOTE', 'DEINE LETZTE NOTIZ')
+                        : t('WRITE A NOTE', 'SCHREIB EINE NOTIZ')}
+                    </Text>
+                    <Text style={styles.notesBody} numberOfLines={2}>
+                      {latestNote
+                        ? latestNote.text
+                        : t(
+                            'tell your partner something...',
+                            'sag deinem Partner etwas...',
+                          )}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={styles.notesArrow}>→</Text>
+              </TouchableOpacity>
+            )}
+
+            {/* All moments feed header */}
+            {recentMemories.length > 0 && (
+              <View style={styles.feedHeader}>
+                <Text style={styles.sectionLabel}>{t('ALL MOMENTS', 'ALLE MOMENTE')}</Text>
+              </View>
+            )}
+
+            {/* Empty state with brand bloom */}
             {!loading && recentMemories.length === 0 && (
               <View style={styles.empty}>
-                <Text style={styles.emptyMark}>✦</Text>
-                <Text style={styles.emptyText}>
-                  {t('your diary is empty.', 'euer Tagebuch ist leer.')}
+                <PeakBloom size="lg" style={styles.emptyBloom} />
+                <Text style={styles.emptyTitle}>
+                  {t('your space is waiting.', 'euer Space wartet.')}
                 </Text>
                 <Text style={styles.emptyHint}>
                   {t(
-                    'scan a card to unlock your first experience — or add a moment of your own.',
+                    'scan a card to unlock your first experience — or capture a moment of your own.',
                     'Karte scannen, um euer erstes Erlebnis freizuschalten — oder einen eigenen Moment festhalten.',
                   )}
                 </Text>
@@ -183,7 +296,6 @@ export default function HomeScreen() {
         }
       />
 
-      {/* Upload a moment from anywhere — the entry point that was missing. */}
       <FloatingActionButton
         onPress={() => router.push('/memory/create')}
         icon="camera-outline"
@@ -208,6 +320,8 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
+
+  // Header
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -238,12 +352,42 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     color: Colors.accent,
   },
-  list: {
-    paddingBottom: 150,
+
+  list: { paddingBottom: 150 },
+
+  // Heartbeat strip
+  heartbeat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xl,
+    paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
   },
-  section: {
+  heartbeatStat: { alignItems: 'center' },
+  heartbeatNum: {
+    ...Typography.editorial,
+    fontSize: 26,
+    lineHeight: 30,
+    color: Colors.text,
+  },
+  heartbeatLabel: {
+    fontSize: 8,
+    fontWeight: '600',
+    letterSpacing: 2,
+    color: Colors.textFaint,
+    marginTop: 2,
+  },
+  heartbeatDiv: { width: 1, height: 26, backgroundColor: Colors.border },
+  heartbeatFill: { flex: 1 },
+  heartbeatGlyph: { fontSize: 18, color: Accents.apricot },
+
+  // Filmstrip section
+  filmstripSection: {
     paddingTop: Spacing.lg,
-    paddingBottom: Spacing.sm,
+    paddingBottom: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
@@ -256,61 +400,164 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.screen,
     marginBottom: Spacing.md,
   },
-  editionRow: {
+  filmstrip: {
     gap: Spacing.sm,
     paddingHorizontal: Spacing.screen,
-    paddingBottom: Spacing.sm,
+    paddingBottom: Spacing.xs,
   },
-  editionChip: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    alignItems: 'center',
-    backgroundColor: Colors.backgroundWarm,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Colors.border,
-    borderLeftWidth: 3,
+  polaroid: {
+    width: 116,
+    backgroundColor: Colors.surface,
     borderRadius: Radii.sm,
+    overflow: 'hidden',
+    ...Shadows.card,
   },
-  editionSymbol: { fontSize: 20 },
-  editionName: {
-    fontSize: 13,
-    fontWeight: '400',
-    color: Colors.text,
+  polaroidPhoto: {
+    width: 116,
+    height: 116,
+    backgroundColor: Colors.border,
   },
-  editionMeta: {
+  polaroidBlank: {
+    width: 116,
+    height: 116,
+    backgroundColor: Accents.cream,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  polaroidMark: { fontSize: 26, color: Accents.apricot },
+  polaroidCaption: {
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    gap: 2,
+  },
+  polaroidCard: {
+    fontSize: 8,
+    fontWeight: '700',
+    letterSpacing: 2,
+    color: Colors.accent,
+  },
+  polaroidDate: {
     fontSize: 10,
     fontWeight: '400',
-    letterSpacing: 1,
     color: Colors.textSubtle,
   },
-  feedHeader: {
+
+  // Active editions
+  editionsSection: {
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    gap: Spacing.sm,
+  },
+  editionCard: {
+    marginHorizontal: Spacing.screen,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    backgroundColor: Colors.backgroundWarm,
+    borderRadius: Radii.md,
+    borderWidth: 1,
+    borderLeftWidth: 4,
+    borderColor: Colors.border,
+    padding: Spacing.md,
+    ...Shadows.subtle,
+  },
+  editionSymbol: { fontSize: 30 },
+  editionText: { flex: 1, gap: 3 },
+  editionName: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: Colors.text,
+    letterSpacing: 0.1,
+  },
+  editionSub: {
+    fontSize: 10,
+    fontWeight: '400',
+    color: Colors.textSubtle,
+    letterSpacing: 0.4,
+  },
+  progressTrack: {
+    height: 3,
+    backgroundColor: Colors.border,
+    borderRadius: 2,
+    marginTop: 5,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: 3,
+    borderRadius: 2,
+  },
+  editionProgress: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 1,
+    color: Colors.textFaint,
+    marginTop: 3,
+  },
+  editionArrow: {
+    fontSize: 18,
+    fontWeight: '300',
+    color: Colors.textMuted,
+  },
+
+  // Notes nudge
+  notesRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: Spacing.screen,
-    paddingTop: Spacing.lg,
-    paddingBottom: Spacing.md,
+    paddingVertical: Spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    gap: Spacing.md,
   },
-  memoryCount: {
-    fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 1,
+  notesLeft: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.md,
+    flex: 1,
+  },
+  notesIcon: { fontSize: 20, marginTop: 1 },
+  notesTextBlock: { flex: 1, gap: 4 },
+  notesTitle: {
+    fontSize: 9,
+    fontWeight: '600',
+    letterSpacing: 2.5,
     color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
+  notesBody: {
+    fontSize: 14,
+    fontWeight: '300',
+    color: Colors.text,
+    lineHeight: 20,
+  },
+  notesArrow: {
+    fontSize: 18,
+    fontWeight: '300',
+    color: Colors.textMuted,
+  },
+
+  // Feed header
+  feedHeader: {
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.md,
+  },
+
+  // Empty state
   empty: {
     alignItems: 'center',
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.xxl,
     gap: Spacing.sm,
   },
-  emptyMark: { fontSize: 34, color: TOGETHER, marginBottom: Spacing.sm },
-  emptyText: {
+  emptyBloom: { marginBottom: Spacing.md },
+  emptyTitle: {
     ...Typography.editorial,
     fontSize: 22,
     color: Colors.text,
+    textAlign: 'center',
   },
   emptyHint: {
     fontSize: 13,
@@ -334,9 +581,9 @@ const styles = StyleSheet.create({
     letterSpacing: 2.5,
     color: Colors.white,
   },
-  fab: {
-    bottom: 54 + Spacing.lg, // float above the scan bar
-  },
+
+  // FAB + scan bar
+  fab: { bottom: 54 + Spacing.lg },
   addBar: {
     position: 'absolute',
     bottom: 0,

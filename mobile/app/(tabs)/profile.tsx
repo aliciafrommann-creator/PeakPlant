@@ -15,6 +15,7 @@ import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
+import { PeakBloom } from '../../components/ui/PeakBloom';
 
 export default function ProfileScreen() {
   const { activeSpace } = useSpaces();
@@ -33,8 +34,11 @@ export default function ProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.kicker}>{t('PROFILE', 'PROFIL')}</Text>
-        <Text style={styles.title}>{t('you', 'du')}</Text>
+        <View style={styles.headerMain}>
+          <Text style={styles.kicker}>{t('PROFILE', 'PROFIL')}</Text>
+          <Text style={styles.title}>{t('you', 'du')}</Text>
+        </View>
+        <PeakBloom size="sm" />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -87,11 +91,16 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.lg,
     paddingBottom: Spacing.lg,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
+  },
+  headerMain: {
     gap: 4,
   },
   kicker: {
