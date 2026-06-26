@@ -99,22 +99,33 @@ export default function HomeScreen() {
       {/* Header — the space name is the dropdown trigger (Instagram-style) */}
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.headerText}
+          style={styles.headerTrigger}
           onPress={() => setPickerOpen(true)}
           activeOpacity={0.7}
           accessibilityRole="button"
           accessibilityLabel={t('Switch, add or share a space', 'Space wechseln, hinzufügen oder teilen')}
           accessibilityHint={t('Opens the space picker', 'Öffnet die Space-Auswahl')}
         >
-          <View style={styles.kickerRow}>
-            <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
-            <Text style={styles.kicker}>{spaceLabel}</Text>
+          <View style={styles.headerAvatar}>
+            {activeSpace?.avatarUrl ? (
+              <Image source={{ uri: activeSpace.avatarUrl }} style={styles.headerAvatarImage} />
+            ) : (
+              <Text style={styles.headerAvatarEmoji}>
+                {activeSpace?.emoji ?? (activeSpace?.type === 'friends' ? '✦' : '♥')}
+              </Text>
+            )}
           </View>
-          <View style={styles.nameRow}>
-            <Text style={styles.spaceName} numberOfLines={1}>
-              {(activeSpace?.name ?? 'your space').toLowerCase()}
-            </Text>
-            <Ionicons name="chevron-down" size={18} color={Colors.textMuted} style={styles.chevron} />
+          <View style={styles.headerText}>
+            <View style={styles.kickerRow}>
+              <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
+              <Text style={styles.kicker}>{spaceLabel}</Text>
+            </View>
+            <View style={styles.nameRow}>
+              <Text style={styles.spaceName} numberOfLines={1}>
+                {(activeSpace?.name ?? 'your space').toLowerCase()}
+              </Text>
+              <Ionicons name="chevron-down" size={18} color={Colors.textMuted} style={styles.chevron} />
+            </View>
           </View>
         </TouchableOpacity>
       </View>
@@ -448,7 +459,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  headerText: { flex: 1, paddingRight: Spacing.md },
+  headerTrigger: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: Spacing.md, paddingRight: Spacing.md },
+  headerAvatar: {
+    width: 52,
+    height: 52,
+    borderRadius: Radii.pill,
+    backgroundColor: Colors.backgroundCream,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  headerAvatarImage: { width: 52, height: 52 },
+  headerAvatarEmoji: { fontSize: 26 },
+  headerText: { flex: 1 },
   kickerRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
   kickerDot: { width: 7, height: 7, borderRadius: 4 },
   kicker: {
