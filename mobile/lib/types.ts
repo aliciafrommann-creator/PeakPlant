@@ -49,6 +49,8 @@ export interface Space {
   createdAt: string;
   /** Local-only decoration: emoji chosen by the couple. Not synced to server. */
   emoji?: string;
+  /** Local-only: the collectible emoji stamped per completed challenge. */
+  collectibleEmoji?: string;
 }
 
 export type SpaceRole = 'owner' | 'member';

@@ -202,6 +202,11 @@ export default function HomeScreen() {
                   </View>
                 </View>
 
+                {chillyCount > 0 && (
+                  <Text style={styles.collectibleStrip}>
+                    {(activeSpace.collectibleEmoji ?? '🌶️').repeat(Math.min(chillyCount, 12))}
+                  </Text>
+                )}
                 <Text style={styles.collectibleLine}>
                   {chillyCount > 0
                     ? t(
@@ -209,8 +214,8 @@ export default function HomeScreen() {
                         `${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''} zusammen geschafft`,
                       )
                     : t(
-                        'your weekly collectible starts with the first completed challenge.',
-                        'euer wöchentliches Sammelzeichen startet mit der ersten geschafften Challenge.',
+                        `your collectible ${activeSpace.collectibleEmoji ?? '🌶️'} starts with the first completed challenge.`,
+                        `euer Sammelzeichen ${activeSpace.collectibleEmoji ?? '🌶️'} startet mit der ersten geschafften Challenge.`,
                       )}
                 </Text>
               </View>
@@ -739,12 +744,17 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     color: Colors.textSubtle,
   },
+  collectibleStrip: {
+    fontSize: 18,
+    letterSpacing: 2,
+    marginTop: Spacing.md,
+  },
   collectibleLine: {
     fontSize: 11,
     fontWeight: '400',
     letterSpacing: 0.3,
     color: Colors.textSubtle,
-    marginTop: Spacing.md,
+    marginTop: Spacing.xs,
     fontStyle: 'italic',
   },
 

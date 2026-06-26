@@ -84,7 +84,6 @@ export default function DiscoverScreen() {
   const streaksEnabled = useAppStore((s) => s.features.streaks);
   const challengesEnabled = useAppStore((s) => s.features.challenges);
   const ritualsEnabled = useAppStore((s) => s.features.rituals);
-  const missionsEnabled = useAppStore((s) => s.features.missions);
   const personalization = useAppStore((s) => s.personalization);
   const personalizationResetAt = useAppStore((s) => s.personalizationResetAt);
   const { t } = useLanguage();
@@ -298,7 +297,7 @@ export default function DiscoverScreen() {
           />
         )}
 
-        {/* Section toggle: All Ideas / Local Places */}
+        {/* Section toggle: Surprise me / Idea library / Places map */}
         <View style={styles.sectionToggle}>
           <TouchableOpacity
             style={[styles.toggleChip, styles.toggleChipActive]}
@@ -306,7 +305,19 @@ export default function DiscoverScreen() {
             accessibilityState={{ selected: true }}
           >
             <Text style={[styles.toggleChipText, styles.toggleChipTextActive]}>
-              {t('💡 ALL IDEAS', '💡 ALLE IDEEN')}
+              {t('✨ SURPRISE ME', '✨ ÜBERRASCH MICH')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.toggleChip}
+            onPress={() => router.push('/discover/browse')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('Browse the full idea library', 'Die ganze Ideen-Bibliothek durchstöbern')}
+          >
+            <Text style={styles.toggleChipText}>
+              {t('💡 ALL IDEAS', '💡 ALLE IDEEN')}{'  '}
+              <Ionicons name="arrow-forward" size={11} color={Colors.textSubtle} />
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -317,7 +328,7 @@ export default function DiscoverScreen() {
             accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
           >
             <Text style={styles.toggleChipText}>
-              {t('🗺️ PLACES MAP', '🗺️ ORTE-KARTE')}{'  '}
+              {t('🗺️ MAP', '🗺️ KARTE')}{'  '}
               <Ionicons name="arrow-forward" size={11} color={Colors.textSubtle} />
             </Text>
           </TouchableOpacity>
@@ -491,17 +502,15 @@ export default function DiscoverScreen() {
                 {saved.length > 0 ? ` · ${saved.length}` : ''}
               </Text>
             </TouchableOpacity>
-            {missionsEnabled && (
-              <TouchableOpacity
-                style={styles.linkPill}
-                onPress={() => router.push('/together')}
-                activeOpacity={0.85}
-                accessibilityRole="button"
-                accessibilityLabel={t('Browse all ideas and local places', 'Alle Ideen und Orte in der Nahe')}
-              >
-                <Text style={styles.linkPillText}>{t('🧭 all ideas', '🧭 alle Ideen')}</Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              style={styles.linkPill}
+              onPress={() => router.push('/discover/browse')}
+              activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel={t('Browse the full idea library', 'Die ganze Ideen-Bibliothek durchstöbern')}
+            >
+              <Text style={styles.linkPillText}>{t('🧭 idea library', '🧭 Ideen-Bibliothek')}</Text>
+            </TouchableOpacity>
             {challengesEnabled && (
               <TouchableOpacity
                 style={styles.linkPill}

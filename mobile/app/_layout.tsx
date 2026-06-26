@@ -52,6 +52,7 @@ export default function RootLayout() {
           <Stack.Screen name="together/[id]" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="challenges/index" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="challenges/[id]" options={{ animation: 'slide_from_right' }} />
+          <Stack.Screen name="discover/browse" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen
             name="space/new"
             options={{ presentation: 'modal', animation: 'slide_from_bottom' }}

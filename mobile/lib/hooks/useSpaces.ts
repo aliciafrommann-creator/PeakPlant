@@ -3,7 +3,7 @@ import { useFocusEffect } from 'expo-router';
 import { spaceRepository } from '../repositories';
 import { getActiveUser } from '../session';
 import { useAppStore } from '../store';
-import { getSpaceEmoji } from '../spaceCustomization';
+import { getSpaceEmoji, getCollectibleEmoji } from '../spaceCustomization';
 import type { Space } from '../types';
 
 /**
@@ -25,7 +25,11 @@ export function useSpaces() {
     }
     const data = await spaceRepository.getAllForUser(user.id);
     const enriched = await Promise.all(
-      data.map(async (s) => ({ ...s, emoji: await getSpaceEmoji(s.id) })),
+      data.map(async (s) => ({
+        ...s,
+        emoji: await getSpaceEmoji(s.id),
+        collectibleEmoji: await getCollectibleEmoji(s.id),
+      })),
     );
     setSpaces(enriched);
     setLoading(false);

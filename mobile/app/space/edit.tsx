@@ -15,7 +15,13 @@ import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Opacity } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { spaceRepository } from '../../lib/repositories';
-import { setSpaceEmoji, getSpaceEmoji } from '../../lib/spaceCustomization';
+import {
+  setSpaceEmoji,
+  getSpaceEmoji,
+  setCollectibleEmoji,
+  getCollectibleEmoji,
+  DEFAULT_COLLECTIBLE_EMOJI,
+} from '../../lib/spaceCustomization';
 import { confirmSuccess } from '../../lib/haptics';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -34,6 +40,12 @@ const EMOJI_GRID = [
   '🦋', '🐚', '🕊️', '🐝', '🧡', '🤍',
 ];
 
+// A small, playful set the couple stamps each time they finish a challenge.
+const COLLECTIBLE_GRID = [
+  '🌶️', '🌻', '🌙', '⭐', '🔥', '🏆',
+  '💛', '🦋', '🍀', '🐚', '✨', '🌈',
+];
+
 export default function EditSpaceScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { spaces, refresh } = useSpaces();
@@ -43,6 +55,7 @@ export default function EditSpaceScreen() {
 
   const [name, setName] = useState(space?.name ?? '');
   const [emoji, setEmoji] = useState<string | undefined>(space?.emoji);
+  const [collectible, setCollectible] = useState<string>(space?.collectibleEmoji ?? DEFAULT_COLLECTIBLE_EMOJI);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const nameInitialized = useRef(false);
@@ -58,6 +71,9 @@ export default function EditSpaceScreen() {
     if (!id) return;
     void getSpaceEmoji(id).then((e) => {
       if (e) setEmoji(e);
+    });
+    void getCollectibleEmoji(id).then((e) => {
+      if (e) setCollectible(e);
     });
   }, [id]);
 
@@ -83,6 +99,7 @@ export default function EditSpaceScreen() {
     try {
       await spaceRepository.update(space.id, { name: name.trim() });
       if (emoji) await setSpaceEmoji(space.id, emoji);
+      await setCollectibleEmoji(space.id, collectible);
       void confirmSuccess();
       await refresh();
       router.back();
@@ -155,6 +172,35 @@ export default function EditSpaceScreen() {
                     key={e}
                     style={[styles.emojiCell, selected && styles.emojiCellActive]}
                     onPress={() => setEmoji(e)}
+                    activeOpacity={0.75}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                    accessibilityLabel={e}
+                  >
+                    <Text style={styles.emojiText}>{e}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+
+          {/* Collectible emoji */}
+          <View style={styles.section}>
+            <Text style={styles.label}>{t('YOUR COLLECTIBLE', 'EUER SAMMELZEICHEN')}</Text>
+            <Text style={styles.collectibleHint}>
+              {t(
+                'you earn one each time you finish a challenge together.',
+                'ihr verdient eins, jedes Mal wenn ihr eine Challenge zusammen abschließt.',
+              )}
+            </Text>
+            <View style={styles.grid}>
+              {COLLECTIBLE_GRID.map((e) => {
+                const selected = collectible === e;
+                return (
+                  <TouchableOpacity
+                    key={e}
+                    style={[styles.emojiCell, selected && styles.emojiCellActive]}
+                    onPress={() => setCollectible(e)}
                     activeOpacity={0.75}
                     accessibilityRole="button"
                     accessibilityState={{ selected }}
@@ -257,6 +303,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   emojiText: { fontSize: 24 },
+  collectibleHint: { fontSize: 11, fontWeight: '300', color: Colors.textFaint, lineHeight: 16 },
   error: { fontSize: 13, fontWeight: '400', color: Colors.danger, lineHeight: 19 },
   primary: {
     height: 56,
