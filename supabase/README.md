@@ -11,6 +11,35 @@ credentials), tracked as O-001/O-002 in the Decision Register.
   `memories`, `card_activations`, `challenge_enrollments`), the
   `app_is_space_member()` security-definer helper, and space-scoped RLS on every
   personal table. No permissive default — access flows only through membership.
+- `migrations/0002`–`0011` — forward migrations (invites, account/storage,
+  discovery, planning, entitlements, atomic space create, public place feedback,
+  partner notes).
+- `migrations/0012_space_identity.sql` — **shared space identity**: adds
+  `spaces.emoji` and `spaces.avatar_path`, a member-scoped **UPDATE** policy on
+  `spaces` (previously missing — renames/emoji were silently denied by RLS), and
+  a private member-scoped **`space-avatars`** storage bucket (separate from the
+  private `memory-photos` bucket). See "Applying 0012" below.
+
+## Applying 0012 (manual)
+
+Run from the repo root once, against the linked project:
+
+```
+supabase db push   # applies 0012_space_identity.sql
+```
+
+This migration is **purely additive** and does not touch `orders`,
+`subscribers`, `community_questions`, or `newsletter_sends`. It:
+
+1. adds two nullable columns to `spaces` (`emoji`, `avatar_path`),
+2. creates the `spaces: members update` RLS policy (members can rename / set
+   emoji / set avatar of their own space),
+3. creates the `space-avatars` bucket (`public = false`) + member read/insert/
+   update/delete policies on `storage.objects`.
+
+No bucket needs to be created by hand in the dashboard — the migration creates
+it. Until 0012 is applied, the app falls back to **local-only** emoji (no
+avatar); after it, emoji + avatar are shared across both members.
 
 ## Going live (human steps)
 
