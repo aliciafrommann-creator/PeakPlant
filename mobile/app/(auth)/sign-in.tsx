@@ -5,14 +5,15 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { Logo } from '../../components/ui/Logo';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { sendEmailCode, verifyEmailCode, ensureProfile } from '../../lib/supabase/auth';
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
   inner: { flex: 1, paddingHorizontal: Spacing.screen, paddingVertical: Spacing.xl, justifyContent: 'space-between' },
   top: { paddingTop: Spacing.md },
   center: { flex: 1, justifyContent: 'center', gap: Spacing.md },
-  title: { fontSize: 34, fontWeight: '200', color: Colors.text, letterSpacing: -0.5 },
+  title: { ...Typography.editorial, fontSize: 34, lineHeight: 40 },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
   input: {
     fontSize: 18,
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
   codeInput: { fontSize: 28, letterSpacing: 5 },
   link: { fontSize: 12, fontWeight: '300', color: Colors.textSubtle, marginTop: Spacing.md },
   linkDisabled: { opacity: 0.4 },
-  error: { fontSize: 13, fontWeight: '300', color: '#b42318', marginBottom: Spacing.md },
+  error: { fontSize: 13, fontWeight: '300', color: Colors.danger, marginBottom: Spacing.md },
   bottom: { alignItems: 'flex-start' },
   button: {
     height: 52,
@@ -193,6 +194,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'stretch',
+    borderRadius: Radii.pill,
   },
   buttonDisabled: { opacity: 0.4 },
   buttonText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },

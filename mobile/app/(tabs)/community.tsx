@@ -6,7 +6,6 @@ import {
   Linking,
   Modal,
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,10 +13,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows, Opacity } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { feedbackRepository, publicPlaceFeedbackRepository, savedDateRepository } from '../../lib/repositories';
@@ -29,7 +30,11 @@ import {
 import { aggregateRatings } from '../../lib/discovery/ratings';
 import { buildPlaceMapHtml, directionsUrl } from '../../lib/discovery/placeMap';
 import { requestCurrentForegroundLocation } from '../../lib/location';
-import { searchLivePlacesNear, type LivePlaceSearchFailure } from '../../lib/discovery/livePlaceSearch';
+import {
+  resetLivePlaceSearchUsage,
+  searchLivePlacesNear,
+  type LivePlaceSearchFailure,
+} from '../../lib/discovery/livePlaceSearch';
 import {
   DEFAULT_LIVE_PLACE_RADIUS_KM,
   PILOT_CITIES,
@@ -40,6 +45,8 @@ import {
 import type { LivePlace } from '../../lib/discovery/providers/interface';
 import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
 import type { DateFeedback, PublicPlaceFeedback, PublicPlaceSpot } from '../../lib/types';
+
+const PLACES = Sections.community; // raspberry blossom — shared, social, a little playful
 
 type MapMessage =
   | { type: 'map-ready' }
@@ -291,11 +298,23 @@ export default function PlacesScreen() {
       message: t(`searching live places for ${label}…`, `Suche Live-Orte für ${label}…`),
     });
     try {
-      const result = await searchLivePlacesNear({
+      let usedBroaderFallback = false;
+      let result = await searchLivePlacesNear({
         query,
         near: coords,
         radiusKm: DEFAULT_LIVE_PLACE_RADIUS_KM,
+        scopeId: activeSpace?.id,
       });
+      // A very specific query (e.g. "workshop innsbruck") can match nothing.
+      // No-results don't burn the allowance, so retry once broader before giving up.
+      if (!result.ok && result.reason === 'no_results' && query) {
+        usedBroaderFallback = true;
+        result = await searchLivePlacesNear({
+          near: coords,
+          radiusKm: DEFAULT_LIVE_PLACE_RADIUS_KM,
+          scopeId: activeSpace?.id,
+        });
+      }
       if (result.ok) {
         setLivePlaces(result.places);
         if (result.places[0]) setSelectedId(result.places[0].id);
@@ -303,15 +322,20 @@ export default function PlacesScreen() {
           kind: result.source,
           remaining: result.remaining,
           limit: result.limit,
-          message: result.source === 'cached'
+          message: usedBroaderFallback
             ? t(
-                `using ${result.places.length} cached places for ${label} — no new Google request.`,
-                `${result.places.length} gespeicherte Orte für ${label} — keine neue Google-Anfrage.`,
+                `nothing exact, so I broadened it and found ${result.places.length} places for ${label}.`,
+                `Exakt dazu kam nichts, deshalb breiter gesucht: ${result.places.length} Orte für ${label} gefunden.`,
               )
-            : t(
-                `found ${result.places.length} live places for ${label}.`,
-                `${result.places.length} Live-Orte für ${label} gefunden.`,
-              ),
+            : result.source === 'cached'
+              ? t(
+                  `using ${result.places.length} cached places for ${label} — no new Google request.`,
+                  `${result.places.length} gespeicherte Orte für ${label} — keine neue Google-Anfrage.`,
+                )
+              : t(
+                  `found ${result.places.length} live places for ${label}.`,
+                  `${result.places.length} Live-Orte für ${label} gefunden.`,
+                ),
         });
         await confirmSuccess();
       } else {
@@ -325,7 +349,7 @@ export default function PlacesScreen() {
     } finally {
       setLiveLoading(false);
     }
-  }, [t]);
+  }, [activeSpace?.id, t]);
 
   const findNearby = useCallback(async (query?: string) => {
     setLiveLoading(true);
@@ -363,6 +387,27 @@ export default function PlacesScreen() {
   const searchPilotCity = useCallback(async (city: PilotCity, query?: string) => {
     await searchAtCoords({ coords: city.coords, query, label: city.label });
   }, [searchAtCoords]);
+
+  // An old build could leave a per-device counter stuck at 0. Let the couple
+  // clear this space's local counter so a stale value never blocks them.
+  const resetLiveSearchCounter = useCallback(async () => {
+    try {
+      await resetLivePlaceSearchUsage(activeSpace?.id);
+      setLiveStatus({
+        kind: 'idle',
+        message: t(
+          'local live-search counter reset for this space. try a broader search again.',
+          'Lokales Live-Suchkontingent für diesen Space zurückgesetzt. Versuch eine breitere Suche nochmal.',
+        ),
+      });
+      await confirmSuccess();
+    } catch {
+      Alert.alert(
+        t('Could not reset counter', 'Kontingent konnte nicht zurückgesetzt werden'),
+        t('Please try again in a moment.', 'Bitte versuche es gleich noch einmal.'),
+      );
+    }
+  }, [activeSpace?.id, t]);
 
   const planSelectedPlace = useCallback(async () => {
     if (!activeSpace || !selected) {
@@ -491,6 +536,20 @@ export default function PlacesScreen() {
               <Text style={styles.liveButtonText}>{t('FIND NEAR ME', 'IN DER NÄHE')}</Text>
             )}
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.askMapButton}
+            onPress={() => router.push('/ask')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t(
+              'Ask PeakPlant for a specific place idea',
+              'PeakPlant nach einer spezifischen Orte-Idee fragen',
+            )}
+          >
+            <Text style={styles.askMapButtonText}>
+              {t('ASK PEAKPLANT FOR A FITTED DATE IDEA', 'PEAKPLANT NACH PASSENDER DATE-IDEE FRAGEN')}
+            </Text>
+          </TouchableOpacity>
           <View style={styles.pilotCities}>
             {PILOT_CITIES.map((city) => (
               <TouchableOpacity
@@ -506,20 +565,34 @@ export default function PlacesScreen() {
             ))}
           </View>
           {liveStatus.message ? (
-            <Text style={[
-              styles.liveStatus,
-              liveStatus.kind === 'error' && styles.liveStatusError,
-            ]}>
-              {liveStatus.message}
-              {'remaining' in liveStatus && liveStatus.limit != null
-                ? ` ${t('left this month:', 'übrig diesen Monat:')} ${liveStatus.remaining}/${liveStatus.limit}`
-                : ''}
-            </Text>
+            <>
+              <Text style={[
+                styles.liveStatus,
+                liveStatus.kind === 'error' && styles.liveStatusError,
+              ]}>
+                {liveStatus.message}
+                {'remaining' in liveStatus && liveStatus.limit != null
+                  ? ` ${t('left for this space:', 'übrig für diesen Space:')} ${liveStatus.remaining}/${liveStatus.limit}`
+                  : ''}
+              </Text>
+              {'remaining' in liveStatus && liveStatus.remaining === 0 ? (
+                <TouchableOpacity
+                  style={styles.resetCounterButton}
+                  onPress={() => void resetLiveSearchCounter()}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('Reset local live search counter', 'Lokales Live-Suchkontingent zurücksetzen')}
+                >
+                  <Text style={styles.resetCounterText}>
+                    {t('RESET LOCAL COUNTER', 'LOKALEN ZÄHLER ZURÜCKSETZEN')}
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
+            </>
           ) : (
             <Text style={styles.liveStatus}>
               {t(
-                'default beta limit: 12 fresh live searches per device/month; cached repeats are free.',
-                'Beta-Default: 12 frische Live-Suchen pro Gerät/Monat; Cache-Wiederholungen sind gratis.',
+                'default beta limit: 6 useful fresh live searches per space/month; cached repeats and no-results are free.',
+                'Beta-Default: 6 nützliche frische Live-Suchen pro Space/Monat; Cache-Wiederholungen und Null-Treffer sind gratis.',
               )}
             </Text>
           )}
@@ -564,7 +637,7 @@ export default function PlacesScreen() {
           )}
         </View>
         <Text style={styles.attribution}>
-          {t('map © OpenStreetMap contributors', 'Karte © OpenStreetMap-Mitwirkende')}
+          {t('map © OpenStreetMap · CARTO Voyager', 'Karte © OpenStreetMap · CARTO Voyager')}
         </Text>
 
         <ScrollView
@@ -863,8 +936,8 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.lg,
     gap: Spacing.sm,
   },
-  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textSubtle },
-  title: { fontSize: 28, fontWeight: '300', color: Colors.text, letterSpacing: -0.5 },
+  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: PLACES },
+  title: { ...Typography.editorial, fontSize: 32, lineHeight: 38 },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
   livePanel: {
     marginHorizontal: Spacing.screen,
@@ -872,18 +945,37 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: Spacing.md,
     backgroundColor: Colors.backgroundCream,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   liveCopy: { gap: Spacing.xs },
-  liveKicker: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.accent },
+  liveKicker: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: PLACES },
   liveText: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18 },
   liveButton: {
     minHeight: 48,
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   liveButtonDisabled: { opacity: 0.7 },
   liveButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
+  askMapButton: {
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.background,
+    borderRadius: Radii.pill,
+  },
+  askMapButtonText: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2,
+    color: Colors.text,
+    textAlign: 'center',
+  },
   pilotCities: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   pilotCity: {
     minHeight: 38,
@@ -895,11 +987,22 @@ const styles = StyleSheet.create({
   pilotCityText: { fontSize: 10, fontWeight: '500', letterSpacing: 1.5, color: Colors.textMuted },
   liveStatus: { fontSize: 10, fontWeight: '400', color: Colors.textSubtle, lineHeight: 15 },
   liveStatusError: { color: Colors.textMuted },
+  resetCounterButton: {
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radii.pill,
+  },
+  resetCounterText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
   mapFrame: {
     height: 310,
     marginHorizontal: Spacing.screen,
     backgroundColor: Colors.backgroundCream,
     overflow: 'hidden',
+    borderRadius: Radii.lg,
+    ...Shadows.card,
   },
   map: { flex: 1, backgroundColor: Colors.backgroundCream },
   mapLoading: {
@@ -934,6 +1037,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.border,
+    borderRadius: Radii.pill,
   },
   placeChipActive: { backgroundColor: Colors.text, borderColor: Colors.text },
   placeChipText: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
@@ -943,6 +1047,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: Spacing.sm,
     backgroundColor: Colors.backgroundCream,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   placeHead: {
     flexDirection: 'row',
@@ -951,7 +1057,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   placeTitleBlock: { flex: 1, gap: 2 },
-  placeName: { fontSize: 22, fontWeight: '300', color: Colors.text },
+  placeName: { ...Typography.editorial, fontSize: 23, lineHeight: 28 },
   placeArea: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
   partner: {
     fontSize: 8,
@@ -998,6 +1104,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   primaryButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
   secondaryButton: {
@@ -1006,6 +1113,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   secondaryButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   tertiaryButton: {
@@ -1093,7 +1201,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
-  sheetConfirmDisabled: { opacity: 0.35 },
+  sheetConfirmDisabled: { opacity: Opacity.disabled },
   sheetConfirmText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
 });

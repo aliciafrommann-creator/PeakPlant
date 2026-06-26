@@ -32,12 +32,13 @@ describe('live places guardrails', () => {
   });
 
   it('resets usage keys by calendar month', () => {
-    expect(livePlacesUsageKey(new Date('2026-06-23T12:00:00Z'))).toBe('live-places:usage:2026-06');
-    expect(livePlacesUsageKey(new Date('2026-07-01T12:00:00Z'))).toBe('live-places:usage:2026-07');
+    expect(livePlacesUsageKey(new Date('2026-06-23T12:00:00Z'), 'space-1')).toBe('live-places:usage:space-1:2026-06');
+    expect(livePlacesUsageKey(new Date('2026-07-01T12:00:00Z'), 'space-1')).toBe('live-places:usage:space-1:2026-07');
+    expect(livePlacesUsageKey(new Date('2026-07-01T12:00:00Z'))).toBe('live-places:usage:device:2026-07');
   });
 
   it('keeps the monthly limit conservative and finite', () => {
-    expect(normalizeMonthlyLivePlaceLimit(undefined)).toBe(12);
+    expect(normalizeMonthlyLivePlaceLimit(undefined)).toBe(6);
     expect(normalizeMonthlyLivePlaceLimit('5')).toBe(5);
     expect(normalizeMonthlyLivePlaceLimit('5000')).toBe(500);
   });

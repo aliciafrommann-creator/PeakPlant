@@ -5,15 +5,16 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   Share,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { SEED_SPACES } from '../../lib/seed';
 import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -335,11 +336,9 @@ const styles = StyleSheet.create({
     color: Colors.textSubtle,
   },
   title: {
+    ...Typography.editorial,
     fontSize: 34,
-    fontWeight: '200',
-    color: Colors.text,
     lineHeight: 40,
-    letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 14,
@@ -352,6 +351,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.backgroundDark,
     padding: Spacing.xl,
     gap: Spacing.sm,
+    borderRadius: Radii.lg,
   },
   codeLabel: {
     fontSize: 10,
@@ -406,6 +406,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   shareText: {
     fontSize: 11,
@@ -417,7 +418,7 @@ const styles = StyleSheet.create({
   error: {
     fontSize: 13,
     fontWeight: '400',
-    color: '#b42318',
+    color: Colors.danger,
     lineHeight: 19,
   },
   bottom: {
@@ -429,6 +430,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   continueText: {
     fontSize: 11,

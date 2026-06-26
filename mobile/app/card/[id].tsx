@@ -1,22 +1,37 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   ScrollView,
+  Animated,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
+import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
 import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { CardGroup, CardSection } from '../../lib/types';
 
 export default function CardDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, unlocked } = useLocalSearchParams<{ id: string; unlocked?: string }>();
   const { t, l } = useLanguage();
+
+  const bannerOpacity = useRef(new Animated.Value(0)).current;
+  const [showBanner, setShowBanner] = useState(false);
+
+  useEffect(() => {
+    if (unlocked !== 'true') return;
+    setShowBanner(true);
+    Animated.sequence([
+      Animated.timing(bannerOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
+      Animated.delay(2000),
+      Animated.timing(bannerOpacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+    ]).start(() => setShowBanner(false));
+  }, [unlocked, bannerOpacity]);
 
   const card = SEED_CARDS.find((c) => c.id === id);
   const edition = card ? (getEdition(card.edition) ?? SEED_EDITION) : SEED_EDITION;
@@ -105,11 +120,16 @@ export default function CardDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {showBanner && (
+        <Animated.View style={[styles.unlockedBanner, { opacity: bannerOpacity }]} pointerEvents="none">
+          <Text style={styles.unlockedBannerText}>
+            {t('✓ CARD UNLOCKED', '✓ KARTE FREIGESCHALTET')}
+          </Text>
+        </Animated.View>
+      )}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURÜCK')}</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerLabel} numberOfLines={1}>{groupLabel.toUpperCase()}</Text>
+        <BackButton variant="close" label={t('CLOSE', 'SCHLIESSEN')} />
+        <Text style={styles.headerLabel} numberOfLines={2}>{groupLabel.toUpperCase()}</Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -188,12 +208,15 @@ const styles = StyleSheet.create({
   },
   cardVisual: {
     padding: 2,
+    borderRadius: Radii.lg,
+    overflow: 'hidden',
   },
   cardInner: {
     padding: Spacing.xl,
     aspectRatio: 0.7,
     justifyContent: 'space-between',
     gap: Spacing.md,
+    borderRadius: Radii.lg - 2,
   },
   cardEdition: {
     fontSize: 8,
@@ -274,6 +297,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   preserveText: {
     fontSize: 11,
@@ -295,6 +319,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     letterSpacing: 0.5,
     fontStyle: 'italic',
+  },
+  unlockedBanner: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: Colors.accent,
+    paddingVertical: 10,
+    alignItems: 'center',
+    zIndex: 100,
+  },
+  unlockedBannerText: {
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 3,
+    color: Colors.white,
   },
   notFound: {
     flex: 1,

@@ -10,7 +10,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
   Modal,
@@ -19,9 +18,12 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { BackButton } from '../../components/ui/BackButton';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useAppStore } from '../../lib/store';
@@ -29,6 +31,8 @@ import { ritualRepository } from '../../lib/repositories';
 import type { Ritual, RitualCadence } from '../../lib/types';
 
 const CADENCES: RitualCadence[] = ['weekly', 'monthly', 'seasonally', 'whenever'];
+
+const RITUALS = Sections.rituals; // sage — quiet, returning, grounded
 
 export default function RitualsScreen() {
   const { activeSpace } = useSpaces();
@@ -134,14 +138,7 @@ export default function RitualsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel={t('Back', 'Zuruck')}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Text style={styles.back}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
-        </TouchableOpacity>
+        <BackButton label={t('BACK', 'ZURUCK')} />
         <Text style={styles.title}>{t('rituals', 'Rituale')}</Text>
         <Text style={styles.subtitle}>
           {t(
@@ -302,7 +299,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   back: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
-  title: { fontSize: 26, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
+  title: { ...Typography.editorial, fontSize: 30, lineHeight: 36 },
   subtitle: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
   center: {
     flex: 1,
@@ -327,12 +324,21 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   ctaText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   scroll: { padding: Spacing.screen, gap: Spacing.md, paddingBottom: Spacing.xxxl },
-  card: { backgroundColor: Colors.backgroundCream, padding: Spacing.lg, gap: Spacing.sm },
-  cardCadence: { fontSize: 8, fontWeight: '500', letterSpacing: 1.5, color: Colors.textSubtle },
-  cardTitle: { fontSize: 20, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
+  card: {
+    backgroundColor: Colors.backgroundCream,
+    padding: Spacing.lg,
+    gap: Spacing.sm,
+    borderRadius: Radii.md,
+    borderLeftWidth: 3,
+    borderLeftColor: RITUALS,
+    ...Shadows.subtle,
+  },
+  cardCadence: { fontSize: 8, fontWeight: '500', letterSpacing: 1.5, color: RITUALS },
+  cardTitle: { ...Typography.editorial, fontSize: 21, lineHeight: 27 },
   cardNote: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19, fontStyle: 'italic' },
   cardRevisited: { fontSize: 11, fontWeight: '300', color: Colors.textFaint },
   actions: {
@@ -349,6 +355,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   actionPrimaryText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.white },
   actionGhost: { height: 40, paddingHorizontal: Spacing.md, justifyContent: 'center', alignItems: 'center' },
@@ -362,6 +369,8 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.xxxl,
     gap: Spacing.md,
+    borderTopLeftRadius: Radii.xl,
+    borderTopRightRadius: Radii.xl,
   },
   sheetTitle: { fontSize: 18, fontWeight: '200', color: Colors.text, letterSpacing: -0.2 },
   sheetInput: {
@@ -389,6 +398,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderWidth: 1,
     borderColor: Colors.border,
+    borderRadius: Radii.pill,
   },
   cadenceChipOn: { borderColor: Colors.text, backgroundColor: Colors.text },
   cadenceChipText: { fontSize: 12, fontWeight: '300', color: Colors.textMuted },
@@ -401,9 +411,10 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   sheetCancelText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
-  sheetConfirm: { height: 44, flex: 1, backgroundColor: Colors.text, justifyContent: 'center', alignItems: 'center' },
+  sheetConfirm: { height: 44, flex: 1, backgroundColor: Colors.text, justifyContent: 'center', alignItems: 'center', borderRadius: Radii.pill },
   sheetConfirmDisabled: { opacity: 0.35 },
   sheetConfirmText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
 });

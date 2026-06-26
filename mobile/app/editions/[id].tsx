@@ -1,8 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
+import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
@@ -11,12 +21,13 @@ import { getEdition, SEED_EDITION, SEED_CARDS } from '../../lib/seed';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { ShopLink } from '../../components/edition/ShopLink';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
+import { EmptyState } from '../../components/ui/EmptyState';
 import type { Memory } from '../../lib/types';
 
 export default function EditionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { activeSpace } = useSpaces();
-  const { memories, loading } = useMemories(activeSpace?.id);
+  const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
   const obscured = usePrivacyOverlay();
   const { t } = useLanguage();
 
@@ -58,19 +69,20 @@ export default function EditionScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.bar}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel={t('Back to editions', 'Zuruck zu Editionen')}
-        >
-          <Text style={styles.back}>{'<-'} {t('EDITIONS', 'EDITIONEN')}</Text>
-        </TouchableOpacity>
+        <BackButton label={t('EDITIONS', 'EDITIONEN')} />
       </View>
 
       <FlatList
         data={editionMemories}
         keyExtractor={(item) => item.id}
         renderItem={renderMemory}
+        refreshControl={
+          <RefreshControl
+            refreshing={loading && editionMemories.length > 0}
+            onRefresh={refresh}
+            tintColor={Colors.accent}
+          />
+        }
         ListHeaderComponent={
           <View style={[styles.header, { backgroundColor: edition.color }]}>
             <Text style={styles.symbol}>{edition.symbol}</Text>
@@ -103,7 +115,17 @@ export default function EditionScreen() {
           </View>
         }
         ListEmptyComponent={
-          loading ? null : (
+          loading ? null : error ? (
+            <EmptyState
+              title={t("couldn't load your diary.", 'euer Tagebuch konnte nicht geladen werden.')}
+              hint={t(
+                'your moments are safe — this is just a connection hiccup.',
+                'eure Momente sind sicher — das ist nur ein Verbindungsproblem.',
+              )}
+              ctaLabel={t('TRY AGAIN', 'ERNEUT VERSUCHEN')}
+              onCta={refresh}
+            />
+          ) : (
             <View style={styles.empty}>
               <Text style={styles.emptyText}>{t('no moments yet.', 'noch keine Momente.')}</Text>
               <Text style={styles.emptyHint}>
@@ -145,7 +167,7 @@ const styles = StyleSheet.create({
   },
   symbol: { fontSize: 36, marginBottom: Spacing.sm },
   editionLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textSubtle },
-  title: { fontSize: 36, fontWeight: '200', color: Colors.white, letterSpacing: -0.5 },
+  title: { ...Typography.editorial, fontSize: 36, lineHeight: 40, color: Colors.white },
   description: {
     fontSize: 14,
     fontWeight: '300',
@@ -175,6 +197,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.md,
+    borderRadius: Radii.pill,
   },
   scanButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.backgroundDark },
   diaryLabel: {

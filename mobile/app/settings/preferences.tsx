@@ -4,14 +4,16 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
   Switch,
   Alert,
 } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from 'expo-router';
+import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useAppStore } from '../../lib/store';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -125,14 +127,7 @@ export default function PreferencesScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel={t('Back', 'Zuruck')}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Text style={styles.back}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
-        </TouchableOpacity>
+        <BackButton label={t('BACK', 'ZURUCK')} />
         <Text style={styles.title}>{t('personalization', 'Personalisierung')}</Text>
       </View>
 
@@ -287,7 +282,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   back: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
-  title: { fontSize: 26, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
+  title: { ...Typography.editorial, fontSize: 26, lineHeight: 32 },
   scroll: { padding: Spacing.screen, gap: Spacing.lg, paddingBottom: Spacing.xxxl },
   lead: {
     fontSize: 14,
@@ -335,6 +330,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     paddingHorizontal: 6,
     paddingVertical: 2,
+    borderRadius: Radii.pill,
   },
   neverRow: {
     flexDirection: 'row',
@@ -345,12 +341,13 @@ const styles = StyleSheet.create({
   clearBtn: {
     height: 44,
     borderWidth: 1,
-    borderColor: '#b42318',
+    borderColor: Colors.danger,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.md,
+    borderRadius: Radii.pill,
   },
-  clearText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: '#b42318' },
+  clearText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.danger },
   learnToggleRow: {
     flexDirection: 'row',
     alignItems: 'center',

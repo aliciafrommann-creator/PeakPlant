@@ -3,15 +3,16 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { TogetherCard } from '../../components/together/TogetherCard';
 import { PlaceItem } from '../../components/together/PlaceItem';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -48,13 +49,7 @@ export default function TogetherScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel={t('Back', 'Zuruck')}
-        >
-          <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
-        </TouchableOpacity>
+        <BackButton label={t('BACK', 'ZURUCK')} />
         <Text style={styles.headerLabel}>{t('TO DO TOGETHER', 'GEMEINSAM TUN')}</Text>
         <View style={{ width: 60 }} />
       </View>
@@ -80,18 +75,36 @@ export default function TogetherScreen() {
           </View>
         )}
 
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>{t('MORE IDEAS', 'WEITERE IDEEN')}</Text>
-          <View style={styles.list}>
-            {rest.map((m) => (
-              <TogetherCard
-                key={m.id}
-                moment={m}
-                onPress={() => router.push(`/together/${m.id}`)}
-              />
-            ))}
+        {rest.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>{t('MORE IDEAS', 'WEITERE IDEEN')}</Text>
+            <View style={styles.list}>
+              {rest.map((m) => (
+                <TogetherCard
+                  key={m.id}
+                  moment={m}
+                  onPress={() => router.push(`/together/${m.id}`)}
+                />
+              ))}
+            </View>
           </View>
-        </View>
+        )}
+
+        {candidates.length === 0 && (
+          <EmptyState
+            mark="✦"
+            title={
+              activeSpace
+                ? t('no ideas right now.', 'gerade keine Ideen.')
+                : t('pick a space first.', 'wähle zuerst einen Space.')
+            }
+            hint={
+              activeSpace
+                ? t('check back soon for fresh things to do together.', 'schau bald wieder vorbei für frische Ideen zu zweit.')
+                : t('ideas are tuned to the space you are in.', 'Ideen richten sich nach eurem Space.')
+            }
+          />
+        )}
 
         {placesEnabled && (
           <View style={styles.section}>

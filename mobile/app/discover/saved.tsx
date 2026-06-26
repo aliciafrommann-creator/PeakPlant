@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
   Alert,
   ActivityIndicator,
@@ -13,9 +12,12 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
+import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii, Opacity } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { savedDateRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -288,14 +290,7 @@ export default function SavedDatesScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel={t('Back', 'Zuruck')}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Text style={styles.back}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
-        </TouchableOpacity>
+        <BackButton label={t('BACK', 'ZURUCK')} />
         <Text style={styles.title}>{t('saved ideas', 'gespeicherte Ideen')}</Text>
       </View>
 
@@ -558,7 +553,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   back: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
-  title: { fontSize: 26, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
+  title: { ...Typography.editorial, fontSize: 26, lineHeight: 32 },
   center: {
     flex: 1,
     alignItems: 'center',
@@ -582,6 +577,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   ctaText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   scroll: { padding: Spacing.screen, gap: Spacing.md, paddingBottom: Spacing.xxxl },
@@ -630,6 +626,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   actionDoneText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.white },
   actionPlan: {
@@ -639,6 +636,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   actionPlanText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   actionDismiss: {
@@ -714,7 +712,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
-  sheetConfirmDisabled: { opacity: 0.35 },
+  sheetConfirmDisabled: { opacity: Opacity.disabled },
   sheetConfirmText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
 });

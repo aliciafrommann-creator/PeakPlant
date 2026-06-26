@@ -47,6 +47,8 @@ export interface Space {
   name: string;
   inviteCode: string;
   createdAt: string;
+  /** Local-only decoration: emoji chosen by the couple. Not synced to server. */
+  emoji?: string;
 }
 
 export type SpaceRole = 'owner' | 'member';
@@ -88,6 +90,21 @@ export interface Memory {
 export interface User {
   id: string;
   name: string;
+}
+
+/**
+ * A short, dedicated note one member leaves for their space — a love message
+ * to the partner. Space-scoped under the same RLS as memories: both members
+ * read every note, only the author writes their own. `authorId`/`authorName`
+ * let the UI distinguish "your note" from "from your partner".
+ */
+export interface PartnerNote {
+  id: string;
+  spaceId: string;
+  text: string;
+  authorId?: string;
+  authorName?: string;
+  createdAt: string;
 }
 
 /**

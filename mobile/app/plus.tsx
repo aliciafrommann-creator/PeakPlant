@@ -4,14 +4,15 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   ActivityIndicator,
   Alert,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../constants/colors';
-import { Spacing } from '../constants/spacing';
+import { Spacing, Radii } from '../constants/spacing';
+import { Typography } from '../constants/typography';
 import { useLanguage } from '../lib/hooks/useLanguage';
 import { useAppStore } from '../lib/store';
 import { billing } from '../lib/monetization/billing';
@@ -185,9 +186,8 @@ const styles = StyleSheet.create({
     marginBottom: -Spacing.sm,
   },
   heading: {
+    ...Typography.editorial,
     fontSize: 34,
-    fontWeight: '300',
-    color: Colors.text,
     letterSpacing: -0.5,
     lineHeight: 40,
   },
@@ -215,6 +215,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   ctaDisabled: { opacity: 0.5 },
   ctaText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },

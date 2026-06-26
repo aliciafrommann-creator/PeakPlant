@@ -10,6 +10,7 @@ import type {
   PublicPlaceSpot,
   PublicPlaceFeedback,
   Ritual,
+  PartnerNote,
 } from '../types';
 
 export interface IMemoryRepository {
@@ -42,6 +43,8 @@ export interface ISpaceRepository {
   create(input: CreateSpaceInput): Promise<Space>;
   /** Mock join-by-code: links the user into the matching space (or a new one). */
   joinByCode(code: string, userId: string, userName: string): Promise<Space>;
+  /** Rename the space. Both members can update. */
+  update(spaceId: string, updates: Pick<Space, 'name'>): Promise<Space>;
 }
 
 export interface ISavedDateRepository {
@@ -81,6 +84,12 @@ export interface IPublicPlaceFeedbackRepository {
   saveSpot(item: Omit<PublicPlaceSpot, 'createdAt'>): Promise<PublicPlaceSpot>;
   getByPlaceIds(placeIds: string[]): Promise<PublicPlaceFeedback[]>;
   save(item: Omit<PublicPlaceFeedback, 'id' | 'createdAt'>): Promise<PublicPlaceFeedback>;
+}
+
+export interface INoteRepository {
+  getAll(spaceId: string): Promise<PartnerNote[]>;
+  create(item: Omit<PartnerNote, 'id' | 'createdAt'>): Promise<PartnerNote>;
+  remove(id: string): Promise<void>;
 }
 
 export interface IRitualRepository {

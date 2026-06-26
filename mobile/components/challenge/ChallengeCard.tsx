@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { ProgressBar } from './ProgressBar';
 import type { Challenge, ChallengeProgress } from '../../lib/challenges';
 
@@ -47,6 +48,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.backgroundWarm,
     padding: Spacing.lg,
     gap: 6,
+    borderRadius: Radii.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    ...Shadows.subtle,
   },
   head: {
     flexDirection: 'row',
@@ -54,8 +59,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   badge: { fontSize: 18 },
-  duration: { fontSize: 8, fontWeight: '500', letterSpacing: 2, color: Colors.textFaint },
-  title: { fontSize: 19, fontWeight: '200', color: Colors.text, letterSpacing: -0.2 },
+  duration: { fontSize: 8, fontWeight: '500', letterSpacing: 2, color: Sections.grow },
+  title: { ...Typography.editorial, fontSize: 20, lineHeight: 26 },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 20 },
   progress: { marginTop: Spacing.sm },
   goalHint: {

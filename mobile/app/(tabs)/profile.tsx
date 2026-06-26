@@ -3,33 +3,42 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { useMemories } from '../../lib/hooks/useMemories';
+import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
+import { PeakBloom } from '../../components/ui/PeakBloom';
 
 export default function ProfileScreen() {
   const { activeSpace } = useSpaces();
   const { t } = useLanguage();
+  const { memories } = useMemories(activeSpace?.id);
+  const { chillyCount } = useWeeklyChallenge(activeSpace?.id);
 
-  const links: { label: string; route: string }[] = [
-    { label: t('customize peakplant', 'PeakPlant anpassen'), route: '/customize' },
-    { label: t('account & data', 'Konto & Daten'), route: '/account' },
-    { label: t('language & preferences', 'Sprache & Einstellungen'), route: '/settings/preferences' },
-    { label: t('ask peakplant', 'PeakPlant fragen'), route: '/ask' },
-    { label: t('peakplant plus', 'PeakPlant Plus'), route: '/plus' },
+  const links: { emoji: string; label: string; route: string }[] = [
+    { emoji: '🎨', label: t('customize peakplant', 'PeakPlant anpassen'), route: '/customize' },
+    { emoji: '🔐', label: t('account & data', 'Konto & Daten'), route: '/account' },
+    { emoji: '🌍', label: t('language & preferences', 'Sprache & Einstellungen'), route: '/settings/preferences' },
+    { emoji: '💬', label: t('ask peakplant', 'PeakPlant fragen'), route: '/ask' },
+    { emoji: '✨', label: t('peakplant plus', 'PeakPlant Plus'), route: '/plus' },
   ];
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.kicker}>{t('PROFILE', 'PROFIL')}</Text>
-        <Text style={styles.title}>{t('you', 'du')}</Text>
+        <View style={styles.headerMain}>
+          <Text style={styles.kicker}>{t('PROFILE', 'PROFIL')}</Text>
+          <Text style={styles.title}>{t('you', 'du')}</Text>
+        </View>
+        <PeakBloom size="sm" animate={false} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -42,11 +51,22 @@ export default function ProfileScreen() {
                 ? t('couple space', 'Paar-Space')
                 : t('friends space', 'Freunde-Space')}
             </Text>
+            <View style={styles.statsRow}>
+              <View style={styles.stat}>
+                <Text style={styles.statNum}>{memories.length}</Text>
+                <Text style={styles.statLabel}>{t('MOMENTS', 'MOMENTE')}</Text>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.stat}>
+                <Text style={styles.statNum}>{chillyCount}</Text>
+                <Text style={styles.statLabel}>{t('CHALLENGES', 'CHALLENGES')}</Text>
+              </View>
+            </View>
           </View>
         )}
 
         <View style={styles.linksBlock}>
-          {links.map(({ label, route }) => (
+          {links.map(({ emoji, label, route }) => (
             <TouchableOpacity
               key={route}
               style={styles.linkRow}
@@ -55,7 +75,10 @@ export default function ProfileScreen() {
               accessibilityRole="button"
               accessibilityLabel={label}
             >
-              <Text style={styles.linkText}>{label}</Text>
+              <Text style={styles.linkText}>
+                <Text style={styles.linkEmoji}>{emoji}  </Text>
+                {label}
+              </Text>
               <Text style={styles.linkArrow}>{'->'}</Text>
             </TouchableOpacity>
           ))}
@@ -68,11 +91,16 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.lg,
     paddingBottom: Spacing.lg,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
+  },
+  headerMain: {
     gap: 4,
   },
   kicker: {
@@ -82,19 +110,21 @@ const styles = StyleSheet.create({
     color: Colors.textFaint,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '300',
-    color: Colors.text,
-    letterSpacing: -0.5,
+    ...Typography.editorial,
+    fontSize: 32,
+    lineHeight: 38,
   },
   content: {
     paddingBottom: Spacing.xxxl,
   },
   spaceBlock: {
-    paddingHorizontal: Spacing.screen,
-    paddingVertical: Spacing.xl,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    marginHorizontal: Spacing.screen,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.md,
+    padding: Spacing.lg,
+    backgroundColor: Colors.backgroundCream,
+    borderRadius: Radii.lg,
+    ...Shadows.subtle,
     gap: 4,
   },
   spaceKicker: {
@@ -106,10 +136,9 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   spaceName: {
-    fontSize: 22,
-    fontWeight: '300',
-    color: Colors.text,
-    letterSpacing: -0.3,
+    ...Typography.editorial,
+    fontSize: 24,
+    lineHeight: 30,
   },
   spaceType: {
     fontSize: 11,
@@ -117,6 +146,32 @@ const styles = StyleSheet.create({
     letterSpacing: 1.5,
     color: Colors.textMuted,
     textTransform: 'uppercase',
+  },
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: Spacing.lg,
+    gap: Spacing.xl,
+  },
+  stat: {
+    alignItems: 'center',
+  },
+  statNum: {
+    ...Typography.editorial,
+    fontSize: 30,
+    lineHeight: 34,
+  },
+  statLabel: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2,
+    color: Colors.textFaint,
+    marginTop: 2,
+  },
+  statDivider: {
+    width: 1,
+    height: 32,
+    backgroundColor: Colors.border,
   },
   linksBlock: {
     borderBottomWidth: 1,
@@ -135,6 +190,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '300',
     color: Colors.text,
+  },
+  linkEmoji: {
+    fontSize: 16,
   },
   linkArrow: {
     fontSize: 18,

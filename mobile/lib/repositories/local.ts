@@ -9,6 +9,7 @@ import type {
   PublicPlaceSpot,
   PublicPlaceFeedback,
   Ritual,
+  PartnerNote,
 } from '../types';
 import { sanitiseTip } from '../privacy/boundaries';
 import { savedDateCache, memoryCache } from '../cache';
@@ -27,6 +28,7 @@ import type {
   IDateFeedbackRepository,
   IPublicPlaceFeedbackRepository,
   IRitualRepository,
+  INoteRepository,
   CreateSpaceInput,
 } from './interfaces';
 import { generateInviteCode, normalizeInviteCode } from '../invite';
@@ -217,6 +219,17 @@ export const localSpaceRepository: ISpaceRepository = {
     }
     return space;
   },
+
+  async update(spaceId: string, updates: Pick<Space, 'name'>): Promise<Space> {
+    const spaces = await loadSpaces();
+    const idx = spaces.findIndex((s) => s.id === spaceId);
+    if (idx === -1) throw new Error(`Space ${spaceId} not found`);
+    const updated = { ...spaces[idx], name: updates.name.trim() || spaces[idx].name };
+    const next = [...spaces];
+    next[idx] = updated;
+    await storage.set(SPACES_KEY, next);
+    return updated;
+  },
 };
 
 export const localSavedDateRepository: ISavedDateRepository = {
@@ -350,6 +363,7 @@ export const localPublicPlaceFeedbackRepository: IPublicPlaceFeedbackRepository 
 };
 
 const RITUALS_KEY = 'rituals';
+const NOTES_KEY = 'partnerNotes';
 
 export const localRitualRepository: IRitualRepository = {
   async getAll(spaceId: string): Promise<Ritual[]> {
@@ -385,5 +399,28 @@ export const localRitualRepository: IRitualRepository = {
     const stored = await storage.get<Ritual[]>(RITUALS_KEY);
     const all = stored ?? [];
     await storage.set(RITUALS_KEY, all.filter((r) => r.id !== id));
+  },
+};
+
+export const localNoteRepository: INoteRepository = {
+  async getAll(spaceId: string): Promise<PartnerNote[]> {
+    const stored = await storage.get<PartnerNote[]>(NOTES_KEY);
+    return (stored ?? [])
+      .filter((n) => n.spaceId === spaceId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  },
+
+  async create(item: Omit<PartnerNote, 'id' | 'createdAt'>): Promise<PartnerNote> {
+    const stored = await storage.get<PartnerNote[]>(NOTES_KEY);
+    const all = stored ?? [];
+    const entry: PartnerNote = { ...item, id: generateId('note'), createdAt: now() };
+    await storage.set(NOTES_KEY, [entry, ...all]);
+    return entry;
+  },
+
+  async remove(id: string): Promise<void> {
+    const stored = await storage.get<PartnerNote[]>(NOTES_KEY);
+    const all = stored ?? [];
+    await storage.set(NOTES_KEY, all.filter((n) => n.id !== id));
   },
 };

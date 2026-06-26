@@ -3,14 +3,15 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
-  TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { Colors } from '../../constants/colors';
+import { BackButton } from '../../components/ui/BackButton';
+import { Colors, Sections } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { ChallengeCard } from '../../components/challenge/ChallengeCard';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useChallenges } from '../../lib/hooks/useChallenges';
@@ -32,13 +33,7 @@ export default function ChallengesScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel={t('Back', 'Zuruck')}
-        >
-          <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
-        </TouchableOpacity>
+        <BackButton label={t('BACK', 'ZURUCK')} />
         <Text style={styles.headerLabel}>{t('CHALLENGES', 'HERAUSFORDERUNGEN')}</Text>
         <View style={{ width: 60 }} />
       </View>
@@ -72,20 +67,38 @@ export default function ChallengesScreen() {
           </View>
         )}
 
-        <View style={styles.section}>
-          <Text style={styles.sectionLabel}>
-            {joined.length > 0 ? t('MORE TO TRY', 'MEHR ZUM AUSPROBIEREN') : t('AVAILABLE', 'VERFUGBAR')}
-          </Text>
-          <View style={styles.list}>
-            {available.map((c) => (
-              <ChallengeCard
-                key={c.id}
-                challenge={c}
-                onPress={() => router.push(`/challenges/${c.id}`)}
-              />
-            ))}
+        {available.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>
+              {joined.length > 0 ? t('MORE TO TRY', 'MEHR ZUM AUSPROBIEREN') : t('AVAILABLE', 'VERFUGBAR')}
+            </Text>
+            <View style={styles.list}>
+              {available.map((c) => (
+                <ChallengeCard
+                  key={c.id}
+                  challenge={c}
+                  onPress={() => router.push(`/challenges/${c.id}`)}
+                />
+              ))}
+            </View>
           </View>
-        </View>
+        )}
+
+        {candidates.length === 0 && (
+          <EmptyState
+            mark="✦"
+            title={
+              activeSpace
+                ? t('no challenges yet.', 'noch keine Challenges.')
+                : t('pick a space first.', 'wähle zuerst einen Space.')
+            }
+            hint={
+              activeSpace
+                ? t('new shared goals arrive here regularly — check back soon.', 'neue gemeinsame Ziele erscheinen hier regelmäßig — schau bald wieder vorbei.')
+                : t('challenges are shared within a space.', 'Challenges werden in einem Space geteilt.')
+            }
+          />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -107,6 +120,6 @@ const styles = StyleSheet.create({
   content: { padding: Spacing.screen, gap: Spacing.xl, paddingBottom: Spacing.xxxl },
   intro: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
   section: { gap: Spacing.md },
-  sectionLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
+  sectionLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Sections.grow },
   list: { gap: Spacing.md },
 });

@@ -5,16 +5,17 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
 import { spaceRepository } from '../../lib/repositories';
 import { getActiveUser } from '../../lib/session';
+import { confirmSuccess } from '../../lib/haptics';
 import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { SpaceType } from '../../lib/types';
@@ -42,6 +43,7 @@ export default function NewSpaceScreen() {
         ownerUserId: user.id,
         ownerName: user.name,
       });
+      void confirmSuccess();
       setActiveSpace(space.id);
       router.back();
     } catch {
@@ -58,6 +60,7 @@ export default function NewSpaceScreen() {
       const user = await getActiveUser();
       if (!user) throw new Error('not signed in');
       const space = await spaceRepository.joinByCode(code, user.id, user.name);
+      void confirmSuccess();
       setActiveSpace(space.id);
       router.back();
     } catch {
@@ -231,6 +234,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   primaryDisabled: { opacity: 0.35 },
   primaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.white },
@@ -243,7 +247,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   secondaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
-  error: { fontSize: 13, fontWeight: '400', color: '#b42318', lineHeight: 19 },
+  error: { fontSize: 13, fontWeight: '400', color: Colors.danger, lineHeight: 19 },
 });

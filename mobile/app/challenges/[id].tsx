@@ -3,19 +3,22 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { BackButton } from '../../components/ui/BackButton';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { ProgressBar } from '../../components/challenge/ProgressBar';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useChallenges } from '../../lib/hooks/useChallenges';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { challengeById, progressFor } from '../../lib/challenges';
+import { confirmSuccess, acknowledgeSelection } from '../../lib/haptics';
 
 export default function ChallengeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -23,6 +26,15 @@ export default function ChallengeDetailScreen() {
   const { memories } = useMemories(activeSpace?.id);
   const { enrollmentFor, join, leave } = useChallenges(activeSpace?.id);
   const { t } = useLanguage();
+
+  const handleJoin = async (challengeId: string) => {
+    await join(challengeId);
+    void confirmSuccess();
+  };
+  const handleLeave = async (challengeId: string) => {
+    await leave(challengeId);
+    void acknowledgeSelection();
+  };
 
   const challenge = challengeById(id);
 
@@ -51,13 +63,7 @@ export default function ChallengeDetailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel={t('Back', 'Zuruck')}
-        >
-          <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
-        </TouchableOpacity>
+        <BackButton label={t('BACK', 'ZURUCK')} />
         <Text style={styles.headerLabel}>{t('CHALLENGE', 'HERAUSFORDERUNG')}</Text>
         <View style={{ width: 60 }} />
       </View>
@@ -80,7 +86,7 @@ export default function ChallengeDetailScreen() {
         {!enrollment ? (
           <TouchableOpacity
             style={styles.primary}
-            onPress={() => join(challenge.id)}
+            onPress={() => handleJoin(challenge.id)}
             activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityLabel={t('Take on this challenge', 'Diese Herausforderung annehmen')}
@@ -88,21 +94,47 @@ export default function ChallengeDetailScreen() {
             <Text style={styles.primaryText}>{t('TAKE IT ON', 'ANNEHMEN')}</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            style={styles.secondary}
-            onPress={() => leave(challenge.id)}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={t('Leave this challenge', 'Herausforderung verlassen')}
-          >
-            <Text style={styles.secondaryText}>{t('LEAVE QUIETLY', 'RUHIG VERLASSEN')}</Text>
-          </TouchableOpacity>
+          <>
+            {!progress?.complete && (
+              <TouchableOpacity
+                style={styles.primary}
+                onPress={() =>
+                  router.push({
+                    pathname: '/memory/create',
+                    params: {
+                      prefillNote: t(
+                        `weekly challenge: ${challenge.title}`,
+                        `Wochen-Challenge: ${challenge.title}`,
+                      ),
+                    },
+                  })
+                }
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t(
+                  'Add photo or note for this challenge',
+                  'Foto oder Notiz für diese Challenge hinzufügen',
+                )}
+              >
+                <Text style={styles.primaryText}>{t('ADD PHOTO / NOTE', 'FOTO / NOTIZ HINZUFÜGEN')}</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={styles.secondary}
+              onPress={() => handleLeave(challenge.id)}
+              activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel={t('Leave this challenge', 'Herausforderung verlassen')}
+            >
+              <Text style={styles.secondaryText}>{t('LEAVE QUIETLY', 'RUHIG VERLASSEN')}</Text>
+            </TouchableOpacity>
+          </>
         )}
 
         <Text style={styles.note}>
           {t(
-            'progress counts moments you preserve after joining. leaving keeps every moment — only the challenge goes away.',
-            'Fortschritt zahlt Momente, die du nach dem Beitritt bewahrst. Verlassen behaltet jeden Moment - nur die Herausforderung verschwindet.',
+            'progress counts moments you preserve after joining. use photo/note when you actually did it together. leaving keeps every moment — only the challenge goes away.',
+            'Fortschritt zählt Momente, die ihr nach dem Beitritt bewahrt. Nutzt Foto/Notiz, wenn ihr es wirklich zusammen gemacht habt. Verlassen behält jeden Moment — nur die Challenge verschwindet.',
           )}
         </Text>
       </ScrollView>
@@ -125,14 +157,16 @@ const styles = StyleSheet.create({
   headerLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.text },
   content: { padding: Spacing.screen, gap: Spacing.sm, paddingBottom: Spacing.xxxl },
   badge: { fontSize: 40, minHeight: 28 },
-  duration: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle, marginTop: Spacing.sm },
-  title: { fontSize: 30, fontWeight: '200', color: Colors.text, letterSpacing: -0.4, lineHeight: 36 },
+  duration: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Sections.grow, marginTop: Spacing.sm },
+  title: { ...Typography.editorial, fontSize: 32, lineHeight: 38 },
   subtitle: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 24, marginTop: 4 },
   progressCard: {
     backgroundColor: Colors.backgroundCream,
     padding: Spacing.lg,
     marginTop: Spacing.lg,
     gap: Spacing.sm,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   done: { fontSize: 13, fontWeight: '300', color: Colors.text, fontStyle: 'italic' },
   primary: {
@@ -141,6 +175,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.lg,
+    borderRadius: Radii.pill,
   },
   primaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },
   secondary: {
@@ -150,6 +185,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.lg,
+    borderRadius: Radii.pill,
   },
   secondaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.textMuted },
   note: {

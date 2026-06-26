@@ -3,6 +3,7 @@ import { useFocusEffect } from 'expo-router';
 import { spaceRepository } from '../repositories';
 import { getActiveUser } from '../session';
 import { useAppStore } from '../store';
+import { getSpaceEmoji } from '../spaceCustomization';
 import type { Space } from '../types';
 
 /**
@@ -23,7 +24,10 @@ export function useSpaces() {
       return;
     }
     const data = await spaceRepository.getAllForUser(user.id);
-    setSpaces(data);
+    const enriched = await Promise.all(
+      data.map(async (s) => ({ ...s, emoji: await getSpaceEmoji(s.id) })),
+    );
+    setSpaces(enriched);
     setLoading(false);
     // Default the active space to the first one if nothing valid is selected.
     if (data.length > 0 && !data.some((s) => s.id === activeSpaceId)) {

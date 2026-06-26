@@ -1,8 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { SEED_EDITIONS, DECK_SIZE_RANGE } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -140,7 +148,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
-  title: { fontSize: 28, fontWeight: '300', color: Colors.text, letterSpacing: -0.5 },
+  title: { ...Typography.editorial, fontSize: 28, lineHeight: 34 },
   lead: {
     fontSize: 14,
     fontWeight: '300',
@@ -149,11 +157,12 @@ const styles = StyleSheet.create({
   },
   scanButton: {
     height: 36,
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   scanButtonText: {
     fontSize: 9,
@@ -170,6 +179,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.backgroundWarm,
     borderWidth: 1,
     borderColor: Colors.border,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   cardUpcoming: { opacity: 0.55 },
   symbol: { fontSize: 28 },

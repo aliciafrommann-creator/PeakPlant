@@ -5,22 +5,27 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
-  SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   Image,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
+import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Colors, Accents, Sections } from '../../constants/colors';
+import { Spacing, Radii } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { savedDateRepository } from '../../lib/repositories';
+import { confirmSuccess } from '../../lib/haptics';
 import { SEED_CARDS } from '../../lib/seed';
+
+const MOMENT = Sections.together; // warm apricot — capturing "our" moment
 
 export default function CreateMemoryScreen() {
   const {
@@ -80,7 +85,7 @@ export default function CreateMemoryScreen() {
   };
 
   const handleSave = async () => {
-    if (!note.trim()) return;
+    if (!note.trim() && !photoUri) return;
     if (!activeSpace) {
       setError(
         t(
@@ -95,9 +100,11 @@ export default function CreateMemoryScreen() {
     try {
       const memory = await createMemory({
         cardId: selectedCardId,
-        note: note.trim(),
+        note: note.trim() || t('photo moment', 'Fotomoment'),
         photoUri,
       });
+      // Preserving a moment is the app's most meaningful create — confirm it.
+      void confirmSuccess();
       // Close the loop: write memory id back to the saved date so learning
       // can confirm this was a real completed experience.
       if (savedDateId) {
@@ -178,11 +185,11 @@ export default function CreateMemoryScreen() {
           <Text style={styles.headerTitle}>{t('PRESERVE MOMENT', 'MOMENT FESTHALTEN')}</Text>
           <TouchableOpacity
             onPress={handleSave}
-            disabled={!note.trim() || saving}
+            disabled={(!note.trim() && !photoUri) || saving}
             accessibilityRole="button"
             accessibilityLabel={t('Save moment', 'Moment speichern')}
           >
-            <Text style={[styles.saveText, (!note.trim() || saving) && styles.saveDisabled]}>
+            <Text style={[styles.saveText, ((!note.trim() && !photoUri) || saving) && styles.saveDisabled]}>
               {saving ? t('SAVING…', 'SPEICHERT…') : t('SAVE', 'SPEICHERN')}
             </Text>
           </TouchableOpacity>
@@ -196,21 +203,29 @@ export default function CreateMemoryScreen() {
             </View>
           )}
 
-          {/* Photo area */}
+          {/* Photo area — the prominent upload affordance */}
           <TouchableOpacity
-            style={styles.photoArea}
-            activeOpacity={0.8}
+            style={[styles.photoArea, !photoUri && styles.photoAreaEmpty]}
+            activeOpacity={0.85}
             onPress={pickPhoto}
             accessibilityRole="button"
-            accessibilityLabel={photoUri ? t('Change photo', 'Foto andern') : t('Add a photo (optional)', 'Foto hinzufugen (optional)')}
+            accessibilityLabel={photoUri ? t('Change photo', 'Foto ändern') : t('Add a photo to this moment', 'Foto zu diesem Moment hinzufügen')}
           >
             {photoUri ? (
-              <Image source={{ uri: photoUri }} style={styles.photoPreview} />
+              <>
+                <Image source={{ uri: photoUri }} style={styles.photoPreview} />
+                <View style={styles.photoChange}>
+                  <Ionicons name="camera-reverse-outline" size={16} color={Colors.white} />
+                  <Text style={styles.photoChangeText}>{t('CHANGE', 'ÄNDERN')}</Text>
+                </View>
+              </>
             ) : (
               <View style={styles.photoPlaceholder}>
-                <Text style={styles.photoIcon}>○</Text>
-                <Text style={styles.photoText}>{t('ADD PHOTO', 'FOTO HINZUFUGEN')}</Text>
-                <Text style={styles.photoHint}>{t('optional', 'optional')}</Text>
+                <View style={styles.photoIconCircle}>
+                  <Ionicons name="camera-outline" size={26} color={MOMENT} />
+                </View>
+                <Text style={styles.photoText}>{t('ADD A PHOTO', 'FOTO HINZUFÜGEN')}</Text>
+                <Text style={styles.photoHint}>{t('upload from your library · optional', 'aus der Galerie hochladen · optional')}</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -225,7 +240,6 @@ export default function CreateMemoryScreen() {
               multiline
               value={note}
               onChangeText={setNote}
-              autoFocus
               textAlignVertical="top"
             />
           </View>
@@ -270,18 +284,19 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 10,
-    fontWeight: '500',
+    fontWeight: '600',
     letterSpacing: 2.5,
     color: Colors.text,
   },
   saveText: {
-    fontSize: 10,
-    fontWeight: '500',
+    fontSize: 11,
+    fontWeight: '700',
     letterSpacing: 2,
-    color: Colors.text,
+    color: Colors.accent,
   },
   saveDisabled: {
     opacity: 0.3,
+    color: Colors.textFaint,
   },
   content: {
     padding: Spacing.screen,
@@ -292,42 +307,70 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   prompt: {
-    fontSize: 22,
-    fontWeight: '200',
-    color: Colors.text,
+    ...Typography.editorial,
+    fontSize: 24,
     lineHeight: 30,
-    letterSpacing: -0.2,
   },
   photoArea: {
     backgroundColor: Colors.backgroundCream,
-    height: 180,
+    height: 210,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
+    borderRadius: Radii.lg,
+  },
+  photoAreaEmpty: {
+    backgroundColor: Accents.cream,
+    borderWidth: 1.5,
+    borderColor: MOMENT,
+    borderStyle: 'dashed',
   },
   photoPreview: {
     width: '100%',
     height: '100%',
   },
+  photoChange: {
+    position: 'absolute',
+    right: Spacing.md,
+    bottom: Spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(30,28,26,0.7)',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
+    borderRadius: Radii.pill,
+  },
+  photoChangeText: {
+    fontSize: 9,
+    fontWeight: '600',
+    letterSpacing: 1.5,
+    color: Colors.white,
+  },
   photoPlaceholder: {
     alignItems: 'center',
     gap: Spacing.sm,
   },
-  photoIcon: {
-    fontSize: 32,
-    color: Colors.border,
+  photoIconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: Radii.pill,
+    backgroundColor: Colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.xs,
   },
   photoText: {
-    fontSize: 10,
-    fontWeight: '500',
-    letterSpacing: 2.5,
-    color: Colors.textFaint,
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 2,
+    color: Colors.text,
   },
   photoHint: {
-    fontSize: 10,
-    fontWeight: '300',
-    color: Colors.textFaint,
-    letterSpacing: 0.5,
+    fontSize: 11,
+    fontWeight: '400',
+    color: Colors.textSubtle,
+    letterSpacing: 0.3,
   },
   noteSection: {
     gap: Spacing.sm,
@@ -356,7 +399,7 @@ const styles = StyleSheet.create({
   error: {
     fontSize: 13,
     fontWeight: '400',
-    color: '#b42318',
+    color: Colors.danger,
     lineHeight: 19,
     letterSpacing: 0.1,
   },

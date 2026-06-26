@@ -15,6 +15,7 @@ import type {
   SavedDate,
   PublicPlaceSpot,
   PublicPlaceFeedback,
+  PartnerNote,
 } from '../types';
 import type {
   IMemoryRepository,
@@ -22,6 +23,7 @@ import type {
   ISpaceRepository,
   ISavedDateRepository,
   IPublicPlaceFeedbackRepository,
+  INoteRepository,
   CreateSpaceInput,
 } from './interfaces';
 import { buildCreateSpaceRpcArgs } from './spaceCreation';
@@ -202,6 +204,17 @@ export const supabaseSpaceRepository: ISpaceRepository = {
     if (error) throw error;
     return mapSpace(data);
   },
+
+  async update(spaceId: string, updates: Pick<Space, 'name'>): Promise<Space> {
+    const { data, error } = await db()
+      .from('spaces')
+      .update({ name: updates.name.trim() })
+      .eq('id', spaceId)
+      .select()
+      .single();
+    if (error) throw error;
+    return mapSpace(data);
+  },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -338,6 +351,51 @@ function mapPublicPlaceFeedback(r: any): PublicPlaceFeedback {
     createdAt: r.created_at,
   };
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function mapNote(r: any): PartnerNote {
+  return {
+    id: r.id,
+    spaceId: r.space_id,
+    text: r.text,
+    authorId: r.author_id ?? undefined,
+    authorName: r.author_name ?? undefined,
+    createdAt: r.created_at,
+  };
+}
+
+export const supabaseNoteRepository: INoteRepository = {
+  async getAll(spaceId: string): Promise<PartnerNote[]> {
+    const { data, error } = await db()
+      .from('partner_notes')
+      .select('*')
+      .eq('space_id', spaceId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data ?? []).map(mapNote);
+  },
+
+  async create(item: Omit<PartnerNote, 'id' | 'createdAt'>): Promise<PartnerNote> {
+    const { data: user } = await db().auth.getUser();
+    const { data, error } = await db()
+      .from('partner_notes')
+      .insert({
+        space_id: item.spaceId,
+        text: item.text,
+        author_id: user.user?.id ?? null,
+        author_name: item.authorName ?? null,
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    return mapNote(data);
+  },
+
+  async remove(id: string): Promise<void> {
+    const { error } = await db().from('partner_notes').delete().eq('id', id);
+    if (error) throw error;
+  },
+};
 
 export const supabasePublicPlaceFeedbackRepository: IPublicPlaceFeedbackRepository = {
   async getSpots(): Promise<PublicPlaceSpot[]> {

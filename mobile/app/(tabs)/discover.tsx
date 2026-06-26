@@ -4,16 +4,19 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
+import { Ionicons } from '@expo/vector-icons';
 import { Logo } from '../../components/ui/Logo';
-import { SpaceSwitcher } from '../../components/space/SpaceSwitcher';
+import { PressableScale } from '../../components/ui/PressableScale';
+import { SpacePicker } from '../../components/space/SpacePicker';
 import { StreakBanner } from '../../components/space/StreakBanner';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
@@ -39,38 +42,40 @@ function currentTimeOfDay(): TimeOfDay {
 }
 
 /** Filter chips, grouped so they read intentionally (not a random pile). */
-type Shortcut = { key: string; label: string; labelDe: string; patch: Partial<DateConstraints> };
+type Shortcut = { key: string; emoji: string; label: string; labelDe: string; patch: Partial<DateConstraints> };
 type FilterGroup = { label: string; labelDe: string; options: Shortcut[] };
 const FILTER_GROUPS: FilterGroup[] = [
   {
     label: 'how long', labelDe: 'wie lang',
     options: [
-      { key: 'quick', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
+      { key: 'quick', emoji: '⚡', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
     ],
   },
   {
     label: 'budget', labelDe: 'Budget',
     options: [
-      { key: 'free', label: 'free', labelDe: 'gratis', patch: { maxBudget: 'free' } },
-      { key: 'cheap', label: 'easy spend', labelDe: 'günstig', patch: { maxBudget: '€€' } },
+      { key: 'free', emoji: '✨', label: 'free', labelDe: 'gratis', patch: { maxBudget: 'free' } },
+      { key: 'cheap', emoji: '💸', label: 'easy spend', labelDe: 'günstig', patch: { maxBudget: '€€' } },
     ],
   },
   {
     label: 'where', labelDe: 'wo',
     options: [
-      { key: 'outdoor', label: 'outdoors', labelDe: 'draußen', patch: { indoorOutdoor: 'outdoor' } },
-      { key: 'indoor', label: 'stay in', labelDe: 'drinnen', patch: { indoorOutdoor: 'indoor' } },
+      { key: 'outdoor', emoji: '🌤️', label: 'outdoors', labelDe: 'draußen', patch: { indoorOutdoor: 'outdoor' } },
+      { key: 'indoor', emoji: '🛋️', label: 'stay in', labelDe: 'drinnen', patch: { indoorOutdoor: 'indoor' } },
     ],
   },
   {
     label: 'vibe', labelDe: 'Stimmung',
     options: [
-      { key: 'calm', label: 'calm', labelDe: 'ruhig', patch: { categories: ['calm'] } },
-      { key: 'play', label: 'playful', labelDe: 'verspielt', patch: { categories: ['play'] } },
+      { key: 'calm', emoji: '🌙', label: 'calm', labelDe: 'ruhig', patch: { categories: ['calm'] } },
+      { key: 'play', emoji: '🎲', label: 'playful', labelDe: 'verspielt', patch: { categories: ['play'] } },
     ],
   },
 ];
 const SHORTCUTS: Shortcut[] = FILTER_GROUPS.flatMap((g) => g.options);
+
+const DISCOVER = Sections.discover; // sunlit gold identity; actions stay chili
 
 export default function DiscoverScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
@@ -91,6 +96,7 @@ export default function DiscoverScreen() {
   const [saved, setSaved] = useState<SavedDate[]>([]);
   const [savedMomentIds, setSavedMomentIds] = useState<Set<string>>(new Set());
   const [liveWeather, setLiveWeather] = useState<Weather | undefined>(undefined);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   // Keep the "already saved" set in sync with what's loaded for this space, so
   // the SAVE button can reflect saved state immediately (and across re-focus).
@@ -250,9 +256,18 @@ export default function DiscoverScreen() {
         <View style={styles.header}>
           <Logo size="sm" />
           <View style={styles.headerRight}>
-            <Text style={styles.spaceName}>
-              {(activeSpace?.name ?? 'your space').toLowerCase()}
-            </Text>
+            <TouchableOpacity
+              style={styles.spaceTrigger}
+              onPress={() => setPickerOpen(true)}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel={t('Switch, add or share a space', 'Space wechseln, hinzufügen oder teilen')}
+            >
+              <Text style={styles.spaceName} numberOfLines={1}>
+                {(activeSpace?.name ?? 'your space').toLowerCase()}
+              </Text>
+              <Ionicons name="chevron-down" size={15} color={Colors.textMuted} />
+            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => router.push('/customize')}
               accessibilityRole="button"
@@ -263,13 +278,16 @@ export default function DiscoverScreen() {
           </View>
         </View>
 
-        {spaces.length >= 1 && (
-          <SpaceSwitcher
-            spaces={spaces}
-            activeSpaceId={activeSpace?.id}
-            onSelect={setActiveSpace}
-          />
-        )}
+        <SpacePicker
+          visible={pickerOpen}
+          spaces={spaces}
+          activeSpaceId={activeSpace?.id}
+          onSelect={(id) => {
+            setActiveSpace(id);
+            setPickerOpen(false);
+          }}
+          onClose={() => setPickerOpen(false)}
+        />
 
         {streaksEnabled && activeSpace && (
           <StreakBanner
@@ -288,7 +306,7 @@ export default function DiscoverScreen() {
             accessibilityState={{ selected: true }}
           >
             <Text style={[styles.toggleChipText, styles.toggleChipTextActive]}>
-              {t('ALL IDEAS', 'ALLE IDEEN')}
+              {t('💡 ALL IDEAS', '💡 ALLE IDEEN')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -299,7 +317,8 @@ export default function DiscoverScreen() {
             accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
           >
             <Text style={styles.toggleChipText}>
-              {t('PLACES MAP', 'ORTE-KARTE')} {'->'}
+              {t('🗺️ PLACES MAP', '🗺️ ORTE-KARTE')}{'  '}
+              <Ionicons name="arrow-forward" size={11} color={Colors.textSubtle} />
             </Text>
           </TouchableOpacity>
         </View>
@@ -313,34 +332,44 @@ export default function DiscoverScreen() {
               `eine konkrete Idee für diesen ${timeOfDay === 'morning' ? 'Morgen' : timeOfDay === 'afternoon' ? 'Nachmittag' : 'Abend'}. chip antippen zum Eingrenzen.`,
             )}
           </Text>
+          <TouchableOpacity
+            style={styles.askInline}
+            onPress={() => router.push('/ask')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('Ask PeakPlant for a specific idea', 'PeakPlant nach einer spezifischen Idee fragen')}
+          >
+            <Text style={styles.askInlineText}>
+              {t('ASK PEAKPLANT FOR SOMETHING SPECIFIC', 'PEAKPLANT NACH ETWAS SPEZIFISCHEM FRAGEN')}
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Grouped filters */}
-        <View style={styles.filterGroups}>
-          {FILTER_GROUPS.map((g) => (
-            <View key={g.label} style={styles.filterGroup}>
-              <Text style={styles.filterGroupLabel}>{t(g.label, g.labelDe).toUpperCase()}</Text>
-              <View style={styles.chips}>
-                {g.options.map((s) => {
-                  const on = active.has(s.key);
-                  return (
-                    <TouchableOpacity
-                      key={s.key}
-                      style={[styles.chip, on && styles.chipOn]}
-                      onPress={() => toggleShortcut(s.key)}
-                      activeOpacity={0.85}
-                      accessibilityRole="button"
-                      accessibilityState={{ selected: on }}
-                      accessibilityLabel={t(s.label, s.labelDe)}
-                    >
-                      <Text style={[styles.chipText, on && styles.chipTextOn]}>{t(s.label, s.labelDe)}</Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            </View>
-          ))}
-        </View>
+        {/* Refine — one quiet scrolling row, not a wall of labelled groups */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.chips}
+        >
+          {SHORTCUTS.map((s) => {
+            const on = active.has(s.key);
+            return (
+              <TouchableOpacity
+                key={s.key}
+                style={[styles.chip, on && styles.chipOn]}
+                onPress={() => toggleShortcut(s.key)}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityState={{ selected: on }}
+                accessibilityLabel={t(s.label, s.labelDe)}
+              >
+                <Text style={[styles.chipText, on && styles.chipTextOn]}>
+                  {s.emoji}  {t(s.label, s.labelDe)}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </ScrollView>
 
         {loading ? (
           <View style={styles.loading}>
@@ -406,79 +435,96 @@ export default function DiscoverScreen() {
         ) : (
           <View style={styles.empty}>
             <Text style={styles.emptyText}>{t('nothing fits all of that right now.', 'nichts passt gerade auf alles.')}</Text>
-            <Text style={styles.emptyHint}>{t("loosen a filter and we'll find something.", 'einen Filter lockern und wir finden etwas.')}</Text>
-            <TouchableOpacity
-              style={styles.actionBtn}
-              onPress={resetFilters}
-              accessibilityRole="button"
-              accessibilityLabel={t('Clear filters', 'Filter zurücksetzen')}
-            >
-              <Text style={styles.actionText}>{t('CLEAR FILTERS', 'FILTER LÖSCHEN')}</Text>
-            </TouchableOpacity>
+            <Text style={styles.emptyHint}>
+              {t(
+                "loosen a filter, or ask PeakPlant in words — that's often faster.",
+                'Lockert einen Filter oder fragt PeakPlant in Worten — das ist oft schneller.',
+              )}
+            </Text>
+            <View style={styles.emptyActions}>
+              <TouchableOpacity
+                style={[styles.actionBtn, styles.emptyActionGrow]}
+                onPress={() => router.push('/ask')}
+                accessibilityRole="button"
+                accessibilityLabel={t('Ask PeakPlant', 'PeakPlant fragen')}
+              >
+                <Text style={styles.actionText}>{t('ASK PEAKPLANT', 'PEAKPLANT FRAGEN')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.actionBtnGhost, styles.emptyActionGrow]}
+                onPress={resetFilters}
+                accessibilityRole="button"
+                accessibilityLabel={t('Clear filters', 'Filter zurücksetzen')}
+              >
+                <Text style={styles.actionTextGhost}>{t('CLEAR FILTERS', 'FILTER LÖSCHEN')}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
 
-        {/* Pillar links — preserve access to the fuller surfaces */}
+        {/* Pillar links — a compact pill cluster, not a stack of full-width rows */}
         <View style={styles.links}>
-          <TouchableOpacity
-            style={styles.linkRow}
-            onPress={() => router.push('/ask')}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={t('Ask PeakPlant for personalised ideas', 'PeakPlant nach personalisierten Ideen fragen')}
+          <Text style={styles.linksLabel}>{t('MORE WAYS IN', 'MEHR WEGE REIN')}</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.linkPills}
           >
-            <Text style={styles.linkText}>{t('ask peakplant', 'peakplant fragen')}</Text>
-            <Text style={styles.linkArrow}>{'->'}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.linkRow}
-            onPress={() => router.push('/discover/saved')}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={t('Saved date ideas', 'Gemerkte Ideen')}
-          >
-            <Text style={styles.linkText}>
-              {t('saved ideas', 'gemerkte Ideen')}
-              {saved.length > 0 ? ` (${saved.length})` : ''}
-            </Text>
-            <Text style={styles.linkArrow}>{'->'}</Text>
-          </TouchableOpacity>
-          {missionsEnabled && (
             <TouchableOpacity
-              style={styles.linkRow}
-              onPress={() => router.push('/together')}
+              style={styles.linkPill}
+              onPress={() => router.push('/ask')}
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel={t('Browse all ideas and local places', 'Alle Ideen und Orte in der Nahe')}
+              accessibilityLabel={t('Ask PeakPlant for personalised ideas', 'PeakPlant nach personalisierten Ideen fragen')}
             >
-              <Text style={styles.linkText}>{t('all ideas & local places', 'alle Ideen & Orte')}</Text>
-              <Text style={styles.linkArrow}>{'->'}</Text>
+              <Text style={styles.linkPillText}>{t('💬 ask peakplant', '💬 peakplant fragen')}</Text>
             </TouchableOpacity>
-          )}
-          {challengesEnabled && (
             <TouchableOpacity
-              style={styles.linkRow}
-              onPress={() => router.push('/challenges')}
+              style={styles.linkPill}
+              onPress={() => router.push('/discover/saved')}
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel={t('Challenges', 'Herausforderungen')}
+              accessibilityLabel={t('Saved date ideas', 'Gemerkte Ideen')}
             >
-              <Text style={styles.linkText}>{t('challenges', 'Herausforderungen')}</Text>
-              <Text style={styles.linkArrow}>{'->'}</Text>
+              <Text style={styles.linkPillText}>
+                {t('🔖 saved', '🔖 gemerkt')}
+                {saved.length > 0 ? ` · ${saved.length}` : ''}
+              </Text>
             </TouchableOpacity>
-          )}
-          {ritualsEnabled && (
-            <TouchableOpacity
-              style={styles.linkRow}
-              onPress={() => router.push('/rituals')}
-              activeOpacity={0.85}
-              accessibilityRole="button"
-              accessibilityLabel={t('Rituals', 'Rituale')}
-            >
-              <Text style={styles.linkText}>{t('rituals', 'Rituale')}</Text>
-              <Text style={styles.linkArrow}>{'->'}</Text>
-            </TouchableOpacity>
-          )}
+            {missionsEnabled && (
+              <TouchableOpacity
+                style={styles.linkPill}
+                onPress={() => router.push('/together')}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Browse all ideas and local places', 'Alle Ideen und Orte in der Nahe')}
+              >
+                <Text style={styles.linkPillText}>{t('🧭 all ideas', '🧭 alle Ideen')}</Text>
+              </TouchableOpacity>
+            )}
+            {challengesEnabled && (
+              <TouchableOpacity
+                style={styles.linkPill}
+                onPress={() => router.push('/challenges')}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Challenges', 'Herausforderungen')}
+              >
+                <Text style={styles.linkPillText}>{t('🔥 challenges', '🔥 Challenges')}</Text>
+              </TouchableOpacity>
+            )}
+            {ritualsEnabled && (
+              <TouchableOpacity
+                style={styles.linkPill}
+                onPress={() => router.push('/rituals')}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Rituals', 'Rituale')}
+              >
+                <Text style={styles.linkPillText}>{t('🌿 rituals', '🌿 Rituale')}</Text>
+              </TouchableOpacity>
+            )}
+          </ScrollView>
         </View>
 
         {/* Weekly challenge */}
@@ -528,7 +574,7 @@ export default function DiscoverScreen() {
             ) : (
               <TouchableOpacity
                 style={styles.challengeAccept}
-                onPress={() => void acceptChallenge()}
+                onPress={() => void acceptChallenge().then(() => confirmSuccess())}
                 activeOpacity={0.85}
                 accessibilityRole="button"
                 accessibilityLabel={t('Accept the weekly challenge', 'Wöchentliche Challenge annehmen')}
@@ -587,13 +633,13 @@ function RecommendationCard({
   checkedLabel?: string;
 }) {
   return (
-    <TouchableOpacity
+    <PressableScale
       style={[styles.card, compact && styles.cardCompact]}
       onPress={onOpen}
-      activeOpacity={0.9}
-      accessibilityRole="button"
+      scaleTo={compact ? 0.98 : 0.985}
       accessibilityLabel={`${rec.title}. ${rec.why}`}
     >
+      {!compact && <View style={styles.cardAccent} />}
       <Text style={styles.cardTitle}>{rec.title}</Text>
       <Text style={styles.cardConcept}>{rec.concept}</Text>
 
@@ -643,7 +689,7 @@ function RecommendationCard({
           )
         )}
       </View>
-    </TouchableOpacity>
+    </PressableScale>
   );
 }
 
@@ -661,59 +707,83 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
   },
   headerRight: { alignItems: 'flex-end', gap: 4 },
+  spaceTrigger: { flexDirection: 'row', alignItems: 'center', gap: 4, maxWidth: 200 },
   spaceName: {
     fontSize: 11,
     fontWeight: '400',
     letterSpacing: 2,
     color: Colors.textMuted,
     textTransform: 'uppercase',
+    flexShrink: 1,
   },
   settings: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textSubtle },
   titleBlock: { paddingHorizontal: Spacing.screen, paddingTop: Spacing.xl, gap: Spacing.sm },
-  title: { fontSize: 30, fontWeight: '200', color: Colors.text, letterSpacing: -0.5, lineHeight: 36 },
-  subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
-  filterGroups: {
-    paddingTop: Spacing.lg,
-    gap: Spacing.md,
+  title: { ...Typography.editorial, fontSize: 34, lineHeight: 38 },
+  subtitle: { fontSize: 14, fontWeight: '400', color: Colors.textSubtle, lineHeight: 21 },
+  askInline: {
+    minHeight: 44,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radii.pill,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Spacing.xs,
   },
-  filterGroup: {
-    gap: Spacing.sm,
-  },
-  filterGroupLabel: {
-    fontSize: 8,
+  askInlineText: {
+    fontSize: 9,
     fontWeight: '500',
     letterSpacing: 2,
-    color: Colors.textFaint,
-    paddingHorizontal: Spacing.screen,
+    color: Colors.text,
+    textAlign: 'center',
   },
   chips: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: Spacing.sm,
     paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.lg,
+    alignItems: 'center',
   },
   chip: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 11,
     borderWidth: 1,
     borderColor: Colors.border,
-    borderRadius: 999,
+    backgroundColor: Colors.backgroundWarm,
+    borderRadius: Radii.pill,
+    ...Shadows.subtle,
   },
-  chipOn: { backgroundColor: Colors.text, borderColor: Colors.text },
-  chipText: { fontSize: 12, fontWeight: '400', color: Colors.textMuted, letterSpacing: 0.3 },
+  chipOn: { backgroundColor: Colors.accent, borderColor: Colors.accent },
+  chipText: { fontSize: 13, fontWeight: '600', color: Colors.text, letterSpacing: 0.2 },
   chipTextOn: { color: Colors.white },
   loading: { alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.xxl },
   loadingText: { fontSize: 12, fontWeight: '300', color: Colors.textFaint, letterSpacing: 0.5 },
   card: {
-    backgroundColor: Colors.backgroundCream,
+    backgroundColor: Colors.surface,
     marginHorizontal: Spacing.screen,
     marginTop: Spacing.lg,
     padding: Spacing.lg,
+    paddingTop: Spacing.xl,
     gap: Spacing.md,
+    borderRadius: Radii.lg,
+    ...Shadows.card,
   },
-  cardCompact: { backgroundColor: Colors.backgroundWarm },
-  cardTitle: { fontSize: 22, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
-  cardConcept: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
+  cardCompact: {
+    backgroundColor: Colors.backgroundWarm,
+    paddingTop: Spacing.lg,
+    ...Shadows.subtle,
+  },
+  cardAccent: {
+    position: 'absolute',
+    top: 0,
+    left: Spacing.lg,
+    width: 40,
+    height: 4,
+    borderBottomLeftRadius: 4,
+    borderBottomRightRadius: 4,
+    backgroundColor: DISCOVER,
+  },
+  cardTitle: { ...Typography.editorial, fontSize: 24, lineHeight: 29 },
+  cardConcept: { fontSize: 14, fontWeight: '400', color: Colors.textMuted, lineHeight: 21 },
   facts: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
   fact: { gap: 2 },
   factLabel: {
@@ -741,7 +811,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cta: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  cta: { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: Colors.accent },
   save: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
   savedDone: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
   actionRow: { flexDirection: 'row', gap: Spacing.sm, paddingHorizontal: Spacing.screen, marginTop: Spacing.md },
@@ -752,6 +822,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   actionText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   actionBtnGhost: { height: 44, paddingHorizontal: Spacing.lg, justifyContent: 'center', alignItems: 'center' },
@@ -760,23 +831,44 @@ const styles = StyleSheet.create({
   altLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
   empty: { alignItems: 'center', gap: Spacing.sm, paddingVertical: Spacing.xxl, paddingHorizontal: Spacing.screen },
   emptyText: { fontSize: 18, fontWeight: '200', color: Colors.textMuted },
-  emptyHint: { fontSize: 13, fontWeight: '300', color: Colors.textFaint, marginBottom: Spacing.md },
+  emptyHint: { fontSize: 13, fontWeight: '300', color: Colors.textFaint, marginBottom: Spacing.md, textAlign: 'center', lineHeight: 19 },
+  emptyActions: { flexDirection: 'row', gap: Spacing.sm, alignSelf: 'stretch' },
+  emptyActionGrow: { flex: 1, paddingHorizontal: Spacing.sm },
   links: {
     marginTop: Spacing.xxl,
+    paddingTop: Spacing.lg,
     borderTopWidth: 1,
     borderTopColor: Colors.border,
+    gap: Spacing.sm,
   },
-  linkRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  linksLabel: {
+    fontSize: 9,
+    fontWeight: '600',
+    letterSpacing: 2.5,
+    color: Colors.textFaint,
+    textTransform: 'uppercase',
     paddingHorizontal: Spacing.screen,
-    paddingVertical: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
   },
-  linkText: { fontSize: 15, fontWeight: '300', color: Colors.text },
-  linkArrow: { fontSize: 18, fontWeight: '200', color: Colors.textMuted },
+  linkPills: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.xs,
+  },
+  linkPill: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radii.pill,
+    backgroundColor: Colors.backgroundWarm,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  linkPillText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: Colors.text,
+    letterSpacing: 0.2,
+  },
   tagline: {
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.xxl,
@@ -799,6 +891,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderWidth: 1,
     borderColor: Colors.border,
+    borderRadius: Radii.pill,
   },
   toggleChipActive: {
     backgroundColor: Colors.text,
@@ -855,6 +948,8 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.screen,
     padding: Spacing.lg,
     gap: Spacing.sm,
+    borderRadius: Radii.lg,
+    ...Shadows.subtle,
   },
   challengePrompt: {
     fontSize: 11,
@@ -904,12 +999,13 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
   },
   challengeAccept: {
-    height: 40,
+    height: 44,
     borderWidth: 1,
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.sm,
+    borderRadius: Radii.pill,
   },
   challengeAcceptText: {
     fontSize: 10,

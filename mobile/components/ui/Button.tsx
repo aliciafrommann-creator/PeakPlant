@@ -1,13 +1,8 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ViewStyle,
-  ActivityIndicator,
-} from 'react-native';
+import { Text, StyleSheet, ViewStyle, ActivityIndicator } from 'react-native';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
+import { PressableScale } from './PressableScale';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'gold';
 
@@ -17,29 +12,35 @@ interface ButtonProps {
   variant?: Variant;
   disabled?: boolean;
   loading?: boolean;
+  /** Fire a light selection haptic on press. Default true. */
+  haptic?: boolean;
   style?: ViewStyle;
 }
 
-export function Button({ label, onPress, variant = 'primary', disabled, loading, style }: ButtonProps) {
-  const containerStyle = [styles.base, styles[variant], disabled && styles.disabled, style];
+/**
+ * The canonical button. Built on PressableScale so every CTA in the app gets
+ * the same spring-press + haptic feedback (the design-system guarantee). Pill
+ * shape, four warm variants, loading + disabled states handled here.
+ */
+export function Button({ label, onPress, variant = 'primary', disabled, loading, haptic = true, style }: ButtonProps) {
+  const containerStyle = [styles.base, styles[variant], style];
   const textStyle = [styles.text, styles[`${variant}Text` as keyof typeof styles]];
 
   return (
-    <TouchableOpacity
+    <PressableScale
       style={containerStyle}
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.7}
+      haptic={haptic}
       accessibilityRole="button"
       accessibilityLabel={label}
-      accessibilityState={{ disabled: !!disabled, busy: !!loading }}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? Colors.white : Colors.text} size="small" />
+        <ActivityIndicator color={variant === 'primary' || variant === 'gold' ? Colors.white : Colors.text} size="small" />
       ) : (
         <Text style={textStyle}>{label.toUpperCase()}</Text>
       )}
-    </TouchableOpacity>
+    </PressableScale>
   );
 }
 
@@ -49,6 +50,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
+    borderRadius: Radii.pill,
   },
   primary: {
     backgroundColor: Colors.text,
@@ -63,9 +65,6 @@ const styles = StyleSheet.create({
   },
   gold: {
     backgroundColor: Colors.accent,
-  },
-  disabled: {
-    opacity: 0.4,
   },
   text: {
     fontSize: 11,

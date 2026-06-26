@@ -3,14 +3,14 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Switch,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../constants/colors';
-import { Spacing } from '../constants/spacing';
+import { Spacing, Radii } from '../constants/spacing';
 import { FEATURES } from '../lib/features';
 import { useAppStore } from '../lib/store';
 import { useLanguage } from '../lib/hooks/useLanguage';
@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.accent,
     paddingHorizontal: 5,
     paddingVertical: 2,
+    borderRadius: Radii.pill,
   },
   rowDesc: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18 },
   footer: {

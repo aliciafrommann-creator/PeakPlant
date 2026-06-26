@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
   TextInput,
   Image,
@@ -13,13 +12,17 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
+import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { Spacing, Radii } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { SEED_CARDS } from '../../lib/seed';
 import { memoryRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { shareMemory } from '../../lib/share';
+import { confirmSuccess } from '../../lib/haptics';
 import type { Memory } from '../../lib/types';
 
 export default function MemoryDetailScreen() {
@@ -71,6 +74,7 @@ export default function MemoryDetailScreen() {
     setError(null);
     try {
       const updated = await memoryRepository.update(memory.id, { note: draftNote.trim() });
+      void confirmSuccess();
       setMemory(updated);
       setEditing(false);
     } catch {
@@ -96,6 +100,7 @@ export default function MemoryDetailScreen() {
           onPress: async () => {
             try {
               await memoryRepository.delete(memory.id);
+              void confirmSuccess();
               router.back();
             } catch {
               setError(t("couldn't delete this moment. please try again.", 'Dieser Moment konnte nicht geloscht werden. Bitte versuche es erneut.'));
@@ -169,13 +174,7 @@ export default function MemoryDetailScreen() {
             </>
           ) : (
             <>
-              <TouchableOpacity
-                onPress={() => router.back()}
-                accessibilityRole="button"
-                accessibilityLabel={t('Back', 'Zuruck')}
-              >
-                <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
-              </TouchableOpacity>
+              <BackButton label={t('BACK', 'ZURUCK')} />
               <Text style={styles.headerLabel}>{t('MOMENT', 'MOMENT')}</Text>
               <TouchableOpacity
                 onPress={() => shareMemory(memory, card).catch(() => {})}
@@ -308,11 +307,9 @@ const styles = StyleSheet.create({
     color: Colors.textSubtle,
   },
   prompt: {
+    ...Typography.editorial,
     fontSize: 22,
-    fontWeight: '200',
-    color: Colors.text,
     lineHeight: 30,
-    letterSpacing: -0.2,
     fontStyle: 'italic',
   },
   divider: {
@@ -320,11 +317,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.border,
   },
   note: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '300',
     color: Colors.text,
-    lineHeight: 26,
-    letterSpacing: 0.1,
+    lineHeight: 28,
+    letterSpacing: 0.05,
   },
   noteInput: {
     fontSize: 16,
@@ -344,7 +341,7 @@ const styles = StyleSheet.create({
   error: {
     fontSize: 13,
     fontWeight: '400',
-    color: '#b42318',
+    color: Colors.danger,
     lineHeight: 19,
   },
   actions: {
@@ -355,14 +352,23 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.lg,
     marginTop: Spacing.sm,
   },
-  actionBtn: { paddingVertical: Spacing.xs },
+  actionBtn: {
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radii.pill,
+    minHeight: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   actionText: {
     fontSize: 10,
     fontWeight: '500',
     letterSpacing: 2,
     color: Colors.textMuted,
   },
-  deleteText: { color: '#b42318' },
+  deleteText: { color: Colors.danger },
   notFound: {
     flex: 1,
     justifyContent: 'center',

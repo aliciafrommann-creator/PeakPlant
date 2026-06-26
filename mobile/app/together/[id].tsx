@@ -4,13 +4,15 @@ import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
-import { Colors } from '../../constants/colors';
-import { Spacing } from '../../constants/spacing';
+import { BackButton } from '../../components/ui/BackButton';
+import { Colors, Sections } from '../../constants/colors';
+import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -21,6 +23,8 @@ import { aggregateRatings, ratingsForMoment } from '../../lib/discovery/ratings'
 import type { RatingSummary } from '../../lib/discovery/ratings';
 import { confirmSuccess } from '../../lib/haptics';
 import type { SavedDate } from '../../lib/types';
+
+const TOGETHER = Sections.together;
 
 export default function TogetherDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -190,13 +194,7 @@ export default function TogetherDetailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          accessibilityRole="button"
-          accessibilityLabel={t('Back', 'Zuruck')}
-        >
-          <Text style={styles.backText}>{'<-'} {t('BACK', 'ZURUCK')}</Text>
-        </TouchableOpacity>
+        <BackButton label={t('BACK', 'ZURUCK')} />
         <Text style={styles.headerLabel}>{t('TO DO TOGETHER', 'GEMEINSAM TUN')}</Text>
         <View style={{ width: 60 }} />
       </View>
@@ -361,16 +359,16 @@ const styles = StyleSheet.create({
   backText: { fontSize: 10, fontWeight: '400', letterSpacing: 1.5, color: Colors.textMuted, width: 60 },
   headerLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.text },
   content: { padding: Spacing.screen, gap: Spacing.md, paddingBottom: Spacing.xxxl },
-  category: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textSubtle },
-  title: { fontSize: 30, fontWeight: '200', color: Colors.text, letterSpacing: -0.4, lineHeight: 36 },
-  idea: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 24 },
+  category: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: TOGETHER },
+  title: { ...Typography.editorial, fontSize: 32, lineHeight: 40 },
+  idea: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 26 },
   experience: { gap: Spacing.sm, marginTop: Spacing.md },
   experienceLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textFaint },
   tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   tag: {
     borderWidth: 1,
     borderColor: Colors.border,
-    borderRadius: 999,
+    borderRadius: Radii.pill,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
   },
@@ -381,6 +379,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: Spacing.xs,
     marginTop: Spacing.md,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   ratingLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
@@ -393,6 +393,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: 4,
     marginTop: Spacing.md,
+    borderRadius: Radii.md,
+    ...Shadows.subtle,
   },
   placeLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
   placeHead: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
@@ -425,6 +427,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.sm,
+    borderRadius: Radii.pill,
   },
   ctaText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },
   secondaryCta: {
@@ -433,12 +436,13 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   secondaryCtaText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   tertiaryCta: { minHeight: 44, justifyContent: 'center', alignItems: 'center' },
   tertiaryCtaText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
   savedState: { fontSize: 10, fontWeight: '500', letterSpacing: 1.5, color: Colors.text },
-  actionError: { fontSize: 12, fontWeight: '400', color: '#b42318', lineHeight: 18, textAlign: 'center' },
+  actionError: { fontSize: 12, fontWeight: '400', color: Colors.danger, lineHeight: 18, textAlign: 'center' },
   noPressure: {
     fontSize: 11,
     fontWeight: '300',

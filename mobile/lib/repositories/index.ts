@@ -12,6 +12,7 @@ import {
   localDateFeedbackRepository,
   localPublicPlaceFeedbackRepository,
   localRitualRepository,
+  localNoteRepository,
 } from './local';
 import {
   supabaseMemoryRepository,
@@ -19,6 +20,7 @@ import {
   supabaseSpaceRepository,
   supabaseSavedDateRepository,
   supabasePublicPlaceFeedbackRepository,
+  supabaseNoteRepository,
 } from './supabase';
 
 export const memoryRepository = isSupabaseConfigured ? supabaseMemoryRepository : localMemoryRepository;
@@ -40,3 +42,9 @@ export const publicPlaceFeedbackRepository = isSupabaseConfigured
 // Rituals are local-only for the beta; the supabase adapter + migration are
 // post-beta (rituals are private, space-scoped — no cross-device need yet).
 export const ritualRepository = localRitualRepository;
+
+// Partner notes sync across devices so a note really reaches the partner. Uses
+// the Supabase adapter when configured (requires migration 0011), local
+// otherwise. The hook degrades to empty on read error, so the home tab stays
+// intact even before the migration is applied.
+export const noteRepository = isSupabaseConfigured ? supabaseNoteRepository : localNoteRepository;
