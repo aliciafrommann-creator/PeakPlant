@@ -75,7 +75,7 @@ const FILTER_GROUPS: FilterGroup[] = [
 ];
 const SHORTCUTS: Shortcut[] = FILTER_GROUPS.flatMap((g) => g.options);
 
-const DISCOVER = Sections.discover; // airy evening-blue identity; actions stay chili
+const DISCOVER = Sections.discover; // sunlit gold identity; actions stay chili
 
 export default function DiscoverScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
@@ -317,7 +317,8 @@ export default function DiscoverScreen() {
             accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
           >
             <Text style={styles.toggleChipText}>
-              {t('🗺️ PLACES MAP', '🗺️ ORTE-KARTE')} {'->'}
+              {t('🗺️ PLACES MAP', '🗺️ ORTE-KARTE')}{'  '}
+              <Ionicons name="arrow-forward" size={11} color={Colors.textSubtle} />
             </Text>
           </TouchableOpacity>
         </View>
@@ -706,7 +707,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
     backgroundColor: Colors.backgroundWarm,
-    borderRadius: 999,
+    borderRadius: Radii.pill,
     ...Shadows.subtle,
   },
   chipOn: { backgroundColor: Colors.accent, borderColor: Colors.accent },

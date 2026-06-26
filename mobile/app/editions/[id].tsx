@@ -12,6 +12,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
   },
   symbol: { fontSize: 36, marginBottom: Spacing.sm },
   editionLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textSubtle },
-  title: { fontSize: 36, fontWeight: '200', color: Colors.white, letterSpacing: -0.5 },
+  title: { ...Typography.editorial, fontSize: 36, lineHeight: 40, color: Colors.white },
   description: {
     fontSize: 14,
     fontWeight: '300',

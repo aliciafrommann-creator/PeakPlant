@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   tag: {
     borderWidth: 1,
     borderColor: Colors.border,
-    borderRadius: 999,
+    borderRadius: Radii.pill,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
   },

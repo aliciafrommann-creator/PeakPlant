@@ -17,7 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors, Sections } from '../../constants/colors';
-import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Spacing, Radii, Shadows, Opacity } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -42,7 +42,7 @@ import type { LivePlace } from '../../lib/discovery/providers/interface';
 import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
 import type { DateFeedback, PublicPlaceFeedback, PublicPlaceSpot } from '../../lib/types';
 
-const PLACES = Sections.community; // lilac — shared, social, a little playful
+const PLACES = Sections.community; // raspberry blossom — shared, social, a little playful
 
 type MapMessage =
   | { type: 'map-ready' }
@@ -1018,6 +1018,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
   secondaryButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
   tertiaryButton: {
@@ -1105,7 +1106,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: Radii.pill,
   },
-  sheetConfirmDisabled: { opacity: 0.35 },
+  sheetConfirmDisabled: { opacity: Opacity.disabled },
   sheetConfirmText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
 });

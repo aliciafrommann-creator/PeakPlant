@@ -13,6 +13,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
+import { Typography } from '../../constants/typography';
 import { resolveScan } from '../../lib/qr';
 import { getRedeemedTokens, markTokenRedeemed } from '../../lib/redeemedTokens';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   label: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
-  title: { fontSize: 28, fontWeight: '200', color: Colors.text, letterSpacing: -0.5 },
+  title: { ...Typography.editorial, fontSize: 28, lineHeight: 34 },
   cameraArea: {
     flex: 1,
     backgroundColor: Colors.backgroundDark,
