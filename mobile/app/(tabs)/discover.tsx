@@ -48,7 +48,7 @@ const FILTER_GROUPS: FilterGroup[] = [
   {
     label: 'how long', labelDe: 'wie lang',
     options: [
-      { key: 'quick', emoji: '⚡', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
+      { key: 'quick', emoji: '⏱️', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
     ],
   },
   {
@@ -56,6 +56,13 @@ const FILTER_GROUPS: FilterGroup[] = [
     options: [
       { key: 'free', emoji: '✨', label: 'free', labelDe: 'gratis', patch: { maxBudget: 'free' } },
       { key: 'cheap', emoji: '💸', label: 'easy spend', labelDe: 'günstig', patch: { maxBudget: '€€' } },
+    ],
+  },
+  {
+    label: 'energy', labelDe: 'Energie',
+    options: [
+      { key: 'easy', emoji: '🍃', label: 'easy', labelDe: 'ruhig', patch: { energy: 'low' } },
+      { key: 'lively', emoji: '🔥', label: 'lively', labelDe: 'aktiv', patch: { energy: 'high' } },
     ],
   },
   {
@@ -70,10 +77,16 @@ const FILTER_GROUPS: FilterGroup[] = [
     options: [
       { key: 'calm', emoji: '🌙', label: 'calm', labelDe: 'ruhig', patch: { categories: ['calm'] } },
       { key: 'play', emoji: '🎲', label: 'playful', labelDe: 'verspielt', patch: { categories: ['play'] } },
+      { key: 'food', emoji: '🍽️', label: 'tasty', labelDe: 'lecker', patch: { categories: ['food'] } },
+      { key: 'create', emoji: '🎨', label: 'creative', labelDe: 'kreativ', patch: { categories: ['create'] } },
     ],
   },
 ];
 const SHORTCUTS: Shortcut[] = FILTER_GROUPS.flatMap((g) => g.options);
+/** key → group label, so toggling a chip clears its siblings (single-select). */
+const GROUP_OF: Record<string, string> = Object.fromEntries(
+  FILTER_GROUPS.flatMap((g) => g.options.map((o) => [o.key, g.label])),
+);
 
 const DISCOVER = Sections.discover; // sunlit gold identity; actions stay chili
 
@@ -189,13 +202,12 @@ export default function DiscoverScreen() {
     setExcludeIds([]);
     setActive((prev) => {
       const next = new Set(prev);
-      // indoor/outdoor are mutually exclusive; same for the category chips.
-      if (key === 'indoor') next.delete('outdoor');
-      if (key === 'outdoor') next.delete('indoor');
-      if (key === 'free') next.delete('cheap');
-      if (key === 'cheap') next.delete('free');
-      if (key === 'calm') next.delete('play');
-      if (key === 'play') next.delete('calm');
+      // Single-select within a group: tapping a chip clears its siblings, so
+      // budget / energy / where / vibe each hold at most one choice.
+      const group = GROUP_OF[key];
+      for (const k of Array.from(next)) {
+        if (k !== key && GROUP_OF[k] === group) next.delete(k);
+      }
       if (next.has(key)) next.delete(key);
       else next.add(key);
       return next;
