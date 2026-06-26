@@ -8,9 +8,12 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Opacity } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -22,7 +25,9 @@ import {
   getCollectibleEmoji,
   DEFAULT_COLLECTIBLE_EMOJI,
 } from '../../lib/spaceCustomization';
-import { confirmSuccess } from '../../lib/haptics';
+import { isSupabaseConfigured } from '../../lib/supabase/client';
+import { uploadSpaceAvatar } from '../../lib/supabase/storage';
+import { confirmSuccess, acknowledgeSelection } from '../../lib/haptics';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { Space } from '../../lib/types';
@@ -56,9 +61,18 @@ export default function EditSpaceScreen() {
   const [name, setName] = useState(space?.name ?? '');
   const [emoji, setEmoji] = useState<string | undefined>(space?.emoji);
   const [collectible, setCollectible] = useState<string>(space?.collectibleEmoji ?? DEFAULT_COLLECTIBLE_EMOJI);
+  // Avatar photo: `photoUri` is a freshly-picked local image; `removePhoto`
+  // clears an existing one. Untouched → keep whatever the space already has.
+  const [photoUri, setPhotoUri] = useState<string | undefined>(undefined);
+  const [removePhoto, setRemovePhoto] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const nameInitialized = useRef(false);
+
+  // What the avatar should show right now: a new pick wins, then the existing
+  // saved avatar (unless being removed), else the emoji fallback.
+  const shownAvatarUrl = photoUri ?? (removePhoto ? undefined : space?.avatarUrl);
+  const fallbackEmoji = emoji ?? (space?.type === 'couple' ? '♥' : '✦');
 
   useEffect(() => {
     if (space && !nameInitialized.current) {
@@ -92,12 +106,51 @@ export default function EditSpaceScreen() {
     );
   }
 
+  const pickPhoto = async () => {
+    void acknowledgeSelection();
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.9,
+      allowsEditing: true,
+      aspect: [1, 1],
+    });
+    if (!result.canceled && result.assets.length > 0) {
+      setPhotoUri(result.assets[0].uri);
+      setRemovePhoto(false);
+    }
+  };
+
+  const clearPhoto = () => {
+    void acknowledgeSelection();
+    setPhotoUri(undefined);
+    setRemovePhoto(true);
+  };
+
   const save = async () => {
     if (!name.trim() || busy) return;
     setBusy(true);
     setError(null);
     try {
-      await spaceRepository.update(space.id, { name: name.trim() });
+      // Resolve the avatar path to persist. undefined = leave unchanged.
+      let avatarPath: string | undefined;
+      if (photoUri) {
+        // Configured: upload (EXIF stripped) → storage path. Otherwise keep the
+        // local file URI so it still shows on this device (no cross-device sync
+        // until Supabase is configured).
+        avatarPath = isSupabaseConfigured
+          ? await uploadSpaceAvatar(space.id, photoUri)
+          : photoUri;
+      } else if (removePhoto) {
+        avatarPath = ''; // cleared — display falls back to the emoji
+      }
+
+      await spaceRepository.update(space.id, {
+        name: name.trim(),
+        emoji,
+        ...(avatarPath !== undefined ? { avatarPath } : {}),
+      });
+      // Local write-through: a cache/fallback so the mark survives offline and
+      // for spaces created before the server column existed (migration 0012).
       if (emoji) await setSpaceEmoji(space.id, emoji);
       await setCollectibleEmoji(space.id, collectible);
       void confirmSuccess();
@@ -136,14 +189,37 @@ export default function EditSpaceScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Avatar preview */}
+          {/* Avatar preview — photo if set, else the chosen emoji */}
           <View style={styles.avatarWrap}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarEmoji}>{emoji ?? (space.type === 'couple' ? '♥' : '✦')}</Text>
+            <TouchableOpacity
+              style={styles.avatar}
+              onPress={pickPhoto}
+              activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel={shownAvatarUrl ? t('Change space photo', 'Space-Foto ändern') : t('Add a space photo', 'Space-Foto hinzufügen')}
+            >
+              {shownAvatarUrl ? (
+                <Image source={{ uri: shownAvatarUrl }} style={styles.avatarImage} />
+              ) : (
+                <Text style={styles.avatarEmoji}>{fallbackEmoji}</Text>
+              )}
+            </TouchableOpacity>
+
+            <View style={styles.avatarActions}>
+              <TouchableOpacity onPress={pickPhoto} accessibilityRole="button" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <Text style={styles.avatarAction}>
+                  {shownAvatarUrl ? t('change photo', 'Foto ändern') : t('add photo', 'Foto hinzufügen')}
+                </Text>
+              </TouchableOpacity>
+              {shownAvatarUrl && (
+                <>
+                  <Text style={styles.avatarActionDot}>·</Text>
+                  <TouchableOpacity onPress={clearPhoto} accessibilityRole="button" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                    <Text style={styles.avatarActionMuted}>{t('use emoji', 'Emoji nutzen')}</Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
-            <Text style={styles.avatarHint}>
-              {t('pick an emoji below', 'Emoji unten auswählen')}
-            </Text>
           </View>
 
           {/* Name input */}
@@ -227,7 +303,11 @@ export default function EditSpaceScreen() {
             accessibilityRole="button"
             accessibilityLabel={t('Save changes', 'Änderungen speichern')}
           >
-            <Text style={styles.primaryText}>{t('SAVE', 'SPEICHERN')}</Text>
+            {busy ? (
+              <ActivityIndicator color={Colors.white} />
+            ) : (
+              <Text style={styles.primaryText}>{t('SAVE', 'SPEICHERN')}</Text>
+            )}
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
@@ -262,13 +342,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  avatarImage: { width: 80, height: 80, borderRadius: Radii.pill },
   avatarEmoji: { fontSize: 36 },
-  avatarHint: {
-    fontSize: 11,
-    fontWeight: '300',
-    color: Colors.textFaint,
-    letterSpacing: 0.3,
-  },
+  avatarActions: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  avatarAction: { fontSize: 12, fontWeight: '500', color: Colors.accent, letterSpacing: 0.3 },
+  avatarActionMuted: { fontSize: 12, fontWeight: '400', color: Colors.textSubtle, letterSpacing: 0.3 },
+  avatarActionDot: { fontSize: 12, color: Colors.textFaint },
   section: { gap: Spacing.sm },
   label: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
   input: {
