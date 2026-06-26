@@ -29,7 +29,11 @@ import {
 import { aggregateRatings } from '../../lib/discovery/ratings';
 import { buildPlaceMapHtml, directionsUrl } from '../../lib/discovery/placeMap';
 import { requestCurrentForegroundLocation } from '../../lib/location';
-import { searchLivePlacesNear, type LivePlaceSearchFailure } from '../../lib/discovery/livePlaceSearch';
+import {
+  resetLivePlaceSearchUsage,
+  searchLivePlacesNear,
+  type LivePlaceSearchFailure,
+} from '../../lib/discovery/livePlaceSearch';
 import {
   DEFAULT_LIVE_PLACE_RADIUS_KM,
   PILOT_CITIES,
@@ -291,12 +295,21 @@ export default function PlacesScreen() {
       message: t(`searching live places for ${label}…`, `Suche Live-Orte für ${label}…`),
     });
     try {
-      const result = await searchLivePlacesNear({
+      let usedBroaderFallback = false;
+      let result = await searchLivePlacesNear({
         query,
         near: coords,
         radiusKm: DEFAULT_LIVE_PLACE_RADIUS_KM,
         scopeId: activeSpace?.id,
       });
+      if (!result.ok && result.reason === 'no_results' && query) {
+        usedBroaderFallback = true;
+        result = await searchLivePlacesNear({
+          near: coords,
+          radiusKm: DEFAULT_LIVE_PLACE_RADIUS_KM,
+          scopeId: activeSpace?.id,
+        });
+      }
       if (result.ok) {
         setLivePlaces(result.places);
         if (result.places[0]) setSelectedId(result.places[0].id);
@@ -304,7 +317,12 @@ export default function PlacesScreen() {
           kind: result.source,
           remaining: result.remaining,
           limit: result.limit,
-          message: result.source === 'cached'
+          message: usedBroaderFallback
+            ? t(
+                `nothing exact, so I broadened it and found ${result.places.length} places for ${label}.`,
+                `Exakt dazu kam nichts, deshalb breiter gesucht: ${result.places.length} Orte für ${label} gefunden.`,
+              )
+            : result.source === 'cached'
             ? t(
                 `using ${result.places.length} cached places for ${label} — no new Google request.`,
                 `${result.places.length} gespeicherte Orte für ${label} — keine neue Google-Anfrage.`,
@@ -364,6 +382,25 @@ export default function PlacesScreen() {
   const searchPilotCity = useCallback(async (city: PilotCity, query?: string) => {
     await searchAtCoords({ coords: city.coords, query, label: city.label });
   }, [searchAtCoords]);
+
+  const resetLiveSearchCounter = useCallback(async () => {
+    try {
+      await resetLivePlaceSearchUsage(activeSpace?.id);
+      setLiveStatus({
+        kind: 'idle',
+        message: t(
+          'local live-search counter reset for this space. try a broader search again.',
+          'Lokales Live-Suchkontingent für diesen Space zurückgesetzt. Versuch eine breitere Suche nochmal.',
+        ),
+      });
+      await confirmSuccess();
+    } catch {
+      Alert.alert(
+        t('Could not reset counter', 'Kontingent konnte nicht zurückgesetzt werden'),
+        t('Please try again in a moment.', 'Bitte versuche es gleich noch einmal.'),
+      );
+    }
+  }, [activeSpace?.id, t]);
 
   const planSelectedPlace = useCallback(async () => {
     if (!activeSpace || !selected) {
@@ -518,15 +555,29 @@ export default function PlacesScreen() {
             ))}
           </View>
           {liveStatus.message ? (
-            <Text style={[
-              styles.liveStatus,
-              liveStatus.kind === 'error' && styles.liveStatusError,
-            ]}>
-              {liveStatus.message}
-              {'remaining' in liveStatus && liveStatus.limit != null
-                ? ` ${t('left for this space:', 'übrig für diesen Space:')} ${liveStatus.remaining}/${liveStatus.limit}`
-                : ''}
-            </Text>
+            <>
+              <Text style={[
+                styles.liveStatus,
+                liveStatus.kind === 'error' && styles.liveStatusError,
+              ]}>
+                {liveStatus.message}
+                {'remaining' in liveStatus && liveStatus.limit != null
+                  ? ` ${t('left for this space:', 'übrig für diesen Space:')} ${liveStatus.remaining}/${liveStatus.limit}`
+                  : ''}
+              </Text>
+              {'remaining' in liveStatus && liveStatus.remaining === 0 ? (
+                <TouchableOpacity
+                  style={styles.resetCounterButton}
+                  onPress={() => void resetLiveSearchCounter()}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('Reset local live search counter', 'Lokales Live-Suchkontingent zurücksetzen')}
+                >
+                  <Text style={styles.resetCounterText}>
+                    {t('RESET LOCAL COUNTER', 'LOKALEN ZÄHLER ZURÜCKSETZEN')}
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
+            </>
           ) : (
             <Text style={styles.liveStatus}>
               {t(
@@ -922,6 +973,14 @@ const styles = StyleSheet.create({
   pilotCityText: { fontSize: 10, fontWeight: '500', letterSpacing: 1.5, color: Colors.textMuted },
   liveStatus: { fontSize: 10, fontWeight: '400', color: Colors.textSubtle, lineHeight: 15 },
   liveStatusError: { color: Colors.textMuted },
+  resetCounterButton: {
+    minHeight: 38,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  resetCounterText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
   mapFrame: {
     height: 310,
     marginHorizontal: Spacing.screen,

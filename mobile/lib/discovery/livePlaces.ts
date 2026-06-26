@@ -76,6 +76,10 @@ export function livePlaceBudgetStatus(used: number, limit: number) {
   };
 }
 
+export function livePlaceUsageScope(spaceId?: string | null): string {
+  return spaceId?.trim() || 'device';
+}
+
 export function livePlaceIsCacheFresh(cachedAt: number, now = Date.now()): boolean {
   return Number.isFinite(cachedAt) && now - cachedAt < LIVE_PLACES_CACHE_TTL_MS;
 }

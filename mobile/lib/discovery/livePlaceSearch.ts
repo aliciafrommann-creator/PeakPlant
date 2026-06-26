@@ -10,6 +10,7 @@ import {
   livePlaceCacheKey,
   livePlaceIsCacheFresh,
   livePlacesUsageKey,
+  livePlaceUsageScope,
   normalizeLivePlaceQuery,
   normalizeMonthlyLivePlaceLimit,
 } from './livePlaces';
@@ -45,16 +46,24 @@ export type LivePlaceSearchResult =
     };
 
 async function readUsed(scopeId?: string, date = new Date()): Promise<number> {
-  const value = await storage.get<number>(livePlacesUsageKey(date, scopeId));
+  const value = await storage.get<number>(livePlacesUsageKey(date, livePlaceUsageScope(scopeId)));
   return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.round(value)) : 0;
 }
 
 async function setUsed(used: number, scopeId?: string, date = new Date()): Promise<void> {
-  await storage.set(livePlacesUsageKey(date, scopeId), Math.max(0, Math.round(used)));
+  await storage.set(livePlacesUsageKey(date, livePlaceUsageScope(scopeId)), Math.max(0, Math.round(used)));
 }
 
 function configuredMonthlyLimit(): number {
   return normalizeMonthlyLivePlaceLimit(process.env.EXPO_PUBLIC_LIVE_PLACES_MONTHLY_LIMIT);
+}
+
+export async function resetLivePlaceSearchUsage(scopeId?: string): Promise<void> {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = `${now.getMonth() + 1}`.padStart(2, '0');
+  await storage.remove(livePlacesUsageKey(now, livePlaceUsageScope(scopeId)));
+  await storage.remove(`live-places:usage:${year}-${month}`); // legacy pre-space-scope key
 }
 
 async function cachedPlaces(

@@ -74,11 +74,23 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
       touchZoom: true,
       scrollWheelZoom: false
     });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    let usingFallbackTiles = false;
+    const cartoTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       subdomains: 'abcd',
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
     }).addTo(map);
+    const osmTiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    });
+    cartoTiles.on('tileerror', () => {
+      if (usingFallbackTiles) return;
+      usingFallbackTiles = true;
+      map.removeLayer(cartoTiles);
+      osmTiles.addTo(map);
+      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'map-ready' }));
+    });
     const bounds = [];
     points.forEach((point) => {
       const classes = ['peak-pin', point.partner ? 'partner' : '', point.id === selectedId ? 'selected' : '']
