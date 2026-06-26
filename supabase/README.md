@@ -19,6 +19,9 @@ credentials), tracked as O-001/O-002 in the Decision Register.
   `spaces` (previously missing — renames/emoji were silently denied by RLS), and
   a private member-scoped **`space-avatars`** storage bucket (separate from the
   private `memory-photos` bucket). See "Applying 0012" below.
+- `migrations/0013_space_collectible.sql` — adds `spaces.collectible_emoji`
+  (the mark a couple earns per completed challenge), shared across members. Reuses
+  the UPDATE policy from 0012, so it is just one additive column. `supabase db push`.
 
 ## Applying 0012 (manual)
 

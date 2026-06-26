@@ -54,10 +54,20 @@ describe('localSpaceRepository.update', () => {
     expect(updated.avatarPath).toBe('space-1/a.jpg');
   });
 
-  it('updates name and emoji together without dropping either', async () => {
-    const updated = await localSpaceRepository.update('space-1', { name: 'Us', emoji: '🌙' });
+  it('sets the collectible emoji', async () => {
+    const updated = await localSpaceRepository.update('space-1', { collectibleEmoji: '🏆' });
+    expect(updated.collectibleEmoji).toBe('🏆');
+  });
+
+  it('updates name, emoji and collectible together without dropping any', async () => {
+    const updated = await localSpaceRepository.update('space-1', {
+      name: 'Us',
+      emoji: '🌙',
+      collectibleEmoji: '🌶️',
+    });
     expect(updated.name).toBe('Us');
     expect(updated.emoji).toBe('🌙');
+    expect(updated.collectibleEmoji).toBe('🌶️');
   });
 
   it('throws for an unknown space', async () => {

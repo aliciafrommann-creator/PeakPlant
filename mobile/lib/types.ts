@@ -57,7 +57,11 @@ export interface Space {
   avatarPath?: string;
   /** Transient, client-only signed URL resolved from `avatarPath` for display. */
   avatarUrl?: string;
-  /** Local-only: the collectible emoji stamped per completed challenge. */
+  /**
+   * The collectible emoji stamped per completed challenge. Synced via
+   * `spaces.collectible_emoji` (migration 0013) when Supabase is configured;
+   * local storage is the fallback.
+   */
   collectibleEmoji?: string;
 }
 

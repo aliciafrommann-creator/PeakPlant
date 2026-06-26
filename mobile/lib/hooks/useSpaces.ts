@@ -46,7 +46,7 @@ export function useSpaces() {
         // both members see the same mark; local storage is a fallback for spaces
         // created before sync, or when Supabase isn't configured.
         emoji: s.emoji ?? (await getSpaceEmoji(s.id)),
-        collectibleEmoji: await getCollectibleEmoji(s.id),
+        collectibleEmoji: s.collectibleEmoji ?? (await getCollectibleEmoji(s.id)),
         avatarUrl: await resolveAvatarUrl(s.avatarPath),
       })),
     );

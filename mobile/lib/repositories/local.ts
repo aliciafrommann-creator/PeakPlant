@@ -222,7 +222,7 @@ export const localSpaceRepository: ISpaceRepository = {
 
   async update(
     spaceId: string,
-    updates: Partial<Pick<Space, 'name' | 'emoji' | 'avatarPath'>>,
+    updates: Partial<Pick<Space, 'name' | 'emoji' | 'avatarPath' | 'collectibleEmoji'>>,
   ): Promise<Space> {
     const spaces = await loadSpaces();
     const idx = spaces.findIndex((s) => s.id === spaceId);
@@ -233,6 +233,7 @@ export const localSpaceRepository: ISpaceRepository = {
       ...(updates.name !== undefined ? { name: updates.name.trim() || current.name } : {}),
       ...(updates.emoji !== undefined ? { emoji: updates.emoji } : {}),
       ...(updates.avatarPath !== undefined ? { avatarPath: updates.avatarPath } : {}),
+      ...(updates.collectibleEmoji !== undefined ? { collectibleEmoji: updates.collectibleEmoji } : {}),
     };
     const next = [...spaces];
     next[idx] = updated;

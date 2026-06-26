@@ -147,10 +147,11 @@ export default function EditSpaceScreen() {
       await spaceRepository.update(space.id, {
         name: name.trim(),
         emoji,
+        collectibleEmoji: collectible,
         ...(avatarPath !== undefined ? { avatarPath } : {}),
       });
-      // Local write-through: a cache/fallback so the mark survives offline and
-      // for spaces created before the server column existed (migration 0012).
+      // Local write-through: a cache/fallback so the marks survive offline and
+      // for spaces created before the server columns existed (0012 / 0013).
       if (emoji) await setSpaceEmoji(space.id, emoji);
       await setCollectibleEmoji(space.id, collectible);
       void confirmSuccess();

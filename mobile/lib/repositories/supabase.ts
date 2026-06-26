@@ -45,6 +45,7 @@ function mapSpace(r: any): Space {
     createdAt: r.created_at,
     emoji: r.emoji ?? undefined,
     avatarPath: r.avatar_path ?? undefined,
+    collectibleEmoji: r.collectible_emoji ?? undefined,
   };
 }
 function mapMember(r: any): SpaceMember {
@@ -215,12 +216,13 @@ export const supabaseSpaceRepository: ISpaceRepository = {
 
   async update(
     spaceId: string,
-    updates: Partial<Pick<Space, 'name' | 'emoji' | 'avatarPath'>>,
+    updates: Partial<Pick<Space, 'name' | 'emoji' | 'avatarPath' | 'collectibleEmoji'>>,
   ): Promise<Space> {
     const patch: Record<string, unknown> = {};
     if (updates.name !== undefined) patch.name = updates.name.trim();
     if (updates.emoji !== undefined) patch.emoji = updates.emoji;
     if (updates.avatarPath !== undefined) patch.avatar_path = updates.avatarPath;
+    if (updates.collectibleEmoji !== undefined) patch.collectible_emoji = updates.collectibleEmoji;
     const { data, error } = await db()
       .from('spaces')
       .update(patch)

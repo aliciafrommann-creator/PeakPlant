@@ -49,7 +49,7 @@ export interface ISpaceRepository {
    */
   update(
     spaceId: string,
-    updates: Partial<Pick<Space, 'name' | 'emoji' | 'avatarPath'>>,
+    updates: Partial<Pick<Space, 'name' | 'emoji' | 'avatarPath' | 'collectibleEmoji'>>,
   ): Promise<Space>;
 }
 
