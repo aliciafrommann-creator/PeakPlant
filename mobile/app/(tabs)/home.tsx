@@ -7,7 +7,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -18,6 +17,8 @@ import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { relativeDay } from '../../lib/relativeTime';
+import { MemoryFeedSkeleton } from '../../components/ui/Skeleton';
 import { useNotes } from '../../lib/hooks/useNotes';
 import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { MemoryCard } from '../../components/memory/MemoryCard';
@@ -32,15 +33,10 @@ import type { Memory } from '../../lib/types';
 
 const TOGETHER = Sections.together;
 
-function formatDateShort(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }).toLowerCase();
-}
-
 export default function HomeScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { latestNote, latestFromPartner } = useNotes(activeSpace?.id);
   const { weekly, enrolled, progress: challengeProgress, chillyCount } = useWeeklyChallenge(
     activeSpace?.id,
@@ -272,7 +268,7 @@ export default function HomeScreen() {
                         style={styles.polaroid}
                         onPress={() => router.push(`/memory/${m.id}`)}
                         scaleTo={0.97}
-                        accessibilityLabel={`Moment ${formatDateShort(m.createdAt)}`}
+                        accessibilityLabel={`Moment ${relativeDay(m.createdAt, language)}`}
                       >
                         {m.photoUri ? (
                           <Image
@@ -291,7 +287,7 @@ export default function HomeScreen() {
                               {String(card.number).padStart(2, '0')}
                             </Text>
                           )}
-                          <Text style={styles.polaroidDate}>{formatDateShort(m.createdAt)}</Text>
+                          <Text style={styles.polaroidDate} numberOfLines={1}>{relativeDay(m.createdAt, language)}</Text>
                         </View>
                       </PressableScale>
                     );
@@ -387,11 +383,10 @@ export default function HomeScreen() {
               </View>
             )}
 
-            {/* First paint while loading — no blank flash before content/empty. */}
-            {loading && recentMemories.length === 0 && (
-              <View style={styles.loading}>
-                <ActivityIndicator color={Colors.accent} />
-              </View>
+            {/* First paint while loading — content-shaped skeletons, not a lone
+                spinner, so the feed reads as "about to appear". */}
+            {loading && recentMemories.length === 0 && !error && (
+              <MemoryFeedSkeleton count={3} />
             )}
 
             {/* Load failure must NOT read as "no memories" — distinct, retryable. */}
@@ -687,12 +682,6 @@ const styles = StyleSheet.create({
   feedHeader: {
     paddingTop: Spacing.lg,
     paddingBottom: Spacing.md,
-  },
-
-  // Loading
-  loading: {
-    paddingTop: Spacing.xxl,
-    alignItems: 'center',
   },
 
   // Hub — the action center

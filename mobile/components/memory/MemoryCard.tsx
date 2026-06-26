@@ -5,6 +5,7 @@ import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { PressableScale } from '../ui/PressableScale';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { relativeDay } from '../../lib/relativeTime';
 import type { Memory, MomentCard } from '../../lib/types';
 
 interface MemoryCardProps {
@@ -15,22 +16,17 @@ interface MemoryCardProps {
   onLongPress?: () => void;
 }
 
-function formatDate(iso: string, locale: string): string {
-  const d = new Date(iso);
-  const loc = locale === 'de' ? 'de-DE' : 'en-US';
-  return d.toLocaleDateString(loc, { month: 'long', day: 'numeric', year: 'numeric' }).toLowerCase();
-}
-
 export function MemoryCard({ memory, card, onPress, onLongPress }: MemoryCardProps) {
   const { language } = useLanguage();
   const hasPhoto = !!memory.photoUri;
+  const when = relativeDay(memory.createdAt, language);
   return (
     <PressableScale
       style={styles.container}
       onPress={onPress}
       onLongPress={onLongPress}
       scaleTo={0.985}
-      accessibilityLabel={`Moment${card ? ` for card ${card.number}` : ''}, ${formatDate(memory.createdAt, language)}`}
+      accessibilityLabel={`Moment${card ? ` for card ${card.number}` : ''}, ${when}`}
       accessibilityHint={onLongPress ? 'Opens this moment. Long-press to share.' : 'Opens this moment'}
     >
       {hasPhoto && (
@@ -54,7 +50,7 @@ export function MemoryCard({ memory, card, onPress, onLongPress }: MemoryCardPro
         <Text style={styles.note} numberOfLines={3}>
           {memory.note}
         </Text>
-        <Text style={styles.date}>{formatDate(memory.createdAt, language)}</Text>
+        <Text style={styles.date}>{when}</Text>
       </View>
     </PressableScale>
   );
