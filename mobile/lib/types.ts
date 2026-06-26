@@ -47,6 +47,8 @@ export interface Space {
   name: string;
   inviteCode: string;
   createdAt: string;
+  /** Local-only decoration: emoji chosen by the couple. Not synced to server. */
+  emoji?: string;
 }
 
 export type SpaceRole = 'owner' | 'member';

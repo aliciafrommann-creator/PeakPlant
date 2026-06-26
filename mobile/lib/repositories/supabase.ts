@@ -204,6 +204,17 @@ export const supabaseSpaceRepository: ISpaceRepository = {
     if (error) throw error;
     return mapSpace(data);
   },
+
+  async update(spaceId: string, updates: Pick<Space, 'name'>): Promise<Space> {
+    const { data, error } = await db()
+      .from('spaces')
+      .update({ name: updates.name.trim() })
+      .eq('id', spaceId)
+      .select()
+      .single();
+    if (error) throw error;
+    return mapSpace(data);
+  },
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

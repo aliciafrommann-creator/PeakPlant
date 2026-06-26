@@ -91,6 +91,11 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
     router.push('/space/new');
   }
 
+  function editSpace(spaceId: string) {
+    onClose();
+    router.push({ pathname: '/space/edit', params: { id: spaceId } });
+  }
+
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel={t('Close', 'Schliessen')}>
@@ -122,7 +127,9 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                       accessibilityRole="button"
                     >
                       <View style={[styles.dot, { backgroundColor: color }]}>
-                        <Text style={styles.dotGlyph}>{glyphFor(space.type)}</Text>
+                        <Text style={styles.dotGlyph}>
+                          {space.emoji ?? glyphFor(space.type)}
+                        </Text>
                       </View>
                       <View style={styles.rowText}>
                         <Text style={[styles.rowName, active && styles.rowNameActive]} numberOfLines={1}>
@@ -140,13 +147,23 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                     </PressableScale>
 
                     <Pressable
-                      style={styles.shareBtn}
+                      style={styles.iconBtn}
+                      onPress={() => editSpace(space.id)}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      accessibilityRole="button"
+                      accessibilityLabel={t(`Edit ${space.name}`, `${space.name} bearbeiten`)}
+                    >
+                      <Ionicons name="pencil-outline" size={16} color={Colors.textMuted} />
+                    </Pressable>
+
+                    <Pressable
+                      style={styles.iconBtn}
                       onPress={() => shareSpace(space)}
                       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                       accessibilityRole="button"
                       accessibilityLabel={t(`Share ${space.name} by invite link`, `${space.name} per Einladungslink teilen`)}
                     >
-                      <Ionicons name="share-outline" size={18} color={Colors.textMuted} />
+                      <Ionicons name="share-outline" size={16} color={Colors.textMuted} />
                     </Pressable>
                   </View>
                 );
@@ -246,13 +263,14 @@ const styles = StyleSheet.create({
   check: {
     marginLeft: Spacing.sm,
   },
-  shareBtn: {
-    width: 36,
-    height: 36,
+  iconBtn: {
+    width: 34,
+    height: 34,
     borderRadius: Radii.pill,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.backgroundWarm,
+    marginRight: 4,
   },
   addRow: {
     flexDirection: 'row',

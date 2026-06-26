@@ -43,6 +43,8 @@ export interface ISpaceRepository {
   create(input: CreateSpaceInput): Promise<Space>;
   /** Mock join-by-code: links the user into the matching space (or a new one). */
   joinByCode(code: string, userId: string, userName: string): Promise<Space>;
+  /** Rename the space. Both members can update. */
+  update(spaceId: string, updates: Pick<Space, 'name'>): Promise<Space>;
 }
 
 export interface ISavedDateRepository {

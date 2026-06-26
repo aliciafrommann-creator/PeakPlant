@@ -219,6 +219,17 @@ export const localSpaceRepository: ISpaceRepository = {
     }
     return space;
   },
+
+  async update(spaceId: string, updates: Pick<Space, 'name'>): Promise<Space> {
+    const spaces = await loadSpaces();
+    const idx = spaces.findIndex((s) => s.id === spaceId);
+    if (idx === -1) throw new Error(`Space ${spaceId} not found`);
+    const updated = { ...spaces[idx], name: updates.name.trim() || spaces[idx].name };
+    const next = [...spaces];
+    next[idx] = updated;
+    await storage.set(SPACES_KEY, next);
+    return updated;
+  },
 };
 
 export const localSavedDateRepository: ISavedDateRepository = {
