@@ -12,6 +12,18 @@ function safeJson(value: unknown): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
 }
 
+function placeEmoji(place: LocalPlace): string {
+  const haystack = `${place.category} ${place.tags.join(' ')}`.toLowerCase();
+  if (haystack.includes('cafe') || haystack.includes('coffee')) return '☕';
+  if (haystack.includes('park') || haystack.includes('walk') || haystack.includes('green')) return '🌿';
+  if (haystack.includes('market') || haystack.includes('food')) return '🍓';
+  if (haystack.includes('view') || haystack.includes('mountain') || haystack.includes('outdoor')) return '⛰';
+  if (haystack.includes('workshop') || haystack.includes('art') || haystack.includes('creative')) return '✦';
+  if (haystack.includes('lake') || haystack.includes('swim') || haystack.includes('water')) return '〰';
+  if (haystack.includes('community')) return '♡';
+  return '•';
+}
+
 export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): string {
   const points = mappablePlaces(places).map((place) => ({
     id: place.id,
@@ -19,6 +31,7 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
     lat: place.lat,
     lng: place.lng,
     partner: place.isPartner,
+    emoji: placeEmoji(place),
   }));
 
   return `<!doctype html>
@@ -38,6 +51,9 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
       width: 24px; height: 24px; border-radius: 50%;
       background: #1A1A1A; border: 3px solid #ffffff;
       box-shadow: 0 2px 10px rgba(0,0,0,.25);
+      color: #ffffff; display: flex; align-items: center; justify-content: center;
+      font: 13px system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1;
     }
     .peak-pin.partner { background: #C9A96E; }
     .peak-pin.selected { width: 30px; height: 30px; margin: -3px; border-width: 4px; }
@@ -67,7 +83,7 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
     points.forEach((point) => {
       const classes = ['peak-pin', point.partner ? 'partner' : '', point.id === selectedId ? 'selected' : '']
         .filter(Boolean).join(' ');
-      const icon = L.divIcon({ className: '', html: '<div class="' + classes + '"></div>', iconSize: [30, 30], iconAnchor: [15, 15] });
+      const icon = L.divIcon({ className: '', html: '<div class="' + classes + '">' + point.emoji + '</div>', iconSize: [30, 30], iconAnchor: [15, 15] });
       const marker = L.marker([point.lat, point.lng], { icon, title: point.name }).addTo(map);
       marker.on('click', () => window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'select-place', id: point.id })));
       bounds.push([point.lat, point.lng]);

@@ -44,13 +44,13 @@ export type LivePlaceSearchResult =
       limit: number;
     };
 
-async function readUsed(date = new Date()): Promise<number> {
-  const value = await storage.get<number>(livePlacesUsageKey(date));
+async function readUsed(scopeId?: string, date = new Date()): Promise<number> {
+  const value = await storage.get<number>(livePlacesUsageKey(date, scopeId));
   return typeof value === 'number' && Number.isFinite(value) ? Math.max(0, Math.round(value)) : 0;
 }
 
-async function setUsed(used: number, date = new Date()): Promise<void> {
-  await storage.set(livePlacesUsageKey(date), Math.max(0, Math.round(used)));
+async function setUsed(used: number, scopeId?: string, date = new Date()): Promise<void> {
+  await storage.set(livePlacesUsageKey(date, scopeId), Math.max(0, Math.round(used)));
 }
 
 function configuredMonthlyLimit(): number {
@@ -94,11 +94,14 @@ export async function searchLivePlacesNear({
   near,
   radiusKm = DEFAULT_LIVE_PLACE_RADIUS_KM,
   limit = DEFAULT_LIVE_PLACE_LIMIT,
+  scopeId,
 }: {
   query?: string;
   near: GeoCoords;
   radiusKm?: number;
   limit?: number;
+  /** Budget scope; pass the current space id so allowance is per space/month. */
+  scopeId?: string;
 }): Promise<LivePlaceSearchResult> {
   const normalizedQuery = normalizeLivePlaceQuery(query);
   const safeRadius = clampLivePlaceRadiusKm(radiusKm);
@@ -107,14 +110,14 @@ export async function searchLivePlacesNear({
 
   let used: number;
   try {
-    used = await readUsed();
+    used = await readUsed(scopeId);
     const cached = await cachedPlaces(normalizedQuery, near, safeRadius);
     const status = livePlaceBudgetStatus(used, monthlyLimit);
     if (cached) {
       return { ok: true, places: cached.slice(0, safeLimit), source: 'cached', ...status };
     }
     if (!status.allowed) return { ok: false, reason: 'monthly_limit', ...status };
-    await setUsed(used + 1);
+    await setUsed(used + 1, scopeId);
     used += 1;
   } catch {
     const status = livePlaceBudgetStatus(0, monthlyLimit);
@@ -125,13 +128,13 @@ export async function searchLivePlacesNear({
   const status = livePlaceBudgetStatus(used, monthlyLimit);
 
   if (!result.ok) {
-    if (result.reason === 'not_configured') {
-      // No paid request happened, so keep the beta budget fair.
-      try { await setUsed(used - 1); } catch { /* non-fatal */ }
-      const refunded = livePlaceBudgetStatus(used - 1, monthlyLimit);
-      return { ok: false, reason: failureFromProvider(result), ...refunded };
-    }
-    return { ok: false, reason: failureFromProvider(result), ...status };
+    // User-visible allowance should buy useful returned places. If the provider
+    // cannot return anything (not configured, rate-limited, network/no-results),
+    // refund the visible allowance while internal provider-cost monitoring stays
+    // separate from this local UX guardrail.
+    try { await setUsed(used - 1, scopeId); } catch { /* non-fatal */ }
+    const refunded = livePlaceBudgetStatus(used - 1, monthlyLimit);
+    return { ok: false, reason: failureFromProvider(result), ...refunded };
   }
 
   const places = result.data.slice(0, safeLimit);

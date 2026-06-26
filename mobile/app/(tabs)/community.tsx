@@ -91,8 +91,8 @@ function liveFailureMessage(
       );
     case 'no_results':
       return t(
-        'no nearby live places matched. try again somewhere else.',
-        'Keine passenden Live-Orte in der Naehe gefunden. Versuch es an einem anderen Ort nochmal.',
+        'no live places matched that exact vibe. your allowance was not used — try a broader vibe or ask PeakPlant.',
+        'Keine Live-Orte haben genau gepasst. Dein Kontingent wurde nicht verbraucht — probier eine breitere Stimmung oder frag PeakPlant.',
       );
     case 'storage_unavailable':
       return t(
@@ -295,6 +295,7 @@ export default function PlacesScreen() {
         query,
         near: coords,
         radiusKm: DEFAULT_LIVE_PLACE_RADIUS_KM,
+        scopeId: activeSpace?.id,
       });
       if (result.ok) {
         setLivePlaces(result.places);
@@ -325,7 +326,7 @@ export default function PlacesScreen() {
     } finally {
       setLiveLoading(false);
     }
-  }, [t]);
+  }, [activeSpace?.id, t]);
 
   const findNearby = useCallback(async (query?: string) => {
     setLiveLoading(true);
@@ -491,6 +492,17 @@ export default function PlacesScreen() {
               <Text style={styles.liveButtonText}>{t('FIND NEAR ME', 'IN DER NÄHE')}</Text>
             )}
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.askMapButton}
+            onPress={() => router.push('/ask')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('Ask PeakPlant for a specific place idea', 'PeakPlant nach einer spezifischen Orte-Idee fragen')}
+          >
+            <Text style={styles.askMapButtonText}>
+              {t('ASK PEAKPLANT FOR A FITTED DATE IDEA', 'PEAKPLANT NACH PASSENDER DATE-IDEE FRAGEN')}
+            </Text>
+          </TouchableOpacity>
           <View style={styles.pilotCities}>
             {PILOT_CITIES.map((city) => (
               <TouchableOpacity
@@ -512,14 +524,14 @@ export default function PlacesScreen() {
             ]}>
               {liveStatus.message}
               {'remaining' in liveStatus && liveStatus.limit != null
-                ? ` ${t('left this month:', 'übrig diesen Monat:')} ${liveStatus.remaining}/${liveStatus.limit}`
+                ? ` ${t('left for this space:', 'übrig für diesen Space:')} ${liveStatus.remaining}/${liveStatus.limit}`
                 : ''}
             </Text>
           ) : (
             <Text style={styles.liveStatus}>
               {t(
-                'default beta limit: 12 fresh live searches per device/month; cached repeats are free.',
-                'Beta-Default: 12 frische Live-Suchen pro Gerät/Monat; Cache-Wiederholungen sind gratis.',
+                'default beta limit: 6 useful fresh live searches per space/month; cached repeats and no-results are free.',
+                'Beta-Default: 6 nützliche frische Live-Suchen pro Space/Monat; Cache-Wiederholungen und Null-Treffer sind gratis.',
               )}
             </Text>
           )}
@@ -884,6 +896,21 @@ const styles = StyleSheet.create({
   },
   liveButtonDisabled: { opacity: 0.7 },
   liveButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
+  askMapButton: {
+    minHeight: 42,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.background,
+  },
+  askMapButtonText: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2,
+    color: Colors.text,
+    textAlign: 'center',
+  },
   pilotCities: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   pilotCity: {
     minHeight: 38,

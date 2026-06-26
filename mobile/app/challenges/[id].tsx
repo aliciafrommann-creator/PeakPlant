@@ -88,21 +88,42 @@ export default function ChallengeDetailScreen() {
             <Text style={styles.primaryText}>{t('TAKE IT ON', 'ANNEHMEN')}</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            style={styles.secondary}
-            onPress={() => leave(challenge.id)}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={t('Leave this challenge', 'Herausforderung verlassen')}
-          >
-            <Text style={styles.secondaryText}>{t('LEAVE QUIETLY', 'RUHIG VERLASSEN')}</Text>
-          </TouchableOpacity>
+          <>
+            {!progress?.complete && (
+              <TouchableOpacity
+                style={styles.primary}
+                onPress={() => router.push({
+                  pathname: '/memory/create',
+                  params: {
+                    prefillNote: t(
+                      `weekly challenge: ${challenge.title}`,
+                      `Wochen-Challenge: ${challenge.title}`,
+                    ),
+                  },
+                })}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Add photo or note for this challenge', 'Foto oder Notiz für diese Challenge hinzufügen')}
+              >
+                <Text style={styles.primaryText}>{t('ADD PHOTO / NOTE', 'FOTO / NOTIZ HINZUFÜGEN')}</Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={styles.secondary}
+              onPress={() => leave(challenge.id)}
+              activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel={t('Leave this challenge', 'Herausforderung verlassen')}
+            >
+              <Text style={styles.secondaryText}>{t('LEAVE QUIETLY', 'RUHIG VERLASSEN')}</Text>
+            </TouchableOpacity>
+          </>
         )}
 
         <Text style={styles.note}>
           {t(
-            'progress counts moments you preserve after joining. leaving keeps every moment — only the challenge goes away.',
-            'Fortschritt zahlt Momente, die du nach dem Beitritt bewahrst. Verlassen behaltet jeden Moment - nur die Herausforderung verschwindet.',
+            'progress counts moments you preserve after joining. use photo/note when you actually did it together. leaving keeps every moment — only the challenge goes away.',
+            'Fortschritt zählt Momente, die ihr nach dem Beitritt bewahrt. Nutzt Foto/Notiz, wenn ihr es wirklich zusammen gemacht habt. Verlassen behält jeden Moment — nur die Challenge verschwindet.',
           )}
         </Text>
       </ScrollView>

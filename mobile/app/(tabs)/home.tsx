@@ -14,6 +14,7 @@ import { Spacing } from '../../constants/spacing';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { SpaceSwitcher } from '../../components/space/SpaceSwitcher';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
@@ -24,6 +25,7 @@ export default function HomeScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { memories, loading } = useMemories(activeSpace?.id);
   const { t } = useLanguage();
+  const { weekly, enrolled, progress: challengeProgress, chillyCount } = useWeeklyChallenge(activeSpace?.id);
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -135,6 +137,72 @@ export default function HomeScreen() {
               </View>
             )}
 
+            <View style={styles.hubSection}>
+              <View style={styles.hubIntro}>
+                <Text style={styles.sectionLabel}>
+                  {t('YOUR SPACE', 'EUER SPACE')}
+                </Text>
+                <Text style={styles.hubTitle}>
+                  {t('what do you want to do together?', 'was wollt ihr zusammen machen?')}
+                </Text>
+              </View>
+
+              <View style={styles.quickGrid}>
+                <TouchableOpacity
+                  style={[styles.quickCard, styles.quickCardDark]}
+                  onPress={() => router.push(`/challenges/${weekly.id}`)}
+                  activeOpacity={0.88}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('Complete this weekly challenge', 'Wöchentliche Challenge abschließen')}
+                >
+                  <Text style={styles.quickKickerDark}>{t('THIS WEEK', 'DIESE WOCHE')}</Text>
+                  <Text style={styles.quickTitleDark}>{weekly.title}</Text>
+                  <Text style={styles.quickBodyDark}>
+                    {challengeProgress?.complete
+                      ? t('complete — keep the glow going.', 'geschafft — nehmt den Schwung mit.')
+                      : enrolled && challengeProgress
+                        ? t(
+                            `${challengeProgress.count}/${challengeProgress.goal} moments collected`,
+                            `${challengeProgress.count}/${challengeProgress.goal} Momente gesammelt`,
+                          )
+                        : t('choose it together, then add a photo or note when you live it.', 'wählt sie zusammen, dann Foto oder Notiz hinzufügen, wenn ihr sie erlebt.')}
+                  </Text>
+                </TouchableOpacity>
+
+                <View style={styles.quickColumn}>
+                  <TouchableOpacity
+                    style={styles.quickMini}
+                    onPress={() => router.push('/ask')}
+                    activeOpacity={0.85}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('Ask PeakPlant', 'PeakPlant fragen')}
+                  >
+                    <Text style={styles.quickMiniTitle}>{t('ask peakplant', 'peakplant fragen')}</Text>
+                    <Text style={styles.quickMiniBody}>{t('get a fitted idea', 'passende Idee holen')}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.quickMini}
+                    onPress={() => router.push('/discover/saved')}
+                    activeOpacity={0.85}
+                    accessibilityRole="button"
+                    accessibilityLabel={t('Open saved ideas', 'Gemerkte Ideen öffnen')}
+                  >
+                    <Text style={styles.quickMiniTitle}>{t('saved plans', 'gemerkte Pläne')}</Text>
+                    <Text style={styles.quickMiniBody}>{t('plan, do, preserve', 'planen, machen, festhalten')}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              <Text style={styles.collectibleLine}>
+                {chillyCount > 0
+                  ? t(
+                      `${chillyCount} challenge${chillyCount !== 1 ? 's' : ''} completed together`,
+                      `${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''} zusammen geschafft`,
+                    )
+                  : t('your weekly collectible starts with the first completed challenge.', 'euer wöchentliches Sammelzeichen startet mit der ersten geschafften Challenge.')}
+              </Text>
+            </View>
+
             <View style={styles.feedHeader}>
               <Text style={styles.sectionLabel}>
                 {t('RECENTLY TOGETHER', 'ZULETZT ZUSAMMEN')}
@@ -156,8 +224,8 @@ export default function HomeScreen() {
                 </Text>
                 <Text style={styles.emptyHint}>
                   {t(
-                    'scan a card or add an experience to begin.',
-                    'Karte scannen oder Erlebnis eintragen, um zu beginnen.',
+                    'scan a card or complete a weekly challenge to begin.',
+                    'Karte scannen oder Wochen-Challenge abschließen, um zu beginnen.',
                   )}
                 </Text>
               </View>
@@ -178,12 +246,12 @@ export default function HomeScreen() {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.addBtn}
-          onPress={() => router.push('/memory/create')}
+          onPress={() => router.push(`/challenges/${weekly.id}`)}
           activeOpacity={0.85}
           accessibilityRole="button"
-          accessibilityLabel={t('Add an experience manually', 'Erlebnis manuell eintragen')}
+          accessibilityLabel={t('Complete the weekly challenge', 'Wöchentliche Challenge abschließen')}
         >
-          <Text style={styles.addBtnText}>{t('ADD EXPERIENCE', 'ERLEBNIS EINTRAGEN')}</Text>
+          <Text style={styles.addBtnText}>{t('WEEKLY CHALLENGE', 'WOCHEN-CHALLENGE')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -239,6 +307,88 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     paddingHorizontal: Spacing.screen,
     marginBottom: Spacing.md,
+  },
+  hubSection: {
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+    gap: Spacing.md,
+  },
+  hubIntro: {
+    gap: 2,
+  },
+  hubTitle: {
+    fontSize: 24,
+    fontWeight: '200',
+    color: Colors.text,
+    letterSpacing: -0.4,
+    lineHeight: 30,
+    paddingHorizontal: Spacing.screen,
+  },
+  quickGrid: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.screen,
+  },
+  quickCard: {
+    flex: 1.15,
+    minHeight: 154,
+    padding: Spacing.md,
+    justifyContent: 'space-between',
+  },
+  quickCardDark: {
+    backgroundColor: Colors.text,
+  },
+  quickKickerDark: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2.2,
+    color: Colors.accent,
+  },
+  quickTitleDark: {
+    fontSize: 20,
+    fontWeight: '200',
+    color: Colors.white,
+    letterSpacing: -0.3,
+    lineHeight: 25,
+  },
+  quickBodyDark: {
+    fontSize: 12,
+    fontWeight: '300',
+    color: Colors.backgroundCream,
+    lineHeight: 18,
+  },
+  quickColumn: {
+    flex: 1,
+    gap: Spacing.sm,
+  },
+  quickMini: {
+    flex: 1,
+    minHeight: 72,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.backgroundWarm,
+    padding: Spacing.md,
+    justifyContent: 'space-between',
+  },
+  quickMiniTitle: {
+    fontSize: 14,
+    fontWeight: '300',
+    color: Colors.text,
+  },
+  quickMiniBody: {
+    fontSize: 11,
+    fontWeight: '300',
+    color: Colors.textMuted,
+    lineHeight: 16,
+  },
+  collectibleLine: {
+    fontSize: 11,
+    fontWeight: '300',
+    color: Colors.textFaint,
+    lineHeight: 17,
+    paddingHorizontal: Spacing.screen,
   },
   editionRow: {
     gap: Spacing.sm,

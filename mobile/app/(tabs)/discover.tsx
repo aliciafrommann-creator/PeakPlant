@@ -45,7 +45,16 @@ const FILTER_GROUPS: FilterGroup[] = [
   {
     label: 'how long', labelDe: 'wie lang',
     options: [
+      { key: 'tiny', label: '30-60 min', labelDe: '30-60 Min', patch: { maxDurationMin: 60 } },
       { key: 'quick', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
+    ],
+  },
+  {
+    label: 'when', labelDe: 'wann',
+    options: [
+      { key: 'morning', label: 'morning', labelDe: 'morgens', patch: { timeOfDay: 'morning' } },
+      { key: 'afternoon', label: 'afternoon', labelDe: 'nachmittags', patch: { timeOfDay: 'afternoon' } },
+      { key: 'evening', label: 'evening', labelDe: 'abends', patch: { timeOfDay: 'evening' } },
     ],
   },
   {
@@ -67,10 +76,28 @@ const FILTER_GROUPS: FilterGroup[] = [
     options: [
       { key: 'calm', label: 'calm', labelDe: 'ruhig', patch: { categories: ['calm'] } },
       { key: 'play', label: 'playful', labelDe: 'verspielt', patch: { categories: ['play'] } },
+      { key: 'food', label: 'food', labelDe: 'Essen', patch: { categories: ['food'] } },
+      { key: 'creative', label: 'creative', labelDe: 'kreativ', patch: { categories: ['create'] } },
+      { key: 'adventure', label: 'adventure', labelDe: 'Abenteuer', patch: { categories: ['outdoors'] } },
+    ],
+  },
+  {
+    label: 'energy', labelDe: 'Energie',
+    options: [
+      { key: 'low-energy', label: 'soft', labelDe: 'sanft', patch: { energy: 'low' } },
+      { key: 'high-energy', label: 'bold', labelDe: 'mutig', patch: { energy: 'high' } },
     ],
   },
 ];
 const SHORTCUTS: Shortcut[] = FILTER_GROUPS.flatMap((g) => g.options);
+const MUTUALLY_EXCLUSIVE_FILTERS = [
+  ['tiny', 'quick'],
+  ['morning', 'afternoon', 'evening'],
+  ['free', 'cheap'],
+  ['indoor', 'outdoor'],
+  ['calm', 'play', 'food', 'creative', 'adventure'],
+  ['low-energy', 'high-energy'],
+];
 
 export default function DiscoverScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
@@ -184,13 +211,12 @@ export default function DiscoverScreen() {
     setExcludeIds([]);
     setActive((prev) => {
       const next = new Set(prev);
-      // indoor/outdoor are mutually exclusive; same for the category chips.
-      if (key === 'indoor') next.delete('outdoor');
-      if (key === 'outdoor') next.delete('indoor');
-      if (key === 'free') next.delete('cheap');
-      if (key === 'cheap') next.delete('free');
-      if (key === 'calm') next.delete('play');
-      if (key === 'play') next.delete('calm');
+      for (const group of MUTUALLY_EXCLUSIVE_FILTERS) {
+        if (!group.includes(key)) continue;
+        for (const other of group) {
+          if (other !== key) next.delete(other);
+        }
+      }
       if (next.has(key)) next.delete(key);
       else next.add(key);
       return next;
@@ -313,6 +339,17 @@ export default function DiscoverScreen() {
               `eine konkrete Idee für diesen ${timeOfDay === 'morning' ? 'Morgen' : timeOfDay === 'afternoon' ? 'Nachmittag' : 'Abend'}. chip antippen zum Eingrenzen.`,
             )}
           </Text>
+          <TouchableOpacity
+            style={styles.askInline}
+            onPress={() => router.push('/ask')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('Ask PeakPlant for a specific idea', 'PeakPlant nach einer spezifischen Idee fragen')}
+          >
+            <Text style={styles.askInlineText}>
+              {t('ASK PEAKPLANT FOR SOMETHING SPECIFIC', 'PEAKPLANT NACH ETWAS SPEZIFISCHEM FRAGEN')}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Grouped filters */}
@@ -406,15 +443,25 @@ export default function DiscoverScreen() {
         ) : (
           <View style={styles.empty}>
             <Text style={styles.emptyText}>{t('nothing fits all of that right now.', 'nichts passt gerade auf alles.')}</Text>
-            <Text style={styles.emptyHint}>{t("loosen a filter and we'll find something.", 'einen Filter lockern und wir finden etwas.')}</Text>
-            <TouchableOpacity
-              style={styles.actionBtn}
-              onPress={resetFilters}
-              accessibilityRole="button"
-              accessibilityLabel={t('Clear filters', 'Filter zurücksetzen')}
-            >
-              <Text style={styles.actionText}>{t('CLEAR FILTERS', 'FILTER LÖSCHEN')}</Text>
-            </TouchableOpacity>
+            <Text style={styles.emptyHint}>{t("loosen a filter, or ask PeakPlant in words — that's often faster.", 'Lockert einen Filter oder fragt PeakPlant in Worten — das ist oft schneller.')}</Text>
+            <View style={styles.emptyActions}>
+              <TouchableOpacity
+                style={[styles.actionBtn, styles.emptyActionGrow]}
+                onPress={() => router.push('/ask')}
+                accessibilityRole="button"
+                accessibilityLabel={t('Ask PeakPlant', 'PeakPlant fragen')}
+              >
+                <Text style={styles.actionText}>{t('ASK PEAKPLANT', 'PEAKPLANT FRAGEN')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.actionBtnGhost, styles.emptyActionGrow]}
+                onPress={resetFilters}
+                accessibilityRole="button"
+                accessibilityLabel={t('Clear filters', 'Filter zurücksetzen')}
+              >
+                <Text style={styles.actionTextGhost}>{t('CLEAR FILTERS', 'FILTER LÖSCHEN')}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
 
@@ -672,6 +719,21 @@ const styles = StyleSheet.create({
   titleBlock: { paddingHorizontal: Spacing.screen, paddingTop: Spacing.xl, gap: Spacing.sm },
   title: { fontSize: 30, fontWeight: '200', color: Colors.text, letterSpacing: -0.5, lineHeight: 36 },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
+  askInline: {
+    minHeight: 42,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Spacing.xs,
+  },
+  askInlineText: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2,
+    color: Colors.text,
+    textAlign: 'center',
+  },
   filterGroups: {
     paddingTop: Spacing.lg,
     gap: Spacing.md,
@@ -760,7 +822,9 @@ const styles = StyleSheet.create({
   altLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
   empty: { alignItems: 'center', gap: Spacing.sm, paddingVertical: Spacing.xxl, paddingHorizontal: Spacing.screen },
   emptyText: { fontSize: 18, fontWeight: '200', color: Colors.textMuted },
-  emptyHint: { fontSize: 13, fontWeight: '300', color: Colors.textFaint, marginBottom: Spacing.md },
+  emptyHint: { fontSize: 13, fontWeight: '300', color: Colors.textFaint, marginBottom: Spacing.md, textAlign: 'center', lineHeight: 19 },
+  emptyActions: { flexDirection: 'row', gap: Spacing.sm, alignSelf: 'stretch' },
+  emptyActionGrow: { flex: 1, paddingHorizontal: Spacing.sm },
   links: {
     marginTop: Spacing.xxl,
     borderTopWidth: 1,
