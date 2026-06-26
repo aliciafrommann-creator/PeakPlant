@@ -82,11 +82,26 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
       touchZoom: true,
       scrollWheelZoom: false
     });
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    // CARTO can fail to serve tiles (network, rate limit) — leaving a grey map.
+    // Fall back to OpenStreetMap tiles once on the first tile error so the map
+    // always renders something.
+    let usingFallbackTiles = false;
+    const cartoTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       subdomains: 'abcd',
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
     }).addTo(map);
+    const osmTiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
+    cartoTiles.on('tileerror', () => {
+      if (usingFallbackTiles) return;
+      usingFallbackTiles = true;
+      map.removeLayer(cartoTiles);
+      osmTiles.addTo(map);
+      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'map-ready' }));
+    });
     const bounds = [];
     points.forEach((point) => {
       const classes = ['peak-pin', point.partner ? 'partner' : '', point.id === selectedId ? 'selected' : '']

@@ -19,11 +19,11 @@ import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useNotes } from '../../lib/hooks/useNotes';
+import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { SpacePicker } from '../../components/space/SpacePicker';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { Ionicons } from '@expo/vector-icons';
-import { FloatingActionButton } from '../../components/ui/FloatingActionButton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
@@ -42,6 +42,9 @@ export default function HomeScreen() {
   const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
   const { t } = useLanguage();
   const { latestNote, latestFromPartner } = useNotes(activeSpace?.id);
+  const { weekly, enrolled, progress: challengeProgress, chillyCount } = useWeeklyChallenge(
+    activeSpace?.id,
+  );
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -142,6 +145,77 @@ export default function HomeScreen() {
         }
         ListHeaderComponent={
           <>
+            {/* Hub — the couple space is where everything starts: this week's
+                challenge, a fitted idea, your saved plans. */}
+            {activeSpace && (
+              <View style={styles.hubSection}>
+                <Text style={styles.sectionLabel}>{t('YOUR SPACE', 'EUER SPACE')}</Text>
+                <Text style={styles.hubTitle}>
+                  {t('what do you want to do together?', 'was wollt ihr zusammen machen?')}
+                </Text>
+
+                <View style={styles.quickGrid}>
+                  <PressableScale
+                    style={[styles.quickCard, styles.quickCardDark]}
+                    onPress={() => router.push(`/challenges/${weekly.id}`)}
+                    accessibilityLabel={t(
+                      'Complete this weekly challenge',
+                      'Wöchentliche Challenge abschließen',
+                    )}
+                  >
+                    <Text style={styles.quickKickerDark}>{t('THIS WEEK', 'DIESE WOCHE')}</Text>
+                    <Text style={styles.quickTitleDark} numberOfLines={2}>
+                      {weekly.title}
+                    </Text>
+                    <Text style={styles.quickBodyDark} numberOfLines={2}>
+                      {challengeProgress?.complete
+                        ? t('complete — keep the glow going.', 'geschafft — nehmt den Schwung mit.')
+                        : enrolled && challengeProgress
+                          ? t(
+                              `${challengeProgress.count}/${challengeProgress.goal} moments collected`,
+                              `${challengeProgress.count}/${challengeProgress.goal} Momente gesammelt`,
+                            )
+                          : t(
+                              'choose it together, add a photo or note when you live it.',
+                              'wählt sie zusammen, Foto oder Notiz hinzufügen, wenn ihr sie erlebt.',
+                            )}
+                    </Text>
+                  </PressableScale>
+
+                  <View style={styles.quickColumn}>
+                    <PressableScale
+                      style={styles.quickMini}
+                      onPress={() => router.push('/ask')}
+                      accessibilityLabel={t('Ask PeakPlant', 'PeakPlant fragen')}
+                    >
+                      <Text style={styles.quickMiniTitle}>{t('ask peakplant', 'peakplant fragen')}</Text>
+                      <Text style={styles.quickMiniBody}>{t('get a fitted idea', 'passende Idee holen')}</Text>
+                    </PressableScale>
+                    <PressableScale
+                      style={styles.quickMini}
+                      onPress={() => router.push('/discover/saved')}
+                      accessibilityLabel={t('Open saved plans', 'Gemerkte Pläne öffnen')}
+                    >
+                      <Text style={styles.quickMiniTitle}>{t('saved plans', 'gemerkte Pläne')}</Text>
+                      <Text style={styles.quickMiniBody}>{t('plan, do, preserve', 'planen, machen, festhalten')}</Text>
+                    </PressableScale>
+                  </View>
+                </View>
+
+                <Text style={styles.collectibleLine}>
+                  {chillyCount > 0
+                    ? t(
+                        `${chillyCount} challenge${chillyCount !== 1 ? 's' : ''} completed together`,
+                        `${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''} zusammen geschafft`,
+                      )
+                    : t(
+                        'your weekly collectible starts with the first completed challenge.',
+                        'euer wöchentliches Sammelzeichen startet mit der ersten geschafften Challenge.',
+                      )}
+                </Text>
+              </View>
+            )}
+
             {/* Heartbeat stats — visible once there's content */}
             {memories.length > 0 && (
               <View style={styles.heartbeat}>
@@ -324,33 +398,31 @@ export default function HomeScreen() {
                 mark="bloom"
                 title={t('your space is waiting.', 'euer Space wartet.')}
                 hint={t(
-                  'scan a card to unlock your first experience — or capture a moment of your own.',
-                  'Karte scannen, um euer erstes Erlebnis freizuschalten — oder einen eigenen Moment festhalten.',
+                  "scan a card to unlock your first experience — or take on this week's challenge together.",
+                  'Karte scannen, um euer erstes Erlebnis freizuschalten — oder nehmt gemeinsam die Wochen-Challenge an.',
                 )}
-                ctaLabel={t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
-                onCta={() => router.push('/(tabs)/scan')}
+                ctaLabel={t("START THIS WEEK'S CHALLENGE", 'WOCHEN-CHALLENGE STARTEN')}
+                onCta={() => router.push(`/challenges/${weekly.id}`)}
               />
             )}
           </>
         }
       />
 
-      <FloatingActionButton
-        onPress={() => router.push('/memory/create')}
-        icon="camera-outline"
-        label={t('MOMENT', 'MOMENT')}
-        color={TOGETHER}
-        accessibilityLabel={t('Add a moment or upload a photo', 'Moment hinzufügen oder Foto hochladen')}
-        style={styles.fab}
-      />
-
       <View style={styles.addBar}>
         <PressableScale
-          style={styles.scanBar}
+          style={[styles.addBtn, styles.addBtnFill]}
           onPress={() => router.push('/(tabs)/scan')}
           accessibilityLabel={t('Scan a card', 'Karte scannen')}
         >
-          <Text style={styles.scanBarText}>{t('SCAN CARD', 'KARTE SCANNEN')}</Text>
+          <Text style={styles.addBtnTextFill}>{t('SCAN CARD', 'KARTE SCANNEN')}</Text>
+        </PressableScale>
+        <PressableScale
+          style={styles.addBtn}
+          onPress={() => router.push(`/challenges/${weekly.id}`)}
+          accessibilityLabel={t('Complete the weekly challenge', 'Wöchentliche Challenge abschließen')}
+        >
+          <Text style={styles.addBtnText}>{t('WEEKLY CHALLENGE', 'WOCHEN-CHALLENGE')}</Text>
         </PressableScale>
       </View>
     </SafeAreaView>
@@ -593,27 +665,119 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  // FAB + scan bar
-  fab: { bottom: 54 + Spacing.lg },
+  // Hub — the action center
+  hubSection: {
+    paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.lg,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  hubTitle: {
+    ...Typography.editorial,
+    fontSize: 20,
+    lineHeight: 26,
+    marginTop: Spacing.xs,
+    marginBottom: Spacing.md,
+  },
+  quickGrid: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  quickCard: {
+    flex: 1,
+    borderRadius: Radii.md,
+    padding: Spacing.md,
+    justifyContent: 'flex-start',
+    minHeight: 132,
+    ...Shadows.subtle,
+  },
+  quickCardDark: {
+    backgroundColor: Colors.text,
+  },
+  quickKickerDark: {
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 2.5,
+    color: Accents.sunflower,
+    marginBottom: Spacing.xs,
+  },
+  quickTitleDark: {
+    ...Typography.editorial,
+    fontSize: 19,
+    lineHeight: 23,
+    color: Colors.white,
+    marginBottom: Spacing.xs,
+  },
+  quickBodyDark: {
+    fontSize: 12,
+    fontWeight: '300',
+    lineHeight: 17,
+    color: 'rgba(250,247,240,0.72)',
+  },
+  quickColumn: {
+    flex: 1,
+    gap: Spacing.sm,
+  },
+  quickMini: {
+    flex: 1,
+    backgroundColor: Colors.backgroundWarm,
+    borderRadius: Radii.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    padding: Spacing.md,
+    justifyContent: 'center',
+  },
+  quickMiniTitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: Colors.text,
+    marginBottom: 3,
+  },
+  quickMiniBody: {
+    fontSize: 11,
+    fontWeight: '300',
+    color: Colors.textSubtle,
+  },
+  collectibleLine: {
+    fontSize: 11,
+    fontWeight: '400',
+    letterSpacing: 0.3,
+    color: Colors.textSubtle,
+    marginTop: Spacing.md,
+    fontStyle: 'italic',
+  },
+
+  // Bottom action bar — two primary couple actions
   addBar: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
+    flexDirection: 'row',
     borderTopWidth: 1,
     borderTopColor: Colors.border,
     backgroundColor: Colors.background,
   },
-  scanBar: {
+  addBtn: {
+    flex: 1,
     height: 54,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  addBtnFill: {
     backgroundColor: Colors.text,
   },
-  scanBarText: {
+  addBtnTextFill: {
     fontSize: 11,
     fontWeight: '600',
     letterSpacing: 2.5,
     color: Colors.white,
+  },
+  addBtnText: {
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 2.5,
+    color: Colors.text,
   },
 });

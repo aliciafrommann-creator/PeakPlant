@@ -332,6 +332,17 @@ export default function DiscoverScreen() {
               `eine konkrete Idee für diesen ${timeOfDay === 'morning' ? 'Morgen' : timeOfDay === 'afternoon' ? 'Nachmittag' : 'Abend'}. chip antippen zum Eingrenzen.`,
             )}
           </Text>
+          <TouchableOpacity
+            style={styles.askInline}
+            onPress={() => router.push('/ask')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('Ask PeakPlant for a specific idea', 'PeakPlant nach einer spezifischen Idee fragen')}
+          >
+            <Text style={styles.askInlineText}>
+              {t('ASK PEAKPLANT FOR SOMETHING SPECIFIC', 'PEAKPLANT NACH ETWAS SPEZIFISCHEM FRAGEN')}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Refine — one quiet scrolling row, not a wall of labelled groups */}
@@ -424,15 +435,30 @@ export default function DiscoverScreen() {
         ) : (
           <View style={styles.empty}>
             <Text style={styles.emptyText}>{t('nothing fits all of that right now.', 'nichts passt gerade auf alles.')}</Text>
-            <Text style={styles.emptyHint}>{t("loosen a filter and we'll find something.", 'einen Filter lockern und wir finden etwas.')}</Text>
-            <TouchableOpacity
-              style={styles.actionBtn}
-              onPress={resetFilters}
-              accessibilityRole="button"
-              accessibilityLabel={t('Clear filters', 'Filter zurücksetzen')}
-            >
-              <Text style={styles.actionText}>{t('CLEAR FILTERS', 'FILTER LÖSCHEN')}</Text>
-            </TouchableOpacity>
+            <Text style={styles.emptyHint}>
+              {t(
+                "loosen a filter, or ask PeakPlant in words — that's often faster.",
+                'Lockert einen Filter oder fragt PeakPlant in Worten — das ist oft schneller.',
+              )}
+            </Text>
+            <View style={styles.emptyActions}>
+              <TouchableOpacity
+                style={[styles.actionBtn, styles.emptyActionGrow]}
+                onPress={() => router.push('/ask')}
+                accessibilityRole="button"
+                accessibilityLabel={t('Ask PeakPlant', 'PeakPlant fragen')}
+              >
+                <Text style={styles.actionText}>{t('ASK PEAKPLANT', 'PEAKPLANT FRAGEN')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.actionBtnGhost, styles.emptyActionGrow]}
+                onPress={resetFilters}
+                accessibilityRole="button"
+                accessibilityLabel={t('Clear filters', 'Filter zurücksetzen')}
+              >
+                <Text style={styles.actionTextGhost}>{t('CLEAR FILTERS', 'FILTER LÖSCHEN')}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         )}
 
@@ -694,6 +720,22 @@ const styles = StyleSheet.create({
   titleBlock: { paddingHorizontal: Spacing.screen, paddingTop: Spacing.xl, gap: Spacing.sm },
   title: { ...Typography.editorial, fontSize: 34, lineHeight: 38 },
   subtitle: { fontSize: 14, fontWeight: '400', color: Colors.textSubtle, lineHeight: 21 },
+  askInline: {
+    minHeight: 44,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radii.pill,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Spacing.xs,
+  },
+  askInlineText: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2,
+    color: Colors.text,
+    textAlign: 'center',
+  },
   chips: {
     flexDirection: 'row',
     gap: Spacing.sm,
@@ -789,7 +831,9 @@ const styles = StyleSheet.create({
   altLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
   empty: { alignItems: 'center', gap: Spacing.sm, paddingVertical: Spacing.xxl, paddingHorizontal: Spacing.screen },
   emptyText: { fontSize: 18, fontWeight: '200', color: Colors.textMuted },
-  emptyHint: { fontSize: 13, fontWeight: '300', color: Colors.textFaint, marginBottom: Spacing.md },
+  emptyHint: { fontSize: 13, fontWeight: '300', color: Colors.textFaint, marginBottom: Spacing.md, textAlign: 'center', lineHeight: 19 },
+  emptyActions: { flexDirection: 'row', gap: Spacing.sm, alignSelf: 'stretch' },
+  emptyActionGrow: { flex: 1, paddingHorizontal: Spacing.sm },
   links: {
     marginTop: Spacing.xxl,
     paddingTop: Spacing.lg,

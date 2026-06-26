@@ -9,7 +9,7 @@ export const MAX_LIVE_PLACE_RADIUS_KM = 8;
 export const DEFAULT_LIVE_PLACE_LIMIT = 6;
 export const MAX_LIVE_PLACE_LIMIT = 8;
 export const LIVE_PLACES_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
-export const DEFAULT_MONTHLY_LIVE_PLACE_SEARCH_LIMIT = 12;
+export const DEFAULT_MONTHLY_LIVE_PLACE_SEARCH_LIMIT = 6;
 
 export interface PilotCity {
   id: string;
@@ -52,10 +52,11 @@ export function livePlaceCacheKey(query: string, near: GeoCoords, radiusKm: numb
   return `live-places:cache:${normalizeLivePlaceQuery(query).toLowerCase()}:${locationBucket(near)}:${clampLivePlaceRadiusKm(radiusKm).toFixed(1)}`;
 }
 
-export function livePlacesUsageKey(date = new Date()): string {
+export function livePlacesUsageKey(date = new Date(), scopeId = 'device'): string {
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  return `live-places:usage:${year}-${month}`;
+  const safeScope = scopeId.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 80) || 'device';
+  return `live-places:usage:${safeScope}:${year}-${month}`;
 }
 
 export function normalizeMonthlyLivePlaceLimit(raw?: string | number | null): number {
@@ -73,6 +74,10 @@ export function livePlaceBudgetStatus(used: number, limit: number) {
     remaining: Math.max(0, safeLimit - safeUsed),
     allowed: safeUsed < safeLimit,
   };
+}
+
+export function livePlaceUsageScope(spaceId?: string | null): string {
+  return spaceId?.trim() || 'device';
 }
 
 export function livePlaceIsCacheFresh(cachedAt: number, now = Date.now()): boolean {

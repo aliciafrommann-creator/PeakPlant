@@ -85,7 +85,7 @@ export default function CreateMemoryScreen() {
   };
 
   const handleSave = async () => {
-    if (!note.trim()) return;
+    if (!note.trim() && !photoUri) return;
     if (!activeSpace) {
       setError(
         t(
@@ -100,7 +100,7 @@ export default function CreateMemoryScreen() {
     try {
       const memory = await createMemory({
         cardId: selectedCardId,
-        note: note.trim(),
+        note: note.trim() || t('photo moment', 'Fotomoment'),
         photoUri,
       });
       // Preserving a moment is the app's most meaningful create — confirm it.
@@ -185,11 +185,11 @@ export default function CreateMemoryScreen() {
           <Text style={styles.headerTitle}>{t('PRESERVE MOMENT', 'MOMENT FESTHALTEN')}</Text>
           <TouchableOpacity
             onPress={handleSave}
-            disabled={!note.trim() || saving}
+            disabled={(!note.trim() && !photoUri) || saving}
             accessibilityRole="button"
             accessibilityLabel={t('Save moment', 'Moment speichern')}
           >
-            <Text style={[styles.saveText, (!note.trim() || saving) && styles.saveDisabled]}>
+            <Text style={[styles.saveText, ((!note.trim() && !photoUri) || saving) && styles.saveDisabled]}>
               {saving ? t('SAVING…', 'SPEICHERT…') : t('SAVE', 'SPEICHERN')}
             </Text>
           </TouchableOpacity>
