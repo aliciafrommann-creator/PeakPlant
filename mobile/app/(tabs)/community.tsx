@@ -531,6 +531,34 @@ export default function PlacesScreen() {
     [savedForSpace, selected],
   );
 
+  // Step 4a: turn this place into a private diary memory (notes/photos stay
+  // private to the space — never public). Prefilled from the planned place.
+  const createMemoryForSelected = useCallback(() => {
+    if (!selected) return;
+    const spot = publicSpotForPlace(selected);
+    router.push({
+      pathname: '/memory/create',
+      params: {
+        prefillNote: t(`our moment at ${selected.name}`, `unser Moment bei ${selected.name}`),
+        ...(selectedSaved
+          ? {
+              savedDateId: selectedSaved.id,
+              savedDateTitle: selectedSaved.title,
+              savedDateMomentId: selectedSaved.momentId,
+            }
+          : {}),
+        placeName: selectedSaved?.placeName ?? spot?.name ?? selected.name,
+        ...(selectedSaved?.placeId ?? spot?.id ? { placeId: selectedSaved?.placeId ?? spot?.id } : {}),
+        ...(selectedSaved?.placeAddress ?? spot?.address
+          ? { placeAddress: selectedSaved?.placeAddress ?? spot?.address }
+          : {}),
+        ...(selectedSaved?.placeMapsUrl ?? spot?.mapsUrl
+          ? { placeMapsUrl: selectedSaved?.placeMapsUrl ?? spot?.mapsUrl }
+          : {}),
+      },
+    });
+  }, [selected, selectedSaved, publicSpotForPlace, t]);
+
   const markSelectedDone = useCallback(async () => {
     if (!selectedSaved) return;
     try {
@@ -540,15 +568,30 @@ export default function PlacesScreen() {
       });
       await confirmSuccess();
       await reloadSaved();
-      // Natural next step in the loop: offer to leave an anonymous tip.
-      if (selected && publicSpotForPlace(selected)) openPublicRating();
+      // Cleanly ask what's next — keep a private memory, or share an anonymous
+      // tip. The copy makes clear notes/photos never become public.
+      const canShare = !!(selected && publicSpotForPlace(selected));
+      Alert.alert(
+        t('lovely — done together ♥', 'schön — zusammen erlebt ♥'),
+        t(
+          'Keep it as a private memory, or leave an anonymous tip on the map? Your notes and photos always stay private to your space.',
+          'Als private Erinnerung behalten oder einen anonymen Tipp auf der Karte lassen? Eure Notizen und Fotos bleiben immer privat in eurem Space.',
+        ),
+        [
+          { text: t('Create memory', 'Erinnerung anlegen'), onPress: () => createMemoryForSelected() },
+          ...(canShare
+            ? [{ text: t('Rate anonymously', 'Anonym bewerten'), onPress: () => openPublicRating() }]
+            : []),
+          { text: t('Later', 'Später'), style: 'cancel' as const },
+        ],
+      );
     } catch {
       Alert.alert(
         t('Could not update this plan', 'Plan konnte nicht aktualisiert werden'),
         t('Please try again in a moment.', 'Bitte versuche es gleich noch einmal.'),
       );
     }
-  }, [selectedSaved, reloadSaved, selected, publicSpotForPlace, openPublicRating, t]);
+  }, [selectedSaved, reloadSaved, selected, publicSpotForPlace, openPublicRating, createMemoryForSelected, t]);
 
   if (!selected) return null;
   const selectedHasDirections = Boolean(selectedLivePlace?.mapsUrl ?? directionsUrl(selected));
@@ -840,12 +883,15 @@ export default function PlacesScreen() {
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
-                style={styles.primaryButton}
+                style={[styles.primaryButton, liveLoading && styles.liveButtonDisabled]}
                 onPress={() => void findNearby(selected.liveQuery)}
+                disabled={liveLoading}
                 accessibilityRole="button"
                 accessibilityLabel={t('Find live matches for this vibe', 'Live-Treffer für diese Stimmung finden')}
               >
-                <Text style={styles.primaryButtonText}>{t('FIND LIVE MATCHES', 'LIVE-TREFFER FINDEN')}</Text>
+                <Text style={styles.primaryButtonText}>
+                  {liveLoading ? t('SEARCHING…', 'SUCHE…') : t('FIND LIVE MATCHES', 'LIVE-TREFFER FINDEN')}
+                </Text>
               </TouchableOpacity>
             )}
             {/* Step 2: plan — hidden once it's already planned/done. */}
@@ -872,7 +918,18 @@ export default function PlacesScreen() {
                 <Text style={styles.secondaryButtonText}>{t('MARK AS DONE', 'ALS ERLEDIGT MARKIEREN')}</Text>
               </TouchableOpacity>
             )}
-            {/* Step 4: anonymous rating — the only thing that ever goes public. */}
+            {/* Step 4a: keep it as a private memory (notes/photos stay private). */}
+            {selectedIsDone && (
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={createMemoryForSelected}
+                accessibilityRole="button"
+                accessibilityLabel={t(`Create a memory of ${selected.name}`, `Erinnerung an ${selected.name} anlegen`)}
+              >
+                <Text style={styles.secondaryButtonText}>{t('CREATE A MEMORY', 'ERINNERUNG ANLEGEN')}</Text>
+              </TouchableOpacity>
+            )}
+            {/* Step 4b: anonymous rating — the only thing that ever goes public. */}
             {selectedCanBeShared ? (
               <TouchableOpacity
                 style={styles.tertiaryButton}
