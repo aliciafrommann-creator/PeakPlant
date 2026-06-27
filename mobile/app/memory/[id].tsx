@@ -21,6 +21,8 @@ import { Typography } from '../../constants/typography';
 import { SEED_CARDS } from '../../lib/seed';
 import { memoryRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
+import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import { shareMemory } from '../../lib/share';
 import { confirmSuccess } from '../../lib/haptics';
 import type { Memory } from '../../lib/types';
@@ -35,6 +37,7 @@ export default function MemoryDetailScreen() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { t } = useLanguage();
+  const obscured = usePrivacyOverlay();
 
   useEffect(() => {
     let active = true;
@@ -149,6 +152,8 @@ export default function MemoryDetailScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <SafeAreaView style={styles.container}>
+        {/* A memory is always private — hide it in the app switcher / on background. */}
+        {obscured && <PrivacyScreen />}
         <View style={styles.header}>
           {editing ? (
             <>

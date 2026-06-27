@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import { relativeDay } from '../../lib/relativeTime';
 import { MemoryFeedSkeleton } from '../../components/ui/Skeleton';
 import { useNotes } from '../../lib/hooks/useNotes';
 import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
+import { useBiometric } from '../../lib/hooks/useBiometric';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { SpacePicker } from '../../components/space/SpacePicker';
 import { PressableScale } from '../../components/ui/PressableScale';
@@ -41,8 +42,24 @@ export default function HomeScreen() {
   const { weekly, enrolled, progress: challengeProgress, chillyCount } = useWeeklyChallenge(
     activeSpace?.id,
   );
+  const { authenticate } = useBiometric();
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
   const [pickerOpen, setPickerOpen] = useState(false);
+
+  // Sensitive editions stay gated wherever they're opened from — Home included
+  // (the editions tab already gates; this closes the bypass from the feed).
+  const openEdition = useCallback(
+    async (edition: { id: string; sensitive?: boolean }) => {
+      if (edition.sensitive) {
+        const granted = await authenticate(
+          t('unlock your private diary', 'privates Tagebuch entsperren'),
+        );
+        if (!granted) return;
+      }
+      router.push(`/editions/${edition.id}`);
+    },
+    [authenticate, t],
+  );
 
   useEffect(() => {
     if (!activeSpace?.id) {
@@ -324,7 +341,7 @@ export default function HomeScreen() {
                     <PressableScale
                       key={e.id}
                       style={[styles.editionCard, { borderLeftColor: e.color }]}
-                      onPress={() => router.push(`/editions/${e.id}`)}
+                      onPress={() => void openEdition(e)}
                       accessibilityLabel={`${e.name}, ${progress} von ${e.cardCount} Karten`}
                     >
                       <Text style={styles.editionSymbol}>{e.symbol}</Text>

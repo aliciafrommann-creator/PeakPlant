@@ -14,11 +14,14 @@ import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
+import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import type { CardGroup, CardSection } from '../../lib/types';
 
 export default function CardDetailScreen() {
   const { id, unlocked } = useLocalSearchParams<{ id: string; unlocked?: string }>();
   const { t, l } = useLanguage();
+  const obscured = usePrivacyOverlay();
 
   const bannerOpacity = useRef(new Animated.Value(0)).current;
   const [showBanner, setShowBanner] = useState(false);
@@ -83,7 +86,10 @@ export default function CardDetailScreen() {
         </TouchableOpacity>
         {edition.sensitive && (
           <Text style={styles.privacyNote}>
-            {t('This stays private on your device.', 'Das bleibt privat auf deinem Gerät.')}
+            {t(
+              'This stays private to your space — only you and your partner can see it.',
+              'Das bleibt privat in eurem Space — nur ihr beide könnt es sehen.',
+            )}
           </Text>
         )}
         <Text style={styles.noPressure}>
@@ -120,6 +126,8 @@ export default function CardDetailScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Sensitive-edition content is hidden in the app switcher / on background. */}
+      {edition.sensitive && obscured && <PrivacyScreen />}
       {showBanner && (
         <Animated.View style={[styles.unlockedBanner, { opacity: bannerOpacity }]} pointerEvents="none">
           <Text style={styles.unlockedBannerText}>

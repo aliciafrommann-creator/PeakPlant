@@ -23,6 +23,11 @@ credentials), tracked as O-001/O-002 in the Decision Register.
   (the mark a couple earns per completed challenge), shared across members. Reuses
   the UPDATE policy from 0012, so it is just one additive column. `supabase db push`.
 
+> **Status:** `0012` and `0013` have been **applied to the production project**
+> (`kmlqjmxkcnkfwsbptvuc`) and verified (columns + `spaces: members update`
+> policy + `space-avatars` bucket with 4 member policies). Security advisors
+> reported no new findings from these migrations.
+
 ## Applying 0012 (manual)
 
 Run from the repo root once, against the linked project:
