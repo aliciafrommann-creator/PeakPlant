@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -72,6 +72,12 @@ export default function HomeScreen() {
   const recentMemories = [...memories].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
+
+  // A gentle, living reward — moments preserved in the last 7 days.
+  const momentsThisWeek = useMemo(() => {
+    const weekAgo = Date.now() - 7 * 86_400_000;
+    return memories.filter((m) => new Date(m.createdAt).getTime() >= weekAgo).length;
+  }, [memories]);
 
   const spaceLabel =
     activeSpace?.type === 'couple'
@@ -208,6 +214,15 @@ export default function HomeScreen() {
                     </PressableScale>
                   </View>
                 </View>
+
+                {momentsThisWeek > 0 && (
+                  <Text style={styles.weekReward}>
+                    {t(
+                      `✦ ${momentsThisWeek} moment${momentsThisWeek !== 1 ? 's' : ''} together this week`,
+                      `✦ ${momentsThisWeek} Moment${momentsThisWeek !== 1 ? 'e' : ''} diese Woche zusammen`,
+                    )}
+                  </Text>
+                )}
 
                 {chillyCount > 0 && (
                   <Text style={styles.collectibleStrip}>
@@ -757,6 +772,13 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '300',
     color: Colors.textSubtle,
+  },
+  weekReward: {
+    fontSize: 12,
+    fontWeight: '500',
+    letterSpacing: 0.3,
+    color: Accents.sage,
+    marginTop: Spacing.md,
   },
   collectibleStrip: {
     fontSize: 18,
