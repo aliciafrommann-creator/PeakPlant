@@ -42,12 +42,32 @@ export const CHALLENGES: Challenge[] = [
   { id: 'ch-5', title: 'the crew', subtitle: 'four moments with the whole group.', goalCount: 4, spaceTypes: ['friends'], badge: '✨', durationLabel: 'this season' },
 ];
 
+/**
+ * Lightweight weekly challenges — a single shared moment is the whole goal, so a
+ * couple can finish "this week's" challenge in one go and collect that week's
+ * mark. Kept separate from the season-long CHALLENGES above so the challenges
+ * list stays uncluttered; both are resolvable via challengeById/ALL_CHALLENGES.
+ */
+export const WEEKLY_CHALLENGES: Challenge[] = [
+  { id: 'wk-1', title: 'one soft evening', subtitle: 'do one calm, unhurried thing together this week.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🌙', durationLabel: 'this week' },
+  { id: 'wk-2', title: 'one out the door', subtitle: 'get outside together once this week — however small.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🌿', durationLabel: 'this week' },
+  { id: 'wk-3', title: 'one good laugh', subtitle: 'do one playful thing that makes you both laugh.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '✨', durationLabel: 'this week' },
+  { id: 'wk-4', title: 'one new thing', subtitle: 'try one small thing neither of you has done.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🧭', durationLabel: 'this week' },
+  { id: 'wk-5', title: 'one slow meal', subtitle: 'share one unhurried meal together, no phones.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🍽️', durationLabel: 'this week' },
+  { id: 'wk-6', title: 'one little adventure', subtitle: 'one tiny adventure, somewhere not far.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🗺️', durationLabel: 'this week' },
+  { id: 'wk-7', title: 'one kind word', subtitle: 'tell or write each other one real thank-you.', goalCount: 1, spaceTypes: ['couple'], badge: '💛', durationLabel: 'this week' },
+  { id: 'wk-8', title: 'one cosy night in', subtitle: 'one cosy night in, just the two of you.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🕯️', durationLabel: 'this week' },
+];
+
+/** Everything resolvable by id — season + weekly. */
+export const ALL_CHALLENGES: Challenge[] = [...CHALLENGES, ...WEEKLY_CHALLENGES];
+
 export function challengesForSpaceType(type: SpaceType): Challenge[] {
   return CHALLENGES.filter((c) => c.spaceTypes.includes(type));
 }
 
 export function challengeById(id: string): Challenge | undefined {
-  return CHALLENGES.find((c) => c.id === id);
+  return ALL_CHALLENGES.find((c) => c.id === id);
 }
 
 /** Pure progress: count moments preserved on/after joining, against the goal. */
