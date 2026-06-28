@@ -74,24 +74,31 @@ export default function HomeScreen() {
     [authenticate, t],
   );
 
-  useEffect(() => {
+  const loadEditionProgress = useCallback(async () => {
     if (!activeSpace?.id) {
       setEditionProgress({});
       return;
     }
-    let alive = true;
-    Promise.all(
+    const entries = await Promise.all(
       SEED_EDITIONS.filter((e) => e.status === 'available').map(async (e) => {
         const cards = await cardRepository.getAll(e.id, activeSpace.id);
         return [e.id, cards.filter((c) => c.status === 'activated').length] as const;
       }),
-    ).then((entries) => {
-      if (alive) setEditionProgress(Object.fromEntries(entries));
-    });
-    return () => {
-      alive = false;
-    };
+    );
+    setEditionProgress(Object.fromEntries(entries));
   }, [activeSpace?.id]);
+
+  useEffect(() => {
+    void loadEditionProgress();
+  }, [loadEditionProgress]);
+
+  // Re-check on focus so a card just scanned/activated shows up in "growing
+  // together" the moment you return to the feed.
+  useFocusEffect(
+    useCallback(() => {
+      void loadEditionProgress();
+    }, [loadEditionProgress]),
+  );
 
   const activeEditions = SEED_EDITIONS.filter(
     (e) => e.status === 'available' && (editionProgress[e.id] ?? 0) > 0,

@@ -67,17 +67,17 @@ const styles = StyleSheet.create({
   },
   photo: {
     width: '100%',
-    height: 220,
+    height: 300,
     backgroundColor: Colors.border,
   },
   noPhoto: {
-    height: 84,
+    height: 132,
     backgroundColor: Accents.cream,
     alignItems: 'center',
     justifyContent: 'center',
   },
   noPhotoMark: {
-    fontSize: 26,
+    fontSize: 40,
     color: Accents.apricot,
   },
   body: {

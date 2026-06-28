@@ -128,8 +128,8 @@ export default function ScanScreen() {
             <View style={styles.permissionBox}>
               <Text style={styles.cameraText}>
                 {permission?.canAskAgain === false
-                  ? t('camera access is off. enable it in settings to scan cards.', 'Kamera-Zugriff ist deaktiviert. Aktiviere ihn in den Einstellungen.')
-                  : t('allow camera access to scan the QR code on your moment card', 'Kamera-Zugriff erlauben, um den QR-Code auf deiner Momentkarte zu scannen')}
+                  ? t('camera access is off. turn it on in settings to scan your cards.', 'Die Kamera ist aus — aktivier sie kurz in den Einstellungen, dann könnt ihr Karten scannen.')
+                  : t('let PeakPlant use the camera to scan the little QR on your card.', 'Lass PeakPlant kurz die Kamera nutzen, dann scannst du den QR-Code auf eurer Karte.')}
               </Text>
               {permission?.canAskAgain !== false ? (
                 <TouchableOpacity
@@ -147,9 +147,9 @@ export default function ScanScreen() {
                   onPress={() => void Linking.openSettings()}
                   activeOpacity={0.85}
                   accessibilityRole="button"
-                  accessibilityLabel={t('Open settings to enable camera', 'Einstellungen offnen, um Kamera zu aktivieren')}
+                  accessibilityLabel={t('Open settings to enable camera', 'Einstellungen öffnen, um die Kamera zu aktivieren')}
                 >
-                  <Text style={styles.permissionButtonText}>{t('OPEN SETTINGS', 'EINSTELLUNGEN OFFNEN')}</Text>
+                  <Text style={styles.permissionButtonText}>{t('OPEN SETTINGS', 'EINSTELLUNGEN ÖFFNEN')}</Text>
                 </TouchableOpacity>
               )}
             </View>
