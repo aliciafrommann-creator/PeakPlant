@@ -10,7 +10,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Colors, Accents, Sections } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -30,6 +30,9 @@ import { EmptyState } from '../../components/ui/EmptyState';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { shareMemory } from '../../lib/share';
+import { acknowledgeSelection } from '../../lib/haptics';
+import { Toast } from '../../components/ui/Toast';
+import { consumePendingReward } from '../../lib/pendingReward';
 import type { Memory } from '../../lib/types';
 
 const TOGETHER = Sections.together;
@@ -45,6 +48,16 @@ export default function HomeScreen() {
   const { authenticate } = useBiometric();
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [reward, setReward] = useState<string | null>(null);
+
+  // A little celebration when you land back on the feed after keeping a moment.
+  useFocusEffect(
+    useCallback(() => {
+      const kind = consumePendingReward();
+      if (kind === 'moment') setReward(t('moment kept ♥', 'Moment festgehalten ♥'));
+      else if (kind === 'challenge') setReward(t('challenge done ✦', 'Challenge geschafft ✦'));
+    }, [t]),
+  );
 
   // Sensitive editions stay gated wherever they're opened from — Home included
   // (the editions tab already gates; this closes the bypass from the feed).
@@ -115,11 +128,12 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {reward && <Toast message={reward} onHide={() => setReward(null)} />}
       {/* Header — the space name is the dropdown trigger (Instagram-style) */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.headerTrigger}
-          onPress={() => setPickerOpen(true)}
+          onPress={() => { void acknowledgeSelection(); setPickerOpen(true); }}
           activeOpacity={0.7}
           accessibilityRole="button"
           accessibilityLabel={t('Switch, add or share a space', 'Space wechseln, hinzufügen oder teilen')}
@@ -281,23 +295,31 @@ export default function HomeScreen() {
               </View>
             )}
 
-            {/* Memory filmstrip — polaroid scroll */}
+            {/* Memory filmstrip — a little album of your latest moments */}
             {recentMemories.length > 0 && (
               <View style={styles.filmstripSection}>
-                <Text style={styles.sectionLabel}>
-                  {t('RECENTLY TOGETHER', 'ZULETZT ZUSAMMEN')}
-                </Text>
+                <View style={styles.filmstripHeader}>
+                  <Text style={styles.sectionLabelInline}>
+                    {t('RECENTLY TOGETHER', 'ZULETZT ZUSAMMEN')}
+                  </Text>
+                  <Text style={styles.filmstripCount}>
+                    {memories.length === 1
+                      ? t('1 kept', '1 festgehalten')
+                      : t(`${memories.length} kept`, `${memories.length} festgehalten`)}
+                  </Text>
+                </View>
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.filmstrip}
                 >
-                  {recentMemories.slice(0, 8).map((m) => {
+                  {recentMemories.slice(0, 8).map((m, i) => {
                     const card = SEED_CARDS.find((c) => c.id === m.cardId);
+                    const hero = i === 0; // first moment reads as the album cover
                     return (
                       <PressableScale
                         key={m.id}
-                        style={styles.polaroid}
+                        style={[styles.polaroid, hero && styles.polaroidHero]}
                         onPress={() => router.push(`/memory/${m.id}`)}
                         scaleTo={0.97}
                         accessibilityLabel={`Moment ${relativeDay(m.createdAt, language)}`}
@@ -305,11 +327,11 @@ export default function HomeScreen() {
                         {m.photoUri ? (
                           <Image
                             source={{ uri: m.photoUri }}
-                            style={styles.polaroidPhoto}
+                            style={[styles.polaroidPhoto, hero && styles.polaroidPhotoHero]}
                             accessibilityLabel="Moment photo"
                           />
                         ) : (
-                          <View style={styles.polaroidBlank}>
+                          <View style={[styles.polaroidBlank, hero && styles.polaroidPhotoHero]}>
                             <Text style={styles.polaroidMark}>✦</Text>
                           </View>
                         )}
@@ -425,12 +447,12 @@ export default function HomeScreen() {
             {!loading && error && recentMemories.length === 0 && (
               <EmptyState
                 mark="✦"
-                title={t("couldn't load your moments.", 'eure Momente konnten nicht geladen werden.')}
+                title={t("couldn't load your moments.", 'kurz die Verbindung verloren.')}
                 hint={t(
                   'your memories are safe — this is just a connection hiccup.',
-                  'eure Erinnerungen sind sicher — das ist nur ein Verbindungsproblem.',
+                  'eure Erinnerungen sind sicher — wir versuchen es gleich nochmal.',
                 )}
-                ctaLabel={t('TRY AGAIN', 'ERNEUT VERSUCHEN')}
+                ctaLabel={t('TRY AGAIN', 'NOCHMAL VERSUCHEN')}
                 onCta={refresh}
               />
             )}
@@ -439,10 +461,10 @@ export default function HomeScreen() {
             {!loading && !error && recentMemories.length === 0 && (
               <EmptyState
                 mark="bloom"
-                title={t('your space is waiting.', 'euer Space wartet.')}
+                title={t('your first moment starts here.', 'euer erster Moment beginnt hier.')}
                 hint={t(
-                  "scan a card to unlock your first experience — or take on this week's challenge together.",
-                  'Karte scannen, um euer erstes Erlebnis freizuschalten — oder nehmt gemeinsam die Wochen-Challenge an.',
+                  'scan a card or take on this week’s challenge together — the first one you keep becomes your space’s first bloom.',
+                  'scannt eine Karte oder nehmt zusammen die Wochen-Challenge an — euer erster festgehaltener Moment wird eure erste Blüte.',
                 )}
                 ctaLabel={t("START THIS WEEK'S CHALLENGE", 'WOCHEN-CHALLENGE STARTEN')}
                 onCta={() => router.push(`/challenges/${weekly.id}`)}
@@ -570,6 +592,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.screen,
     paddingBottom: Spacing.xs,
   },
+  filmstripHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.screen,
+    marginBottom: Spacing.md,
+  },
+  sectionLabelInline: {
+    fontSize: 9,
+    fontWeight: '600',
+    letterSpacing: 2.5,
+    color: Colors.textSubtle,
+    textTransform: 'uppercase',
+  },
+  filmstripCount: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 0.3,
+    color: Colors.textFaint,
+  },
   polaroid: {
     width: 116,
     backgroundColor: Colors.surface,
@@ -577,11 +619,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Shadows.card,
   },
+  polaroidHero: { width: 150 },
   polaroidPhoto: {
     width: 116,
     height: 116,
     backgroundColor: Colors.border,
   },
+  polaroidPhotoHero: { width: 150, height: 150 },
   polaroidBlank: {
     width: 116,
     height: 116,
@@ -591,7 +635,7 @@ const styles = StyleSheet.create({
   },
   polaroidMark: { fontSize: 26, color: Accents.apricot },
   polaroidCaption: {
-    paddingHorizontal: 10,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 8,
     gap: 2,
   },

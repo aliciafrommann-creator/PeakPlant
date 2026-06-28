@@ -23,6 +23,7 @@ import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { savedDateRepository } from '../../lib/repositories';
 import { confirmSuccess } from '../../lib/haptics';
+import { setPendingReward } from '../../lib/pendingReward';
 import { SEED_CARDS } from '../../lib/seed';
 
 const MOMENT = Sections.together; // warm apricot — capturing "our" moment
@@ -105,6 +106,8 @@ export default function CreateMemoryScreen() {
       });
       // Preserving a moment is the app's most meaningful create — confirm it.
       void confirmSuccess();
+      // Queue a little celebration for when they land back on the feed.
+      setPendingReward('moment');
       // Close the loop: write memory id back to the saved date so learning
       // can confirm this was a real completed experience.
       if (savedDateId) {
