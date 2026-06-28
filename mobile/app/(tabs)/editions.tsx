@@ -77,14 +77,16 @@ export default function EditionsScreen() {
           <Text style={styles.desc} numberOfLines={2}>{item.description}</Text>
           <Text style={available ? styles.meta : styles.metaSoon}>
             {available
-              ? t(`${done} of ${item.cardCount} preserved`, `${done} von ${item.cardCount} bewahrt`)
+              ? done > 0 && item.cardCount > 0 && done >= item.cardCount
+                ? t('✦ every moment preserved', '✦ jeder Moment bewahrt')
+                : t(`${done} of ${item.cardCount} preserved`, `${done} von ${item.cardCount} bewahrt`)
               : t(
                   `${DECK_SIZE_RANGE.min}-${DECK_SIZE_RANGE.max} cards - coming soon`,
                   `${DECK_SIZE_RANGE.min}-${DECK_SIZE_RANGE.max} Karten - demnächst`,
                 )}
           </Text>
           {item.sensitive && available && (
-            <Text style={styles.privateBadge}>{t('private - device only', 'privat - nur auf dem Gerät')}</Text>
+            <Text style={styles.privateBadge}>{t('private to your space', 'privat — nur für euch')}</Text>
           )}
         </View>
       </TouchableOpacity>
