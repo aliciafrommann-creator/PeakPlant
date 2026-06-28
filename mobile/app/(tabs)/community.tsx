@@ -903,7 +903,7 @@ export default function PlacesScreen() {
                 accessibilityLabel={t(`Plan ${selected.name}`, `${selected.name} planen`)}
               >
                 <Text style={styles.secondaryButtonText}>
-                  {selectedLivePlace ? t('PLAN THIS PLACE', 'DIESEN ORT PLANEN') : t('PLAN THIS IDEA', 'DIESE IDEE PLANEN')}
+                  {selectedLivePlace ? t('PLAN A DATE HERE', 'HIER EIN DATE PLANEN') : t('PLAN THIS DATE', 'DIESES DATE PLANEN')}
                 </Text>
               </TouchableOpacity>
             )}
@@ -915,7 +915,7 @@ export default function PlacesScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={t(`Mark ${selected.name} as done`, `${selected.name} als erledigt markieren`)}
               >
-                <Text style={styles.secondaryButtonText}>{t('MARK AS DONE', 'ALS ERLEDIGT MARKIEREN')}</Text>
+                <Text style={styles.secondaryButtonText}>{t('WE DID THIS HERE', 'DAS HABEN WIR ERLEBT')}</Text>
               </TouchableOpacity>
             )}
             {/* Step 4a: keep it as a private memory (notes/photos stay private). */}
@@ -926,7 +926,7 @@ export default function PlacesScreen() {
                 accessibilityRole="button"
                 accessibilityLabel={t(`Create a memory of ${selected.name}`, `Erinnerung an ${selected.name} anlegen`)}
               >
-                <Text style={styles.secondaryButtonText}>{t('CREATE A MEMORY', 'ERINNERUNG ANLEGEN')}</Text>
+                <Text style={styles.secondaryButtonText}>{t('KEEP THE MEMORY', 'ERINNERUNG FESTHALTEN')}</Text>
               </TouchableOpacity>
             )}
             {/* Step 4b: anonymous rating — the only thing that ever goes public. */}
@@ -939,8 +939,8 @@ export default function PlacesScreen() {
               >
                 <Text style={styles.tertiaryButtonText}>
                   {publicSummary.count > 0
-                    ? t('ADD YOUR ANONYMOUS RATING', 'DEINE ANONYME BEWERTUNG')
-                    : t('RATE ANONYMOUSLY ON MAP', 'ANONYM AUF KARTE BEWERTEN')}
+                    ? t('ADD ANONYMOUS RATING', 'ANONYME BEWERTUNG HINZUFÜGEN')
+                    : t('SHARE ONLY THE SPOT', 'NUR DEN ORT TEILEN')}
                 </Text>
               </TouchableOpacity>
             ) : null}
