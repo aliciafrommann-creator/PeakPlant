@@ -290,7 +290,7 @@ export default function SavedDatesScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <BackButton label={t('BACK', 'ZURUCK')} />
+        <BackButton label={t('BACK', 'ZURÜCK')} />
         <Text style={styles.title}>{t('saved ideas', 'gespeicherte Ideen')}</Text>
       </View>
 
@@ -312,7 +312,7 @@ export default function SavedDatesScreen() {
             onPress={() => router.back()}
             accessibilityRole="button"
           >
-            <Text style={styles.ctaText}>{t('BACK TO DISCOVER', 'ZURUCK ZU ENTDECKEN')}</Text>
+            <Text style={styles.ctaText}>{t('BACK TO DISCOVER', 'ZURÜCK ZU ENTDECKEN')}</Text>
           </TouchableOpacity>
         </View>
       ) : (

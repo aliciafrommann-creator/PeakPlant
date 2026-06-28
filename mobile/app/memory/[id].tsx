@@ -179,7 +179,7 @@ export default function MemoryDetailScreen() {
             </>
           ) : (
             <>
-              <BackButton label={t('BACK', 'ZURUCK')} />
+              <BackButton label={t('BACK', 'ZURÜCK')} />
               <Text style={styles.headerLabel}>{t('MOMENT', 'MOMENT')}</Text>
               <TouchableOpacity
                 onPress={() => shareMemory(memory, card).catch(() => {})}
@@ -216,7 +216,7 @@ export default function MemoryDetailScreen() {
                 multiline
                 autoFocus
                 textAlignVertical="top"
-                placeholder={t('what do you want to remember about this moment?', 'was mochtest du von diesem Moment festhalten?')}
+                placeholder={t('what do you want to remember about this moment?', 'was möchtest du von diesem Moment festhalten?')}
                 placeholderTextColor={Colors.textFaint}
               />
             ) : (

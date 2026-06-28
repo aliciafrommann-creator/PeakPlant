@@ -138,12 +138,12 @@ export default function RitualsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <BackButton label={t('BACK', 'ZURUCK')} />
+        <BackButton label={t('BACK', 'ZURÜCK')} />
         <Text style={styles.title}>{t('rituals', 'Rituale')}</Text>
         <Text style={styles.subtitle}>
           {t(
             'the moments you loved enough to come back to.',
-            'die Momente, die ihr genug geliebt habt, um zuruckzukehren.',
+            'die Momente, die ihr genug geliebt habt, um zurückzukehren.',
           )}
         </Text>
       </View>
@@ -158,7 +158,7 @@ export default function RitualsScreen() {
             )}
           </Text>
           <TouchableOpacity style={styles.cta} onPress={() => router.push('/customize')} accessibilityRole="button">
-            <Text style={styles.ctaText}>{t('OPEN SETTINGS', 'EINSTELLUNGEN OFFNEN')}</Text>
+            <Text style={styles.ctaText}>{t('OPEN SETTINGS', 'EINSTELLUNGEN ÖFFNEN')}</Text>
           </TouchableOpacity>
         </View>
       ) : loading ? (
@@ -187,7 +187,7 @@ export default function RitualsScreen() {
               {r.note ? <Text style={styles.cardNote}>{r.note}</Text> : null}
               {r.lastRevisitedAt ? (
                 <Text style={styles.cardRevisited}>
-                  {t('last returned to', 'zuletzt zuruckgekehrt')}{' '}
+                  {t('last returned to', 'zuletzt zurückgekehrt')}{' '}
                   {new Date(r.lastRevisitedAt).toLocaleDateString(t('en-GB', 'de-DE'), {
                     day: 'numeric',
                     month: 'short',
@@ -199,7 +199,7 @@ export default function RitualsScreen() {
                   style={styles.actionPrimary}
                   onPress={() => void revisit(r)}
                   accessibilityRole="button"
-                  accessibilityLabel={t(`We came back to ${r.title}`, `Wir sind zu ${r.title} zuruckgekehrt`)}
+                  accessibilityLabel={t(`We came back to ${r.title}`, `Wir sind zu ${r.title} zurückgekehrt`)}
                 >
                   <Text style={styles.actionPrimaryText}>{t('WE CAME BACK', 'WIR WAREN WIEDER DA')}</Text>
                 </TouchableOpacity>
@@ -227,7 +227,7 @@ export default function RitualsScreen() {
         >
           <TouchableOpacity style={StyleSheet.absoluteFill} onPress={closeCreate} accessibilityLabel={t('Close', 'Schliessen')} />
           <View style={styles.sheet}>
-            <Text style={styles.sheetTitle}>{t('a ritual you return to', 'ein Ritual, zu dem ihr zuruckkehrt')}</Text>
+            <Text style={styles.sheetTitle}>{t('a ritual you return to', 'ein Ritual, zu dem ihr zurückkehrt')}</Text>
             <TextInput
               style={styles.sheetInput}
               placeholder={t('e.g. Sunday morning walk', 'z.B. Sonntagmorgen-Spaziergang')}

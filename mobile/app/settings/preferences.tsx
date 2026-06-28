@@ -95,7 +95,7 @@ export default function PreferencesScreen() {
 
   const clearGoals = useCallback(() => {
     Alert.alert(
-      t('clear onboarding goals?', 'Onboarding-Ziele loschen?'),
+      t('clear onboarding goals?', 'Onboarding-Ziele löschen?'),
       t(
         'your discovery picks will no longer be personalised by these. you can re-set them from onboarding at any time.',
         'Deine Entdecken-Vorschlage werden nicht mehr danach personalisiert. Du kannst sie jederzeit neu setzen.',
@@ -103,7 +103,7 @@ export default function PreferencesScreen() {
       [
         { text: t('keep them', 'behalten'), style: 'cancel' },
         {
-          text: t('clear', 'loschen'),
+          text: t('clear', 'löschen'),
           style: 'destructive',
           onPress: () => void setGoals([]),
         },
@@ -127,7 +127,7 @@ export default function PreferencesScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <BackButton label={t('BACK', 'ZURUCK')} />
+        <BackButton label={t('BACK', 'ZURÜCK')} />
         <Text style={styles.title}>{t('personalization', 'Personalisierung')}</Text>
       </View>
 
@@ -147,7 +147,7 @@ export default function PreferencesScreen() {
             <Text style={styles.emptyHint}>
               {t(
                 'your picks today are ordered by the ideas in our curated catalog, not personalised. set goals during onboarding or use the filter chips on Discover to tune results.',
-                'Deine heutigen Vorschlage basieren auf unserem kuratierten Katalog, nicht auf personlichen Praferenzen. Setze Ziele beim Onboarding oder nutze die Filter-Chips in Entdecken.',
+                'Deine heutigen Vorschlage basieren auf unserem kuratierten Katalog, nicht auf personlichen Präferenzen. Setze Ziele beim Onboarding oder nutze die Filter-Chips in Entdecken.',
               )}
             </Text>
           </View>
@@ -177,7 +177,7 @@ export default function PreferencesScreen() {
         <Text style={styles.sectionNote}>
           {t(
             'the chips on the Discover screen (calm, outdoors, free...) are applied only for that session and are never stored. they reset when you leave.',
-            'Die Chips auf dem Entdecken-Bildschirm (ruhig, draussen, kostenlos ...) gelten nur fur diese Sitzung und werden nie gespeichert. Sie werden zuruckgesetzt, wenn du die Seite verlasst.',
+            'Die Chips auf dem Entdecken-Bildschirm (ruhig, draussen, kostenlos ...) gelten nur für diese Sitzung und werden nie gespeichert. Sie werden zurückgesetzt, wenn du die Seite verlasst.',
           )}
         </Text>
 
@@ -186,7 +186,7 @@ export default function PreferencesScreen() {
             style={styles.clearBtn}
             onPress={clearGoals}
             accessibilityRole="button"
-            accessibilityLabel={t('Clear onboarding goals', 'Onboarding-Ziele loschen')}
+            accessibilityLabel={t('Clear onboarding goals', 'Onboarding-Ziele löschen')}
           >
             <Text style={styles.clearText}>{t('CLEAR ONBOARDING GOALS', 'ONBOARDING-ZIELE LOSCHEN')}</Text>
           </TouchableOpacity>
@@ -199,7 +199,7 @@ export default function PreferencesScreen() {
             <Text style={styles.signalNote}>
               {t(
                 'gently lifts ideas like the ones you save, plan and complete. only your own explicit actions — never inferred.',
-                'hebt sanft Ideen hervor, die du merkst, planst und abschliesst. nur deine eigenen Aktionen - nie abgeleitet.',
+                'hebt sanft Ideen hervor, die du merkst, planst und abschließt. nur deine eigenen Aktionen - nie abgeleitet.',
               )}
             </Text>
           </View>
@@ -217,14 +217,14 @@ export default function PreferencesScreen() {
             <Text style={styles.sectionNote}>
               {t(
                 "nothing learned yet. save, plan or complete a few ideas and a gentle picture forms here — always visible, always yours to reset.",
-                'noch nichts gelernt. merke, plane oder schliesse ein paar Ideen ab, und hier entsteht ein sanftes Bild - immer sichtbar, immer von dir rucksetzbar.',
+                'noch nichts gelernt. merke, plane oder schliesse ein paar Ideen ab, und hier entsteht ein sanftes Bild - immer sichtbar, immer von dir rücksetzbar.',
               )}
             </Text>
           ) : (
             <>
               {learning.liked.length > 0 && (
                 <View style={styles.learnedBlock}>
-                  <Text style={styles.learnedHeading}>{t('you seem drawn to', 'du scheinst dich hingezogen zu fuhlen zu')}</Text>
+                  <Text style={styles.learnedHeading}>{t('you seem drawn to', 'du scheinst dich hingezogen zu fühlen zu')}</Text>
                   {learning.liked.map((a) => (
                     <View key={a.category} style={styles.learnedRow}>
                       <Text style={styles.learnedCat}>{t(...CATEGORY_LABEL[a.category])}</Text>
@@ -263,7 +263,7 @@ export default function PreferencesScreen() {
         <Text style={styles.footer}>
           {t(
             'personalization signals live only on this device in local mode, or in your private space in backend mode — they are never used for ads, sold, or shared outside your space. (PP-014 / PP-016)',
-            'Personalisierungssignale leben nur auf diesem Gerat (lokaler Modus) oder in deinem privaten Space (Backend-Modus) - sie werden nie fur Werbung verwendet, verkauft oder ausserhalb deines Space geteilt. (PP-014 / PP-016)',
+            'Personalisierungssignale leben nur auf diesem Gerät (lokaler Modus) oder in deinem privaten Space (Backend-Modus) - sie werden nie für Werbung verwendet, verkauft oder ausserhalb deines Space geteilt. (PP-014 / PP-016)',
           )}
         </Text>
       </ScrollView>

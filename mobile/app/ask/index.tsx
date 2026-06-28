@@ -142,7 +142,7 @@ export default function AskScreen() {
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <BackButton label={t('BACK', 'ZURUCK')} />
+          <BackButton label={t('BACK', 'ZURÜCK')} />
           <Text style={styles.headerTitle}>{t('ASK PEAKPLANT', 'PEAKPLANT FRAGEN')}</Text>
           <View style={{ width: 60 }} />
         </View>

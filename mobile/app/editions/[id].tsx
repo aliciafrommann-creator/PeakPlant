@@ -94,7 +94,7 @@ export default function EditionScreen() {
               <Text style={[styles.stat, { color: fgMuted }]}>{momentCount}</Text>
               {edition.sensitive && (
                 <Text style={[styles.privateNote, { color: fgFaint }]}>
-                  {t('this diary stays private on your device', 'dieses Tagebuch bleibt privat auf deinem Gerat')}
+                  {t('this diary stays private on your device', 'dieses Tagebuch bleibt privat auf deinem Gerät')}
                 </Text>
               )}
             </View>
@@ -131,7 +131,7 @@ export default function EditionScreen() {
               <Text style={styles.emptyHint}>
                 {t(
                   'complete a card, then scan its QR code to add it to your diary.',
-                  'Schliesse eine Karte ab, dann scanne ihren QR-Code, um sie eurem Tagebuch hinzuzufugen.',
+                  'Schliesse eine Karte ab, dann scanne ihren QR-Code, um sie eurem Tagebuch hinzuzufügen.',
                 )}
               </Text>
             </View>

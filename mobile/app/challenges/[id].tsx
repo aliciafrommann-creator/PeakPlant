@@ -46,9 +46,9 @@ export default function ChallengeDetailScreen() {
           <TouchableOpacity
             onPress={() => router.back()}
             accessibilityRole="button"
-            accessibilityLabel={t('Go back', 'Zuruck')}
+            accessibilityLabel={t('Go back', 'Zurück')}
           >
-            <Text style={styles.backLink}>{t('go back', 'zuruck')}</Text>
+            <Text style={styles.backLink}>{t('go back', 'zurück')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -65,7 +65,7 @@ export default function ChallengeDetailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <BackButton label={t('BACK', 'ZURUCK')} />
+        <BackButton label={t('BACK', 'ZURÜCK')} />
         <Text style={styles.headerLabel}>{t('CHALLENGE', 'HERAUSFORDERUNG')}</Text>
         <View style={{ width: 60 }} />
       </View>

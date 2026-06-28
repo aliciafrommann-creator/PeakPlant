@@ -91,7 +91,7 @@ export default function NewSpaceScreen() {
           <Text style={styles.lead}>
             {t(
               'a space is shared with the people in it. you can be in as many as you like.',
-              'Ein Space wird mit den Personen darin geteilt. Du kannst in so vielen sein, wie du mochtest.',
+              'Ein Space wird mit den Personen darin geteilt. Du kannst in so vielen sein, wie du möchtest.',
             )}
           </Text>
 

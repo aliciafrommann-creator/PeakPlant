@@ -43,7 +43,7 @@ export default function OnboardingScreen() {
           <Text style={styles.subtitle}>
             {t(
               'choose what feels true. you can always change this.',
-              'wahlt, was sich richtig anfuhlt. ihr konnt es jederzeit andern.',
+              'wählt, was sich richtig anfühlt. ihr konnt es jederzeit andern.',
             )}
           </Text>
         </View>
