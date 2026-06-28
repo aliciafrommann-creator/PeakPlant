@@ -30,7 +30,7 @@ import { EmptyState } from '../../components/ui/EmptyState';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { shareMemory } from '../../lib/share';
-import { acknowledgeSelection } from '../../lib/haptics';
+import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
 import { Toast } from '../../components/ui/Toast';
 import { consumePendingReward } from '../../lib/pendingReward';
 import type { Memory } from '../../lib/types';
@@ -42,9 +42,29 @@ export default function HomeScreen() {
   const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
   const { t, language } = useLanguage();
   const { latestNote, latestFromPartner } = useNotes(activeSpace?.id);
-  const { weekly, enrolled, progress: challengeProgress, chillyCount } = useWeeklyChallenge(
-    activeSpace?.id,
-  );
+  const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
+    useWeeklyChallenge(activeSpace?.id);
+
+  // The hub challenge card acts in place — one clear action per state:
+  // not enrolled → take it on; in progress → add a moment (note/photo);
+  // complete → review the badge you earned.
+  const onHubChallenge = useCallback(async () => {
+    if (challengeProgress?.complete) {
+      router.push(`/challenges/${weekly.id}`);
+      return;
+    }
+    if (!enrolled) {
+      await acceptChallenge();
+      void confirmSuccess();
+      return;
+    }
+    router.push({
+      pathname: '/memory/create',
+      params: {
+        prefillNote: t(`weekly challenge: ${weekly.title}`, `Wochen-Challenge: ${weekly.title}`),
+      },
+    });
+  }, [challengeProgress?.complete, enrolled, acceptChallenge, weekly.id, weekly.title, t]);
   const { authenticate } = useBiometric();
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -208,27 +228,37 @@ export default function HomeScreen() {
                 <View style={styles.quickGrid}>
                   <PressableScale
                     style={[styles.quickCard, styles.quickCardDark]}
-                    onPress={() => router.push(`/challenges/${weekly.id}`)}
-                    accessibilityLabel={t(
-                      'Complete this weekly challenge',
-                      'Wöchentliche Challenge abschließen',
-                    )}
+                    onPress={() => void onHubChallenge()}
+                    accessibilityLabel={
+                      challengeProgress?.complete
+                        ? t('Review this week’s finished challenge', 'Geschaffte Wochen-Challenge ansehen')
+                        : enrolled
+                          ? t('Add a photo or note for this challenge', 'Foto oder Notiz für diese Challenge hinzufügen')
+                          : t('Take on this week’s challenge together', 'Diese Wochen-Challenge gemeinsam annehmen')
+                    }
                   >
-                    <Text style={styles.quickKickerDark}>{t('THIS WEEK', 'DIESE WOCHE')}</Text>
+                    <Text style={styles.quickKickerDark}>
+                      {challengeProgress?.complete
+                        ? t('THIS WEEK ✓', 'DIESE WOCHE ✓')
+                        : t('THIS WEEK', 'DIESE WOCHE')}
+                    </Text>
                     <Text style={styles.quickTitleDark} numberOfLines={2}>
                       {weekly.title}
                     </Text>
                     <Text style={styles.quickBodyDark} numberOfLines={2}>
                       {challengeProgress?.complete
-                        ? t('complete — keep the glow going.', 'geschafft — nehmt den Schwung mit.')
+                        ? t(
+                            `done — ${activeSpace.collectibleEmoji ?? '🌶️'} collected this week`,
+                            `geschafft — ${activeSpace.collectibleEmoji ?? '🌶️'} diese Woche gesammelt`,
+                          )
                         : enrolled && challengeProgress
                           ? t(
-                              `${challengeProgress.count}/${challengeProgress.goal} moments collected`,
-                              `${challengeProgress.count}/${challengeProgress.goal} Momente gesammelt`,
+                              `${challengeProgress.count}/${challengeProgress.goal} moments · tap to add one`,
+                              `${challengeProgress.count}/${challengeProgress.goal} Momente · tippen zum Hinzufügen`,
                             )
                           : t(
-                              'choose it together, add a photo or note when you live it.',
-                              'wählt sie zusammen, Foto oder Notiz hinzufügen, wenn ihr sie erlebt.',
+                              'tap to take it on together',
+                              'tippen, um sie gemeinsam anzunehmen',
                             )}
                     </Text>
                   </PressableScale>
