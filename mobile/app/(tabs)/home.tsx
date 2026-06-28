@@ -473,8 +473,8 @@ export default function HomeScreen() {
                   'scan a card or take on this week’s challenge together — the first one you keep becomes your space’s first bloom.',
                   'scannt eine Karte oder nehmt zusammen die Wochen-Challenge an — euer erster festgehaltener Moment wird eure erste Blüte.',
                 )}
-                ctaLabel={t("START THIS WEEK'S CHALLENGE", 'WOCHEN-CHALLENGE STARTEN')}
-                onCta={() => router.push(`/challenges/${weekly.id}`)}
+                ctaLabel={t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
+                onCta={() => router.push('/(tabs)/scan')}
               />
             )}
           </>
@@ -491,10 +491,10 @@ export default function HomeScreen() {
         </PressableScale>
         <PressableScale
           style={styles.addBtn}
-          onPress={() => router.push(`/challenges/${weekly.id}`)}
-          accessibilityLabel={t('Complete the weekly challenge', 'Wöchentliche Challenge abschließen')}
+          onPress={() => router.push('/memory/create')}
+          accessibilityLabel={t('Add a moment to your diary', 'Einen Moment ins Tagebuch legen')}
         >
-          <Text style={styles.addBtnText}>{t('WEEKLY CHALLENGE', 'WOCHEN-CHALLENGE')}</Text>
+          <Text style={styles.addBtnText}>{t('ADD A MOMENT', 'MOMENT FESTHALTEN')}</Text>
         </PressableScale>
       </View>
     </SafeAreaView>
