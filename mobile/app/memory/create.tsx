@@ -193,7 +193,7 @@ export default function CreateMemoryScreen() {
             accessibilityLabel={t('Save moment', 'Moment speichern')}
           >
             <Text style={[styles.saveText, ((!note.trim() && !photoUri) || saving) && styles.saveDisabled]}>
-              {saving ? t('SAVING…', 'SPEICHERT…') : t('SAVE', 'SPEICHERN')}
+              {saving ? t('KEEPING…', 'FESTHALTEN…') : t('KEEP', 'FESTHALTEN')}
             </Text>
           </TouchableOpacity>
         </View>
