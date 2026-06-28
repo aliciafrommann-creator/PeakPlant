@@ -18,6 +18,7 @@ import { Logo } from '../../components/ui/Logo';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { SpacePicker } from '../../components/space/SpacePicker';
 import { StreakBanner } from '../../components/space/StreakBanner';
+import { Toast } from '../../components/ui/Toast';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useAppStore } from '../../lib/store';
@@ -109,6 +110,7 @@ export default function DiscoverScreen() {
   const [savedMomentIds, setSavedMomentIds] = useState<Set<string>>(new Set());
   const [liveWeather, setLiveWeather] = useState<Weather | undefined>(undefined);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   // Keep the "already saved" set in sync with what's loaded for this space, so
   // the SAVE button can reflect saved state immediately (and across re-focus).
@@ -241,6 +243,7 @@ export default function DiscoverScreen() {
           status: 'saved',
         });
         await confirmSuccess();
+        setToast(t('saved to your space ♥', 'in eurem Space gemerkt ♥'));
       } catch {
         // Roll back the optimistic flip and tell the user — a silently dropped
         // save looks identical to success and is exactly what confused testers.
@@ -263,6 +266,7 @@ export default function DiscoverScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {toast && <Toast message={toast} onHide={() => setToast(null)} />}
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
           <Logo size="sm" />
@@ -407,9 +411,9 @@ export default function DiscoverScreen() {
               onSave={() => void saveDate(primary)}
               saved={savedMomentIds.has(primary.momentId)}
               onViewSaved={() => router.push('/discover/saved')}
-              saveLabel={t('SAVE', 'MERKEN')}
-              savedLabel={t('SAVED ✓ — VIEW', 'GEMERKT ✓ — ANSEHEN')}
-              seeLabel={t('SEE THIS IDEA ->', 'DIESE IDEE ANSEHEN ->')}
+              saveLabel={t('SAVE FOR US', 'FÜR UNS MERKEN')}
+              savedLabel={t('SAVED FOR US ✓', 'FÜR UNS GEMERKT ✓')}
+              seeLabel={t('SEE THIS IDEA', 'DIESE IDEE ANSEHEN')}
               whyLabel={t('WHY THIS', 'WARUM DIES')}
               notUsedPrefix={t('not used:', 'nicht verwendet:')}
               curatedLabel={t('curated', 'kuratiert')}
@@ -446,7 +450,7 @@ export default function DiscoverScreen() {
                   rec={alternative}
                   compact
                   onOpen={() => router.push(`/together/${alternative.momentId}`)}
-                  seeLabel={t('SEE THIS IDEA ->', 'DIESE IDEE ANSEHEN ->')}
+                  seeLabel={t('SEE THIS IDEA', 'DIESE IDEE ANSEHEN')}
                   whyLabel={t('WHY THIS', 'WARUM DIES')}
                   notUsedPrefix={t('not used:', 'nicht verwendet:')}
                   curatedLabel={t('curated', 'kuratiert')}
@@ -493,35 +497,20 @@ export default function DiscoverScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.linkPills}
           >
-            <TouchableOpacity
-              style={styles.linkPill}
-              onPress={() => router.push('/ask')}
-              activeOpacity={0.85}
-              accessibilityRole="button"
-              accessibilityLabel={t('Ask PeakPlant for personalised ideas', 'PeakPlant nach personalisierten Ideen fragen')}
-            >
-              <Text style={styles.linkPillText}>{t('💬 ask peakplant', '💬 peakplant fragen')}</Text>
-            </TouchableOpacity>
+            {/* "ask peakplant" and "idea library" intentionally omitted here —
+                they already have prominent entry points above (the inline ask
+                button + the ALL IDEAS toggle). One door each, not three. */}
             <TouchableOpacity
               style={styles.linkPill}
               onPress={() => router.push('/discover/saved')}
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel={t('Saved date ideas', 'Gemerkte Ideen')}
+              accessibilityLabel={t('Your saved plans', 'Eure gemerkten Pläne')}
             >
               <Text style={styles.linkPillText}>
-                {t('🔖 saved', '🔖 gemerkt')}
+                {t('🔖 saved plans', '🔖 gemerkte Pläne')}
                 {saved.length > 0 ? ` · ${saved.length}` : ''}
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.linkPill}
-              onPress={() => router.push('/discover/browse')}
-              activeOpacity={0.85}
-              accessibilityRole="button"
-              accessibilityLabel={t('Browse the full idea library', 'Die ganze Ideen-Bibliothek durchstöbern')}
-            >
-              <Text style={styles.linkPillText}>{t('🧭 idea library', '🧭 Ideen-Bibliothek')}</Text>
             </TouchableOpacity>
             {challengesEnabled && (
               <TouchableOpacity
