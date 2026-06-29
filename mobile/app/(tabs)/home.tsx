@@ -252,10 +252,15 @@ export default function HomeScreen() {
                             `geschafft — ${activeSpace.collectibleEmoji ?? '🌶️'} diese Woche gesammelt`,
                           )
                         : enrolled && challengeProgress
-                          ? t(
-                              `${challengeProgress.count}/${challengeProgress.goal} moments · tap to add one`,
-                              `${challengeProgress.count}/${challengeProgress.goal} Momente · tippen zum Hinzufügen`,
-                            )
+                          ? challengeProgress.goal <= 1
+                            ? t(
+                                'tap to add your moment',
+                                'tippen, um euren Moment hinzuzufügen',
+                              )
+                            : t(
+                                `${challengeProgress.count}/${challengeProgress.goal} moments · tap to add one`,
+                                `${challengeProgress.count}/${challengeProgress.goal} Momente · tippen zum Hinzufügen`,
+                              )
                           : t(
                               'tap to take it on together',
                               'tippen, um sie gemeinsam anzunehmen',
