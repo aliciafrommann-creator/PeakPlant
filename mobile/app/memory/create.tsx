@@ -135,7 +135,7 @@ export default function CreateMemoryScreen() {
       } else {
         router.replace(`/memory/${memory.id}`);
       }
-    } catch (_e) {
+    } catch {
       // The write failed — tell the user so they don't lose the moment thinking
       // it was saved. Their note stays in the field so they can retry.
       setSaving(false);
