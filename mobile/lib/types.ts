@@ -47,8 +47,22 @@ export interface Space {
   name: string;
   inviteCode: string;
   createdAt: string;
-  /** Local-only decoration: emoji chosen by the couple. Not synced to server. */
+  /**
+   * Shared space emoji. Synced via the `spaces.emoji` column when Supabase is
+   * configured (migration 0012); falls back to local storage otherwise so both
+   * members see the same mark.
+   */
   emoji?: string;
+  /** Shared avatar storage path in the `space-avatars` bucket (server). */
+  avatarPath?: string;
+  /** Transient, client-only signed URL resolved from `avatarPath` for display. */
+  avatarUrl?: string;
+  /**
+   * The collectible emoji stamped per completed challenge. Synced via
+   * `spaces.collectible_emoji` (migration 0013) when Supabase is configured;
+   * local storage is the fallback.
+   */
+  collectibleEmoji?: string;
 }
 
 export type SpaceRole = 'owner' | 'member';

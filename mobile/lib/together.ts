@@ -1,4 +1,5 @@
 import type { SpaceType } from './types';
+import { CURATED_MOMENTS } from './discovery/curatedMoments';
 
 /**
  * "Moments to do together" — small real-world things a space can do together,
@@ -278,6 +279,8 @@ export const TOGETHER_MOMENTS: TogetherMoment[] = [
     weatherFit: ['any', 'rain', 'cold', 'sunny'],
     linkedCardIds: ['card-15'],
   },
+  // Curated depth (~100 more hand-written ideas) for the recommender + Ask pool.
+  ...CURATED_MOMENTS,
 ];
 
 export function placeById(id?: string): LocalPlace | undefined {

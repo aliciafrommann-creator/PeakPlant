@@ -18,6 +18,7 @@ import { Logo } from '../../components/ui/Logo';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { SpacePicker } from '../../components/space/SpacePicker';
 import { StreakBanner } from '../../components/space/StreakBanner';
+import { Toast } from '../../components/ui/Toast';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useAppStore } from '../../lib/store';
@@ -48,7 +49,7 @@ const FILTER_GROUPS: FilterGroup[] = [
   {
     label: 'how long', labelDe: 'wie lang',
     options: [
-      { key: 'quick', emoji: '⚡', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
+      { key: 'quick', emoji: '⏱️', label: 'under 2h', labelDe: 'unter 2 Std', patch: { maxDurationMin: 120 } },
     ],
   },
   {
@@ -56,6 +57,13 @@ const FILTER_GROUPS: FilterGroup[] = [
     options: [
       { key: 'free', emoji: '✨', label: 'free', labelDe: 'gratis', patch: { maxBudget: 'free' } },
       { key: 'cheap', emoji: '💸', label: 'easy spend', labelDe: 'günstig', patch: { maxBudget: '€€' } },
+    ],
+  },
+  {
+    label: 'energy', labelDe: 'Energie',
+    options: [
+      { key: 'easy', emoji: '🍃', label: 'easy', labelDe: 'ruhig', patch: { energy: 'low' } },
+      { key: 'lively', emoji: '🔥', label: 'lively', labelDe: 'aktiv', patch: { energy: 'high' } },
     ],
   },
   {
@@ -70,10 +78,16 @@ const FILTER_GROUPS: FilterGroup[] = [
     options: [
       { key: 'calm', emoji: '🌙', label: 'calm', labelDe: 'ruhig', patch: { categories: ['calm'] } },
       { key: 'play', emoji: '🎲', label: 'playful', labelDe: 'verspielt', patch: { categories: ['play'] } },
+      { key: 'food', emoji: '🍽️', label: 'tasty', labelDe: 'lecker', patch: { categories: ['food'] } },
+      { key: 'create', emoji: '🎨', label: 'creative', labelDe: 'kreativ', patch: { categories: ['create'] } },
     ],
   },
 ];
 const SHORTCUTS: Shortcut[] = FILTER_GROUPS.flatMap((g) => g.options);
+/** key → group label, so toggling a chip clears its siblings (single-select). */
+const GROUP_OF: Record<string, string> = Object.fromEntries(
+  FILTER_GROUPS.flatMap((g) => g.options.map((o) => [o.key, g.label])),
+);
 
 const DISCOVER = Sections.discover; // sunlit gold identity; actions stay chili
 
@@ -84,7 +98,6 @@ export default function DiscoverScreen() {
   const streaksEnabled = useAppStore((s) => s.features.streaks);
   const challengesEnabled = useAppStore((s) => s.features.challenges);
   const ritualsEnabled = useAppStore((s) => s.features.rituals);
-  const missionsEnabled = useAppStore((s) => s.features.missions);
   const personalization = useAppStore((s) => s.personalization);
   const personalizationResetAt = useAppStore((s) => s.personalizationResetAt);
   const { t } = useLanguage();
@@ -97,6 +110,7 @@ export default function DiscoverScreen() {
   const [savedMomentIds, setSavedMomentIds] = useState<Set<string>>(new Set());
   const [liveWeather, setLiveWeather] = useState<Weather | undefined>(undefined);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   // Keep the "already saved" set in sync with what's loaded for this space, so
   // the SAVE button can reflect saved state immediately (and across re-focus).
@@ -190,13 +204,12 @@ export default function DiscoverScreen() {
     setExcludeIds([]);
     setActive((prev) => {
       const next = new Set(prev);
-      // indoor/outdoor are mutually exclusive; same for the category chips.
-      if (key === 'indoor') next.delete('outdoor');
-      if (key === 'outdoor') next.delete('indoor');
-      if (key === 'free') next.delete('cheap');
-      if (key === 'cheap') next.delete('free');
-      if (key === 'calm') next.delete('play');
-      if (key === 'play') next.delete('calm');
+      // Single-select within a group: tapping a chip clears its siblings, so
+      // budget / energy / where / vibe each hold at most one choice.
+      const group = GROUP_OF[key];
+      for (const k of Array.from(next)) {
+        if (k !== key && GROUP_OF[k] === group) next.delete(k);
+      }
       if (next.has(key)) next.delete(key);
       else next.add(key);
       return next;
@@ -230,6 +243,7 @@ export default function DiscoverScreen() {
           status: 'saved',
         });
         await confirmSuccess();
+        setToast(t('saved to your space ♥', 'in eurem Space gemerkt ♥'));
       } catch {
         // Roll back the optimistic flip and tell the user — a silently dropped
         // save looks identical to success and is exactly what confused testers.
@@ -252,6 +266,7 @@ export default function DiscoverScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {toast && <Toast message={toast} onHide={() => setToast(null)} />}
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         <View style={styles.header}>
           <Logo size="sm" />
@@ -298,7 +313,7 @@ export default function DiscoverScreen() {
           />
         )}
 
-        {/* Section toggle: All Ideas / Local Places */}
+        {/* Section toggle: Surprise me / Idea library / Places map */}
         <View style={styles.sectionToggle}>
           <TouchableOpacity
             style={[styles.toggleChip, styles.toggleChipActive]}
@@ -306,7 +321,19 @@ export default function DiscoverScreen() {
             accessibilityState={{ selected: true }}
           >
             <Text style={[styles.toggleChipText, styles.toggleChipTextActive]}>
-              {t('💡 ALL IDEAS', '💡 ALLE IDEEN')}
+              {t('✨ SURPRISE ME', '✨ ÜBERRASCH MICH')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.toggleChip}
+            onPress={() => router.push('/discover/browse')}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('Browse the full idea library', 'Die ganze Ideen-Bibliothek durchstöbern')}
+          >
+            <Text style={styles.toggleChipText}>
+              {t('💡 ALL IDEAS', '💡 ALLE IDEEN')}{'  '}
+              <Ionicons name="arrow-forward" size={11} color={Colors.textSubtle} />
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -317,7 +344,7 @@ export default function DiscoverScreen() {
             accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
           >
             <Text style={styles.toggleChipText}>
-              {t('🗺️ PLACES MAP', '🗺️ ORTE-KARTE')}{'  '}
+              {t('🗺️ MAP', '🗺️ KARTE')}{'  '}
               <Ionicons name="arrow-forward" size={11} color={Colors.textSubtle} />
             </Text>
           </TouchableOpacity>
@@ -384,9 +411,9 @@ export default function DiscoverScreen() {
               onSave={() => void saveDate(primary)}
               saved={savedMomentIds.has(primary.momentId)}
               onViewSaved={() => router.push('/discover/saved')}
-              saveLabel={t('SAVE', 'MERKEN')}
-              savedLabel={t('SAVED ✓ — VIEW', 'GEMERKT ✓ — ANSEHEN')}
-              seeLabel={t('SEE THIS IDEA ->', 'DIESE IDEE ANSEHEN ->')}
+              saveLabel={t('SAVE FOR US', 'FÜR UNS MERKEN')}
+              savedLabel={t('SAVED FOR US ✓', 'FÜR UNS GEMERKT ✓')}
+              seeLabel={t('SEE THIS IDEA', 'DIESE IDEE ANSEHEN')}
               whyLabel={t('WHY THIS', 'WARUM DIES')}
               notUsedPrefix={t('not used:', 'nicht verwendet:')}
               curatedLabel={t('curated', 'kuratiert')}
@@ -423,7 +450,7 @@ export default function DiscoverScreen() {
                   rec={alternative}
                   compact
                   onOpen={() => router.push(`/together/${alternative.momentId}`)}
-                  seeLabel={t('SEE THIS IDEA ->', 'DIESE IDEE ANSEHEN ->')}
+                  seeLabel={t('SEE THIS IDEA', 'DIESE IDEE ANSEHEN')}
                   whyLabel={t('WHY THIS', 'WARUM DIES')}
                   notUsedPrefix={t('not used:', 'nicht verwendet:')}
                   curatedLabel={t('curated', 'kuratiert')}
@@ -470,38 +497,21 @@ export default function DiscoverScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.linkPills}
           >
-            <TouchableOpacity
-              style={styles.linkPill}
-              onPress={() => router.push('/ask')}
-              activeOpacity={0.85}
-              accessibilityRole="button"
-              accessibilityLabel={t('Ask PeakPlant for personalised ideas', 'PeakPlant nach personalisierten Ideen fragen')}
-            >
-              <Text style={styles.linkPillText}>{t('💬 ask peakplant', '💬 peakplant fragen')}</Text>
-            </TouchableOpacity>
+            {/* "ask peakplant" and "idea library" intentionally omitted here —
+                they already have prominent entry points above (the inline ask
+                button + the ALL IDEAS toggle). One door each, not three. */}
             <TouchableOpacity
               style={styles.linkPill}
               onPress={() => router.push('/discover/saved')}
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel={t('Saved date ideas', 'Gemerkte Ideen')}
+              accessibilityLabel={t('Your saved plans', 'Eure gemerkten Pläne')}
             >
               <Text style={styles.linkPillText}>
-                {t('🔖 saved', '🔖 gemerkt')}
+                {t('🔖 saved plans', '🔖 gemerkte Pläne')}
                 {saved.length > 0 ? ` · ${saved.length}` : ''}
               </Text>
             </TouchableOpacity>
-            {missionsEnabled && (
-              <TouchableOpacity
-                style={styles.linkPill}
-                onPress={() => router.push('/together')}
-                activeOpacity={0.85}
-                accessibilityRole="button"
-                accessibilityLabel={t('Browse all ideas and local places', 'Alle Ideen und Orte in der Nahe')}
-              >
-                <Text style={styles.linkPillText}>{t('🧭 all ideas', '🧭 alle Ideen')}</Text>
-              </TouchableOpacity>
-            )}
             {challengesEnabled && (
               <TouchableOpacity
                 style={styles.linkPill}

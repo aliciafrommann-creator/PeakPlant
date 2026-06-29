@@ -35,15 +35,15 @@ export default function AccountScreen() {
 
   const confirmDelete = () => {
     Alert.alert(
-      t('delete your account?', 'Konto loschen?'),
+      t('delete your account?', 'Konto löschen?'),
       t(
         'this permanently removes your account, your spaces where you are the only member, and your moments. this cannot be undone.',
-        'Dein Konto, deine Spaces (wo du das einzige Mitglied bist) und deine Momente werden dauerhaft geloscht. Das kann nicht ruckgangig gemacht werden.',
+        'Dein Konto, deine Spaces (wo du das einzige Mitglied bist) und deine Momente werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden.',
       ),
       [
         { text: t('cancel', 'abbrechen'), style: 'cancel' },
         {
-          text: t('delete', 'loschen'),
+          text: t('delete', 'löschen'),
           style: 'destructive',
           onPress: handleDelete,
         },
@@ -60,7 +60,7 @@ export default function AccountScreen() {
     } catch (e) {
       setBusy(false);
       Alert.alert(
-        t('could not delete', 'Loschen fehlgeschlagen'),
+        t('could not delete', 'Löschen fehlgeschlagen'),
         e instanceof Error ? e.message : t('please try again.', 'Bitte versuche es erneut.'),
       );
     }
@@ -84,7 +84,7 @@ export default function AccountScreen() {
         <Text style={styles.lead}>
           {t(
             'your diary is private to your spaces. you\'re always in control of your data.',
-            'Dein Tagebuch ist privat fur deinen Space. Du hast jederzeit die Kontrolle uber deine Daten.',
+            'Dein Tagebuch ist privat für deinen Space. Du hast jederzeit die Kontrolle über deine Daten.',
           )}
         </Text>
 
@@ -115,14 +115,14 @@ export default function AccountScreen() {
             disabled={busy}
             activeOpacity={0.8}
             accessibilityRole="button"
-            accessibilityLabel={t('Delete account', 'Konto loschen')}
+            accessibilityLabel={t('Delete account', 'Konto löschen')}
           >
             <View style={styles.rowText}>
-              <Text style={styles.dangerText}>{t('delete account', 'Konto loschen')}</Text>
+              <Text style={styles.dangerText}>{t('delete account', 'Konto löschen')}</Text>
               <Text style={styles.rowDesc}>
                 {t(
                   'permanently removes your account and your moments. cannot be undone.',
-                  'Loscht dein Konto und deine Momente dauerhaft. Kann nicht ruckgangig gemacht werden.',
+                  'Löscht dein Konto und deine Momente dauerhaft. Kann nicht rückgängig gemacht werden.',
                 )}
               </Text>
             </View>

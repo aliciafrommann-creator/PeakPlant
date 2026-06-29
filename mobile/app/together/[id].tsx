@@ -182,9 +182,9 @@ export default function TogetherDetailScreen() {
           <TouchableOpacity
             onPress={() => router.back()}
             accessibilityRole="button"
-            accessibilityLabel={t('Go back', 'Zuruck')}
+            accessibilityLabel={t('Go back', 'Zurück')}
           >
-            <Text style={styles.backLink}>{t('go back', 'zuruck')}</Text>
+            <Text style={styles.backLink}>{t('go back', 'zurück')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -194,7 +194,7 @@ export default function TogetherDetailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <BackButton label={t('BACK', 'ZURUCK')} />
+        <BackButton label={t('BACK', 'ZURÜCK')} />
         <Text style={styles.headerLabel}>{t('TO DO TOGETHER', 'GEMEINSAM TUN')}</Text>
         <View style={{ width: 60 }} />
       </View>
@@ -339,7 +339,7 @@ export default function TogetherDetailScreen() {
           <Text style={styles.actionError} accessibilityLiveRegion="polite">{actionError}</Text>
         ) : null}
 
-        <Text style={styles.noPressure}>{t('no pressure. only if it feels right.', 'kein Muss. nur wenn es sich richtig anfuhlt.')}</Text>
+        <Text style={styles.noPressure}>{t('no pressure. only if it feels right.', 'kein Muss. nur wenn es sich richtig anfühlt.')}</Text>
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -7,19 +7,21 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
-  ActivityIndicator,
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Colors, Accents, Sections } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { relativeDay } from '../../lib/relativeTime';
+import { MemoryFeedSkeleton } from '../../components/ui/Skeleton';
 import { useNotes } from '../../lib/hooks/useNotes';
 import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
+import { useBiometric } from '../../lib/hooks/useBiometric';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { SpacePicker } from '../../components/space/SpacePicker';
 import { PressableScale } from '../../components/ui/PressableScale';
@@ -28,44 +30,95 @@ import { EmptyState } from '../../components/ui/EmptyState';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { shareMemory } from '../../lib/share';
+import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
+import { Toast } from '../../components/ui/Toast';
+import { consumePendingReward } from '../../lib/pendingReward';
 import type { Memory } from '../../lib/types';
 
 const TOGETHER = Sections.together;
 
-function formatDateShort(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }).toLowerCase();
-}
-
 export default function HomeScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { latestNote, latestFromPartner } = useNotes(activeSpace?.id);
-  const { weekly, enrolled, progress: challengeProgress, chillyCount } = useWeeklyChallenge(
-    activeSpace?.id,
-  );
+  const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
+    useWeeklyChallenge(activeSpace?.id);
+
+  // The hub challenge card acts in place — one clear action per state:
+  // not enrolled → take it on; in progress → add a moment (note/photo);
+  // complete → review the badge you earned.
+  const onHubChallenge = useCallback(async () => {
+    if (challengeProgress?.complete) {
+      router.push(`/challenges/${weekly.id}`);
+      return;
+    }
+    if (!enrolled) {
+      await acceptChallenge();
+      void confirmSuccess();
+      return;
+    }
+    router.push({
+      pathname: '/memory/create',
+      params: {
+        prefillNote: t(`weekly challenge: ${weekly.title}`, `Wochen-Challenge: ${weekly.title}`),
+      },
+    });
+  }, [challengeProgress?.complete, enrolled, acceptChallenge, weekly.id, weekly.title, t]);
+  const { authenticate } = useBiometric();
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [reward, setReward] = useState<string | null>(null);
 
-  useEffect(() => {
+  // A little celebration when you land back on the feed after keeping a moment.
+  useFocusEffect(
+    useCallback(() => {
+      const kind = consumePendingReward();
+      if (kind === 'moment') setReward(t('moment kept ♥', 'Moment festgehalten ♥'));
+      else if (kind === 'challenge') setReward(t('challenge done ✦', 'Challenge geschafft ✦'));
+    }, [t]),
+  );
+
+  // Sensitive editions stay gated wherever they're opened from — Home included
+  // (the editions tab already gates; this closes the bypass from the feed).
+  const openEdition = useCallback(
+    async (edition: { id: string; sensitive?: boolean }) => {
+      if (edition.sensitive) {
+        const granted = await authenticate(
+          t('unlock your private diary', 'privates Tagebuch entsperren'),
+        );
+        if (!granted) return;
+      }
+      router.push(`/editions/${edition.id}`);
+    },
+    [authenticate, t],
+  );
+
+  const loadEditionProgress = useCallback(async () => {
     if (!activeSpace?.id) {
       setEditionProgress({});
       return;
     }
-    let alive = true;
-    Promise.all(
+    const entries = await Promise.all(
       SEED_EDITIONS.filter((e) => e.status === 'available').map(async (e) => {
         const cards = await cardRepository.getAll(e.id, activeSpace.id);
         return [e.id, cards.filter((c) => c.status === 'activated').length] as const;
       }),
-    ).then((entries) => {
-      if (alive) setEditionProgress(Object.fromEntries(entries));
-    });
-    return () => {
-      alive = false;
-    };
+    );
+    setEditionProgress(Object.fromEntries(entries));
   }, [activeSpace?.id]);
+
+  useEffect(() => {
+    void loadEditionProgress();
+  }, [loadEditionProgress]);
+
+  // Re-check on focus so a card just scanned/activated shows up in "growing
+  // together" the moment you return to the feed.
+  useFocusEffect(
+    useCallback(() => {
+      void loadEditionProgress();
+    }, [loadEditionProgress]),
+  );
 
   const activeEditions = SEED_EDITIONS.filter(
     (e) => e.status === 'available' && (editionProgress[e.id] ?? 0) > 0,
@@ -76,6 +129,12 @@ export default function HomeScreen() {
   const recentMemories = [...memories].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
+
+  // A gentle, living reward — moments preserved in the last 7 days.
+  const momentsThisWeek = useMemo(() => {
+    const weekAgo = Date.now() - 7 * 86_400_000;
+    return memories.filter((m) => new Date(m.createdAt).getTime() >= weekAgo).length;
+  }, [memories]);
 
   const spaceLabel =
     activeSpace?.type === 'couple'
@@ -96,25 +155,37 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
+      {reward && <Toast message={reward} onHide={() => setReward(null)} />}
       {/* Header — the space name is the dropdown trigger (Instagram-style) */}
       <View style={styles.header}>
         <TouchableOpacity
-          style={styles.headerText}
-          onPress={() => setPickerOpen(true)}
+          style={styles.headerTrigger}
+          onPress={() => { void acknowledgeSelection(); setPickerOpen(true); }}
           activeOpacity={0.7}
           accessibilityRole="button"
           accessibilityLabel={t('Switch, add or share a space', 'Space wechseln, hinzufügen oder teilen')}
           accessibilityHint={t('Opens the space picker', 'Öffnet die Space-Auswahl')}
         >
-          <View style={styles.kickerRow}>
-            <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
-            <Text style={styles.kicker}>{spaceLabel}</Text>
+          <View style={styles.headerAvatar}>
+            {activeSpace?.avatarUrl ? (
+              <Image source={{ uri: activeSpace.avatarUrl }} style={styles.headerAvatarImage} />
+            ) : (
+              <Text style={styles.headerAvatarEmoji}>
+                {activeSpace?.emoji ?? (activeSpace?.type === 'friends' ? '✦' : '♥')}
+              </Text>
+            )}
           </View>
-          <View style={styles.nameRow}>
-            <Text style={styles.spaceName} numberOfLines={1}>
-              {(activeSpace?.name ?? 'your space').toLowerCase()}
-            </Text>
-            <Ionicons name="chevron-down" size={18} color={Colors.textMuted} style={styles.chevron} />
+          <View style={styles.headerText}>
+            <View style={styles.kickerRow}>
+              <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
+              <Text style={styles.kicker}>{spaceLabel}</Text>
+            </View>
+            <View style={styles.nameRow}>
+              <Text style={styles.spaceName} numberOfLines={1}>
+                {(activeSpace?.name ?? 'your space').toLowerCase()}
+              </Text>
+              <Ionicons name="chevron-down" size={18} color={Colors.textMuted} style={styles.chevron} />
+            </View>
           </View>
         </TouchableOpacity>
       </View>
@@ -157,27 +228,42 @@ export default function HomeScreen() {
                 <View style={styles.quickGrid}>
                   <PressableScale
                     style={[styles.quickCard, styles.quickCardDark]}
-                    onPress={() => router.push(`/challenges/${weekly.id}`)}
-                    accessibilityLabel={t(
-                      'Complete this weekly challenge',
-                      'Wöchentliche Challenge abschließen',
-                    )}
+                    onPress={() => void onHubChallenge()}
+                    accessibilityLabel={
+                      challengeProgress?.complete
+                        ? t('Review this week’s finished challenge', 'Geschaffte Wochen-Challenge ansehen')
+                        : enrolled
+                          ? t('Add a photo or note for this challenge', 'Foto oder Notiz für diese Challenge hinzufügen')
+                          : t('Take on this week’s challenge together', 'Diese Wochen-Challenge gemeinsam annehmen')
+                    }
                   >
-                    <Text style={styles.quickKickerDark}>{t('THIS WEEK', 'DIESE WOCHE')}</Text>
+                    <Text style={styles.quickKickerDark}>
+                      {challengeProgress?.complete
+                        ? t('THIS WEEK ✓', 'DIESE WOCHE ✓')
+                        : t('THIS WEEK', 'DIESE WOCHE')}
+                    </Text>
                     <Text style={styles.quickTitleDark} numberOfLines={2}>
                       {weekly.title}
                     </Text>
                     <Text style={styles.quickBodyDark} numberOfLines={2}>
                       {challengeProgress?.complete
-                        ? t('complete — keep the glow going.', 'geschafft — nehmt den Schwung mit.')
+                        ? t(
+                            `done — ${activeSpace.collectibleEmoji ?? '🌶️'} collected this week`,
+                            `geschafft — ${activeSpace.collectibleEmoji ?? '🌶️'} diese Woche gesammelt`,
+                          )
                         : enrolled && challengeProgress
-                          ? t(
-                              `${challengeProgress.count}/${challengeProgress.goal} moments collected`,
-                              `${challengeProgress.count}/${challengeProgress.goal} Momente gesammelt`,
-                            )
+                          ? challengeProgress.goal <= 1
+                            ? t(
+                                'tap to add your moment',
+                                'tippen, um euren Moment hinzuzufügen',
+                              )
+                            : t(
+                                `${challengeProgress.count}/${challengeProgress.goal} moments · tap to add one`,
+                                `${challengeProgress.count}/${challengeProgress.goal} Momente · tippen zum Hinzufügen`,
+                              )
                           : t(
-                              'choose it together, add a photo or note when you live it.',
-                              'wählt sie zusammen, Foto oder Notiz hinzufügen, wenn ihr sie erlebt.',
+                              'tap to take it on together',
+                              'tippen, um sie gemeinsam anzunehmen',
                             )}
                     </Text>
                   </PressableScale>
@@ -202,6 +288,20 @@ export default function HomeScreen() {
                   </View>
                 </View>
 
+                {momentsThisWeek > 0 && (
+                  <Text style={styles.weekReward}>
+                    {t(
+                      `✦ ${momentsThisWeek} moment${momentsThisWeek !== 1 ? 's' : ''} together this week`,
+                      `✦ ${momentsThisWeek} Moment${momentsThisWeek !== 1 ? 'e' : ''} diese Woche zusammen`,
+                    )}
+                  </Text>
+                )}
+
+                {chillyCount > 0 && (
+                  <Text style={styles.collectibleStrip}>
+                    {(activeSpace.collectibleEmoji ?? '🌶️').repeat(Math.min(chillyCount, 12))}
+                  </Text>
+                )}
                 <Text style={styles.collectibleLine}>
                   {chillyCount > 0
                     ? t(
@@ -209,8 +309,8 @@ export default function HomeScreen() {
                         `${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''} zusammen geschafft`,
                       )
                     : t(
-                        'your weekly collectible starts with the first completed challenge.',
-                        'euer wöchentliches Sammelzeichen startet mit der ersten geschafften Challenge.',
+                        `your collectible ${activeSpace.collectibleEmoji ?? '🌶️'} starts with the first completed challenge.`,
+                        `euer Sammelzeichen ${activeSpace.collectibleEmoji ?? '🌶️'} startet mit der ersten geschafften Challenge.`,
                       )}
                 </Text>
               </View>
@@ -237,35 +337,43 @@ export default function HomeScreen() {
               </View>
             )}
 
-            {/* Memory filmstrip — polaroid scroll */}
+            {/* Memory filmstrip — a little album of your latest moments */}
             {recentMemories.length > 0 && (
               <View style={styles.filmstripSection}>
-                <Text style={styles.sectionLabel}>
-                  {t('RECENTLY TOGETHER', 'ZULETZT ZUSAMMEN')}
-                </Text>
+                <View style={styles.filmstripHeader}>
+                  <Text style={styles.sectionLabelInline}>
+                    {t('RECENTLY TOGETHER', 'ZULETZT ZUSAMMEN')}
+                  </Text>
+                  <Text style={styles.filmstripCount}>
+                    {memories.length === 1
+                      ? t('1 kept', '1 festgehalten')
+                      : t(`${memories.length} kept`, `${memories.length} festgehalten`)}
+                  </Text>
+                </View>
                 <ScrollView
                   horizontal
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.filmstrip}
                 >
-                  {recentMemories.slice(0, 8).map((m) => {
+                  {recentMemories.slice(0, 8).map((m, i) => {
                     const card = SEED_CARDS.find((c) => c.id === m.cardId);
+                    const hero = i === 0; // first moment reads as the album cover
                     return (
                       <PressableScale
                         key={m.id}
-                        style={styles.polaroid}
+                        style={[styles.polaroid, hero && styles.polaroidHero]}
                         onPress={() => router.push(`/memory/${m.id}`)}
                         scaleTo={0.97}
-                        accessibilityLabel={`Moment ${formatDateShort(m.createdAt)}`}
+                        accessibilityLabel={`Moment ${relativeDay(m.createdAt, language)}`}
                       >
                         {m.photoUri ? (
                           <Image
                             source={{ uri: m.photoUri }}
-                            style={styles.polaroidPhoto}
+                            style={[styles.polaroidPhoto, hero && styles.polaroidPhotoHero]}
                             accessibilityLabel="Moment photo"
                           />
                         ) : (
-                          <View style={styles.polaroidBlank}>
+                          <View style={[styles.polaroidBlank, hero && styles.polaroidPhotoHero]}>
                             <Text style={styles.polaroidMark}>✦</Text>
                           </View>
                         )}
@@ -275,7 +383,7 @@ export default function HomeScreen() {
                               {String(card.number).padStart(2, '0')}
                             </Text>
                           )}
-                          <Text style={styles.polaroidDate}>{formatDateShort(m.createdAt)}</Text>
+                          <Text style={styles.polaroidDate} numberOfLines={1}>{relativeDay(m.createdAt, language)}</Text>
                         </View>
                       </PressableScale>
                     );
@@ -297,7 +405,7 @@ export default function HomeScreen() {
                     <PressableScale
                       key={e.id}
                       style={[styles.editionCard, { borderLeftColor: e.color }]}
-                      onPress={() => router.push(`/editions/${e.id}`)}
+                      onPress={() => void openEdition(e)}
                       accessibilityLabel={`${e.name}, ${progress} von ${e.cardCount} Karten`}
                     >
                       <Text style={styles.editionSymbol}>{e.symbol}</Text>
@@ -371,23 +479,22 @@ export default function HomeScreen() {
               </View>
             )}
 
-            {/* First paint while loading — no blank flash before content/empty. */}
-            {loading && recentMemories.length === 0 && (
-              <View style={styles.loading}>
-                <ActivityIndicator color={Colors.accent} />
-              </View>
+            {/* First paint while loading — content-shaped skeletons, not a lone
+                spinner, so the feed reads as "about to appear". */}
+            {loading && recentMemories.length === 0 && !error && (
+              <MemoryFeedSkeleton count={3} />
             )}
 
             {/* Load failure must NOT read as "no memories" — distinct, retryable. */}
             {!loading && error && recentMemories.length === 0 && (
               <EmptyState
                 mark="✦"
-                title={t("couldn't load your moments.", 'eure Momente konnten nicht geladen werden.')}
+                title={t("couldn't load your moments.", 'kurz die Verbindung verloren.')}
                 hint={t(
                   'your memories are safe — this is just a connection hiccup.',
-                  'eure Erinnerungen sind sicher — das ist nur ein Verbindungsproblem.',
+                  'eure Erinnerungen sind sicher — wir versuchen es gleich nochmal.',
                 )}
-                ctaLabel={t('TRY AGAIN', 'ERNEUT VERSUCHEN')}
+                ctaLabel={t('TRY AGAIN', 'NOCHMAL VERSUCHEN')}
                 onCta={refresh}
               />
             )}
@@ -396,13 +503,13 @@ export default function HomeScreen() {
             {!loading && !error && recentMemories.length === 0 && (
               <EmptyState
                 mark="bloom"
-                title={t('your space is waiting.', 'euer Space wartet.')}
+                title={t('your first moment starts here.', 'euer erster Moment beginnt hier.')}
                 hint={t(
-                  "scan a card to unlock your first experience — or take on this week's challenge together.",
-                  'Karte scannen, um euer erstes Erlebnis freizuschalten — oder nehmt gemeinsam die Wochen-Challenge an.',
+                  'scan a card or take on this week’s challenge together — the first one you keep becomes your space’s first bloom.',
+                  'scannt eine Karte oder nehmt zusammen die Wochen-Challenge an — euer erster festgehaltener Moment wird eure erste Blüte.',
                 )}
-                ctaLabel={t("START THIS WEEK'S CHALLENGE", 'WOCHEN-CHALLENGE STARTEN')}
-                onCta={() => router.push(`/challenges/${weekly.id}`)}
+                ctaLabel={t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
+                onCta={() => router.push('/(tabs)/scan')}
               />
             )}
           </>
@@ -419,10 +526,10 @@ export default function HomeScreen() {
         </PressableScale>
         <PressableScale
           style={styles.addBtn}
-          onPress={() => router.push(`/challenges/${weekly.id}`)}
-          accessibilityLabel={t('Complete the weekly challenge', 'Wöchentliche Challenge abschließen')}
+          onPress={() => router.push('/memory/create')}
+          accessibilityLabel={t('Add a moment to your diary', 'Einen Moment ins Tagebuch legen')}
         >
-          <Text style={styles.addBtnText}>{t('WEEKLY CHALLENGE', 'WOCHEN-CHALLENGE')}</Text>
+          <Text style={styles.addBtnText}>{t('ADD A MOMENT', 'MOMENT FESTHALTEN')}</Text>
         </PressableScale>
       </View>
     </SafeAreaView>
@@ -443,7 +550,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  headerText: { flex: 1, paddingRight: Spacing.md },
+  headerTrigger: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: Spacing.md, paddingRight: Spacing.md },
+  headerAvatar: {
+    width: 52,
+    height: 52,
+    borderRadius: Radii.pill,
+    backgroundColor: Colors.backgroundCream,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  headerAvatarImage: { width: 52, height: 52 },
+  headerAvatarEmoji: { fontSize: 26 },
+  headerText: { flex: 1 },
   kickerRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
   kickerDot: { width: 7, height: 7, borderRadius: 4 },
   kicker: {
@@ -513,6 +634,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.screen,
     paddingBottom: Spacing.xs,
   },
+  filmstripHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.screen,
+    marginBottom: Spacing.md,
+  },
+  sectionLabelInline: {
+    fontSize: 9,
+    fontWeight: '600',
+    letterSpacing: 2.5,
+    color: Colors.textSubtle,
+    textTransform: 'uppercase',
+  },
+  filmstripCount: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 0.3,
+    color: Colors.textFaint,
+  },
   polaroid: {
     width: 116,
     backgroundColor: Colors.surface,
@@ -520,11 +661,13 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Shadows.card,
   },
+  polaroidHero: { width: 150 },
   polaroidPhoto: {
     width: 116,
     height: 116,
     backgroundColor: Colors.border,
   },
+  polaroidPhotoHero: { width: 150, height: 150 },
   polaroidBlank: {
     width: 116,
     height: 116,
@@ -534,7 +677,7 @@ const styles = StyleSheet.create({
   },
   polaroidMark: { fontSize: 26, color: Accents.apricot },
   polaroidCaption: {
-    paddingHorizontal: 10,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: 8,
     gap: 2,
   },
@@ -659,12 +802,6 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.md,
   },
 
-  // Loading
-  loading: {
-    paddingTop: Spacing.xxl,
-    alignItems: 'center',
-  },
-
   // Hub — the action center
   hubSection: {
     paddingHorizontal: Spacing.screen,
@@ -739,12 +876,24 @@ const styles = StyleSheet.create({
     fontWeight: '300',
     color: Colors.textSubtle,
   },
+  weekReward: {
+    fontSize: 12,
+    fontWeight: '500',
+    letterSpacing: 0.3,
+    color: Accents.sage,
+    marginTop: Spacing.md,
+  },
+  collectibleStrip: {
+    fontSize: 18,
+    letterSpacing: 2,
+    marginTop: Spacing.md,
+  },
   collectibleLine: {
     fontSize: 11,
     fontWeight: '400',
     letterSpacing: 0.3,
     color: Colors.textSubtle,
-    marginTop: Spacing.md,
+    marginTop: Spacing.xs,
     fontStyle: 'italic',
   },
 

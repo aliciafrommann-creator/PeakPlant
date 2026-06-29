@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -15,19 +16,29 @@ import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
+import { useAppStore } from '../../lib/store';
+import { acknowledgeSelection } from '../../lib/haptics';
 import { PeakBloom } from '../../components/ui/PeakBloom';
+import { SpacePicker } from '../../components/space/SpacePicker';
 
 export default function ProfileScreen() {
-  const { activeSpace } = useSpaces();
+  const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { t } = useLanguage();
   const { memories } = useMemories(activeSpace?.id);
   const { chillyCount } = useWeeklyChallenge(activeSpace?.id);
+  const ritualsEnabled = useAppStore((s) => s.features.rituals);
+  const [pickerOpen, setPickerOpen] = useState(false);
 
+  // Me = trust & control center: your spaces, your archive, your settings.
+  // No vanity metrics — links lead to control, not a public persona.
   const links: { emoji: string; label: string; route: string }[] = [
     { emoji: '🎨', label: t('customize peakplant', 'PeakPlant anpassen'), route: '/customize' },
-    { emoji: '🔐', label: t('account & data', 'Konto & Daten'), route: '/account' },
+    { emoji: '🔖', label: t('saved plans', 'gemerkte Pläne'), route: '/discover/saved' },
+    ...(ritualsEnabled
+      ? [{ emoji: '🌿', label: t('your rituals', 'eure Rituale'), route: '/rituals' }]
+      : []),
     { emoji: '🌍', label: t('language & preferences', 'Sprache & Einstellungen'), route: '/settings/preferences' },
-    { emoji: '💬', label: t('ask peakplant', 'PeakPlant fragen'), route: '/ask' },
+    { emoji: '🔐', label: t('account & data', 'Konto & Daten'), route: '/account' },
     { emoji: '✨', label: t('peakplant plus', 'PeakPlant Plus'), route: '/plus' },
   ];
 
@@ -43,27 +54,45 @@ export default function ProfileScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {activeSpace && (
-          <View style={styles.spaceBlock}>
-            <Text style={styles.spaceKicker}>{t('CURRENT SPACE', 'AKTUELLER SPACE')}</Text>
-            <Text style={styles.spaceName}>{activeSpace.name.toLowerCase()}</Text>
+          <TouchableOpacity
+            style={styles.spaceBlock}
+            onPress={() => { void acknowledgeSelection(); setPickerOpen(true); }}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('Switch, add or invite to a space', 'Space wechseln, hinzufügen oder einladen')}
+          >
+            <View style={styles.spaceHeadRow}>
+              <Text style={styles.spaceKicker}>{t('CURRENT SPACE', 'AKTUELLER SPACE')}</Text>
+              <Text style={styles.spaceSwitch}>
+                {t('switch / invite', 'wechseln / einladen')}{'  '}
+                <Ionicons name="chevron-down" size={11} color={Colors.textMuted} />
+              </Text>
+            </View>
+            <Text style={styles.spaceName}>
+              {(activeSpace.emoji ? `${activeSpace.emoji}  ` : '') + activeSpace.name.toLowerCase()}
+            </Text>
             <Text style={styles.spaceType}>
               {activeSpace.type === 'couple'
                 ? t('couple space', 'Paar-Space')
                 : t('friends space', 'Freunde-Space')}
             </Text>
-            <View style={styles.statsRow}>
-              <View style={styles.stat}>
-                <Text style={styles.statNum}>{memories.length}</Text>
-                <Text style={styles.statLabel}>{t('MOMENTS', 'MOMENTE')}</Text>
-              </View>
-              <View style={styles.statDivider} />
-              <View style={styles.stat}>
-                <Text style={styles.statNum}>{chillyCount}</Text>
-                <Text style={styles.statLabel}>{t('CHALLENGES', 'CHALLENGES')}</Text>
-              </View>
-            </View>
-          </View>
+            {/* Archive, not a scoreboard: a quiet line, never big vanity numbers. */}
+            <Text style={styles.archiveLine}>
+              {t(
+                `${memories.length} moment${memories.length !== 1 ? 's' : ''} kept · ${chillyCount} challenge${chillyCount !== 1 ? 's' : ''} done together`,
+                `${memories.length} Moment${memories.length !== 1 ? 'e' : ''} festgehalten · ${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''} zusammen geschafft`,
+              )}
+            </Text>
+          </TouchableOpacity>
         )}
+
+        <SpacePicker
+          visible={pickerOpen}
+          spaces={spaces}
+          activeSpaceId={activeSpace?.id}
+          onSelect={(id) => { setActiveSpace(id); setPickerOpen(false); }}
+          onClose={() => setPickerOpen(false)}
+        />
 
         <View style={styles.linksBlock}>
           {links.map(({ emoji, label, route }) => (
@@ -79,7 +108,7 @@ export default function ProfileScreen() {
                 <Text style={styles.linkEmoji}>{emoji}  </Text>
                 {label}
               </Text>
-              <Text style={styles.linkArrow}>{'->'}</Text>
+              <Ionicons name="chevron-forward" size={16} color={Colors.textFaint} />
             </TouchableOpacity>
           ))}
         </View>
@@ -127,13 +156,24 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
     gap: 4,
   },
+  spaceHeadRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
   spaceKicker: {
     fontSize: 9,
     fontWeight: '500',
     letterSpacing: 2.5,
     color: Colors.textFaint,
     textTransform: 'uppercase',
-    marginBottom: 4,
+  },
+  spaceSwitch: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 0.5,
+    color: Colors.textMuted,
   },
   spaceName: {
     ...Typography.editorial,
@@ -147,31 +187,12 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
     textTransform: 'uppercase',
   },
-  statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: Spacing.lg,
-    gap: Spacing.xl,
-  },
-  stat: {
-    alignItems: 'center',
-  },
-  statNum: {
-    ...Typography.editorial,
-    fontSize: 30,
-    lineHeight: 34,
-  },
-  statLabel: {
-    fontSize: 9,
-    fontWeight: '500',
-    letterSpacing: 2,
-    color: Colors.textFaint,
-    marginTop: 2,
-  },
-  statDivider: {
-    width: 1,
-    height: 32,
-    backgroundColor: Colors.border,
+  archiveLine: {
+    fontSize: 12,
+    fontWeight: '300',
+    color: Colors.textMuted,
+    fontStyle: 'italic',
+    marginTop: Spacing.md,
   },
   linksBlock: {
     borderBottomWidth: 1,
@@ -193,10 +214,5 @@ const styles = StyleSheet.create({
   },
   linkEmoji: {
     fontSize: 16,
-  },
-  linkArrow: {
-    fontSize: 18,
-    fontWeight: '300',
-    color: Colors.textMuted,
   },
 });

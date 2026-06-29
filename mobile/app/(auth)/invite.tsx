@@ -176,9 +176,9 @@ export default function InviteScreen() {
                 onPress={() => { setPhase('choice'); setError(null); }}
                 disabled={joining}
                 accessibilityRole="button"
-                accessibilityLabel={t('Back', 'Zuruck')}
+                accessibilityLabel={t('Back', 'Zurück')}
               >
-                <Text style={styles.backText}>{t('back', 'zuruck')}</Text>
+                <Text style={styles.backText}>{t('back', 'zurück')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -249,7 +249,7 @@ export default function InviteScreen() {
           <Text style={styles.subtitle}>
             {t(
               'share this with your partner so you can build your shared diary together. you can also start friends spaces later.',
-              'Teile diesen Code mit deinem Partner, damit ihr gemeinsam euer Tagebuch aufbaut. Du kannst spater auch Freunde-Spaces starten.',
+              'Teile diesen Code mit deinem Partner, damit ihr gemeinsam euer Tagebuch aufbaut. Du kannst später auch Freunde-Spaces starten.',
             )}
           </Text>
         </View>
@@ -306,7 +306,7 @@ export default function InviteScreen() {
           <Text style={styles.hint}>
             {t(
               'your partner can join later using the code above',
-              'Dein Partner kann spater mit dem Code oben beitreten',
+              'Dein Partner kann später mit dem Code oben beitreten',
             )}
           </Text>
         </View>

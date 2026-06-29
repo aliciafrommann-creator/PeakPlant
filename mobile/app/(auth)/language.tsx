@@ -24,7 +24,7 @@ export default function LanguageScreen() {
 
   const choose = (lang: Lang) => {
     setLanguage(lang);
-    router.push('/(auth)/onboarding');
+    router.push('/(auth)/intro');
   };
 
   return (

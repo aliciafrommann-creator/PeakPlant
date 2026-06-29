@@ -1,4 +1,4 @@
-import { CHALLENGES, progressFor } from './challenges';
+import { WEEKLY_CHALLENGES, challengeById, progressFor } from './challenges';
 import type { Enrollment } from './challenges';
 
 /** ISO week number (1–53) for a given date. */
@@ -9,10 +9,11 @@ function isoWeekNumber(d: Date): number {
   return Math.ceil(((target.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
-/** Which challenge is highlighted this week (rotates every 7 days). */
-export function currentWeeklyChallenge(): typeof CHALLENGES[0] {
+/** Which lightweight weekly challenge is highlighted this week (one shared
+ *  moment completes it). Rotates every 7 days by ISO week. */
+export function currentWeeklyChallenge(): typeof WEEKLY_CHALLENGES[0] {
   const week = isoWeekNumber(new Date());
-  return CHALLENGES[week % CHALLENGES.length];
+  return WEEKLY_CHALLENGES[week % WEEKLY_CHALLENGES.length];
 }
 
 /** Count of enrollments where the challenge goal has been reached. */
@@ -21,7 +22,7 @@ export function completedCount(
   memoryDates: string[],
 ): number {
   return enrollments.filter((enr) => {
-    const challenge = CHALLENGES.find((c) => c.id === enr.challengeId);
+    const challenge = challengeById(enr.challengeId);
     if (!challenge) return false;
     return progressFor(challenge, enr.joinedAt, memoryDates).complete;
   }).length;

@@ -37,7 +37,16 @@ function db() {
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 function mapSpace(r: any): Space {
-  return { id: r.id, type: r.type, name: r.name, inviteCode: r.invite_code, createdAt: r.created_at };
+  return {
+    id: r.id,
+    type: r.type,
+    name: r.name,
+    inviteCode: r.invite_code,
+    createdAt: r.created_at,
+    emoji: r.emoji ?? undefined,
+    avatarPath: r.avatar_path ?? undefined,
+    collectibleEmoji: r.collectible_emoji ?? undefined,
+  };
 }
 function mapMember(r: any): SpaceMember {
   return { id: r.id, spaceId: r.space_id, userId: r.user_id, name: r.name, role: r.role, joinedAt: r.joined_at };
@@ -205,10 +214,18 @@ export const supabaseSpaceRepository: ISpaceRepository = {
     return mapSpace(data);
   },
 
-  async update(spaceId: string, updates: Pick<Space, 'name'>): Promise<Space> {
+  async update(
+    spaceId: string,
+    updates: Partial<Pick<Space, 'name' | 'emoji' | 'avatarPath' | 'collectibleEmoji'>>,
+  ): Promise<Space> {
+    const patch: Record<string, unknown> = {};
+    if (updates.name !== undefined) patch.name = updates.name.trim();
+    if (updates.emoji !== undefined) patch.emoji = updates.emoji;
+    if (updates.avatarPath !== undefined) patch.avatar_path = updates.avatarPath;
+    if (updates.collectibleEmoji !== undefined) patch.collectible_emoji = updates.collectibleEmoji;
     const { data, error } = await db()
       .from('spaces')
-      .update({ name: updates.name.trim() })
+      .update(patch)
       .eq('id', spaceId)
       .select()
       .single();

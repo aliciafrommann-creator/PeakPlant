@@ -8,15 +8,26 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Image,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Opacity } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { spaceRepository } from '../../lib/repositories';
-import { setSpaceEmoji, getSpaceEmoji } from '../../lib/spaceCustomization';
-import { confirmSuccess } from '../../lib/haptics';
+import {
+  setSpaceEmoji,
+  getSpaceEmoji,
+  setCollectibleEmoji,
+  getCollectibleEmoji,
+  DEFAULT_COLLECTIBLE_EMOJI,
+} from '../../lib/spaceCustomization';
+import { isSupabaseConfigured } from '../../lib/supabase/client';
+import { uploadSpaceAvatar } from '../../lib/supabase/storage';
+import { confirmSuccess, acknowledgeSelection } from '../../lib/haptics';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { Space } from '../../lib/types';
@@ -34,6 +45,12 @@ const EMOJI_GRID = [
   '🦋', '🐚', '🕊️', '🐝', '🧡', '🤍',
 ];
 
+// A small, playful set the couple stamps each time they finish a challenge.
+const COLLECTIBLE_GRID = [
+  '🌶️', '🌻', '🌙', '⭐', '🔥', '🏆',
+  '💛', '🦋', '🍀', '🐚', '✨', '🌈',
+];
+
 export default function EditSpaceScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { spaces, refresh } = useSpaces();
@@ -43,9 +60,19 @@ export default function EditSpaceScreen() {
 
   const [name, setName] = useState(space?.name ?? '');
   const [emoji, setEmoji] = useState<string | undefined>(space?.emoji);
+  const [collectible, setCollectible] = useState<string>(space?.collectibleEmoji ?? DEFAULT_COLLECTIBLE_EMOJI);
+  // Avatar photo: `photoUri` is a freshly-picked local image; `removePhoto`
+  // clears an existing one. Untouched → keep whatever the space already has.
+  const [photoUri, setPhotoUri] = useState<string | undefined>(undefined);
+  const [removePhoto, setRemovePhoto] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const nameInitialized = useRef(false);
+
+  // What the avatar should show right now: a new pick wins, then the existing
+  // saved avatar (unless being removed), else the emoji fallback.
+  const shownAvatarUrl = photoUri ?? (removePhoto ? undefined : space?.avatarUrl);
+  const fallbackEmoji = emoji ?? (space?.type === 'couple' ? '♥' : '✦');
 
   useEffect(() => {
     if (space && !nameInitialized.current) {
@@ -58,6 +85,9 @@ export default function EditSpaceScreen() {
     if (!id) return;
     void getSpaceEmoji(id).then((e) => {
       if (e) setEmoji(e);
+    });
+    void getCollectibleEmoji(id).then((e) => {
+      if (e) setCollectible(e);
     });
   }, [id]);
 
@@ -76,13 +106,54 @@ export default function EditSpaceScreen() {
     );
   }
 
+  const pickPhoto = async () => {
+    void acknowledgeSelection();
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.9,
+      allowsEditing: true,
+      aspect: [1, 1],
+    });
+    if (!result.canceled && result.assets.length > 0) {
+      setPhotoUri(result.assets[0].uri);
+      setRemovePhoto(false);
+    }
+  };
+
+  const clearPhoto = () => {
+    void acknowledgeSelection();
+    setPhotoUri(undefined);
+    setRemovePhoto(true);
+  };
+
   const save = async () => {
     if (!name.trim() || busy) return;
     setBusy(true);
     setError(null);
     try {
-      await spaceRepository.update(space.id, { name: name.trim() });
+      // Resolve the avatar path to persist. undefined = leave unchanged.
+      let avatarPath: string | undefined;
+      if (photoUri) {
+        // Configured: upload (EXIF stripped) → storage path. Otherwise keep the
+        // local file URI so it still shows on this device (no cross-device sync
+        // until Supabase is configured).
+        avatarPath = isSupabaseConfigured
+          ? await uploadSpaceAvatar(space.id, photoUri)
+          : photoUri;
+      } else if (removePhoto) {
+        avatarPath = ''; // cleared — display falls back to the emoji
+      }
+
+      await spaceRepository.update(space.id, {
+        name: name.trim(),
+        emoji,
+        collectibleEmoji: collectible,
+        ...(avatarPath !== undefined ? { avatarPath } : {}),
+      });
+      // Local write-through: a cache/fallback so the marks survive offline and
+      // for spaces created before the server columns existed (0012 / 0013).
       if (emoji) await setSpaceEmoji(space.id, emoji);
+      await setCollectibleEmoji(space.id, collectible);
       void confirmSuccess();
       await refresh();
       router.back();
@@ -119,14 +190,37 @@ export default function EditSpaceScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Avatar preview */}
+          {/* Avatar preview — photo if set, else the chosen emoji */}
           <View style={styles.avatarWrap}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarEmoji}>{emoji ?? (space.type === 'couple' ? '♥' : '✦')}</Text>
+            <TouchableOpacity
+              style={styles.avatar}
+              onPress={pickPhoto}
+              activeOpacity={0.85}
+              accessibilityRole="button"
+              accessibilityLabel={shownAvatarUrl ? t('Change space photo', 'Space-Foto ändern') : t('Add a space photo', 'Space-Foto hinzufügen')}
+            >
+              {shownAvatarUrl ? (
+                <Image source={{ uri: shownAvatarUrl }} style={styles.avatarImage} />
+              ) : (
+                <Text style={styles.avatarEmoji}>{fallbackEmoji}</Text>
+              )}
+            </TouchableOpacity>
+
+            <View style={styles.avatarActions}>
+              <TouchableOpacity onPress={pickPhoto} accessibilityRole="button" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <Text style={styles.avatarAction}>
+                  {shownAvatarUrl ? t('change photo', 'Foto ändern') : t('add photo', 'Foto hinzufügen')}
+                </Text>
+              </TouchableOpacity>
+              {shownAvatarUrl && (
+                <>
+                  <Text style={styles.avatarActionDot}>·</Text>
+                  <TouchableOpacity onPress={clearPhoto} accessibilityRole="button" hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                    <Text style={styles.avatarActionMuted}>{t('use emoji', 'Emoji nutzen')}</Text>
+                  </TouchableOpacity>
+                </>
+              )}
             </View>
-            <Text style={styles.avatarHint}>
-              {t('pick an emoji below', 'Emoji unten auswählen')}
-            </Text>
           </View>
 
           {/* Name input */}
@@ -167,6 +261,35 @@ export default function EditSpaceScreen() {
             </View>
           </View>
 
+          {/* Collectible emoji */}
+          <View style={styles.section}>
+            <Text style={styles.label}>{t('YOUR COLLECTIBLE', 'EUER SAMMELZEICHEN')}</Text>
+            <Text style={styles.collectibleHint}>
+              {t(
+                'you earn one each time you finish a challenge together.',
+                'ihr verdient eins, jedes Mal wenn ihr eine Challenge zusammen abschließt.',
+              )}
+            </Text>
+            <View style={styles.grid}>
+              {COLLECTIBLE_GRID.map((e) => {
+                const selected = collectible === e;
+                return (
+                  <TouchableOpacity
+                    key={e}
+                    style={[styles.emojiCell, selected && styles.emojiCellActive]}
+                    onPress={() => setCollectible(e)}
+                    activeOpacity={0.75}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected }}
+                    accessibilityLabel={e}
+                  >
+                    <Text style={styles.emojiText}>{e}</Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+
           {error && (
             <Text style={styles.error} accessibilityLiveRegion="polite">
               {error}
@@ -181,7 +304,11 @@ export default function EditSpaceScreen() {
             accessibilityRole="button"
             accessibilityLabel={t('Save changes', 'Änderungen speichern')}
           >
-            <Text style={styles.primaryText}>{t('SAVE', 'SPEICHERN')}</Text>
+            {busy ? (
+              <ActivityIndicator color={Colors.white} />
+            ) : (
+              <Text style={styles.primaryText}>{t('SAVE', 'SPEICHERN')}</Text>
+            )}
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
@@ -216,13 +343,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  avatarImage: { width: 80, height: 80, borderRadius: Radii.pill },
   avatarEmoji: { fontSize: 36 },
-  avatarHint: {
-    fontSize: 11,
-    fontWeight: '300',
-    color: Colors.textFaint,
-    letterSpacing: 0.3,
-  },
+  avatarActions: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  avatarAction: { fontSize: 12, fontWeight: '500', color: Colors.accent, letterSpacing: 0.3 },
+  avatarActionMuted: { fontSize: 12, fontWeight: '400', color: Colors.textSubtle, letterSpacing: 0.3 },
+  avatarActionDot: { fontSize: 12, color: Colors.textFaint },
   section: { gap: Spacing.sm },
   label: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
   input: {
@@ -257,6 +383,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   emojiText: { fontSize: 24 },
+  collectibleHint: { fontSize: 11, fontWeight: '300', color: Colors.textFaint, lineHeight: 16 },
   error: { fontSize: 13, fontWeight: '400', color: Colors.danger, lineHeight: 19 },
   primary: {
     height: 56,

@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { Colors, Sections } from '../../constants/colors';
 import { Spacing, Radii, Shadows, Opacity } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -44,7 +44,7 @@ import {
 } from '../../lib/discovery/livePlaces';
 import type { LivePlace } from '../../lib/discovery/providers/interface';
 import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
-import type { DateFeedback, PublicPlaceFeedback, PublicPlaceSpot } from '../../lib/types';
+import type { DateFeedback, PublicPlaceFeedback, PublicPlaceSpot, SavedDate } from '../../lib/types';
 
 const PLACES = Sections.community; // raspberry blossom — shared, social, a little playful
 
@@ -134,10 +134,31 @@ export default function PlacesScreen() {
   const [publicRating, setPublicRating] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
   const [publicTip, setPublicTip] = useState('');
   const [publicSharing, setPublicSharing] = useState(false);
+  const [savedForSpace, setSavedForSpace] = useState<SavedDate[]>([]);
   const [liveStatus, setLiveStatus] = useState<LiveStatus>({
     kind: 'idle',
     message: '',
   });
+
+  // The space's saved/planned/done places — powers the on-map loop status so
+  // find → plan → done → rate reads as one journey without leaving the map.
+  const reloadSaved = useCallback(async () => {
+    if (!activeSpace) {
+      setSavedForSpace([]);
+      return;
+    }
+    try {
+      setSavedForSpace(await savedDateRepository.getAll(activeSpace.id));
+    } catch {
+      /* best-effort: the map still works without loop status */
+    }
+  }, [activeSpace]);
+
+  useFocusEffect(
+    useCallback(() => {
+      void reloadSaved();
+    }, [reloadSaved]),
+  );
 
   useEffect(() => {
     if (initialPlaceId && LOCAL_PLACES.some((place) => place.id === initialPlaceId)) {
@@ -440,6 +461,7 @@ export default function PlacesScreen() {
         placeMapsUrl: spot?.mapsUrl,
       });
       await confirmSuccess();
+      await reloadSaved();
       router.push({ pathname: '/discover/saved', params: { plan: saved.id } });
     } catch {
       Alert.alert(
@@ -447,7 +469,7 @@ export default function PlacesScreen() {
         t('Please try again in a moment.', 'Bitte versuche es gleich noch einmal.'),
       );
     }
-  }, [activeSpace, linkedMoments, publicSpotForPlace, selected, t]);
+  }, [activeSpace, linkedMoments, publicSpotForPlace, selected, t, reloadSaved]);
 
   const openPublicRating = useCallback(() => {
     const spot = publicSpotForPlace(selected);
@@ -494,10 +516,89 @@ export default function PlacesScreen() {
     }
   }, [displayPlaces, publicRating, publicSharing, publicSpotForPlace, publicTip, selected, t]);
 
+  // Where this place sits in the loop for the active space (matched by name).
+  // Declared before the early return below so hook order stays stable.
+  const selectedSaved = useMemo(
+    () =>
+      selected
+        ? savedForSpace.find(
+            (d) =>
+              d.status !== 'dismissed' &&
+              d.placeName != null &&
+              d.placeName.toLowerCase() === selected.name.toLowerCase(),
+          )
+        : undefined,
+    [savedForSpace, selected],
+  );
+
+  // Step 4a: turn this place into a private diary memory (notes/photos stay
+  // private to the space — never public). Prefilled from the planned place.
+  const createMemoryForSelected = useCallback(() => {
+    if (!selected) return;
+    const spot = publicSpotForPlace(selected);
+    router.push({
+      pathname: '/memory/create',
+      params: {
+        prefillNote: t(`our moment at ${selected.name}`, `unser Moment bei ${selected.name}`),
+        ...(selectedSaved
+          ? {
+              savedDateId: selectedSaved.id,
+              savedDateTitle: selectedSaved.title,
+              savedDateMomentId: selectedSaved.momentId,
+            }
+          : {}),
+        placeName: selectedSaved?.placeName ?? spot?.name ?? selected.name,
+        ...(selectedSaved?.placeId ?? spot?.id ? { placeId: selectedSaved?.placeId ?? spot?.id } : {}),
+        ...(selectedSaved?.placeAddress ?? spot?.address
+          ? { placeAddress: selectedSaved?.placeAddress ?? spot?.address }
+          : {}),
+        ...(selectedSaved?.placeMapsUrl ?? spot?.mapsUrl
+          ? { placeMapsUrl: selectedSaved?.placeMapsUrl ?? spot?.mapsUrl }
+          : {}),
+      },
+    });
+  }, [selected, selectedSaved, publicSpotForPlace, t]);
+
+  const markSelectedDone = useCallback(async () => {
+    if (!selectedSaved) return;
+    try {
+      await savedDateRepository.update(selectedSaved.id, {
+        status: 'completed',
+        completedAt: new Date().toISOString(),
+      });
+      await confirmSuccess();
+      await reloadSaved();
+      // Cleanly ask what's next — keep a private memory, or share an anonymous
+      // tip. The copy makes clear notes/photos never become public.
+      const canShare = !!(selected && publicSpotForPlace(selected));
+      Alert.alert(
+        t('lovely — done together ♥', 'schön — zusammen erlebt ♥'),
+        t(
+          'Keep it as a private memory, or leave an anonymous tip on the map? Your notes and photos always stay private to your space.',
+          'Als private Erinnerung behalten oder einen anonymen Tipp auf der Karte lassen? Eure Notizen und Fotos bleiben immer privat in eurem Space.',
+        ),
+        [
+          { text: t('Create memory', 'Erinnerung anlegen'), onPress: () => createMemoryForSelected() },
+          ...(canShare
+            ? [{ text: t('Rate anonymously', 'Anonym bewerten'), onPress: () => openPublicRating() }]
+            : []),
+          { text: t('Later', 'Später'), style: 'cancel' as const },
+        ],
+      );
+    } catch {
+      Alert.alert(
+        t('Could not update this plan', 'Plan konnte nicht aktualisiert werden'),
+        t('Please try again in a moment.', 'Bitte versuche es gleich noch einmal.'),
+      );
+    }
+  }, [selectedSaved, reloadSaved, selected, publicSpotForPlace, openPublicRating, createMemoryForSelected, t]);
+
   if (!selected) return null;
   const selectedHasDirections = Boolean(selectedLivePlace?.mapsUrl ?? directionsUrl(selected));
   const selectedIsSearchPrompt = !selectedLivePlace && selected.provenance === 'needs-confirmation';
   const selectedCanBeShared = Boolean(publicSpotForPlace(selected));
+  const selectedIsPlanned = !!selectedSaved && selectedSaved.status !== 'completed';
+  const selectedIsDone = selectedSaved?.status === 'completed';
 
   return (
     <SafeAreaView style={styles.container}>
@@ -759,6 +860,17 @@ export default function PlacesScreen() {
             </View>
           ) : null}
 
+          {/* Loop status: find → plan → done → rate, shown right on the place. */}
+          {(selectedIsPlanned || selectedIsDone) && (
+            <View style={[styles.loopStatus, selectedIsDone && styles.loopStatusDone]}>
+              <Text style={[styles.loopStatusText, selectedIsDone && styles.loopStatusTextDone]}>
+                {selectedIsDone
+                  ? t('✓ you’ve done this together', '✓ ihr habt das zusammen gemacht')
+                  : t('◷ planned for your space', '◷ für euren Space geplant')}
+              </Text>
+            </View>
+          )}
+
           <View style={styles.placeActions}>
             {selectedHasDirections ? (
               <TouchableOpacity
@@ -771,24 +883,53 @@ export default function PlacesScreen() {
               </TouchableOpacity>
             ) : (
               <TouchableOpacity
-                style={styles.primaryButton}
+                style={[styles.primaryButton, liveLoading && styles.liveButtonDisabled]}
                 onPress={() => void findNearby(selected.liveQuery)}
+                disabled={liveLoading}
                 accessibilityRole="button"
                 accessibilityLabel={t('Find live matches for this vibe', 'Live-Treffer für diese Stimmung finden')}
               >
-                <Text style={styles.primaryButtonText}>{t('FIND LIVE MATCHES', 'LIVE-TREFFER FINDEN')}</Text>
+                <Text style={styles.primaryButtonText}>
+                  {liveLoading ? t('SEARCHING…', 'SUCHE…') : t('FIND LIVE MATCHES', 'LIVE-TREFFER FINDEN')}
+                </Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity
-              style={styles.secondaryButton}
-              onPress={() => void planSelectedPlace()}
-              accessibilityRole="button"
-              accessibilityLabel={t(`Plan ${selected.name}`, `${selected.name} planen`)}
-            >
-              <Text style={styles.secondaryButtonText}>
-                {selectedLivePlace ? t('PLAN THIS PLACE', 'DIESEN ORT PLANEN') : t('PLAN THIS IDEA', 'DIESE IDEE PLANEN')}
-              </Text>
-            </TouchableOpacity>
+            {/* Step 2: plan — hidden once it's already planned/done. */}
+            {!selectedSaved && (
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={() => void planSelectedPlace()}
+                accessibilityRole="button"
+                accessibilityLabel={t(`Plan ${selected.name}`, `${selected.name} planen`)}
+              >
+                <Text style={styles.secondaryButtonText}>
+                  {selectedLivePlace ? t('PLAN A DATE HERE', 'HIER EIN DATE PLANEN') : t('PLAN THIS DATE', 'DIESES DATE PLANEN')}
+                </Text>
+              </TouchableOpacity>
+            )}
+            {/* Step 3: complete — once planned, finish it right here. */}
+            {selectedIsPlanned && (
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={() => void markSelectedDone()}
+                accessibilityRole="button"
+                accessibilityLabel={t(`Mark ${selected.name} as done`, `${selected.name} als erledigt markieren`)}
+              >
+                <Text style={styles.secondaryButtonText}>{t('WE DID THIS HERE', 'DAS HABEN WIR ERLEBT')}</Text>
+              </TouchableOpacity>
+            )}
+            {/* Step 4a: keep it as a private memory (notes/photos stay private). */}
+            {selectedIsDone && (
+              <TouchableOpacity
+                style={styles.secondaryButton}
+                onPress={createMemoryForSelected}
+                accessibilityRole="button"
+                accessibilityLabel={t(`Create a memory of ${selected.name}`, `Erinnerung an ${selected.name} anlegen`)}
+              >
+                <Text style={styles.secondaryButtonText}>{t('KEEP THE MEMORY', 'ERINNERUNG FESTHALTEN')}</Text>
+              </TouchableOpacity>
+            )}
+            {/* Step 4b: anonymous rating — the only thing that ever goes public. */}
             {selectedCanBeShared ? (
               <TouchableOpacity
                 style={styles.tertiaryButton}
@@ -798,8 +939,8 @@ export default function PlacesScreen() {
               >
                 <Text style={styles.tertiaryButtonText}>
                   {publicSummary.count > 0
-                    ? t('ADD YOUR RATING', 'DEINE BEWERTUNG HINZUFÜGEN')
-                    : t('ADD / RATE ON MAP', 'AUF KARTE HINZUFÜGEN / BEWERTEN')}
+                    ? t('ADD ANONYMOUS RATING', 'ANONYME BEWERTUNG HINZUFÜGEN')
+                    : t('SHARE ONLY THE SPOT', 'NUR DEN ORT TEILEN')}
                 </Text>
               </TouchableOpacity>
             ) : null}
@@ -1098,6 +1239,19 @@ const styles = StyleSheet.create({
   feedbackTip: { fontSize: 13, fontWeight: '300', color: Colors.text, lineHeight: 19 },
   privateNote: { fontSize: 10, fontWeight: '400', color: Colors.textSubtle, lineHeight: 15 },
   emptyFeedback: { fontSize: 12, fontWeight: '400', color: Colors.textMuted, lineHeight: 18 },
+  loopStatus: {
+    marginTop: Spacing.sm,
+    alignSelf: 'flex-start',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
+    borderRadius: Radii.pill,
+    backgroundColor: Colors.backgroundCream,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  loopStatusDone: { backgroundColor: Colors.text, borderColor: Colors.text },
+  loopStatusText: { fontSize: 10, fontWeight: '600', letterSpacing: 1, color: Colors.textMuted },
+  loopStatusTextDone: { color: Colors.white },
   placeActions: { paddingTop: Spacing.sm, gap: Spacing.sm },
   primaryButton: {
     minHeight: 48,

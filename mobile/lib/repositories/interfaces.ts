@@ -43,8 +43,14 @@ export interface ISpaceRepository {
   create(input: CreateSpaceInput): Promise<Space>;
   /** Mock join-by-code: links the user into the matching space (or a new one). */
   joinByCode(code: string, userId: string, userName: string): Promise<Space>;
-  /** Rename the space. Both members can update. */
-  update(spaceId: string, updates: Pick<Space, 'name'>): Promise<Space>;
+  /**
+   * Update a space's shared identity. Both members can update (RLS: migration
+   * 0012). `emoji`/`avatarPath` are persisted server-side when configured.
+   */
+  update(
+    spaceId: string,
+    updates: Partial<Pick<Space, 'name' | 'emoji' | 'avatarPath' | 'collectibleEmoji'>>,
+  ): Promise<Space>;
 }
 
 export interface ISavedDateRepository {

@@ -220,11 +220,21 @@ export const localSpaceRepository: ISpaceRepository = {
     return space;
   },
 
-  async update(spaceId: string, updates: Pick<Space, 'name'>): Promise<Space> {
+  async update(
+    spaceId: string,
+    updates: Partial<Pick<Space, 'name' | 'emoji' | 'avatarPath' | 'collectibleEmoji'>>,
+  ): Promise<Space> {
     const spaces = await loadSpaces();
     const idx = spaces.findIndex((s) => s.id === spaceId);
     if (idx === -1) throw new Error(`Space ${spaceId} not found`);
-    const updated = { ...spaces[idx], name: updates.name.trim() || spaces[idx].name };
+    const current = spaces[idx];
+    const updated: Space = {
+      ...current,
+      ...(updates.name !== undefined ? { name: updates.name.trim() || current.name } : {}),
+      ...(updates.emoji !== undefined ? { emoji: updates.emoji } : {}),
+      ...(updates.avatarPath !== undefined ? { avatarPath: updates.avatarPath } : {}),
+      ...(updates.collectibleEmoji !== undefined ? { collectibleEmoji: updates.collectibleEmoji } : {}),
+    };
     const next = [...spaces];
     next[idx] = updated;
     await storage.set(SPACES_KEY, next);

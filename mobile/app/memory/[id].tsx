@@ -21,6 +21,8 @@ import { Typography } from '../../constants/typography';
 import { SEED_CARDS } from '../../lib/seed';
 import { memoryRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
+import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import { shareMemory } from '../../lib/share';
 import { confirmSuccess } from '../../lib/haptics';
 import type { Memory } from '../../lib/types';
@@ -35,6 +37,7 @@ export default function MemoryDetailScreen() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { t } = useLanguage();
+  const obscured = usePrivacyOverlay();
 
   useEffect(() => {
     let active = true;
@@ -78,7 +81,7 @@ export default function MemoryDetailScreen() {
       setMemory(updated);
       setEditing(false);
     } catch {
-      setError(t("couldn't save your changes. please try again.", 'Anderungen konnten nicht gespeichert werden. Bitte versuche es erneut.'));
+      setError(t("couldn't save your changes. please try again.", 'Änderungen konnten nicht gespeichert werden. Bitte versuch es nochmal.'));
     } finally {
       setBusy(false);
     }
@@ -87,15 +90,15 @@ export default function MemoryDetailScreen() {
   const confirmDelete = () => {
     if (!memory) return;
     Alert.alert(
-      t('delete this moment?', 'Diesen Moment loschen?'),
+      t('delete this moment?', 'Diesen Moment löschen?'),
       t(
         'this removes it from your diary for everyone in this space. it cannot be undone.',
-        'Das entfernt ihn aus eurem Tagebuch fur alle in diesem Space. Das kann nicht ruckgangig gemacht werden.',
+        'Das nimmt ihn für euch beide aus dem Tagebuch. Das lässt sich nicht rückgängig machen.',
       ),
       [
         { text: t('keep it', 'behalten'), style: 'cancel' },
         {
-          text: t('delete', 'loschen'),
+          text: t('delete', 'löschen'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -103,7 +106,7 @@ export default function MemoryDetailScreen() {
               void confirmSuccess();
               router.back();
             } catch {
-              setError(t("couldn't delete this moment. please try again.", 'Dieser Moment konnte nicht geloscht werden. Bitte versuche es erneut.'));
+              setError(t("couldn't delete this moment. please try again.", 'Dieser Moment ließ sich nicht löschen. Bitte versuch es nochmal.'));
             }
           },
         },
@@ -129,9 +132,9 @@ export default function MemoryDetailScreen() {
           <TouchableOpacity
             onPress={() => router.back()}
             accessibilityRole="button"
-            accessibilityLabel={t('Go back', 'Zuruck')}
+            accessibilityLabel={t('Go back', 'Zurück')}
           >
-            <Text style={styles.backLink}>{t('go back', 'zuruck')}</Text>
+            <Text style={styles.backLink}>{t('go back', 'zurück')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -149,6 +152,8 @@ export default function MemoryDetailScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <SafeAreaView style={styles.container}>
+        {/* A memory is always private — hide it in the app switcher / on background. */}
+        {obscured && <PrivacyScreen />}
         <View style={styles.header}>
           {editing ? (
             <>
@@ -164,7 +169,7 @@ export default function MemoryDetailScreen() {
                 onPress={saveEdit}
                 disabled={!draftNote.trim() || busy}
                 accessibilityRole="button"
-                accessibilityLabel={t('Save changes', 'Anderungen speichern')}
+                accessibilityLabel={t('Save changes', 'Änderungen speichern')}
                 style={styles.shareHit}
               >
                 <Text style={[styles.shareText, (!draftNote.trim() || busy) && styles.disabled]}>
@@ -174,7 +179,7 @@ export default function MemoryDetailScreen() {
             </>
           ) : (
             <>
-              <BackButton label={t('BACK', 'ZURUCK')} />
+              <BackButton label={t('BACK', 'ZURÜCK')} />
               <Text style={styles.headerLabel}>{t('MOMENT', 'MOMENT')}</Text>
               <TouchableOpacity
                 onPress={() => shareMemory(memory, card).catch(() => {})}
@@ -211,7 +216,7 @@ export default function MemoryDetailScreen() {
                 multiline
                 autoFocus
                 textAlignVertical="top"
-                placeholder={t('what do you want to remember about this moment?', 'was mochtest du von diesem Moment festhalten?')}
+                placeholder={t('what do you want to remember about this moment?', 'was möchtest du von diesem Moment festhalten?')}
                 placeholderTextColor={Colors.textFaint}
               />
             ) : (
@@ -239,7 +244,7 @@ export default function MemoryDetailScreen() {
                 <TouchableOpacity
                   onPress={confirmDelete}
                   accessibilityRole="button"
-                  accessibilityLabel={t('Delete this moment', 'Diesen Moment loschen')}
+                  accessibilityLabel={t('Delete this moment', 'Diesen Moment löschen')}
                   style={styles.actionBtn}
                 >
                   <Text style={[styles.actionText, styles.deleteText]}>{t('DELETE', 'LOSCHEN')}</Text>

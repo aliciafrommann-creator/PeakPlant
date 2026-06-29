@@ -22,6 +22,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.peakplant.app",
       "buildNumber": "1",
+      "associatedDomains": ["applinks:peak-plant.com"],
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -32,7 +33,20 @@
         "backgroundColor": "#1A1A1A"
       },
       "package": "com.peakplant.app",
-      "versionCode": 1
+      "versionCode": 1,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            { "scheme": "https", "host": "peak-plant.com", "pathPrefix": "/c/" },
+            { "scheme": "https", "host": "peak-plant.com", "pathPrefix": "/i/" },
+            { "scheme": "https", "host": "peak-plant.com", "pathPrefix": "/t/" },
+            { "scheme": "https", "host": "peak-plant.com", "pathPrefix": "/places/" }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "plugins": [
       "expo-router",

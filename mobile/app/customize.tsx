@@ -38,7 +38,7 @@ export default function CustomizeScreen() {
         <Text style={styles.lead}>
           {t(
             "make peakplant yours. a few gentle helpers are on to start — switch off anything you don't want. nothing here is required, and collecting moments always works.",
-            'Mach PeakPlant zu deinem. Ein paar hilfreiche Funktionen sind zu Beginn aktiviert - schalte ab, was du nicht mochtest. Nichts davon ist Pflicht, und Momente sammeln funktioniert immer.',
+            'Mach PeakPlant zu deinem. Ein paar hilfreiche Funktionen sind zu Beginn aktiviert - schalte ab, was du nicht möchtest. Nichts davon ist Pflicht, und Momente sammeln funktioniert immer.',
           )}
         </Text>
 
@@ -78,7 +78,7 @@ export default function CustomizeScreen() {
           onPress={() => router.push('/settings/preferences')}
           activeOpacity={0.8}
           accessibilityRole="button"
-          accessibilityLabel={t('Personalization and learned preferences', 'Personalisierung und gelernte Praferenzen')}
+          accessibilityLabel={t('Personalization and learned preferences', 'Personalisierung und gelernte Präferenzen')}
         >
           <Text style={styles.accountLabel}>{t('personalization', 'Personalisierung')}</Text>
           <Text style={styles.accountArrow}>-{'>'}</Text>

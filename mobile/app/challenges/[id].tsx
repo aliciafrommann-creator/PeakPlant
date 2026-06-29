@@ -46,9 +46,9 @@ export default function ChallengeDetailScreen() {
           <TouchableOpacity
             onPress={() => router.back()}
             accessibilityRole="button"
-            accessibilityLabel={t('Go back', 'Zuruck')}
+            accessibilityLabel={t('Go back', 'Zurück')}
           >
-            <Text style={styles.backLink}>{t('go back', 'zuruck')}</Text>
+            <Text style={styles.backLink}>{t('go back', 'zurück')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -59,17 +59,19 @@ export default function ChallengeDetailScreen() {
   const progress = enrollment
     ? progressFor(challenge, enrollment.joinedAt, memories.map((m) => m.createdAt))
     : undefined;
+  // The couple's own collectible (set in space/edit) stamps a finished challenge.
+  const collectible = activeSpace?.collectibleEmoji ?? challenge.badge;
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <BackButton label={t('BACK', 'ZURUCK')} />
+        <BackButton label={t('BACK', 'ZURÜCK')} />
         <Text style={styles.headerLabel}>{t('CHALLENGE', 'HERAUSFORDERUNG')}</Text>
         <View style={{ width: 60 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.badge}>{progress?.complete ? challenge.badge : ''}</Text>
+        <Text style={styles.badge}>{progress?.complete ? collectible : ''}</Text>
         <Text style={styles.duration}>{challenge.durationLabel.toUpperCase()}</Text>
         <Text style={styles.title}>{challenge.title}</Text>
         <Text style={styles.subtitle}>{challenge.subtitle}</Text>
@@ -78,7 +80,7 @@ export default function ChallengeDetailScreen() {
           <View style={styles.progressCard}>
             <ProgressBar count={progress.count} goal={progress.goal} complete={progress.complete} />
             {progress.complete && (
-              <Text style={styles.done}>{challenge.badge} {t('earned. lovely work, together.', 'verdient. wunderbare Arbeit, gemeinsam.')}</Text>
+              <Text style={styles.done}>{collectible} {t('earned. lovely work, together.', 'verdient. wunderbare Arbeit, gemeinsam.')}</Text>
             )}
           </View>
         )}

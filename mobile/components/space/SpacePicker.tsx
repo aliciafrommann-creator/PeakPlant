@@ -9,6 +9,7 @@ import {
   Share,
   Animated,
   Easing,
+  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -127,9 +128,13 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                       accessibilityRole="button"
                     >
                       <View style={[styles.dot, { backgroundColor: color }]}>
-                        <Text style={styles.dotGlyph}>
-                          {space.emoji ?? glyphFor(space.type)}
-                        </Text>
+                        {space.avatarUrl ? (
+                          <Image source={{ uri: space.avatarUrl }} style={styles.dotImage} />
+                        ) : (
+                          <Text style={styles.dotGlyph}>
+                            {space.emoji ?? glyphFor(space.type)}
+                          </Text>
+                        )}
                       </View>
                       <View style={styles.rowText}>
                         <Text style={[styles.rowName, active && styles.rowNameActive]} numberOfLines={1}>
@@ -243,6 +248,11 @@ const styles = StyleSheet.create({
   dotGlyph: {
     fontSize: 16,
     color: Colors.white,
+  },
+  dotImage: {
+    width: 38,
+    height: 38,
+    borderRadius: Radii.pill,
   },
   rowText: { flex: 1, gap: 2 },
   rowName: {

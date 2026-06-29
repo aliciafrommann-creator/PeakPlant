@@ -33,7 +33,7 @@ export default function ChallengesScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <BackButton label={t('BACK', 'ZURUCK')} />
+        <BackButton label={t('BACK', 'ZURÜCK')} />
         <Text style={styles.headerLabel}>{t('CHALLENGES', 'HERAUSFORDERUNGEN')}</Text>
         <View style={{ width: 60 }} />
       </View>

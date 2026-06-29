@@ -18,13 +18,17 @@ export interface PilotCity {
 }
 
 /**
- * Pilot cities are not static venue catalogs. They are only safe location seeds
- * for live provider searches, so the returned places stay current.
+ * Pilot cities are not static venue catalogs and they do NOT limit where the app
+ * works — "find near me" uses the device location and works anywhere. They are
+ * only convenient location seeds for live provider searches in the launch
+ * regions, so a couple can try the map without granting location first.
  */
 export const PILOT_CITIES: PilotCity[] = [
-  { id: 'innsbruck', label: 'Innsbruck', coords: { lat: 47.2692, lng: 11.4041 } },
-  { id: 'vienna', label: 'Vienna', coords: { lat: 48.2082, lng: 16.3738 } },
-  { id: 'munich', label: 'Munich', coords: { lat: 48.1351, lng: 11.5820 } },
+  { id: 'hannover', label: 'Hannover', coords: { lat: 52.3759, lng: 9.732 } },
+  { id: 'stuttgart', label: 'Stuttgart', coords: { lat: 48.7758, lng: 9.1829 } },
+  { id: 'munich', label: 'München', coords: { lat: 48.1351, lng: 11.582 } },
+  { id: 'freiburg', label: 'Freiburg', coords: { lat: 47.999, lng: 7.8421 } },
+  { id: 'konstanz', label: 'Konstanz', coords: { lat: 47.6779, lng: 9.1732 } },
 ];
 
 const DEFAULT_LIVE_PRICE_BAND: PriceBand = LOCAL_PLACES.find((place) => place.priceBand !== 'free')?.priceBand ?? 'free';
