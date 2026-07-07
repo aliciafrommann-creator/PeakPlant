@@ -8,7 +8,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Image,
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -28,6 +27,7 @@ import {
 import { isSupabaseConfigured } from '../../lib/supabase/client';
 import { uploadSpaceAvatar } from '../../lib/supabase/storage';
 import { persistPickedPhoto } from '../../lib/photoStorage';
+import { FadeInImage } from '../../components/ui/FadeInImage';
 import { confirmSuccess, acknowledgeSelection } from '../../lib/haptics';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -201,7 +201,7 @@ export default function EditSpaceScreen() {
               accessibilityLabel={shownAvatarUrl ? t('Change space photo', 'Space-Foto ändern') : t('Add a space photo', 'Space-Foto hinzufügen')}
             >
               {shownAvatarUrl ? (
-                <Image source={{ uri: shownAvatarUrl }} style={styles.avatarImage} />
+                <FadeInImage source={{ uri: shownAvatarUrl }} style={styles.avatarImage} />
               ) : (
                 <Text style={styles.avatarEmoji}>{fallbackEmoji}</Text>
               )}

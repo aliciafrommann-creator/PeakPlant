@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Image,
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
@@ -23,6 +22,7 @@ import { memoryRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
+import { FadeInImage } from '../../components/ui/FadeInImage';
 import { shareMemory } from '../../lib/share';
 import { confirmSuccess } from '../../lib/haptics';
 import type { Memory } from '../../lib/types';
@@ -195,7 +195,7 @@ export default function MemoryDetailScreen() {
 
         <ScrollView showsVerticalScrollIndicator={false}>
           {memory.photoUri && (
-            <Image source={{ uri: memory.photoUri }} style={styles.photo} />
+            <FadeInImage source={{ uri: memory.photoUri }} style={styles.photo} />
           )}
 
           <View style={styles.body}>

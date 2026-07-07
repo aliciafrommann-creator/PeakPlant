@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
+import { PressableScale } from '../../components/ui/PressableScale';
 import { Colors, Sections } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -86,19 +87,18 @@ export default function ChallengeDetailScreen() {
         )}
 
         {!enrollment ? (
-          <TouchableOpacity
+          <PressableScale
             style={styles.primary}
-            onPress={() => handleJoin(challenge.id)}
-            activeOpacity={0.85}
-            accessibilityRole="button"
+            haptic={false}
+            onPress={() => void handleJoin(challenge.id)}
             accessibilityLabel={t('Take on this challenge', 'Diese Herausforderung annehmen')}
           >
             <Text style={styles.primaryText}>{t('TAKE IT ON', 'ANNEHMEN')}</Text>
-          </TouchableOpacity>
+          </PressableScale>
         ) : (
           <>
             {!progress?.complete && (
-              <TouchableOpacity
+              <PressableScale
                 style={styles.primary}
                 onPress={() =>
                   router.push({
@@ -111,15 +111,13 @@ export default function ChallengeDetailScreen() {
                     },
                   })
                 }
-                activeOpacity={0.85}
-                accessibilityRole="button"
                 accessibilityLabel={t(
                   'Add photo or note for this challenge',
                   'Foto oder Notiz für diese Challenge hinzufügen',
                 )}
               >
                 <Text style={styles.primaryText}>{t('ADD PHOTO / NOTE', 'FOTO / NOTIZ HINZUFÜGEN')}</Text>
-              </TouchableOpacity>
+              </PressableScale>
             )}
             <TouchableOpacity
               style={styles.secondary}

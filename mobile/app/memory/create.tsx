@@ -8,7 +8,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Image,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -25,6 +24,8 @@ import { savedDateRepository } from '../../lib/repositories';
 import { confirmSuccess } from '../../lib/haptics';
 import { setPendingReward } from '../../lib/pendingReward';
 import { persistPickedPhoto } from '../../lib/photoStorage';
+import { PressableScale } from '../../components/ui/PressableScale';
+import { FadeInImage } from '../../components/ui/FadeInImage';
 import { SEED_CARDS } from '../../lib/seed';
 
 const MOMENT = Sections.together; // warm apricot — capturing "our" moment
@@ -213,16 +214,15 @@ export default function CreateMemoryScreen() {
           )}
 
           {/* Photo area — the prominent upload affordance */}
-          <TouchableOpacity
+          <PressableScale
             style={[styles.photoArea, !photoUri && styles.photoAreaEmpty]}
-            activeOpacity={0.85}
-            onPress={pickPhoto}
-            accessibilityRole="button"
+            scaleTo={0.985}
+            onPress={() => void pickPhoto()}
             accessibilityLabel={photoUri ? t('Change photo', 'Foto ändern') : t('Add a photo to this moment', 'Foto zu diesem Moment hinzufügen')}
           >
             {photoUri ? (
               <>
-                <Image source={{ uri: photoUri }} style={styles.photoPreview} />
+                <FadeInImage source={{ uri: photoUri }} style={styles.photoPreview} />
                 <View style={styles.photoChange}>
                   <Ionicons name="camera-reverse-outline" size={16} color={Colors.white} />
                   <Text style={styles.photoChangeText}>{t('CHANGE', 'ÄNDERN')}</Text>
@@ -237,7 +237,7 @@ export default function CreateMemoryScreen() {
                 <Text style={styles.photoHint}>{t('upload from your library · optional', 'aus der Galerie hochladen · optional')}</Text>
               </View>
             )}
-          </TouchableOpacity>
+          </PressableScale>
 
           {/* Note input */}
           <View style={styles.noteSection}>

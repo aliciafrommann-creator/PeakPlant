@@ -26,7 +26,7 @@ import { shareSavedDate } from '../../lib/share';
 import { shareCalendarEvent } from '../../lib/calendarShare';
 import { ideaLink, placeLink } from '../../lib/links';
 import { formatPlanDate, parsePlanDate } from '../../lib/calendar';
-import { confirmSuccess } from '../../lib/haptics';
+import { confirmSuccess, acknowledgeSelection } from '../../lib/haptics';
 import type { SavedDate } from '../../lib/types';
 
 export default function SavedDatesScreen() {
@@ -483,7 +483,7 @@ export default function SavedDatesScreen() {
                   <TouchableOpacity
                     key={option.value}
                     style={[styles.quickDate, selected && styles.quickDateSelected]}
-                    onPress={() => setPlanText(option.value)}
+                    onPress={() => { void acknowledgeSelection(); setPlanText(option.value); }}
                     accessibilityRole="button"
                     accessibilityState={{ selected }}
                     accessibilityLabel={option.label}

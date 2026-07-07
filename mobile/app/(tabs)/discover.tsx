@@ -19,6 +19,7 @@ import { PressableScale } from '../../components/ui/PressableScale';
 import { SpacePicker } from '../../components/space/SpacePicker';
 import { StreakBanner } from '../../components/space/StreakBanner';
 import { Toast } from '../../components/ui/Toast';
+import { AnimatedFill } from '../../components/ui/AnimatedFill';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useAppStore } from '../../lib/store';
@@ -326,7 +327,7 @@ export default function DiscoverScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.toggleChip}
-            onPress={() => router.push('/discover/browse')}
+            onPress={() => { void acknowledgeSelection(); router.push('/discover/browse'); }}
             activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityLabel={t('Browse the full idea library', 'Die ganze Ideen-Bibliothek durchstöbern')}
@@ -338,7 +339,7 @@ export default function DiscoverScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.toggleChip}
-            onPress={() => router.push('/(tabs)/community')}
+            onPress={() => { void acknowledgeSelection(); router.push('/(tabs)/community'); }}
             activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
@@ -567,11 +568,9 @@ export default function DiscoverScreen() {
             ) : enrolled && challengeProgress ? (
               <View style={styles.challengeProgress}>
                 <View style={styles.challengeProgressBar}>
-                  <View
-                    style={[
-                      styles.challengeProgressFill,
-                      { width: `${Math.min(100, (challengeProgress.count / challengeProgress.goal) * 100)}%` },
-                    ]}
+                  <AnimatedFill
+                    ratio={challengeProgress.goal > 0 ? challengeProgress.count / challengeProgress.goal : 0}
+                    style={styles.challengeProgressFill}
                   />
                 </View>
                 <Text style={styles.challengeProgressText}>

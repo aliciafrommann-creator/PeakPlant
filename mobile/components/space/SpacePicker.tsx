@@ -9,7 +9,6 @@ import {
   Share,
   Animated,
   Easing,
-  Image,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,6 +16,7 @@ import { router } from 'expo-router';
 import { Colors, Accents } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { PressableScale } from '../ui/PressableScale';
+import { FadeInImage } from '../ui/FadeInImage';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { acknowledgeSelection } from '../../lib/haptics';
@@ -129,7 +129,7 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                     >
                       <View style={[styles.dot, { backgroundColor: color }]}>
                         {space.avatarUrl ? (
-                          <Image source={{ uri: space.avatarUrl }} style={styles.dotImage} />
+                          <FadeInImage source={{ uri: space.avatarUrl }} style={styles.dotImage} />
                         ) : (
                           <Text style={styles.dotGlyph}>
                             {space.emoji ?? glyphFor(space.type)}
