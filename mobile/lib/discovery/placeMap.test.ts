@@ -31,6 +31,17 @@ describe('place map', () => {
     expect(html).toContain('selected');
   });
 
+  it('reports readiness honestly — ready only when tiles paint, failure surfaced', () => {
+    const html = buildPlaceMapHtml([place]);
+    // "map-ready" must be tied to a painted tile, not Leaflet merely booting:
+    // exactly one post site (inside markReady), guarded by the tileload hook.
+    expect(html).toContain('tileload');
+    expect((html.match(/post\('map-ready'\)/g) ?? []).length).toBe(1);
+    // Hard failures (Leaflet blocked, both tile providers down) must surface.
+    expect(html).toContain('map-failed');
+    expect(html).toContain('catch');
+  });
+
   it('escapes markup embedded in static place names', () => {
     const html = buildPlaceMapHtml([{ ...place, name: '</script><script>alert(1)</script>' }]);
     expect(html).not.toContain('</script><script>alert(1)</script>');
