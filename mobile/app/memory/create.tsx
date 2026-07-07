@@ -24,6 +24,7 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { savedDateRepository } from '../../lib/repositories';
 import { confirmSuccess } from '../../lib/haptics';
 import { setPendingReward } from '../../lib/pendingReward';
+import { persistPickedPhoto } from '../../lib/photoStorage';
 import { SEED_CARDS } from '../../lib/seed';
 
 const MOMENT = Sections.together; // warm apricot — capturing "our" moment
@@ -99,10 +100,15 @@ export default function CreateMemoryScreen() {
     setSaving(true);
     setError(null);
     try {
+      // Picker URIs live in the evictable cache — persist before storing so the
+      // photo survives cache cleanup (local mode; no-op when Supabase uploads).
+      const durablePhotoUri = photoUri
+        ? await persistPickedPhoto(photoUri, 'memory')
+        : undefined;
       const memory = await createMemory({
         cardId: selectedCardId,
         note: note.trim() || t('photo moment', 'Fotomoment'),
-        photoUri,
+        photoUri: durablePhotoUri,
       });
       // Preserving a moment is the app's most meaningful create — confirm it.
       void confirmSuccess();

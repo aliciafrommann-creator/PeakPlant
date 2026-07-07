@@ -116,10 +116,24 @@ export const supabaseMemoryRepository: IMemoryRepository = {
   async update(id: string, updates: Partial<Pick<Memory, 'note' | 'photoUri'>>): Promise<Memory> {
     const patch: Record<string, unknown> = { updated_at: new Date().toISOString() };
     if (updates.note !== undefined) patch.note = updates.note;
-    if (updates.photoUri !== undefined) patch.photo_path = updates.photoUri;
+    if (updates.photoUri !== undefined) {
+      // A local picker URI must be uploaded first — writing it into photo_path
+      // verbatim would store a dead file:// reference as the "cloud" photo.
+      if (updates.photoUri && /^(file|content):/.test(updates.photoUri)) {
+        const { data: row, error: readError } = await db()
+          .from('memories')
+          .select('space_id')
+          .eq('id', id)
+          .single();
+        if (readError) throw readError;
+        patch.photo_path = await uploadMemoryPhoto(row.space_id, updates.photoUri);
+      } else {
+        patch.photo_path = updates.photoUri || null; // already a storage path, or clearing
+      }
+    }
     const { data, error } = await db().from('memories').update(patch).eq('id', id).select().single();
     if (error) throw error;
-    return mapMemory(data);
+    return withSignedPhoto(mapMemory(data));
   },
 
   async delete(id: string): Promise<void> {
