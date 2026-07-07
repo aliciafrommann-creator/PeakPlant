@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useAppStore } from '../store';
 import type { Lang, LocalizedText } from '../types';
 
@@ -12,15 +13,20 @@ export function useLanguage() {
   const language = useAppStore((s) => s.language);
   const setLanguage = useAppStore((s) => s.setLanguage);
 
+  // Stable identities (per language) so t/l are safe in effect/callback deps —
+  // fresh functions every render caused focus-effects downstream to re-subscribe
+  // on every render.
   /** Inline bilingual literal: t('Back', 'Zurück'). */
-  function t(en: string, de: string): string {
-    return language === 'de' ? de : en;
-  }
+  const t = useCallback(
+    (en: string, de: string): string => (language === 'de' ? de : en),
+    [language],
+  );
 
   /** Resolve a LocalizedText value (string or { en, de }) for the active language. */
-  function l(text: LocalizedText | undefined): string {
-    return loc(text, language);
-  }
+  const l = useCallback(
+    (text: LocalizedText | undefined): string => loc(text, language),
+    [language],
+  );
 
   return { language, setLanguage, t, l };
 }

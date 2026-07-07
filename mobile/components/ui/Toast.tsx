@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, Easing } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Animated, StyleSheet, Text, View, Easing } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
@@ -45,11 +44,14 @@ export function Toast({
   const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [-16, 0] });
 
   return (
-    <SafeAreaView edges={['top']} pointerEvents="none" style={styles.safe}>
+    // Plain View, not SafeAreaView: the parent screen is already a SafeAreaView,
+    // and absolute top:0 sits below its top inset — nesting another safe area
+    // doubled the offset and pushed the toast too far down on notched devices.
+    <View pointerEvents="none" style={styles.safe}>
       <Animated.View style={[styles.toast, { opacity: anim, transform: [{ translateY }] }]}>
         <Text style={styles.text}>{message}</Text>
       </Animated.View>
-    </SafeAreaView>
+    </View>
   );
 }
 
