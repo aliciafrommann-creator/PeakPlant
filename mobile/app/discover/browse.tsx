@@ -7,6 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from 'expo-router';
@@ -33,6 +36,11 @@ import {
 } from '../../lib/discovery/ideaCatalog';
 import type { TimeOfDay, Energy, PriceBand, IndoorOutdoor } from '../../lib/together';
 import type { Season } from '../../lib/discovery/ideaCatalog';
+
+// LayoutAnimation needs an explicit opt-in on old-architecture Android.
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 type Lang = (en: string, de: string) => string;
 
@@ -200,7 +208,12 @@ export default function BrowseIdeasScreen() {
             <View style={styles.filterBar}>
               <TouchableOpacity
                 style={[styles.filterToggle, count > 0 && styles.filterToggleActive]}
-                onPress={() => { void acknowledgeSelection(); setShowFilters((s) => !s); }}
+                onPress={() => {
+                  void acknowledgeSelection();
+                  // Ease the filter panel open/closed instead of popping.
+                  LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                  setShowFilters((s) => !s);
+                }}
                 activeOpacity={0.85}
                 accessibilityRole="button"
                 accessibilityLabel={t('Toggle filters', 'Filter umschalten')}

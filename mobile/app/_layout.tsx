@@ -2,20 +2,38 @@ import { useEffect } from 'react';
 import { AppState } from 'react-native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useAppStore } from '../lib/store';
 import { Colors } from '../constants/colors';
 import { lockBiometricSession } from '../lib/hooks/useBiometric';
 
+// Keep the native splash up until the store has hydrated, so cold start goes
+// splash → real app with no boot-spinner flash in between.
+SplashScreen.preventAutoHideAsync().catch(() => {
+  // Already hidden / unavailable — nothing to hold.
+});
+
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const hydrate = useAppStore((s) => s.hydrate);
+  const hydrated = useAppStore((s) => s.hydrated);
 
   useEffect(() => {
     void hydrate();
   }, [hydrate]);
+
+  // Hand off from splash once ready — with a hard fallback so a hung hydration
+  // can never leave the user stuck on the splash screen.
+  useEffect(() => {
+    if (hydrated) void SplashScreen.hideAsync().catch(() => {});
+  }, [hydrated]);
+  useEffect(() => {
+    const failsafe = setTimeout(() => void SplashScreen.hideAsync().catch(() => {}), 3000);
+    return () => clearTimeout(failsafe);
+  }, []);
 
   // Re-lock sensitive editions whenever the app is backgrounded.
   useEffect(() => {

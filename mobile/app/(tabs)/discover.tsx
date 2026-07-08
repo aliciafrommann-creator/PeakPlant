@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,6 +19,7 @@ import { SpacePicker } from '../../components/space/SpacePicker';
 import { StreakBanner } from '../../components/space/StreakBanner';
 import { Toast } from '../../components/ui/Toast';
 import { AnimatedFill } from '../../components/ui/AnimatedFill';
+import { IdeaCardSkeleton } from '../../components/ui/Skeleton';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useAppStore } from '../../lib/store';
@@ -401,7 +401,7 @@ export default function DiscoverScreen() {
 
         {loading ? (
           <View style={styles.loading}>
-            <ActivityIndicator color={Colors.accent} />
+            <IdeaCardSkeleton />
             <Text style={styles.loadingText}>{t('finding something that fits...', 'wir suchen etwas Passendes...')}</Text>
           </View>
         ) : primary ? (
@@ -764,8 +764,14 @@ const styles = StyleSheet.create({
   chipOn: { backgroundColor: Colors.accent, borderColor: Colors.accent },
   chipText: { fontSize: 13, fontWeight: '600', color: Colors.text, letterSpacing: 0.2 },
   chipTextOn: { color: Colors.white },
-  loading: { alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.xxl },
-  loadingText: { fontSize: 12, fontWeight: '300', color: Colors.textFaint, letterSpacing: 0.5 },
+  loading: { gap: Spacing.md, paddingBottom: Spacing.xxl },
+  loadingText: {
+    fontSize: 12,
+    fontWeight: '300',
+    color: Colors.textFaint,
+    letterSpacing: 0.5,
+    textAlign: 'center',
+  },
   card: {
     backgroundColor: Colors.surface,
     marginHorizontal: Spacing.screen,

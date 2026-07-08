@@ -75,6 +75,39 @@ export function MemoryFeedSkeleton({ count = 3 }: { count?: number }) {
   );
 }
 
+/** A photo-less card placeholder shaped like an idea/plan card (title, two
+ *  body lines, a facts row) — for Discover recommendations and saved plans. */
+export function IdeaCardSkeleton() {
+  return (
+    <View
+      style={[styles.card, styles.ideaBody]}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+    >
+      <Skeleton width={88} height={9} radius={4} />
+      <Skeleton width="75%" height={20} radius={6} style={styles.gapTop} />
+      <Skeleton width="95%" height={13} radius={5} style={styles.gapSm} />
+      <Skeleton width="60%" height={13} radius={5} style={styles.gapSm} />
+      <View style={styles.factsRow}>
+        <Skeleton width={64} height={10} radius={4} />
+        <Skeleton width={64} height={10} radius={4} />
+        <Skeleton width={64} height={10} radius={4} />
+      </View>
+    </View>
+  );
+}
+
+/** Stacked idea-card skeletons — first-paint state for idea/plan lists. */
+export function IdeaListSkeleton({ count = 2 }: { count?: number }) {
+  return (
+    <View>
+      {Array.from({ length: count }).map((_, i) => (
+        <IdeaCardSkeleton key={i} />
+      ))}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.surface,
@@ -86,6 +119,8 @@ const styles = StyleSheet.create({
   },
   photo: { width: '100%' },
   body: { padding: Spacing.lg },
+  ideaBody: { padding: Spacing.lg, marginTop: Spacing.lg },
+  factsRow: { flexDirection: 'row', gap: Spacing.md, marginTop: Spacing.md },
   gapTop: { marginTop: Spacing.md },
   gapSm: { marginTop: Spacing.sm },
 });

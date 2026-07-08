@@ -27,6 +27,7 @@ import { shareCalendarEvent } from '../../lib/calendarShare';
 import { ideaLink, placeLink } from '../../lib/links';
 import { formatPlanDate, parsePlanDate } from '../../lib/calendar';
 import { confirmSuccess, acknowledgeSelection } from '../../lib/haptics';
+import { IdeaListSkeleton } from '../../components/ui/Skeleton';
 import type { SavedDate } from '../../lib/types';
 
 export default function SavedDatesScreen() {
@@ -295,9 +296,7 @@ export default function SavedDatesScreen() {
       </View>
 
       {loading ? (
-        <View style={styles.center}>
-          <ActivityIndicator color={Colors.accent} />
-        </View>
+        <IdeaListSkeleton count={3} />
       ) : dates.length === 0 ? (
         <View style={styles.center}>
           <Text style={styles.emptyText}>{t('nothing saved yet.', 'noch nichts gespeichert.')}</Text>
