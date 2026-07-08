@@ -72,51 +72,69 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script>
-    const points = ${safeJson(points)};
-    const selectedId = ${safeJson(selectedId ?? null)};
-    const map = L.map('map', {
-      zoomControl: true,
-      attributionControl: true,
-      dragging: true,
-      tap: true,
-      touchZoom: true,
-      scrollWheelZoom: false
-    });
-    // CARTO can fail to serve tiles (network, rate limit) — leaving a grey map.
-    // Fall back to OpenStreetMap tiles once on the first tile error so the map
-    // always renders something.
-    let usingFallbackTiles = false;
-    const cartoTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd',
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-    }).addTo(map);
-    const osmTiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    });
-    cartoTiles.on('tileerror', () => {
-      if (usingFallbackTiles) return;
-      usingFallbackTiles = true;
-      map.removeLayer(cartoTiles);
-      osmTiles.addTo(map);
-      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'map-ready' }));
-    });
-    const bounds = [];
-    points.forEach((point) => {
-      const classes = ['peak-pin', point.partner ? 'partner' : '', point.id === selectedId ? 'selected' : '']
-        .filter(Boolean).join(' ');
-      const html = '<div class="' + classes + '" style="background:' + point.color + '">' + point.emoji + '</div>';
-      const icon = L.divIcon({ className: '', html: html, iconSize: [40, 40], iconAnchor: [20, 20] });
-      const marker = L.marker([point.lat, point.lng], { icon, title: point.name }).addTo(map);
-      marker.on('click', () => window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'select-place', id: point.id })));
-      bounds.push([point.lat, point.lng]);
-    });
-    const selected = points.find((point) => point.id === selectedId);
-    if (selected) map.setView([selected.lat, selected.lng], 14);
-    else if (bounds.length) map.fitBounds(bounds, { padding: [28, 28], maxZoom: 13 });
-    else map.setView([47.2692, 11.4041], 12);
-    window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'map-ready' }));
+    // Honest readiness: "map-ready" is only posted once a real tile has painted
+    // — not when Leaflet merely initialised. Any hard failure (Leaflet script
+    // blocked, both tile providers down) posts "map-failed" so the app can show
+    // its connection message instead of a silent grey pane.
+    function post(type) { window.ReactNativeWebView && window.ReactNativeWebView.postMessage(JSON.stringify({ type: type })); }
+    try {
+      if (typeof L === 'undefined') throw new Error('leaflet blocked');
+      const points = ${safeJson(points)};
+      const selectedId = ${safeJson(selectedId ?? null)};
+      const map = L.map('map', {
+        zoomControl: true,
+        attributionControl: true,
+        dragging: true,
+        tap: true,
+        touchZoom: true,
+        scrollWheelZoom: false
+      });
+      let tilesShown = false;
+      function markReady() {
+        if (tilesShown) return;
+        tilesShown = true;
+        post('map-ready');
+      }
+      // CARTO can fail to serve tiles (network, rate limit) — fall back to
+      // OpenStreetMap on the first tile error; if OSM also never paints, fail.
+      let usingFallbackTiles = false;
+      const cartoTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd',
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+      }).addTo(map);
+      const osmTiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      });
+      cartoTiles.on('tileload', markReady);
+      osmTiles.on('tileload', markReady);
+      cartoTiles.on('tileerror', () => {
+        if (usingFallbackTiles) return;
+        usingFallbackTiles = true;
+        map.removeLayer(cartoTiles);
+        osmTiles.addTo(map);
+      });
+      osmTiles.on('tileerror', () => {
+        if (!tilesShown) post('map-failed');
+      });
+      const bounds = [];
+      points.forEach((point) => {
+        const classes = ['peak-pin', point.partner ? 'partner' : '', point.id === selectedId ? 'selected' : '']
+          .filter(Boolean).join(' ');
+        const html = '<div class="' + classes + '" style="background:' + point.color + '">' + point.emoji + '</div>';
+        const icon = L.divIcon({ className: '', html: html, iconSize: [40, 40], iconAnchor: [20, 20] });
+        const marker = L.marker([point.lat, point.lng], { icon, title: point.name }).addTo(map);
+        marker.on('click', () => window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'select-place', id: point.id })));
+        bounds.push([point.lat, point.lng]);
+      });
+      const selected = points.find((point) => point.id === selectedId);
+      if (selected) map.setView([selected.lat, selected.lng], 14);
+      else if (bounds.length) map.fitBounds(bounds, { padding: [28, 28], maxZoom: 13 });
+      else map.setView([47.2692, 11.4041], 12);
+    } catch (e) {
+      post('map-failed');
+    }
   </script>
 </body>
 </html>`;

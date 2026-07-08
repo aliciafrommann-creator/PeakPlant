@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,6 +18,8 @@ import { PressableScale } from '../../components/ui/PressableScale';
 import { SpacePicker } from '../../components/space/SpacePicker';
 import { StreakBanner } from '../../components/space/StreakBanner';
 import { Toast } from '../../components/ui/Toast';
+import { AnimatedFill } from '../../components/ui/AnimatedFill';
+import { IdeaCardSkeleton } from '../../components/ui/Skeleton';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useAppStore } from '../../lib/store';
@@ -326,7 +327,7 @@ export default function DiscoverScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.toggleChip}
-            onPress={() => router.push('/discover/browse')}
+            onPress={() => { void acknowledgeSelection(); router.push('/discover/browse'); }}
             activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityLabel={t('Browse the full idea library', 'Die ganze Ideen-Bibliothek durchstöbern')}
@@ -338,7 +339,7 @@ export default function DiscoverScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.toggleChip}
-            onPress={() => router.push('/(tabs)/community')}
+            onPress={() => { void acknowledgeSelection(); router.push('/(tabs)/community'); }}
             activeOpacity={0.85}
             accessibilityRole="button"
             accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
@@ -400,7 +401,7 @@ export default function DiscoverScreen() {
 
         {loading ? (
           <View style={styles.loading}>
-            <ActivityIndicator color={Colors.accent} />
+            <IdeaCardSkeleton />
             <Text style={styles.loadingText}>{t('finding something that fits...', 'wir suchen etwas Passendes...')}</Text>
           </View>
         ) : primary ? (
@@ -567,11 +568,9 @@ export default function DiscoverScreen() {
             ) : enrolled && challengeProgress ? (
               <View style={styles.challengeProgress}>
                 <View style={styles.challengeProgressBar}>
-                  <View
-                    style={[
-                      styles.challengeProgressFill,
-                      { width: `${Math.min(100, (challengeProgress.count / challengeProgress.goal) * 100)}%` },
-                    ]}
+                  <AnimatedFill
+                    ratio={challengeProgress.goal > 0 ? challengeProgress.count / challengeProgress.goal : 0}
+                    style={styles.challengeProgressFill}
                   />
                 </View>
                 <Text style={styles.challengeProgressText}>
@@ -765,8 +764,14 @@ const styles = StyleSheet.create({
   chipOn: { backgroundColor: Colors.accent, borderColor: Colors.accent },
   chipText: { fontSize: 13, fontWeight: '600', color: Colors.text, letterSpacing: 0.2 },
   chipTextOn: { color: Colors.white },
-  loading: { alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.xxl },
-  loadingText: { fontSize: 12, fontWeight: '300', color: Colors.textFaint, letterSpacing: 0.5 },
+  loading: { gap: Spacing.md, paddingBottom: Spacing.xxl },
+  loadingText: {
+    fontSize: 12,
+    fontWeight: '300',
+    color: Colors.textFaint,
+    letterSpacing: 0.5,
+    textAlign: 'center',
+  },
   card: {
     backgroundColor: Colors.surface,
     marginHorizontal: Spacing.screen,

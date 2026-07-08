@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
+import { PressableScale } from '../../components/ui/PressableScale';
 import { Colors, Sections } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -279,12 +280,10 @@ export default function TogetherDetailScreen() {
           )}
         </Text>
 
-        <TouchableOpacity
+        <PressableScale
           style={styles.cta}
           onPress={() => void handlePrimary()}
           disabled={busy}
-          activeOpacity={0.85}
-          accessibilityRole="button"
           accessibilityLabel={t('Continue with this idea', 'Mit dieser Idee weitermachen')}
         >
           {busy ? (
@@ -300,18 +299,17 @@ export default function TogetherDetailScreen() {
                   : t('PLAN THIS DATE', 'DIESES DATE PLANEN')}
             </Text>
           )}
-        </TouchableOpacity>
+        </PressableScale>
 
         {savedDate?.status !== 'completed' && (
-          <TouchableOpacity
+          <PressableScale
             style={styles.secondaryCta}
             onPress={() => void handleDone()}
             disabled={busy}
-            accessibilityRole="button"
             accessibilityLabel={t('We already did this', 'Wir haben das schon gemacht')}
           >
             <Text style={styles.secondaryCtaText}>{t('WE ALREADY DID THIS', 'WIR HABEN DAS SCHON GEMACHT')}</Text>
-          </TouchableOpacity>
+          </PressableScale>
         )}
 
         {!savedDate ? (

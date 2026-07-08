@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
+import { PressableScale } from '../../components/ui/PressableScale';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
@@ -73,17 +74,15 @@ export default function CardDetailScreen() {
   function renderPreserveCTA(keyPrefix: string) {
     return (
       <View key={`${keyPrefix}-cta`} style={styles.ctaBlock}>
-        <TouchableOpacity
+        <PressableScale
           style={styles.preserveButton}
           onPress={() => router.push({ pathname: '/memory/create', params: { cardId: card!.id } })}
-          activeOpacity={0.8}
-          accessibilityRole="button"
           accessibilityLabel={t('Preserve this moment', 'Diesen Moment festhalten')}
         >
           <Text style={styles.preserveText}>
             {t('PRESERVE THIS MOMENT', 'MOMENT FESTHALTEN')}
           </Text>
-        </TouchableOpacity>
+        </PressableScale>
         {edition.sensitive && (
           <Text style={styles.privacyNote}>
             {t(

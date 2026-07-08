@@ -8,7 +8,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Image,
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,6 +26,8 @@ import {
 } from '../../lib/spaceCustomization';
 import { isSupabaseConfigured } from '../../lib/supabase/client';
 import { uploadSpaceAvatar } from '../../lib/supabase/storage';
+import { persistPickedPhoto } from '../../lib/photoStorage';
+import { FadeInImage } from '../../components/ui/FadeInImage';
 import { confirmSuccess, acknowledgeSelection } from '../../lib/haptics';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -134,12 +135,12 @@ export default function EditSpaceScreen() {
       // Resolve the avatar path to persist. undefined = leave unchanged.
       let avatarPath: string | undefined;
       if (photoUri) {
-        // Configured: upload (EXIF stripped) → storage path. Otherwise keep the
-        // local file URI so it still shows on this device (no cross-device sync
-        // until Supabase is configured).
+        // Configured: upload (EXIF stripped) → storage path. Otherwise persist
+        // the picked file out of the evictable cache and keep that local path
+        // (device-only until Supabase is configured).
         avatarPath = isSupabaseConfigured
           ? await uploadSpaceAvatar(space.id, photoUri)
-          : photoUri;
+          : await persistPickedPhoto(photoUri, 'space-avatar');
       } else if (removePhoto) {
         avatarPath = ''; // cleared — display falls back to the emoji
       }
@@ -200,7 +201,7 @@ export default function EditSpaceScreen() {
               accessibilityLabel={shownAvatarUrl ? t('Change space photo', 'Space-Foto ändern') : t('Add a space photo', 'Space-Foto hinzufügen')}
             >
               {shownAvatarUrl ? (
-                <Image source={{ uri: shownAvatarUrl }} style={styles.avatarImage} />
+                <FadeInImage source={{ uri: shownAvatarUrl }} style={styles.avatarImage} />
               ) : (
                 <Text style={styles.avatarEmoji}>{fallbackEmoji}</Text>
               )}

@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Accents } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { PressableScale } from '../ui/PressableScale';
+import { FadeInImage } from '../ui/FadeInImage';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { relativeDay } from '../../lib/relativeTime';
 import type { Memory, MomentCard } from '../../lib/types';
@@ -30,7 +31,7 @@ export function MemoryCard({ memory, card, onPress, onLongPress }: MemoryCardPro
       accessibilityHint={onLongPress ? 'Opens this moment. Long-press to share.' : 'Opens this moment'}
     >
       {hasPhoto && (
-        <Image source={{ uri: memory.photoUri }} style={styles.photo} accessibilityLabel="Moment photo" />
+        <FadeInImage source={{ uri: memory.photoUri }} style={styles.photo} accessibilityLabel="Moment photo" />
       )}
       {/* No photo: a branded typographic block instead of a thumbnail gap. */}
       {!hasPhoto && (

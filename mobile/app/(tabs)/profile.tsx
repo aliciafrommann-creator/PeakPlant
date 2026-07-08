@@ -19,6 +19,7 @@ import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { useAppStore } from '../../lib/store';
 import { acknowledgeSelection } from '../../lib/haptics';
 import { PeakBloom } from '../../components/ui/PeakBloom';
+import { PressableScale } from '../../components/ui/PressableScale';
 import { SpacePicker } from '../../components/space/SpacePicker';
 
 export default function ProfileScreen() {
@@ -96,12 +97,11 @@ export default function ProfileScreen() {
 
         <View style={styles.linksBlock}>
           {links.map(({ emoji, label, route }) => (
-            <TouchableOpacity
+            <PressableScale
               key={route}
               style={styles.linkRow}
+              scaleTo={0.99}
               onPress={() => router.push(route)}
-              activeOpacity={0.85}
-              accessibilityRole="button"
               accessibilityLabel={label}
             >
               <Text style={styles.linkText}>
@@ -109,7 +109,7 @@ export default function ProfileScreen() {
                 {label}
               </Text>
               <Ionicons name="chevron-forward" size={16} color={Colors.textFaint} />
-            </TouchableOpacity>
+            </PressableScale>
           ))}
         </View>
       </ScrollView>

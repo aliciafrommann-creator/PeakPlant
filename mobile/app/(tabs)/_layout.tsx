@@ -1,10 +1,14 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/colors';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 
 export default function TabsLayout() {
   const { t } = useLanguage();
+  // A hard-coded 60px bar crowds the home indicator on gesture-nav devices —
+  // grow the bar by the bottom inset so icons/labels keep their breathing room.
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -16,8 +20,8 @@ export default function TabsLayout() {
           borderTopWidth: 1,
           elevation: 0,
           shadowOpacity: 0,
-          height: 60,
-          paddingBottom: 8,
+          height: 60 + insets.bottom,
+          paddingBottom: 8 + insets.bottom,
         },
         tabBarActiveTintColor: Colors.text,
         tabBarInactiveTintColor: Colors.textFaint,

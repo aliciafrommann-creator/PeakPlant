@@ -43,22 +43,33 @@ export function PressableScale({
   accessibilityRole = 'button',
 }: PressableScaleProps) {
   const scale = useRef(new Animated.Value(1)).current;
+  const pressOpacity = useRef(new Animated.Value(1)).current;
   const reduced = useReducedMotion();
 
-  const animate = (to: number) => {
-    if (reduced) return;
+  // Scale spring + a subtle dim while pressed. Under reduce-motion the spring
+  // is skipped but the dim still applies instantly, so a press never feels dead.
+  const animate = (pressed: boolean) => {
+    if (reduced) {
+      pressOpacity.setValue(pressed ? 0.82 : 1);
+      return;
+    }
     Animated.spring(scale, {
-      toValue: to,
+      toValue: pressed ? scaleTo : 1,
       useNativeDriver: true,
       speed: 40,
       bounciness: 6,
+    }).start();
+    Animated.timing(pressOpacity, {
+      toValue: pressed ? 0.88 : 1,
+      duration: 90,
+      useNativeDriver: true,
     }).start();
   };
 
   return (
     <Pressable
-      onPressIn={() => animate(scaleTo)}
-      onPressOut={() => animate(1)}
+      onPressIn={() => animate(true)}
+      onPressOut={() => animate(false)}
       onPress={(e) => {
         if (haptic) void acknowledgeSelection();
         onPress?.(e);
@@ -73,7 +84,7 @@ export function PressableScale({
       <Animated.View
         style={[
           style,
-          { transform: [{ scale }], opacity: disabled ? Opacity.disabled : 1 },
+          { transform: [{ scale }], opacity: disabled ? Opacity.disabled : pressOpacity },
         ]}
       >
         {children}

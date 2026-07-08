@@ -50,6 +50,7 @@ const PLACES = Sections.community; // raspberry blossom — shared, social, a li
 
 type MapMessage =
   | { type: 'map-ready' }
+  | { type: 'map-failed' }
   | { type: 'select-place'; id: string };
 
 type LiveStatus =
@@ -267,6 +268,10 @@ export default function PlacesScreen() {
       if (message.type === 'map-ready') {
         setMapReady(true);
         setMapUnavailable(false);
+      } else if (message.type === 'map-failed') {
+        // Leaflet blocked or both tile providers down — show the honest
+        // connection message immediately instead of waiting out the timer.
+        setMapUnavailable(true);
       } else if (message.type === 'select-place') {
         selectPlace(message.id);
       }
@@ -453,7 +458,9 @@ export default function PlacesScreen() {
         estDurationMin: linkedMoment?.avgDurationMin ?? 75,
         status: 'saved',
         placeId: spot?.id,
-        placeName: spot?.name,
+        // Curated prompts have no real spot (no lat/lng) — still key the plan
+        // by the visible name so the map's planned/done loop status matches.
+        placeName: spot?.name ?? selected.name,
         placeAddress: spot?.address,
         placeLat: spot?.lat,
         placeLng: spot?.lng,

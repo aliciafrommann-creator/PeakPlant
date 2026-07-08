@@ -6,7 +6,6 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
-  Image,
   RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,6 +18,8 @@ import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { relativeDay } from '../../lib/relativeTime';
 import { MemoryFeedSkeleton } from '../../components/ui/Skeleton';
+import { AnimatedFill } from '../../components/ui/AnimatedFill';
+import { FadeInImage } from '../../components/ui/FadeInImage';
 import { useNotes } from '../../lib/hooks/useNotes';
 import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { useBiometric } from '../../lib/hooks/useBiometric';
@@ -141,17 +142,23 @@ export default function HomeScreen() {
       ? t('COUPLE SPACE', 'PAAR-SPACE')
       : t('FRIENDS SPACE', 'FREUNDE-SPACE');
 
-  function renderMemory({ item }: { item: Memory }) {
-    const card = SEED_CARDS.find((c) => c.id === item.cardId);
-    return (
-      <MemoryCard
-        memory={item}
-        card={card}
-        onPress={() => router.push(`/memory/${item.id}`)}
-        onLongPress={() => void shareMemory(item, card)}
-      />
-    );
-  }
+  // One lookup map instead of a SEED_CARDS.find per row per render, and a
+  // stable renderItem so FlatList can skip re-rendering unchanged rows.
+  const cardById = useMemo(() => new Map(SEED_CARDS.map((c) => [c.id, c])), []);
+  const renderMemory = useCallback(
+    ({ item }: { item: Memory }) => {
+      const card = cardById.get(item.cardId);
+      return (
+        <MemoryCard
+          memory={item}
+          card={card}
+          onPress={() => router.push(`/memory/${item.id}`)}
+          onLongPress={() => void shareMemory(item, card)}
+        />
+      );
+    },
+    [cardById],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -168,7 +175,7 @@ export default function HomeScreen() {
         >
           <View style={styles.headerAvatar}>
             {activeSpace?.avatarUrl ? (
-              <Image source={{ uri: activeSpace.avatarUrl }} style={styles.headerAvatarImage} />
+              <FadeInImage source={{ uri: activeSpace.avatarUrl }} style={styles.headerAvatarImage} />
             ) : (
               <Text style={styles.headerAvatarEmoji}>
                 {activeSpace?.emoji ?? (activeSpace?.type === 'friends' ? '✦' : '♥')}
@@ -205,6 +212,9 @@ export default function HomeScreen() {
         data={recentMemories}
         keyExtractor={(item) => item.id}
         renderItem={renderMemory}
+        initialNumToRender={6}
+        maxToRenderPerBatch={8}
+        windowSize={7}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.list}
         refreshControl={
@@ -367,7 +377,7 @@ export default function HomeScreen() {
                         accessibilityLabel={`Moment ${relativeDay(m.createdAt, language)}`}
                       >
                         {m.photoUri ? (
-                          <Image
+                          <FadeInImage
                             source={{ uri: m.photoUri }}
                             style={[styles.polaroidPhoto, hero && styles.polaroidPhotoHero]}
                             accessibilityLabel="Moment photo"
@@ -413,11 +423,9 @@ export default function HomeScreen() {
                         <Text style={styles.editionName}>{e.name.toLowerCase()}</Text>
                         <Text style={styles.editionSub}>{e.subtitle}</Text>
                         <View style={styles.progressTrack}>
-                          <View
-                            style={[
-                              styles.progressFill,
-                              { width: `${pct}%` as `${number}%`, backgroundColor: e.color },
-                            ]}
+                          <AnimatedFill
+                            ratio={pct / 100}
+                            style={[styles.progressFill, { backgroundColor: e.color }]}
                           />
                         </View>
                         <Text style={styles.editionProgress}>
