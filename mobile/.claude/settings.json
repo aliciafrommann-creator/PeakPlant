@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'PeakPlant routine — read MANIFESTO.md + AGENTS.md before building. Work on a claude/<topic> branch, never push to main. Before any push run the verify-peakplant skill: tsc + eslint + vitest must be green (say honestly what the headless env cannot verify). Never ship the service_role key, never a fake claim or fake venue, never make private data public. Migrations are additive-only and never touch orders/subscribers/community_questions/newsletter_subscribers.'"
+          }
+        ]
+      }
+    ]
+  }
+}
