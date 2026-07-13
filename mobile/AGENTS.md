@@ -15,10 +15,14 @@ building; it reflects the **current** codebase, not the initial scaffold.
 2. **Verify before push.** `npx tsc --noEmit`, `npx eslint`, `npx vitest run`
    must be green. Use the `verify-peakplant` skill. State honestly what could
    NOT be verified (the GUI can't run headless — see the `run-peakplant-mobile`
-   skill).
-3. **Small, clean commits** with a clear message; don't change what you don't
+   skill). CI (`.github/workflows/ci.yml`) runs the same checks on every PR.
+3. **Use the routines:** `.claude/skills/` holds `verify-peakplant` (pre-push
+   gate), `safe-supabase-migration` (any schema/RLS/bucket change),
+   `feel-audit` (before polishing/redesigning any screen), and
+   `run-peakplant-mobile` (headless driver for the discovery/AI logic).
+4. **Small, clean commits** with a clear message; don't change what you don't
    need to.
-4. Commit footers include:
+5. Commit footers include:
    `Co-Authored-By: Claude <noreply@anthropic.com>` and the session link.
 
 ## Security (non-negotiable — see MANIFESTO §2, §4)
