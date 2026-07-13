@@ -1,82 +1,121 @@
 # PeakPlant Mobile — Agent Notes
 
-This is an Expo ~51 / expo-router ~3 project. It is the mobile companion to the
-PeakPlant website (Next.js, in the parent directory) and must preserve that
-brand's visual identity.
+Expo SDK 51 / React Native 0.74 / expo-router v3 / TypeScript strict. The mobile
+companion to the PeakPlant website (Next.js, parent directory). Read this before
+building; it reflects the **current** codebase, not the initial scaffold.
 
-## Product philosophy
+> The product constitution lives in `../MANIFESTO.md` (wired via `CLAUDE.md`).
+> This file is the *how*; the manifesto is the *why and the guardrails*. When
+> they seem to conflict, the manifesto wins.
 
-PeakPlant turns a physical card moment into a private, shared couple diary:
-physical card → real shared moment → QR scan → photo + note → growing diary.
+## Working agreement (every session)
 
-Core promise: **collect moments. grow together.**
+1. **Branch, never main.** Work on a feature branch (`claude/<topic>`); ship via
+   PR. Never push straight to `main`.
+2. **Verify before push.** `npx tsc --noEmit`, `npx eslint`, `npx vitest run`
+   must be green. Use the `verify-peakplant` skill. State honestly what could
+   NOT be verified (the GUI can't run headless — see the `run-peakplant-mobile`
+   skill). CI (`.github/workflows/ci.yml`) runs the same checks on every PR.
+3. **Use the routines:** `.claude/skills/` holds `verify-peakplant` (pre-push
+   gate), `safe-supabase-migration` (any schema/RLS/bucket change),
+   `feel-audit` (before polishing/redesigning any screen), and
+   `run-peakplant-mobile` (headless driver for the discovery/AI logic).
+4. **Small, clean commits** with a clear message; don't change what you don't
+   need to.
+5. Commit footers include:
+   `Co-Authored-By: Claude <noreply@anthropic.com>` and the session link.
 
-Build for presence, not performance. Memories over metrics. Invitation over
-obligation. Real life before screen time. The product helps couples *notice*
-what is already growing between them — it does not measure or rate a
-relationship.
+## Security (non-negotiable — see MANIFESTO §2, §4)
 
-## Design rules
+- Only the **publishable/anon** Supabase key ships (in `eas.json` env /
+  `EXPO_PUBLIC_*`). The `service_role` / `sb_secret` key is NEVER in the client
+  or in git.
+- Provider/AI keys (`ANTHROPIC_API_KEY`, place providers) live ONLY in Supabase
+  Edge Function secrets — never in the mobile bundle.
+- Supabase is a **production** DB. Migrations are **additive, forward-only**;
+  applied files are immutable. Never touch `orders`, `subscribers`,
+  `community_questions`, `newsletter_subscribers`. Apply to prod only with
+  explicit human OK, then re-run `get_advisors` (security).
+- No fake claims / no fake partner venues / no private data made public
+  (MANIFESTO §1–2).
 
-DO:
-- Large, light-weight typography (fontWeight '200'–'300' for headings)
-- Generous whitespace; near-black `#1A1A1A` on warm off-whites
-- Warm gold `#C9A96E` as a subtle accent only
-- Lowercase for emotional/brand copy; UPPERCASE wide-spaced for labels
-- Sharp or minimal radius (0–4px), editorial/print feel
+## Architecture
 
-DO NOT:
-- Bright gradients, startup blue/purple
-- Pink hearts or cutesy icons
-- Gamification visuals (streaks, badges, stars, fire)
-- Progress bars framed as completion pressure
-- Social-feed layouts, crowded interfaces
+- **Local-first + Supabase.** `lib/repositories/interfaces.ts` defines
+  contracts; `local.ts` (AsyncStorage) and `supabase.ts` implement them.
+  `lib/repositories/index.ts` picks Supabase when `isSupabaseConfigured`
+  (`EXPO_PUBLIC_SUPABASE_URL` + `_ANON_KEY` present), local otherwise. Screens/
+  hooks import from `index.ts` — the data source swaps in one place.
+- Supabase **is wired** and live. Migrations `0001`–`0013` are applied to prod
+  (`kmlqjmxkcnkfwsbptvuc`). Schema/RLS mirror the local domain; deny-by-default,
+  space-scoped via `app_is_space_member()`. See `supabase/README.md`.
+- **Photos:** picked URIs live in the evictable cache — persist them first
+  (`lib/photoStorage.ts`, local mode) or upload immediately (Supabase mode →
+  `lib/supabase/storage.ts`, member-scoped buckets `memory-photos` /
+  `space-avatars`, EXIF-stripped, read via short-lived signed URLs).
+- **Space identity** (`spaces.emoji` / `avatar_path` / `collectible_emoji`) syncs
+  server-side when configured; local storage is the fallback (`useSpaces`).
+- Seed data in `lib/seed.ts`. The curated recommender pool is
+  `lib/together.ts` (TOGETHER_MOMENTS) + `lib/discovery/curatedMoments.ts`; the
+  browsable library is the generated `lib/discovery/ideaCatalog.ts` (~1275,
+  distinct from the curated pool). Weekly challenges: `lib/challenges.ts`
+  (`WEEKLY_CHALLENGES`, goal 1).
 
-## Prohibited patterns (product principles)
+## Navigation (expo-router)
 
-Never implement: streaks, points, leaderboards, relationship scores, public
-profiles, pressured completion, aggressive notifications, automatic social
-sharing. Collection is shown as a neutral fact ("3 of 20 discovered"), never as
-a completion percentage.
+Tabs: `home` (Together), `discover`, `editions`, `community` (Places), `profile`
+(Me). Hidden routes: `scan`, `moments`, `grow`, `us`. Modals: `space/new`,
+`space/edit`, `customize`, `note/compose`, `plus`. Auth flow: `welcome` →
+`language` → `intro` (60–90s explainer) → `sign-in` (email OTP) → `onboarding` →
+`invite`.
 
-## Privacy
+## Design system (current — editorial warm-stone, NOT the old scaffold)
 
-The diary is private to the two connected couple members. Photos and notes are
-never public, never auto-shared, and never sent to analytics. Deletion is
-always possible.
+- Tokens: `constants/colors.ts` (`Colors`, `Accents`, `Sections`),
+  `constants/spacing.ts` (`Spacing`, `Radii`, `Shadows`, `Opacity`),
+  `constants/typography.ts` (`Typography.editorial` = platform serif).
+- Base is warm-stone paper (`#F3F1EC`); primary accent is sun-faded chili
+  (`#CF4B2C`). One dominant accent per section, never a rainbow.
+- CTAs use `Radii.pill`. Editorial serif for titles / idea / memory names.
+- **Interaction primitives (use them, don't reinvent):** `PressableScale`
+  (spring + dim + haptic — the default tap), `FadeInImage` (photos),
+  `AnimatedFill` (progress bars), `Skeleton`/`*Skeleton` (loading), `Toast`
+  (celebration), `EmptyState`, `BackButton`. Haptics: `confirmSuccess` /
+  `acknowledgeSelection` (`lib/haptics.ts`).
+- German copy is natural, cute & easy, with correct umlauts (ä ö ü ß) — never
+  ASCII transliteration ("Zuruck", "loschen").
+
+## Prohibited (product principles — MANIFESTO §3)
+
+Never build: streaks-as-pressure, points, leaderboards, relationship scores,
+public profiles / followers / likes, pressured completion %, aggressive
+notifications, automatic social sharing, generic AI chat surfaces.
 
 ## Code conventions
 
-- TypeScript strict mode; no unresolved errors
-- Named exports for components (default export only for expo-router screens)
-- No hard-coded secrets; mock services isolated behind interfaces
+- TypeScript strict; zero tsc/eslint errors before push.
+- Named exports for components (default export only for expo-router screens).
+- No hard-coded secrets. `lib/mock-auth.ts` is unconfigured-mode only — never a
+  production path.
+- Pure logic (`lib/discovery/**`, `lib/ai/**`) has no RN imports and is unit-
+  tested with Vitest; the `run-peakplant-mobile` skill drives it headless.
 
-## Architecture
-- Local-first with AsyncStorage via `lib/storage.ts`
-- Repository pattern: `lib/repositories/interfaces.ts` defines contracts
-- `lib/repositories/local.ts` implements them locally
-- `lib/repositories/supabase.ts` has stubs — not wired
-- Seed data in `lib/seed.ts`
-- Mock auth in `lib/mock-auth.ts` — never import in production paths
+## Operator steps that live outside code (document, don't assume)
 
-## Navigation
-expo-router file-based routing:
-- `app/(auth)/` — welcome, onboarding, invite
-- `app/(tabs)/` — us, moments, scan, grow
-- `app/memory/create.tsx` — modal
-- `app/memory/[id].tsx` — detail
-- `app/card/[id].tsx` — card detail
-
-## Design tokens
-See `constants/colors.ts`, `constants/typography.ts`, `constants/spacing.ts`.
-
-## Adding Supabase
-1. Install `@supabase/supabase-js`
-2. Add env vars in `.env` (see `.env.example`)
-3. Wire `supabase.ts` repository implementations
-4. Replace `getMockSession()` with real auth
+- `supabase db push` applies pending migrations; buckets are created by the
+  migrations (no dashboard clicks).
+- Login uses **email OTP** — the Supabase "Magic Link" / "Confirm signup" email
+  template MUST include `{{ .Token }}`, or users hit a dead end.
+- Universal links need server-side `apple-app-site-association` + `assetlinks.json`
+  on peak-plant.com (app.json already declares the domains).
+- `expo-secure-store` (session hardening, B1) is documented in
+  `lib/supabase/client.ts` — install + wire before store submission.
 
 ## Running
+
 ```
-npm start   # Expo dev server
+npm start        # Expo dev server (needs a device/simulator — no web build)
+npx tsc --noEmit # types
+npx eslint app components lib --ext .ts,.tsx
+npx vitest run   # unit tests
 ```
