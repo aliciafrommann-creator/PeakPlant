@@ -70,7 +70,7 @@ export default function Article() {
           </p>
 
           <p>
-            The paradigm driving disconnection is this: your worth is conditional on your performance. That belief is the water we swim in. It shows up in how we love, how we have sex, how we talk about ourselves, how we respond when we feel hurt. It makes vulnerability feel like a strategic risk rather than a human necessity.
+            The paradigm driving disconnection is this: your worth is conditional on your performance. That belief is the water we swim in. It shows up in how we love, how we connect, how we talk about ourselves, how we respond when we feel hurt. It makes vulnerability feel like a strategic risk rather than a human necessity.
           </p>
 
           <p>

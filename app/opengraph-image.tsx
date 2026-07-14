@@ -21,7 +21,7 @@ export default function Image() {
           fontFamily: 'system-ui, sans-serif',
         }}
       >
-        <div style={{ fontSize: 72, color: '#C9A96E', marginBottom: 28, display: 'flex', lineHeight: 1 }}>
+        <div style={{ fontSize: 72, color: '#CF4B2C', marginBottom: 28, display: 'flex', lineHeight: 1 }}>
           ∧
         </div>
         <div style={{ fontSize: 13, letterSpacing: '0.4em', color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginBottom: 44, display: 'flex' }}>
@@ -31,7 +31,7 @@ export default function Image() {
           <div style={{ fontSize: 58, fontWeight: 200, color: '#ffffff', display: 'flex' }}>
             mind the moment.
           </div>
-          <div style={{ fontSize: 58, fontWeight: 200, color: '#C9A96E', display: 'flex' }}>
+          <div style={{ fontSize: 58, fontWeight: 200, color: '#CF4B2C', display: 'flex' }}>
             max the love.
           </div>
         </div>

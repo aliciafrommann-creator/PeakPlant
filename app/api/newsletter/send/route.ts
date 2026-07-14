@@ -61,7 +61,7 @@ function buildHtml(email: string, isDE: boolean): string {
   <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;max-width:560px;margin:0 auto;background:#fffdf8;color:#2a2620">
     <!-- header -->
     <div style="padding:48px 40px 0;text-align:center">
-      <div style="font-size:40px;color:#C9A96E;line-height:1">∧</div>
+      <div style="font-size:40px;color:#CF4B2C;line-height:1">∧</div>
       <p style="font-size:11px;letter-spacing:0.35em;text-transform:uppercase;color:#b9ad95;margin:18px 0 0">peakplant · ${t.kicker}</p>
     </div>
 
@@ -73,7 +73,7 @@ function buildHtml(email: string, isDE: boolean): string {
 
     <!-- founder note -->
     <div style="padding:36px 40px 0">
-      <div style="border-left:2px solid #C9A96E;padding:4px 0 4px 22px">
+      <div style="border-left:2px solid #CF4B2C;padding:4px 0 4px 22px">
         <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#b9ad95;margin:0 0 12px">${t.founderLabel}</p>
         <p style="font-size:15px;line-height:1.85;font-weight:300;font-style:italic;color:#4a4438;margin:0">${t.founderNote}</p>
       </div>
@@ -82,7 +82,7 @@ function buildHtml(email: string, isDE: boolean): string {
     <!-- journal piece of the month -->
     <div style="padding:40px 40px 0">
       <div style="background:#faf6ec;border:1px solid #ece4d2;border-radius:2px;padding:30px 28px">
-        <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#C9A96E;margin:0 0 14px">${t.readLabel} · ${article.category}</p>
+        <p style="font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#CF4B2C;margin:0 0 14px">${t.readLabel} · ${article.category}</p>
         <p style="font-size:22px;font-weight:300;letter-spacing:-0.02em;line-height:1.25;margin:0 0 14px;color:#2a2620">${article.title}</p>
         <p style="font-size:14px;line-height:1.8;font-weight:300;color:#6b6457;margin:0 0 22px">${article.excerpt}</p>
         <a href="${articleUrl}" style="display:inline-block;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;padding:13px 26px;background:#2a2620;color:#fffdf8;text-decoration:none">${t.read}</a>
@@ -102,7 +102,7 @@ function buildHtml(email: string, isDE: boolean): string {
     <!-- footer -->
     <div style="padding:44px 40px 48px;margin-top:32px;text-align:center;border-top:1px solid #ece4d2">
       <p style="font-size:13px;font-weight:300;color:#2a2620;margin:0 0 4px">mind the moment.</p>
-      <p style="font-size:13px;font-weight:300;color:#C9A96E;margin:0 0 24px">max the love.</p>
+      <p style="font-size:13px;font-weight:300;color:#CF4B2C;margin:0 0 24px">max the love.</p>
       <a href="${unsubUrl}" style="font-size:11px;letter-spacing:0.1em;color:#b9ad95;text-decoration:underline">${t.unsub}</a>
     </div>
   </div>
