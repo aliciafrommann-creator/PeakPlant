@@ -95,17 +95,17 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
   const certifications = [
     { name: 'BLAUER ENGEL', description: isDE ? 'deutschlands strengstes umweltsiegel.\nunsere verpackung und karten.' : "germany's strictest environmental label.\nour packaging and cards." },
     { name: 'DHL GOGREEN', description: isDE ? 'klimaneutraler versand.\njede bestellung, jedes mal.' : 'climate-neutral shipping.\nevery order, every time.' },
-    { name: 'FAIR RUBBER', description: isDE ? 'unser latex stammt von fair rubber zertifizierten lieferanten — zum schutz von arbeitnehmern und ökosystemen.' : 'our latex is sourced from fair rubber certified suppliers — protecting workers and ecosystems.' },
+    { name: 'PAPER & PRINT', description: isDE ? 'unser ziel: fsc-zertifiziertes papier, vegane farben, faire druckereien. wir veröffentlichen unsere lieferanten, sobald sie feststehen.' : 'our goal: fsc-certified paper, vegan inks, fair print partners. we will publish our suppliers as soon as they are confirmed.' },
     { name: 'VEGAN', description: isDE ? 'alle produkte sind 100% vegan.\nkeine tierversuche. keine tierischen produkte.' : 'all products are 100% vegan.\nno animal testing. no animal products.' },
   ]
 
   const limitsItems = isDE ? [
-    'unser kondomlieferant ist noch nicht b corp zertifiziert. wir suchen aktiv nach einem hersteller für fair rubber, veganen latex, der b corp standards erfüllt. das ist unsere größte offene herausforderung.',
-    'unsere verpackung ist noch nicht 100% plastikfrei. die einzelnen kondomverpackungen benötigen eine schutzfolie. wir erforschen alternativen.',
+    'unsere druckerei steht noch nicht fest. wir suchen aktiv nach einem partner für fsc-papier und vegane farben, der b corp standards erfüllt. das ist unsere größte offene herausforderung.',
+    'unsere verpackung ist noch nicht final. unser ziel ist ein deck ganz ohne folie — plastikfrei, vom kartenschuber bis zum versand.',
     'wir sind eine junge marke. wir haben nicht alle antworten. aber wir verpflichten uns, unsere fortschritte ehrlich zu teilen.',
   ] : [
-    "our condom supplier is not yet b corp certified. we are actively looking for a fair rubber, vegan latex manufacturer who meets b corp standards. this is our biggest open challenge.",
-    "our packaging is not yet 100% plastic-free. the individual condom wrappers require a protective foil. we are researching alternatives.",
+    "our print partner is not confirmed yet. we are actively looking for an fsc-paper, vegan-ink printer who meets b corp standards. this is our biggest open challenge.",
+    "our packaging is not final yet. our goal is a deck with no foil at all — plastic-free, from the card box to shipping.",
     "we are a young brand. we don't have all the answers. but we commit to sharing our progress — honestly.",
   ]
 

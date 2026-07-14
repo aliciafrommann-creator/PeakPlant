@@ -34,9 +34,9 @@ export async function POST(req: NextRequest) {
   const address = formatAddress(order)
   const orderDate = new Date(order.created_at).toLocaleDateString('de-AT', { timeZone: 'Europe/Vienna' })
 
-  // condom quantity by product (founders = 6, subscription tiers = 6/9/12)
-  const QTY: Record<string, number> = { founders: 6, sub_6: 6, sub_9: 9, sub_12: 12 }
-  const qty = QTY[order.product] ?? 6
+  // deck count by product (duo/pack_12 ships two decks; everything else one)
+  const QTY: Record<string, number> = { founders: 1, pack_3: 1, pack_12: 2, sub_6: 1, sub_9: 1, sub_12: 1 }
+  const qty = QTY[order.product] ?? 1
   const productLabel = order.product === 'founders'
     ? 'Founders Edition (1×)'
     : `Abo-Lieferung — ${qty} Stück`
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     </tr>
     <tr style="border-bottom:1px solid #f0f0f0">
       <td style="padding:10px 0;color:#888">Inhalt</td>
-      <td style="padding:10px 0;line-height:1.6">${qty} Kondome (vegan, fair rubber latex)<br>1 Fragenkarte (1 Frage, Blauer Engel)<br>QR-Code zur digitalen Welt</td>
+      <td style="padding:10px 0;line-height:1.6">${qty} Kartenset(s) Edition 01 (Momentkarten: Dates, Acts, Questions)<br>${qty} Saatpapierkarte(n) (Sonnenblume)<br>QR-Codes zur PeakPlant App</td>
     </tr>
     <tr>
       <td style="padding:10px 0;color:#888;vertical-align:top">Lieferadresse</td>

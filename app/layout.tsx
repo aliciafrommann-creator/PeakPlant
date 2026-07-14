@@ -17,10 +17,10 @@ const jsonLd = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://peak-plant.com'),
   title: 'peakplant — mind the moment. max the love.',
-  description: 'peakplant — a new intimacy brand for couples. mind the moment. max the love. edition 01: the sunflower. 6 condoms, 1 question card, 1 seed paper card. vegan, fair rubber. launching august 2026.',
+  description: 'peakplant — moment cards for couples. mind the moment. max the love. edition 01: the sunflower. a deck of dates, acts and questions, a seed paper card, and a private couple diary app. launching august 2026.',
   openGraph: {
     title: 'peakplant — mind the moment. max the love.',
-    description: '6 condoms. one question. one ritual. edition 01 — the sunflower.',
+    description: 'one deck. real moments. a shared diary. edition 01 — the sunflower.',
     type: 'website',
     url: 'https://peak-plant.com',
     siteName: 'PeakPlant',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'peakplant — mind the moment. max the love.',
-    description: '6 condoms. one question. one ritual. edition 01 — the sunflower.',
+    description: 'one deck. real moments. a shared diary. edition 01 — the sunflower.',
     images: ['/opengraph-image'],
   },
   icons: [{ rel: 'icon', url: '/favicon.svg', type: 'image/svg+xml' }],

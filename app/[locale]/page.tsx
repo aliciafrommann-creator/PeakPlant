@@ -82,7 +82,7 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
           style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
-          {isDE ? '6 Kondome. 1 Fragenkarte. 1 Saatpapierkarte mit Sonnenblumensamen.\nvegan · fair rubber latex · ab august 2026.' : '6 condoms. 1 question card. 1 seed paper card with sunflower seeds.\nvegan · fair rubber latex · launching august 2026.'}
+          {isDE ? 'ein Kartenset mit echten Momenten für euch zwei — Dates, Acts, Questions. Plus eine Saatpapierkarte mit Sonnenblumensamen.\nKarte erleben · QR scannen · Moment festhalten · ab august 2026.' : 'a deck of real moments for the two of you — dates, acts, questions. plus one seed paper card with sunflower seeds.\nlive the card · scan the QR · keep the moment · launching august 2026.'}
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }}
           style={{ marginTop: 36, display: 'flex', alignItems: 'baseline', gap: 14 }}>
@@ -102,7 +102,7 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         initial={{ clipPath: 'inset(0 0 100% 0)' }} whileInView={{ clipPath: 'inset(0 0 0% 0)' }}
         transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
         style={{ position: 'relative', minHeight: isMobile ? '60vw' : 'auto' }}>
-        <Image src="/product-hero.png" alt="PeakPlant edition 01 — condoms and the sunflower question card" fill priority sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover', objectPosition: 'center' }} />
+        <Image src="/product-hero.png" alt="PeakPlant edition 01 — the sunflower card deck" fill priority sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: 'cover', objectPosition: 'center' }} />
       </motion.div>
     </section>
   )
@@ -238,7 +238,7 @@ function SixQuestions({ locale }: { locale: string }) {
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.15 }}
           style={{ fontSize: '0.95rem', color: '#777', fontWeight: 300, lineHeight: 1.8, maxWidth: 440, marginBottom: '4rem', fontFamily: PP }}>
-          {isDE ? 'ein vorgeschmack. die übrigen entfalten sich, eine nach der anderen, in deiner box.' : 'a first taste. the rest unfold, one at a time, inside your box.'}
+          {isDE ? 'ein vorgeschmack. die übrigen warten in eurem deck — neben dates und acts.' : 'a first taste. the rest wait inside your deck — alongside dates and acts.'}
         </motion.p>
         <div style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #ebebeb' }}>
           {questions.map(({ n, q }, i) => (
@@ -270,12 +270,12 @@ function CollectAndSurprise({ locale, isMobile }: { locale: string; isMobile: bo
             {isDE ? 'zum sammeln' : 'made to collect'}
           </p>
           <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: PP }}>
-            {isDE ? 'zehn karten. eine in jeder box.' : 'ten cards. one in every box.'}
+            {isDE ? 'ein deck. jede karte wird ein moment.' : 'one deck. every card becomes a moment.'}
           </h2>
           <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8, fontFamily: PP }}>
             {isDE
-              ? 'jede box trägt eine der zehn fragenkarten dieser edition. nach und nach sammelst du das ganze set — und jede karte lebt für immer in deiner digitalen welt weiter.'
-              : 'every box carries one of this edition’s ten question cards. collect the full set over time — and each card lives on forever in your digital world.'}
+              ? 'euer deck trägt die momente dieser edition — dates, acts, questions. erlebt eine karte, scannt ihren QR-code, haltet ein foto und eine notiz fest. so wächst euer gemeinsames tagebuch, karte für karte.'
+              : 'your deck holds this edition’s moments — dates, acts, questions. live a card, scan its QR code, keep a photo and a note. your shared diary grows, card by card.'}
           </p>
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}>
@@ -283,12 +283,12 @@ function CollectAndSurprise({ locale, isMobile }: { locale: string; isMobile: bo
             {isDE ? 'die überraschung' : 'the surprise'}
           </p>
           <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: PP }}>
-            {isDE ? 'zwanzig boxen verbergen mehr.' : 'twenty boxes hide more.'}
+            {isDE ? 'zwanzig decks verbergen mehr.' : 'twenty decks hide more.'}
           </h2>
           <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8, fontFamily: PP }}>
             {isDE
-              ? 'zwanzig boxen pro edition tragen eine besondere karte. dahinter: ein kostenloser workshop, ein kleines goodie oder deine nächste box geschenkt. du weißt es in dem moment, in dem du sie öffnest.'
-              : 'twenty boxes per edition carry a special card. behind it: a free workshop, a little goodie, or your next box on us. you’ll know the moment you open it.'}
+              ? 'zwanzig decks pro edition tragen eine besondere karte. dahinter: ein kostenloser workshop, ein kleines goodie oder euer nächstes deck geschenkt. ihr wisst es in dem moment, in dem ihr sie zieht.'
+              : 'twenty decks per edition carry a special card. behind it: a free workshop, a little goodie, or your next deck on us. you’ll know the moment you draw it.'}
           </p>
         </motion.div>
       </div>
@@ -382,8 +382,8 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }}
           style={{ fontSize: '0.95rem', color: '#ffffff', opacity: 0.45, lineHeight: 1.75, fontWeight: 300, maxWidth: 480, fontFamily: PP, whiteSpace: 'pre-line' }}>
           {isDE
-            ? 'jede edition eine pflanze, drei monate lang. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deiner box.\nneue edition: neue pflanze, neue karten, neue fragen, neue digitale welt.'
-            : 'every edition is a plant, for three months. edition 01 is the sunflower — its seeds are pressed into the seed paper in your box.\nnew edition: new plant, new cards, new questions, new digital world.'}
+            ? 'jede edition eine pflanze, drei monate lang. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deines decks.\nneue edition: neue pflanze, neue karten, neue fragen, neue digitale welt.'
+            : 'every edition is a plant, for three months. edition 01 is the sunflower — its seeds are pressed into the seed paper in your deck.\nnew edition: new plant, new cards, new questions, new digital world.'}
         </motion.p>
       </div>
     </section>

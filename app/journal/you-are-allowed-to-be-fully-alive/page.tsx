@@ -98,7 +98,7 @@ export default function Article() {
           <Link href="/journal/what-emotional-safety-feels-like" style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none' }}>
             ← Previous essay
           </Link>
-          <Link href="/journal/why-the-wrapper-has-a-question" style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none' }}>
+          <Link href="/journal/why-the-card-has-a-question" style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none' }}>
             Next essay →
           </Link>
         </motion.div>

@@ -11,11 +11,11 @@ export type JournalArticle = {
 
 export const journalArticles: JournalArticle[] = [
   {
-    slug: 'why-the-wrapper-has-a-question',
+    slug: 'why-the-card-has-a-question',
     category: 'Design',
-    title: 'Why the wrapper has a question on it.',
+    title: 'Why every card asks a question.',
     excerpt:
-      'Most condom packaging is designed to disappear. We wanted ours to do the opposite — to create a small moment of pause before one of the most intimate things two people can do together.',
+      'Most card games are designed to fill time. We wanted our cards to do the opposite — to create a small moment of pause, so two people actually look at each other before anything else happens.',
   },
   {
     slug: 'the-case-for-slowness',
