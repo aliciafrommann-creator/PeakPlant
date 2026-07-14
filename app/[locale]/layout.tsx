@@ -8,8 +8,8 @@ export async function generateMetadata({ params }: { params: { locale: string } 
   return {
     title: isDE ? 'PeakPlant — Intimität neu erleben' : 'PeakPlant — Reimagine Intimacy',
     description: isDE
-      ? 'Edition 01. 6 Kondome. 1 Fragenkarte. 1 Saatpapierkarte. Für die Momente, die bleiben. Vegan, fair rubber latex. Startet August 2026.'
-      : 'Edition 01. 6 condoms. 1 question card. 1 seed paper card. Made for the moments that stay with you. Vegan, fair rubber latex. Launching August 2026.',
+      ? 'Edition 01. Ein Kartenset voller echter Momente — Dates, Acts, Questions. Plus Saatpapierkarte. Für die Momente, die bleiben. Startet August 2026.'
+      : 'Edition 01. A deck of real moments — dates, acts, questions. Plus a seed paper card. Made for the moments that stay with you. Launching August 2026.',
     alternates: {
       canonical: `${SITE_URL}/${params.locale}`,
       languages: {
