@@ -73,10 +73,12 @@ Tabs: `home` (Together), `discover`, `editions`, `community` (Places), `profile`
 
 - Tokens: `constants/colors.ts` (`Colors`, `Accents`, `Sections`),
   `constants/spacing.ts` (`Spacing`, `Radii`, `Shadows`, `Opacity`),
-  `constants/typography.ts` (`Typography.editorial` = platform serif).
+  `constants/typography.ts` (`Typography.editorial`/`display` = light
+  Helvetica Neue / system sans, weight 300 — same voice as the website).
 - Base is warm-stone paper (`#F3F1EC`); primary accent is sun-faded chili
   (`#CF4B2C`). One dominant accent per section, never a rainbow.
-- CTAs use `Radii.pill`. Editorial serif for titles / idea / memory names.
+- CTAs use `Radii.pill`. Titles / idea / memory names use the light editorial
+  sans (`Typography.editorial`) — never a serif, never bold shouting.
 - **Interaction primitives (use them, don't reinvent):** `PressableScale`
   (spring + dim + haptic — the default tap), `FadeInImage` (photos),
   `AnimatedFill` (progress bars), `Skeleton`/`*Skeleton` (loading), `Toast`
