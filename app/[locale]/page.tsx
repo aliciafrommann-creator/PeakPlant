@@ -7,8 +7,6 @@ import { NavBar } from '../../components/NavBar'
 import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
-// Editorial serif — same voice as the app's Typography.editorial titles.
-const SERIF = 'Georgia, "Times New Roman", serif'
 
 // Global pages — no locale prefix (shop + journal only; rest are locale-routed)
 const GLOBAL_PAGES = ['/shop', '/journal']
@@ -53,7 +51,7 @@ function CouplesHero({ locale }: { locale: string }) {
           style={{ marginBottom: '1.5rem' }}>
           <Logo color="#ffffff" size={36} />
         </motion.div>
-        <h1 style={{ fontFamily: SERIF, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, margin: '0 auto 1.25rem' }}>
+        <h1 style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, margin: '0 auto 1.25rem' }}>
           {isDE ? 'wann hat das leben begonnen, sich so schnell anzufühlen?' : 'when did life start feeling this fast?'}
         </h1>
         <p style={{ fontFamily: PP, fontSize: '0.8rem', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.75)', fontWeight: 300, maxWidth: 420, margin: '0 auto 2rem', lineHeight: 1.7 }}>
@@ -82,7 +80,7 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
           {isDE ? 'WAS WIR GEMACHT HABEN' : 'WHAT WE MADE'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
-          style={{ fontSize: 'clamp(32px, 3.8vw, 54px)', fontWeight: 200, color: '#1A1A1A', lineHeight: 1.12, marginBottom: 36, letterSpacing: '-0.03em', fontFamily: SERIF, whiteSpace: 'pre-line' }}>
+          style={{ fontSize: 'clamp(32px, 3.8vw, 54px)', fontWeight: 200, color: '#1A1A1A', lineHeight: 1.12, marginBottom: 36, letterSpacing: '-0.03em', fontFamily: PP, whiteSpace: 'pre-line' }}>
           {isDE ? 'Für die Momente,\ndie bleiben.' : 'Made for the moments\nthat stay with you.'}
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
@@ -137,7 +135,7 @@ function Waitlist({ locale }: { locale: string }) {
         <motion.div initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}>
           <Logo color="#ffffff" size={44} />
         </motion.div>
-        <h2 style={{ marginTop: 36, fontSize: 'clamp(26px, 4vw, 48px)', fontWeight: 300, color: '#ffffff', lineHeight: 1.15, maxWidth: 560, margin: '36px auto 20px', fontFamily: SERIF, letterSpacing: '-0.02em' }}>
+        <h2 style={{ marginTop: 36, fontSize: 'clamp(26px, 4vw, 48px)', fontWeight: 300, color: '#ffffff', lineHeight: 1.15, maxWidth: 560, margin: '36px auto 20px', fontFamily: PP, letterSpacing: '-0.02em' }}>
           {isDE ? 'bleib noch etwas.' : 'stay a little longer.'}
         </h2>
         <p style={{ fontSize: 15, color: '#ffffff', opacity: 0.4, maxWidth: 400, margin: '0 auto 56px', lineHeight: 1.85, fontWeight: 300, fontFamily: PP }}>
@@ -238,7 +236,7 @@ function SixQuestions({ locale }: { locale: string }) {
           edition 01
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '2rem', fontFamily: SERIF }}>
+          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '2rem', fontFamily: PP }}>
           {isDE ? 'zehn fragen. eine edition.' : 'ten questions. one edition.'}
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.15 }}
@@ -274,7 +272,7 @@ function CollectAndSurprise({ locale, isMobile }: { locale: string; isMobile: bo
           <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#CF4B2C', opacity: 0.9, marginBottom: '1.25rem', fontFamily: PP }}>
             {isDE ? 'zum sammeln' : 'made to collect'}
           </p>
-          <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: SERIF }}>
+          <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: PP }}>
             {isDE ? 'ein deck. jede karte wird ein moment.' : 'one deck. every card becomes a moment.'}
           </h2>
           <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8, fontFamily: PP }}>
@@ -287,7 +285,7 @@ function CollectAndSurprise({ locale, isMobile }: { locale: string; isMobile: bo
           <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.25rem', fontFamily: PP }}>
             {isDE ? 'die überraschung' : 'the surprise'}
           </p>
-          <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: SERIF }}>
+          <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: PP }}>
             {isDE ? 'zwanzig decks verbergen mehr.' : 'twenty decks hide more.'}
           </h2>
           <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8, fontFamily: PP }}>
@@ -363,7 +361,7 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
     <section style={{ backgroundColor: '#1A1A1A', padding: '8rem 2.5rem' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto' }}>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '4rem', maxWidth: 560, fontFamily: SERIF }}>
+          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '4rem', maxWidth: 560, fontFamily: PP }}>
           {isDE ? 'jede edition. eine andere welt.' : 'every edition. a different world.'}
         </motion.h2>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '4rem' }}>
@@ -403,10 +401,10 @@ function Manifesto({ locale }: { locale: string }) {
         <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.28em', textTransform: 'uppercase', color: '#ffffff', opacity: 0.3, marginBottom: '2.5rem' }}>
           ∧ peakplant
         </p>
-        <h2 style={{ fontFamily: SERIF, fontSize: 'clamp(2rem, 5vw, 4.5rem)', fontWeight: 200, color: '#ffffff', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 0 }}>
+        <h2 style={{ fontFamily: PP, fontSize: 'clamp(2rem, 5vw, 4.5rem)', fontWeight: 200, color: '#ffffff', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 0 }}>
           {isDE ? 'im moment bleiben.' : 'mind the moment.'}
         </h2>
-        <h2 style={{ fontFamily: SERIF, fontSize: 'clamp(2rem, 5vw, 4.5rem)', fontWeight: 200, color: '#CF4B2C', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '2.5rem' }}>
+        <h2 style={{ fontFamily: PP, fontSize: 'clamp(2rem, 5vw, 4.5rem)', fontWeight: 200, color: '#CF4B2C', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '2.5rem' }}>
           {isDE ? 'die liebe maximieren.' : 'max the love.'}
         </h2>
         <p style={{ fontFamily: PP, fontSize: '0.9rem', color: '#ffffff', opacity: 0.35, fontWeight: 300, maxWidth: 480, margin: '0 auto', lineHeight: 1.85 }}>

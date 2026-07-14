@@ -9,12 +9,11 @@
     --paper:#F3F1EC; --card:#FBFAF7; --cream:#F7F2E8; --cream2:#EFE6D4;
     --dark:#1E1C1A; --chili:#CF4B2C; --apricot:#E08A4F; --sunflower:#E3B23C;
     --text:#1E1C1A; --muted:#5A554E; --subtle:#857F76;
-    --serif:Georgia,"Times New Roman",serif;
     --sans:"Helvetica Neue",Helvetica,Arial,sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{background:var(--paper);font-family:var(--sans);color:var(--text);padding:48px}
-  h1{font-family:var(--serif);font-weight:500;font-size:28px;letter-spacing:-0.02em;margin-bottom:6px}
+  h1{font-weight:300;font-size:28px;letter-spacing:-0.02em;margin-bottom:6px}
   .hint{font-size:12px;color:var(--subtle);margin-bottom:36px;line-height:1.7;max-width:640px}
   .grid{display:flex;flex-wrap:wrap;gap:40px}
   .slot{width:360px}
@@ -26,7 +25,8 @@
         display:flex;flex-direction:column;position:relative;overflow:hidden}
   .mark{font-family:var(--sans);font-weight:300;font-size:54px;line-height:1}
   .label{font-size:27px;letter-spacing:.75em;text-transform:uppercase}
-  .serif{font-family:var(--serif);letter-spacing:-0.02em;font-weight:400}
+  /* Editorial voice: the same light Helvetica as website + app — airy, tight, lowercase. */
+  .serif{font-family:var(--sans);letter-spacing:-0.03em;font-weight:200}
 
   /* 1 — Typo-Frage auf Creme */
   .t1{background:var(--cream);padding:110px;justify-content:space-between}

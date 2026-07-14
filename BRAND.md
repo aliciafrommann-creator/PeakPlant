@@ -21,9 +21,12 @@ der Default; die Familie nur für Editionen/Status.
 
 ## Typografie
 
-- **Editorial-Serif** (Georgia / Plattform-Serif) für die großen emotionalen
-  Zeilen — lowercase, eng gesetzt (`letter-spacing -0.02em`), Gewicht 300–500.
-- **Sans** (Helvetica Neue) für alles Funktionale.
+- **Eine Familie: Helvetica Neue** (iOS nativ; Android/System-Sans als
+  Fallback). Die großen emotionalen Zeilen sind **leicht** (Gewicht 200–300),
+  lowercase und eng gesetzt (`letter-spacing -0.02em bis -0.03em`) — Luft und
+  Zurückhaltung statt Serifen-Schwere.
+- Funktionales (Body, Buttons) läuft in derselben Familie, Gewicht 400–500 —
+  der Kontrast entsteht über Größe + Gewicht, nie über einen Schriftwechsel.
 - **Labels**: UPPERCASE, 9–11px-Äquivalent, `letter-spacing 0.15–0.28em`.
 - Emotionale Copy ist **lowercase**; Deutsch natürlich & warm, echte Umlaute.
 
@@ -49,6 +52,6 @@ keine Streaks-Peitsche, keine Fake-Claims (siehe `MANIFESTO.md` §1–3).
 
 - Formate: 1080×1350 (Feed) / 1080×1920 (Story). Vorlagen: `brand/ig-templates.html`.
 - Jede Kachel = **eine** Aussage: eine Frage, ein Moment, eine Challenge.
-- Mix aus **Typo-Karten** (Serif-Frage auf Creme/Chili) und **Foto-Kacheln**
+- Mix aus **Typo-Karten** (leichte Helvetica-Frage auf Creme/Chili) und **Foto-Kacheln**
   (warme Paarfotos mit schmaler Caption-Zeile) — Verhältnis ≈ 1:1, wie ein Deck.
 - Immer ein ruhiges Element: ∧-Mark oder ✦, klein, nie beides groß.
