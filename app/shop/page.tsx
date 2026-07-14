@@ -91,9 +91,9 @@ function ParallaxImage({ src, alt, objectPosition = 'center' }: { src: string; a
 }
 
 const pricingRows = [
-  { label: 'condoms',       pack3: '3',          founders: '6',        pack12: '12'       },
-  { label: 'question card', pack3: '1 of ten',   founders: '1 of ten', pack12: '2 of ten' },
-  { label: 'seed paper',    pack3: 'sunflower',  founders: 'sunflower', pack12: 'sunflower' },
+  { label: 'moment cards',  pack3: 'full deck',  founders: 'full deck', pack12: '2 × full deck' },
+  { label: 'card groups',   pack3: 'dates · acts · questions', founders: 'dates · acts · questions', pack12: 'dates · acts · questions' },
+  { label: 'seed paper',    pack3: 'sunflower',  founders: 'sunflower', pack12: '2 × sunflower' },
   { label: 'surprise card', pack3: 'a chance',   founders: 'a chance', pack12: 'a chance' },
   { label: 'shipping',      pack3: 'included',   founders: 'included', pack12: 'included' },
   { label: 'digital world', pack3: '✓',          founders: '✓',        pack12: '✓'        },
@@ -141,7 +141,7 @@ export default function ShopPage() {
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'start' }}>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             style={{ aspectRatio: '1/1', background: '#f5f5f5', overflow: 'hidden' }}>
-            <ParallaxImage src="/product-hero.png" alt="PeakPlant edition 01 — condoms and the sunflower question card" />
+            <ParallaxImage src="/product-hero.png" alt="PeakPlant edition 01 — the sunflower card deck" />
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingTop: '0.5rem' }}>
@@ -155,10 +155,10 @@ export default function ShopPage() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {[
-                '6 condoms — vegan, fair rubber latex',
-                '1 question card — one of ten to collect this edition, blauer engel certified',
-                '1 seed paper card — plant it, it grows into sunflowers · QR to the digital world',
-                'a chance at a special card — twenty boxes per edition hide a free workshop, a goodie, or your next box on us',
+                'the full edition 01 deck — moment cards in three groups: dates, acts, questions',
+                'every card carries a QR — live the moment, scan it, keep a photo and a note in your private couple diary',
+                '1 seed paper card — plant it, it grows into sunflowers',
+                'a chance at a special card — twenty decks per edition hide a free workshop, a goodie, or your next deck on us',
               ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'baseline' }}>
                   <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
@@ -167,9 +167,9 @@ export default function ShopPage() {
               ))}
             </div>
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1rem' }}>
-              <p style={{ fontSize: '0.6rem', letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '0.6rem', fontFamily: PP }}>the digital world</p>
+              <p style={{ fontSize: '0.6rem', letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '0.6rem', fontFamily: PP }}>the app — your space</p>
               <p style={{ fontSize: '0.82rem', color: '#777', fontWeight: 300, lineHeight: 1.7, fontFamily: PP }}>
-                a sunflower playlist · how to grow your seed paper · templates to download · date ideas · founder insights · one free workshop per edition
+                a private couple space · your growing moment diary · a gentle weekly challenge · curated date ideas & a places map · how to grow your seed paper · one free workshop per edition
               </p>
             </div>
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
@@ -200,14 +200,14 @@ export default function ShopPage() {
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
               style={{ border: '1px solid #e8e8e8', padding: '2.5rem', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div>
-                <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>3er pack</p>
-                <h3 style={{ fontSize: 'clamp(1.3rem, 2.2vw, 1.8rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.2 }}>three condoms.<br />one card.</h3>
+                <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>the deck</p>
+                <h3 style={{ fontSize: 'clamp(1.3rem, 2.2vw, 1.8rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.2 }}>one deck.<br />every moment.</h3>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                 {[
-                  '3 condoms — vegan, fair rubber latex',
-                  '1 question card — one of ten to collect',
-                  '1 seed paper card — grows into sunflowers · QR to digital world',
+                  'the edition 01 deck — dates, acts, questions',
+                  'every card scans into your private couple diary',
+                  '1 seed paper card — grows into sunflowers',
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline' }}>
                     <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
@@ -230,14 +230,14 @@ export default function ShopPage() {
             <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
               style={{ border: '1px solid #e8e8e8', padding: '2.5rem', background: '#ffffff', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div>
-                <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>12er pack</p>
-                <h3 style={{ fontSize: 'clamp(1.3rem, 2.2vw, 1.8rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.2 }}>twelve condoms.<br />two cards.</h3>
+                <p style={{ fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '0.5rem' }}>duo</p>
+                <h3 style={{ fontSize: 'clamp(1.3rem, 2.2vw, 1.8rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.2 }}>two decks.<br />one to gift.</h3>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                 {[
-                  '12 condoms — vegan, fair rubber latex',
-                  '2 question cards — two of ten to collect',
-                  '1 seed paper card — grows into sunflowers · QR to digital world',
+                  'two edition 01 decks — keep one, gift one',
+                  'every card scans into a private couple diary',
+                  '2 seed paper cards — they grow into sunflowers',
                 ].map((item, i) => (
                   <div key={i} style={{ display: 'flex', gap: '0.75rem', alignItems: 'baseline' }}>
                     <span style={{ fontSize: '0.6rem', opacity: 0.3, minWidth: 8 }}>—</span>
@@ -271,9 +271,9 @@ export default function ShopPage() {
           <div style={{ minWidth: 520 }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', borderBottom: '1px solid #1A1A1A', paddingBottom: '1rem' }}>
               <div />
-              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>3er pack</p>
-              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>6er · founders</p>
-              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>12er pack</p>
+              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>the deck</p>
+              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>founders</p>
+              <p style={{ fontSize: '0.7rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 500 }}>duo</p>
             </div>
             {pricingRows.map(({ label, pack3, founders, pack12 }) => (
               <div key={label} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', padding: '1.1rem 0', borderBottom: '1px solid #ebebeb' }}>
