@@ -103,7 +103,7 @@ export async function POST(req: NextRequest) {
   <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;opacity:0.4;margin-bottom:24px">∧ peakplant — neue reservierung</p>
   <table style="width:100%;font-size:14px;font-weight:300;border-collapse:collapse">
     <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5;width:140px">produkt</td><td style="padding:10px 0">${edition}</td></tr>
-    <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5">zahlung</td><td style="padding:10px 0;color:#C9A96E">auf rechnung (offen)</td></tr>
+    <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5">zahlung</td><td style="padding:10px 0;color:#CF4B2C">auf rechnung (offen)</td></tr>
     <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5">name</td><td style="padding:10px 0">${name ?? '—'}</td></tr>
     <tr><td style="padding:10px 0;opacity:0.5">email</td><td style="padding:10px 0">${sanitized}</td></tr>
   </table>

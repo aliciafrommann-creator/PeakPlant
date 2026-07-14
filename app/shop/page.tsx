@@ -61,7 +61,7 @@ function WaitlistModal({ onClose, source }: { onClose: () => void; source: strin
                 style={{ fontFamily: PP, fontSize: '1rem', padding: '0.85rem 1rem', border: '1px solid #1A1A1A', background: 'transparent', outline: 'none', color: '#1A1A1A' }}
               />
               <button type="submit" disabled={status === 'loading'}
-                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem 1rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem 1rem', borderRadius: 999, background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
                 {status === 'loading' ? '...' : 'get early access'}
               </button>
             </form>
@@ -109,7 +109,7 @@ export default function ShopPage() {
       <NavBar activePath="/shop" />
 
       {/* Hero */}
-      <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
+      <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#1E1C1A' }}>
         <video autoPlay muted playsInline loop
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
           <source src="/film-wildness.mp4" type="video/mp4" />
@@ -173,13 +173,13 @@ export default function ShopPage() {
               </p>
             </div>
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
-              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
+              <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#CF4B2C', opacity: 0.85 }}>
                 preorder opens soon · ships mid-august 2026
               </p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'flex-start' }}>
               <button onClick={() => setWaitlistOpen(true)}
-                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
+                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', border: 'none', borderRadius: 999, cursor: 'pointer', alignSelf: 'flex-start' }}>
                 join the waitlist
               </button>
             </div>
@@ -216,12 +216,12 @@ export default function ShopPage() {
                 ))}
               </div>
               <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem' }}>
-                <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
+                <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#CF4B2C', opacity: 0.85 }}>
                   preorder opens soon
                 </p>
               </div>
               <button onClick={() => setWaitlistOpen(true)}
-                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.9rem 1.75rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
+                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.9rem 1.75rem', background: '#1A1A1A', color: '#fff', border: 'none', borderRadius: 999, cursor: 'pointer', alignSelf: 'flex-start' }}>
                 join the waitlist
               </button>
             </motion.div>
@@ -246,12 +246,12 @@ export default function ShopPage() {
                 ))}
               </div>
               <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem' }}>
-                <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.85 }}>
+                <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#CF4B2C', opacity: 0.85 }}>
                   preorder opens soon
                 </p>
               </div>
               <button onClick={() => setWaitlistOpen(true)}
-                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.9rem 1.75rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer', alignSelf: 'flex-start' }}>
+                style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.9rem 1.75rem', background: '#1A1A1A', color: '#fff', border: 'none', borderRadius: 999, cursor: 'pointer', alignSelf: 'flex-start' }}>
                 join the waitlist
               </button>
             </motion.div>
@@ -325,7 +325,7 @@ export default function ShopPage() {
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'start' }}>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
-            <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#C9A96E', opacity: 0.9, marginBottom: '1.25rem' }}>every edition, a plant</p>
+            <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#CF4B2C', opacity: 0.9, marginBottom: '1.25rem' }}>every edition, a plant</p>
             <h2 style={{ fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem' }}>
               edition 01 is the sunflower.
             </h2>
@@ -359,7 +359,7 @@ export default function ShopPage() {
             edition 01 ships mid-august. be the first to know.
           </p>
           <button onClick={() => setWaitlistOpen(true)}
-            style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
+            style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: '#1A1A1A', color: '#fff', border: 'none', borderRadius: 999, cursor: 'pointer' }}>
             join the waitlist
           </button>
         </motion.div>

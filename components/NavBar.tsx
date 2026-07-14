@@ -86,6 +86,7 @@ export function NavBar({ activePath }: { activePath?: string }) {
           color: scrolled ? '#1A1A1A' : '#ffffff',
           background: scrolled ? '#ffffff' : '#1A1A1A',
           padding: isMobile ? '0.5rem 0.8rem' : '0.6rem 1.2rem',
+          borderRadius: 999,
           transition: 'background 0.4s ease, color 0.4s ease',
           whiteSpace: 'nowrap',
         }}>
