@@ -76,6 +76,21 @@ export function NavBar({ activePath }: { activePath?: string }) {
             {locale === 'de' ? de : en}
           </Link>
         ))}
+        {/* Persistent conversion CTA — the waitlist is one tap away on every page. */}
+        <Link href={`/${locale}#waitlist`} style={{
+          fontFamily: PP,
+          fontSize: isMobile ? '0.55rem' : '0.65rem',
+          letterSpacing: '0.16em',
+          textTransform: 'uppercase',
+          textDecoration: 'none',
+          color: scrolled ? '#1A1A1A' : '#ffffff',
+          background: scrolled ? '#ffffff' : '#1A1A1A',
+          padding: isMobile ? '0.5rem 0.8rem' : '0.6rem 1.2rem',
+          transition: 'background 0.4s ease, color 0.4s ease',
+          whiteSpace: 'nowrap',
+        }}>
+          {locale === 'de' ? 'warteliste' : 'waitlist'}
+        </Link>
         <Link href={altPath} style={{
           fontFamily: PP,
           fontSize: '0.65rem',

@@ -51,9 +51,12 @@ function CouplesHero({ locale }: { locale: string }) {
           style={{ marginBottom: '1.5rem' }}>
           <Logo color="#ffffff" size={36} />
         </motion.div>
-        <h1 style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, margin: '0 auto 2rem' }}>
+        <h1 style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, margin: '0 auto 1.25rem' }}>
           {isDE ? 'wann hat das leben begonnen, sich so schnell anzufühlen?' : 'when did life start feeling this fast?'}
         </h1>
+        <p style={{ fontFamily: PP, fontSize: '0.8rem', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.75)', fontWeight: 300, maxWidth: 420, margin: '0 auto 2rem', lineHeight: 1.7 }}>
+          {isDE ? 'ein kartenset für paare — dates, acts, questions. jede karte wird ein festgehaltener moment.' : 'a card deck for couples — dates, acts, questions. every card becomes a moment you keep.'}
+        </p>
         <a href="#waitlist"
           style={{ display: 'inline-block', marginBottom: '2rem', padding: '0.85rem 2.2rem', border: '1px solid rgba(255,255,255,0.5)', fontSize: '0.65rem', letterSpacing: '0.28em', color: '#ffffff', textDecoration: 'none', fontFamily: PP, textTransform: 'uppercase' }}>
           {isDE ? 'edition 01 — auf die warteliste' : 'edition 01 — join the waitlist'}
@@ -155,7 +158,7 @@ function Waitlist({ locale }: { locale: string }) {
               style={{ flex: 1, padding: '16px 24px', background: 'transparent', border: 'none', outline: 'none', fontSize: 13, fontFamily: PP, color: '#ffffff' }} />
             <button type="submit" disabled={status === 'loading'}
               style={{ padding: '16px 28px', backgroundColor: '#ffffff', color: '#1A1A1A', border: 'none', cursor: 'pointer', fontSize: 10, letterSpacing: '0.4em', fontFamily: PP, fontWeight: 500 }}>
-              {status === 'loading' ? '...' : (isDE ? 'dabei bleiben' : 'stay close')}
+              {status === 'loading' ? '...' : (isDE ? 'edition 01 sichern' : 'get early access')}
             </button>
           </form>
         )}

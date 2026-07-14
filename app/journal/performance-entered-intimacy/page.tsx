@@ -80,7 +80,7 @@ export default function Article() {
           <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>This is what PeakPlant is really about.</h2>
 
           <p>
-            The question on every PeakPlant wrapper is not decoration. It is an invitation to pause. To arrive. To notice whether you are about to be present with another human being, or whether you are about to manage an experience.
+            The question on every PeakPlant card is not decoration. It is an invitation to pause. To arrive. To notice whether you are about to be present with another human being, or whether you are about to manage an experience.
           </p>
 
           <p>

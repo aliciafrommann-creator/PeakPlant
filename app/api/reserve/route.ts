@@ -11,7 +11,7 @@ const ADMIN_EMAIL = process.env.OWNER_EMAIL ?? 'hello@peak-plant.com'
 
 function editionLabel(product: string) {
   if (product === 'pack_3')   return '3er pack'
-  if (product === 'founders') return '6er pack — founders edition'
+  if (product === 'founders') return 'founders edition — edition 01 deck'
   if (product === 'pack_12')  return '12er pack'
   return product
 }

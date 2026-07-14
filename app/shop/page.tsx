@@ -62,7 +62,7 @@ function WaitlistModal({ onClose, source }: { onClose: () => void; source: strin
               />
               <button type="submit" disabled={status === 'loading'}
                 style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', padding: '0.85rem 1rem', background: '#1A1A1A', color: '#fff', border: 'none', cursor: 'pointer' }}>
-                {status === 'loading' ? '...' : 'keep me posted'}
+                {status === 'loading' ? '...' : 'get early access'}
               </button>
             </form>
             <p style={{ marginTop: '1rem', fontSize: '0.7rem', color: '#1A1A1A', opacity: 0.4, lineHeight: 1.6, fontFamily: PP }}>
@@ -124,7 +124,7 @@ export default function ShopPage() {
             Not just a product.<br />A decision to feel.
           </p>
           <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.45)', marginBottom: '2.5rem' }}>
-            edition 01 · the sunflower · ships mid-august 2026
+            a card deck for couples · edition 01 · the sunflower · ships mid-august 2026
           </p>
           <button
             style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
