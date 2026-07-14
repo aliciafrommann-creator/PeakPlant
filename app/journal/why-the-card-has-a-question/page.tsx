@@ -22,7 +22,7 @@ export default function Article() {
 
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '3rem' }}>
-          Why the wrapper has a question on it.
+          Why every card asks a question.
         </motion.h1>
 
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2 }}
@@ -34,7 +34,7 @@ export default function Article() {
           style={{ fontSize: '1.05rem', lineHeight: 1.9, color: '#333', display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
 
           <p style={{ fontSize: '1.2rem', lineHeight: 1.7, color: '#1A1A1A', fontWeight: 300 }}>
-            Most condom packaging is designed to disappear. Or to signal confidence. Or to feel clinical and responsible. What almost none of it does is create a moment of pause before one of the most intimate things two people can do together.
+            Most card games are designed to fill time. Or to entertain. Or to win. What almost none of them do is create a moment of pause — a beat in which two people actually arrive with each other before anything else happens.
           </p>
 
           <p>
@@ -42,13 +42,13 @@ export default function Article() {
           </p>
 
           <p>
-            Because there is a moment. Between reaching for the packaging and opening it, there is a beat — brief, often unexamined — where something could be different. Where instead of rushing through a logistical step, two people could actually arrive in the room with each other.
+            Because there is a moment. Between drawing a card and reading it out loud, there is a beat — brief, often unexamined — where something could be different. Where instead of rushing into the next activity, two people could actually arrive in the room with each other.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>The wrapper as design philosophy.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>The card as design philosophy.</h2>
 
           <p>
-            We put a question on each wrapper. Not as decoration. Not as a brand flourish. As an invitation to pause. To look at the person you are with. To be, for a moment, present rather than procedural.
+            We put a question on the cards. Not as decoration. Not as a brand flourish. As an invitation to pause. To look at the person you are with. To be, for a moment, present rather than procedural.
           </p>
 
           <p>
@@ -60,13 +60,13 @@ export default function Article() {
           </p>
 
           <p>
-            Simon Sinek's work on intentionality in leadership keeps coming back to the same insight: behavior changes when you change the environment that prompts it. We are trying to redesign a small environmental prompt — the wrapper — in a way that points toward presence rather than away from it.
+            Simon Sinek's work on intentionality in leadership keeps coming back to the same insight: behavior changes when you change the environment that prompts it. We are trying to design a small environmental prompt — a card in your hand — in a way that points toward presence rather than away from it.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Why packaging is never only packaging.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Why a card is never only a card.</h2>
 
           <p>
-            The object you hold shapes how you feel about what you are about to do. Clinical packaging says: this is a medical precaution. Aggressive packaging says: this is about performance. Packaging with a question says: this is about the two of you.
+            The object you hold shapes how you feel about what you are about to do. A screen says: this is content. A game says: this is competition. A card with a question says: this is about the two of you.
           </p>
 
           <p>
@@ -74,7 +74,7 @@ export default function Article() {
           </p>
 
           <p>
-            The seed in the corner of the box is not an accident either. It is a symbol: something small that holds the possibility of growth. Every PeakPlant box contains one, because what we are really designing for is not a single encounter but a longer arc — the accumulation of moments in which two people choose presence over performance, and slowly build something between them that can grow.
+            The seed paper card in every deck is not an accident either. It is a symbol: something small that holds the possibility of growth. What we are really designing for is not a single evening but a longer arc — the accumulation of moments in which two people choose presence over performance, and slowly build something between them that can grow.
           </p>
 
           <p style={{ color: '#1A1A1A', fontStyle: 'italic' }}>

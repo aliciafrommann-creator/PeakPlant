@@ -25,7 +25,7 @@ const sections = [
     heading: '§ 3 Vertragsgegenstand',
     paragraphs: [
       '(1) Gegenstand des Kaufvertrags sind die im Online-Shop angebotenen Produkte, insbesondere:',
-      '— Kondome (vegan, aus Fair-Trade-Latex)',
+      '— Kartensets (Decks mit Momentkarten: Dates, Acts, Questions)',
       '— Reflexionskarten (Cards)',
       '— Seed Paper Cards (Samenpapier-Karten)',
       '— weitere Bestandteile der jeweiligen Edition',
@@ -65,13 +65,11 @@ const sections = [
     ],
   },
   {
-    heading: '§ 8 Hinweise zu Kondomen und Produktsicherheit',
+    heading: '§ 8 Produkthinweise',
     paragraphs: [
-      '(1) Die angebotenen Kondome entsprechen den gesetzlichen Anforderungen (CE-Kennzeichnung gemäß DIN EN ISO 4074).',
-      '(2) Kondome sind Einwegprodukte und dürfen nur einmal verwendet werden. Bei sichtbaren Beschädigungen ist das Produkt zu verwerfen.',
-      '(3) Latex-Allergiker sollten vor der Verwendung einen Arzt konsultieren. PeakPlant übernimmt keine Haftung bei bekannter Latex-Allergie.',
-      '(4) Kondome schützen bei richtiger Anwendung vor ungewollter Schwangerschaft und der Übertragung vieler sexuell übertragbarer Infektionen, bieten jedoch keinen 100%igen Schutz.',
-      '(5) Das Produkt ist außerhalb der Reichweite von Kindern aufzubewahren. Das Ablaufdatum ist zu beachten.',
+      '(1) Die Kartensets sind Druckerzeugnisse und kein Spielzeug; Kleinteile (z. B. Kartenschuber-Verpackung) gehören nicht in die Hände von Kleinkindern.',
+      '(2) Die Saatpapierkarte ist zum Einpflanzen bestimmt und nicht zum Verzehr geeignet.',
+      '(3) Die Nutzung der zugehörigen App ist optional; für die Nutzung gelten ergänzend die App-Datenschutzhinweise.',
     ],
   },
   {

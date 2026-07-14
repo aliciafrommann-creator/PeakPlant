@@ -9,7 +9,7 @@ const GLOBAL_PAGES = ['/shop', '/journal']
 const LOCALE_CONTENT_PAGES = ['/philosophy', '/intimacy', '/community', '/about', '/ethics', '/01']
 const LEGAL_PAGES = ['/impressum', '/datenschutz', '/agb']
 const JOURNAL_ARTICLES = [
-  '/journal/why-the-wrapper-has-a-question',
+  '/journal/why-the-card-has-a-question',
   '/journal/the-case-for-slowness',
   '/journal/what-emotional-safety-feels-like',
   '/journal/performance-entered-intimacy',
