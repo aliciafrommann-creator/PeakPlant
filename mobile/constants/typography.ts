@@ -1,23 +1,27 @@
 import { Platform } from 'react-native';
 
-/** Platform editorial serif — no bundled font asset required. */
-const serif = Platform.select({ ios: 'Georgia', android: 'serif', default: 'serif' });
+/**
+ * Editorial voice = the website's light Helvetica: airy, tight-set, lowercase.
+ * Helvetica Neue ships with iOS; Android falls back to the system sans
+ * (Roboto Light via fontWeight) — no bundled font asset required.
+ */
+const editorialSans = Platform.select({ ios: 'Helvetica Neue', android: undefined, default: undefined });
 
 export const Typography = {
-  /** Big editorial moment — screen openings, onboarding statements. Serif. */
+  /** Big editorial moment — screen openings, onboarding statements. Light sans. */
   display: {
-    fontFamily: serif,
+    fontFamily: editorialSans,
     fontSize: 40,
-    fontWeight: '500' as const,
+    fontWeight: '300' as const,
     letterSpacing: -0.8,
     color: '#1E1C1A',
     lineHeight: 44,
   },
-  /** Editorial title — idea/memory titles, section openings. Serif. */
+  /** Editorial title — idea/memory titles, section openings. Light sans. */
   editorial: {
-    fontFamily: serif,
+    fontFamily: editorialSans,
     fontSize: 26,
-    fontWeight: '500' as const,
+    fontWeight: '300' as const,
     letterSpacing: -0.4,
     color: '#1E1C1A',
     lineHeight: 32,
