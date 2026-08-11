@@ -116,33 +116,50 @@ export default function PlusScreen() {
           ))}
         </View>
 
-        <View style={styles.ctaBlock}>
-          <TouchableOpacity
-            style={[styles.cta, loading && styles.ctaDisabled]}
-            onPress={() => void handleStartTrial()}
-            disabled={loading || !activeSpaceId}
-            accessibilityRole="button"
-          >
-            {loading ? (
-              <ActivityIndicator color={Colors.white} />
-            ) : (
-              <Text style={styles.ctaText}>
-                {t('START 7 DAYS FREE', '7 TAGE KOSTENLOS TESTEN')}
-              </Text>
-            )}
-          </TouchableOpacity>
-          <Text style={styles.priceNote}>
-            {t(`then ${priceLabel} per couple · cancel anytime`, `danach ${priceLabel} pro Paar · jederzeit kündbar`)}
-          </Text>
-        </View>
+        {/* Honest state: while billing is not wired, there is nothing to buy —
+            a dead "START FREE" button pretending to be a fixable error was the
+            worst kind of lie (audit A2-10.1). */}
+        {billing.isConfigured() ? (
+          <View style={styles.ctaBlock}>
+            <TouchableOpacity
+              style={[styles.cta, loading && styles.ctaDisabled]}
+              onPress={() => void handleStartTrial()}
+              disabled={loading || !activeSpaceId}
+              accessibilityRole="button"
+            >
+              {loading ? (
+                <ActivityIndicator color={Colors.white} />
+              ) : (
+                <Text style={styles.ctaText}>
+                  {t('START 7 DAYS FREE', '7 TAGE KOSTENLOS TESTEN')}
+                </Text>
+              )}
+            </TouchableOpacity>
+            <Text style={styles.priceNote}>
+              {t(`then ${priceLabel} per space · cancel anytime`, `danach ${priceLabel} pro Space · jederzeit kündbar`)}
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.ctaBlock}>
+            <Text style={styles.priceNote}>
+              {t(
+                'Plus is not available yet — everything in your diary stays free.',
+                'Plus gibt es noch nicht zu kaufen — alles in eurem Tagebuch bleibt frei.',
+              )}
+            </Text>
+          </View>
+        )}
 
         <View style={styles.footer}>
-          <Text style={styles.legal}>
-            {t(
-              'One subscription per couple. Payment charged after the trial. Manage or cancel in your App Store / Play Store account settings.',
-              'Ein Abo pro Paar. Zahlung nach der Testphase. Verwalten oder kündigen in den App Store / Play Store Kontoeinstellungen.',
-            )}
-          </Text>
+          {billing.isConfigured() && (
+            <Text style={styles.legal}>
+              {t(
+                'One subscription per space. Payment charged after the trial. Manage or cancel in the account settings of the App Store or Play Store.',
+                'Ein Abo pro Space. Zahlung nach der Testphase. Verwalten oder kündigen in den Kontoeinstellungen im App Store bzw. Play Store.',
+              )}
+            </Text>
+          )}
+          {billing.isConfigured() && (
           <TouchableOpacity
             onPress={() => void handleRestore()}
             disabled={restoring}
@@ -154,6 +171,7 @@ export default function PlusScreen() {
                 : t('Restore purchases', 'Käufe wiederherstellen')}
             </Text>
           </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

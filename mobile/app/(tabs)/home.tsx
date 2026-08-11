@@ -524,22 +524,26 @@ export default function HomeScreen() {
         }
       />
 
-      <View style={styles.addBar}>
-        <PressableScale
-          style={[styles.addBtn, styles.addBtnFill]}
-          onPress={() => router.push('/(tabs)/scan')}
-          accessibilityLabel={t('Scan a card', 'Karte scannen')}
-        >
-          <Text style={styles.addBtnTextFill}>{t('SCAN CARD', 'KARTE SCANNEN')}</Text>
-        </PressableScale>
-        <PressableScale
-          style={styles.addBtn}
-          onPress={() => router.push('/memory/create')}
-          accessibilityLabel={t('Add a moment to your diary', 'Einen Moment ins Tagebuch legen')}
-        >
-          <Text style={styles.addBtnText}>{t('ADD A MOMENT', 'MOMENT FESTHALTEN')}</Text>
-        </PressableScale>
-      </View>
+      {/* Hidden on the empty feed: the EmptyState's SCAN-CTA is then the one
+          clear action — the same target twice broke §5 (audit A6-6.1). */}
+      {recentMemories.length > 0 && (
+        <View style={styles.addBar}>
+          <PressableScale
+            style={[styles.addBtn, styles.addBtnFill]}
+            onPress={() => router.push('/(tabs)/scan')}
+            accessibilityLabel={t('Scan a card', 'Karte scannen')}
+          >
+            <Text style={styles.addBtnTextFill}>{t('SCAN CARD', 'KARTE SCANNEN')}</Text>
+          </PressableScale>
+          <PressableScale
+            style={styles.addBtn}
+            onPress={() => router.push('/memory/create')}
+            accessibilityLabel={t('Add a moment to your diary', 'Einen Moment ins Tagebuch legen')}
+          >
+            <Text style={styles.addBtnText}>{t('ADD A MOMENT', 'MOMENT FESTHALTEN')}</Text>
+          </PressableScale>
+        </View>
+      )}
     </SafeAreaView>
   );
 }

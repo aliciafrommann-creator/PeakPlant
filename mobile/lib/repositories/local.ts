@@ -164,6 +164,14 @@ export const localSpaceRepository: ISpaceRepository = {
     return members.filter((m) => m.spaceId === spaceId);
   },
 
+  async leave(spaceId: string, userId: string): Promise<void> {
+    const members = await loadMembers();
+    await storage.set(
+      MEMBERS_KEY,
+      members.filter((m) => !(m.spaceId === spaceId && m.userId === userId)),
+    );
+  },
+
   async create({ type, name, ownerUserId, ownerName }: CreateSpaceInput): Promise<Space> {
     const spaces = await loadSpaces();
     const members = await loadMembers();

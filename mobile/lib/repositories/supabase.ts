@@ -216,6 +216,17 @@ export const supabaseSpaceRepository: ISpaceRepository = {
     return (data ?? []).map(mapMember);
   },
 
+  async leave(spaceId: string, userId: string): Promise<void> {
+    // Covered by the "space_members: leave self" RLS policy (migration 0001) —
+    // it existed from day one, no client ever used it (audit A2-6.1).
+    const { error } = await db()
+      .from('space_members')
+      .delete()
+      .eq('space_id', spaceId)
+      .eq('user_id', userId);
+    if (error) throw error;
+  },
+
   async create(input: CreateSpaceInput): Promise<Space> {
     const { data: spaceRow, error: spaceErr } = await db()
       .rpc('create_space', buildCreateSpaceRpcArgs(input, generateInviteCode()))

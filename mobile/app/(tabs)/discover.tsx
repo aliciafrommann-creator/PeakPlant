@@ -229,7 +229,21 @@ export default function DiscoverScreen() {
 
   const saveDate = useCallback(
     async (rec: DateRecommendation) => {
-      if (!activeSpace) return;
+      if (!activeSpace) {
+        // Never a silent no-op — the tap must answer (audit A3-4).
+        Alert.alert(
+          t('Create a space first', 'Erstelle zuerst einen Space'),
+          t(
+            'Saved ideas live in a shared space so they can become moments.',
+            'Gemerkte Ideen leben in einem gemeinsamen Space, damit daraus Momente werden.',
+          ),
+          [
+            { text: t('not now', 'nicht jetzt'), style: 'cancel' },
+            { text: t('START A SPACE', 'SPACE STARTEN'), onPress: () => router.push('/space/new') },
+          ],
+        );
+        return;
+      }
       if (savedMomentIds.has(rec.momentId)) return; // already saved
       // Optimistic: flip the button to "saved" immediately so the tap is felt.
       setSavedMomentIds((prev) => new Set(prev).add(rec.momentId));
@@ -318,8 +332,10 @@ export default function DiscoverScreen() {
         <View style={styles.sectionToggle}>
           <TouchableOpacity
             style={[styles.toggleChip, styles.toggleChipActive]}
-            accessibilityRole="button"
+            onPress={resetFilters}
+            accessibilityRole="tab"
             accessibilityState={{ selected: true }}
+            accessibilityLabel={t('Surprise me — reset filters', 'Überrasch mich — Filter zurücksetzen')}
           >
             <Text style={[styles.toggleChipText, styles.toggleChipTextActive]}>
               {t('✨ SURPRISE ME', '✨ ÜBERRASCH MICH')}
@@ -498,21 +514,10 @@ export default function DiscoverScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.linkPills}
           >
-            {/* "ask peakplant" and "idea library" intentionally omitted here —
-                they already have prominent entry points above (the inline ask
-                button + the ALL IDEAS toggle). One door each, not three. */}
-            <TouchableOpacity
-              style={styles.linkPill}
-              onPress={() => router.push('/discover/saved')}
-              activeOpacity={0.85}
-              accessibilityRole="button"
-              accessibilityLabel={t('Your saved plans', 'Eure gemerkten Pläne')}
-            >
-              <Text style={styles.linkPillText}>
-                {t('🔖 saved plans', '🔖 gemerkte Pläne')}
-                {saved.length > 0 ? ` · ${saved.length}` : ''}
-              </Text>
-            </TouchableOpacity>
+            {/* "ask peakplant", "idea library" AND "saved plans" intentionally
+                omitted here — each already has exactly one entry point above
+                (inline ask button, ALL IDEAS toggle, the card's saved-link).
+                One door each, not two (audit A6-6.3). */}
             {challengesEnabled && (
               <TouchableOpacity
                 style={styles.linkPill}

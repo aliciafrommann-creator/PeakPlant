@@ -124,7 +124,21 @@ export default function BrowseIdeasScreen() {
 
   const saveIdea = useCallback(
     async (idea: DateIdea, asCompleted: boolean) => {
-      if (!activeSpace) return;
+      if (!activeSpace) {
+        // Never a silent no-op — the tap must answer (audit A3-26).
+        Alert.alert(
+          t('Create a space first', 'Erstelle zuerst einen Space'),
+          t(
+            'Saved ideas live in a shared space so they can become moments.',
+            'Gemerkte Ideen leben in einem gemeinsamen Space, damit daraus Momente werden.',
+          ),
+          [
+            { text: t('not now', 'nicht jetzt'), style: 'cancel' },
+            { text: t('START A SPACE', 'SPACE STARTEN'), onPress: () => router.push('/space/new') },
+          ],
+        );
+        return;
+      }
       // Optimistic flip.
       setSavedIds((prev) => new Set(prev).add(idea.id));
       if (asCompleted) setCompletedIds((prev) => new Set(prev).add(idea.id));
