@@ -11,14 +11,8 @@ const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 // Global pages — no locale prefix (shop + journal only; rest are locale-routed)
 const GLOBAL_PAGES = ['/shop', '/journal']
 
-const CARD_IMAGES = [
-  '/edition-01/8.png',
-  '/edition-01/9.png',
-  '/edition-01/10.png',
-  '/edition-01/11.png',
-  '/edition-01/12.png',
-  '/edition-01/13.png',
-]
+// NOTE: /edition-01/*.png are pink design-exploration sheets, NOT the sunflower
+// edition's card art — they are deliberately no longer shown anywhere.
 
 function Logo({ color = '#1A1A1A', size = 28 }: { color?: string; size?: number }) {
   return (
@@ -175,48 +169,42 @@ function Waitlist({ locale }: { locale: string }) {
   )
 }
 
+// The REAL ten Growing Questions from the finalized deck
+// (mobile/lib/content/edition01.ts) — never invented approximations.
 const questionsEN = [
-  { n: '01', q: 'what makes you feel seen by me?' },
-  { n: '02', q: 'when do you feel most alive with me?' },
-  { n: '03', q: 'what helps you open up to me?' },
-  { n: '04', q: 'what makes our relationship feel warm?' },
-  { n: '05', q: 'where do you need more light from me?' },
-  { n: '06', q: 'when do you feel safe enough to fully bloom?' },
-  { n: '07', q: 'where do you need space to grow on your own?' },
-  { n: '08', q: 'what are we still growing into together?' },
-  { n: '09', q: 'how do we find our way back to each other?' },
-  { n: '10', q: 'what have we helped each other become?' },
+  { n: '01', q: 'where do you sometimes still feel unseen by me?' },
+  { n: '02', q: 'what helps you become more yourself?' },
+  { n: '03', q: 'what helps you feel safe enough to grow and change?' },
+  { n: '04', q: 'who are you slowly becoming?' },
+  { n: '05', q: 'what between us currently needs more light?' },
+  { n: '06', q: 'what is already growing beautifully between us?' },
+  { n: '07', q: 'what have we outgrown together?' },
+  { n: '08', q: 'how can I support your growth without taking over?' },
+  { n: '09', q: 'what part of your growth should remain entirely yours?' },
+  { n: '10', q: 'what dream would you like me to take seriously?' },
 ]
 const questionsDE = [
-  { n: '01', q: 'was lässt dich von mir gesehen fühlen?' },
-  { n: '02', q: 'wann fühlst du dich mit mir am lebendigsten?' },
-  { n: '03', q: 'was hilft dir, dich mir zu öffnen?' },
-  { n: '04', q: 'was macht unsere beziehung warm?' },
-  { n: '05', q: 'wo brauchst du mehr licht von mir?' },
-  { n: '06', q: 'wann fühlst du dich sicher genug, ganz aufzublühen?' },
-  { n: '07', q: 'wo brauchst du raum, um für dich zu wachsen?' },
-  { n: '08', q: 'worin wachsen wir noch gemeinsam hinein?' },
-  { n: '09', q: 'wie finden wir wieder zueinander?' },
-  { n: '10', q: 'wozu haben wir einander werden lassen?' },
+  { n: '01', q: 'wo fühlst du dich von mir manchmal noch ungesehen?' },
+  { n: '02', q: 'was hilft dir, mehr du selbst zu werden?' },
+  { n: '03', q: 'was hilft dir, dich sicher genug zu fühlen, um zu wachsen?' },
+  { n: '04', q: 'wer wirst du gerade langsam?' },
+  { n: '05', q: 'was zwischen uns braucht gerade mehr licht?' },
+  { n: '06', q: 'was wächst zwischen uns schon wunderschön?' },
+  { n: '07', q: 'woraus sind wir zusammen herausgewachsen?' },
+  { n: '08', q: 'wie kann ich dein wachstum unterstützen, ohne es zu übernehmen?' },
+  { n: '09', q: 'welcher teil deines wachstums soll ganz dir gehören?' },
+  { n: '10', q: 'welchen traum von dir soll ich ernst nehmen?' },
 ]
 
-function QuestionRow({ n, q, cardSrc, i }: { n: string; q: string; cardSrc: string; i: number }) {
-  const [hovered, setHovered] = useState(false)
+function QuestionRow({ n, q, i }: { n: string; q: string; i: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
       transition={{ duration: 0.7, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{ position: 'relative', display: 'flex', alignItems: 'baseline', gap: '2.5rem', padding: '2rem 0', borderBottom: '1px solid #ebebeb', overflow: 'hidden', cursor: 'default' }}
+      style={{ position: 'relative', display: 'flex', alignItems: 'baseline', gap: '2.5rem', padding: '2rem 0', borderBottom: '1px solid #ebebeb', cursor: 'default' }}
     >
-      <motion.div
-        animate={{ opacity: hovered ? 0.07 : 0 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        style={{ position: 'absolute', inset: 0, backgroundImage: `url(${cardSrc})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(2px)', transform: 'scale(1.04)', pointerEvents: 'none' }}
-      />
-      <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24, position: 'relative', zIndex: 1 }}>{n}</span>
-      <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', fontStyle: 'italic', color: '#1A1A1A', fontFamily: PP, position: 'relative', zIndex: 1 }}>
+      <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24 }}>{n}</span>
+      <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', fontStyle: 'italic', color: '#1A1A1A', fontFamily: PP }}>
         "{q}"
       </p>
     </motion.div>
@@ -237,15 +225,15 @@ function SixQuestions({ locale }: { locale: string }) {
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '2rem', fontFamily: PP }}>
-          {isDE ? 'zehn fragen. eine edition.' : 'ten questions. one edition.'}
+          {isDE ? 'zwanzig karten. eine edition.' : 'twenty cards. one edition.'}
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.15 }}
           style={{ fontSize: '0.95rem', color: '#777', fontWeight: 300, lineHeight: 1.8, maxWidth: 440, marginBottom: '4rem', fontFamily: PP }}>
-          {isDE ? 'ein vorgeschmack. die übrigen warten in eurem deck — neben dates und acts.' : 'a first taste. the rest wait inside your deck — alongside dates and acts.'}
+          {isDE ? 'fünf grow dates, fünf small acts, zehn growing questions. hier ein vorgeschmack auf die fragen — echte karten aus dem deck.' : 'five grow dates, five small acts, ten growing questions. a taste of the questions — real cards from the deck.'}
         </motion.p>
         <div style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #ebebeb' }}>
           {questions.map(({ n, q }, i) => (
-            <QuestionRow key={n} n={n} q={q} cardSrc={CARD_IMAGES[i]} i={i} />
+            <QuestionRow key={n} n={n} q={q} i={i} />
           ))}
           <motion.div
             initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -254,7 +242,7 @@ function SixQuestions({ locale }: { locale: string }) {
           >
             <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24 }}>∧</span>
             <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', color: '#bbb', fontFamily: PP }}>
-              {isDE ? 'sieben weitere — zu entdecken in edition 01.' : 'seven more — to discover in edition 01.'}
+              {isDE ? 'sieben weitere fragen — und alle dates & acts — zu entdecken in edition 01.' : 'seven more questions — and every date & act — to discover in edition 01.'}
             </p>
           </motion.div>
         </div>
@@ -336,7 +324,7 @@ function EditionCard01({ locale }: { locale: string }) {
       onMouseLeave={() => setHovered(false)}
       style={{ position: 'relative', overflow: 'hidden', minHeight: 280, border: '1px solid rgba(255,255,255,0.12)', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'default' }}
     >
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/edition-01/1.png)', backgroundSize: 'cover', backgroundPosition: 'center', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/product-hero.png)', backgroundSize: 'cover', backgroundPosition: 'center', pointerEvents: 'none' }} />
       <motion.div
         animate={{ opacity: hovered ? 0.5 : 0.15 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -347,7 +335,7 @@ function EditionCard01({ locale }: { locale: string }) {
       </div>
       <div style={{ position: 'relative', zIndex: 1 }}>
         <p style={{ fontFamily: PP, fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)', fontWeight: 300, color: '#ffffff', fontStyle: 'italic', lineHeight: 1.6, marginBottom: '1rem' }}>
-          {isDE ? '"wann hast du es gewusst?"' : '"when did you know?"'}
+          {isDE ? '"was wächst zwischen uns schon wunderschön?"' : '"what is already growing beautifully between us?"'}
         </p>
         <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.01em' }}>{isDE ? 'edition 01 — die sonnenblume' : 'edition 01 — the sunflower'}</span>
       </div>

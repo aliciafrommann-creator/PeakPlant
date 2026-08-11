@@ -155,7 +155,7 @@ export default function ShopPage() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {[
-                'the full edition 01 deck — moment cards in three groups: dates, acts, questions',
+                'the full edition 01 deck — 20 moment cards: 5 grow dates · 5 small acts · 10 growing questions',
                 'every card carries a QR — live the moment, scan it, keep a photo and a note in your private couple diary',
                 '1 seed paper card — plant it, it grows into sunflowers',
                 'a chance at a special card — twenty decks per edition hide a free workshop, a goodie, or your next deck on us',
