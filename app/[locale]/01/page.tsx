@@ -72,7 +72,7 @@ const LETTERS_EN: Letter[] = [
     title: 'the room opens.',
     lines: [
       'this is the first letter. there will be one every month — short, honest, no marketing.',
-      'the room opens before the box does. edition 01 ships in august. until then, this is where it begins: a question, a playlist, and whatever you leave on the wall below.',
+      'the room opens before the box does. edition 01 ships in october. until then, this is where it begins: a question, a playlist, and whatever you leave on the wall below.',
       'come back next month. the question changes, the playlist changes, and a new letter will be here.',
       '— alicia',
     ],
@@ -85,7 +85,7 @@ const LETTERS_DE: Letter[] = [
     title: 'der raum öffnet sich.',
     lines: [
       'das ist der erste brief. es wird jeden monat einen geben — kurz, ehrlich, ohne marketing.',
-      'der raum öffnet, bevor die box es tut. edition 01 erscheint im august. bis dahin beginnt es hier: eine frage, eine playlist, und alles, was du unten an der wand hinterlässt.',
+      'der raum öffnet, bevor die box es tut. edition 01 erscheint im oktober. bis dahin beginnt es hier: eine frage, eine playlist, und alles, was du unten an der wand hinterlässt.',
       'komm nächsten monat wieder. die frage ändert sich, die playlist ändert sich, und ein neuer brief wartet hier.',
       '— alicia',
     ],
