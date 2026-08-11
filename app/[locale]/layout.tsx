@@ -9,8 +9,8 @@ export async function generateMetadata({ params }: { params: { locale: string } 
   return {
     title: 'PeakPlant — collect moments. grow together.',
     description: isDE
-      ? 'Edition 01. Ein Kartenset voller echter Momente — Dates, Acts, Questions. Plus Saatpapierkarte. Für die Momente, die bleiben. Startet August 2026.'
-      : 'Edition 01. A deck of real moments — dates, acts, questions. Plus a seed paper card. Made for the moments that stay with you. Launching August 2026.',
+      ? 'Edition 01. Ein Kartenset voller echter Momente — Dates, Acts, Questions. Plus Saatpapierkarte. Für die Momente, die bleiben. Startet Oktober 2026.'
+      : 'Edition 01. A deck of real moments — dates, acts, questions. Plus a seed paper card. Made for the moments that stay with you. Launching Oktober 2026.',
     alternates: {
       canonical: `${SITE_URL}/${params.locale}`,
       languages: {

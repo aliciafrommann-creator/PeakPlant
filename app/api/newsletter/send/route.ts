@@ -38,7 +38,7 @@ function buildHtml(email: string, isDE: boolean): string {
           'edition 01 ist die sonnenblume. sie steht für wärme, treue und gemeinsames wachsen — und für etwas, das ich gerade selbst lerne: einander licht zu geben, ohne dem anderen das eigene zu nehmen. genau darum drehen sich die zehn fragen dieser edition.',
         readLabel: 'aus dem journal',
         read: 'lesen (auf englisch) →',
-        editionLine: 'edition 01 — die sonnenblume — erscheint mitte august 2026.',
+        editionLine: 'edition 01 — die sonnenblume — erscheint oktober 2026.',
         signoff: 'bis nächsten monat,\nalicia',
         unsub: 'abmelden',
       }
@@ -52,7 +52,7 @@ function buildHtml(email: string, isDE: boolean): string {
           'edition 01 is the sunflower. it stands for warmth, loyalty and growing together — and for something i am learning myself right now: giving each other light without taking the other’s. that is what the ten questions of this edition are about.',
         readLabel: 'from the journal',
         read: 'read it →',
-        editionLine: 'edition 01 — the sunflower — ships mid-august 2026.',
+        editionLine: 'edition 01 — the sunflower — ships october 2026.',
         signoff: 'until next month,\nalicia',
         unsub: 'unsubscribe',
       }

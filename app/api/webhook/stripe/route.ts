@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
 
   <p style="font-size:15px;line-height:1.8;color:#555;font-weight:300;margin-bottom:32px">
     thank you — we're glad you're here.<br>
-    <strong style="color:#1A1A1A;font-weight:400">${edition}</strong> ships mid-august 2026.
+    <strong style="color:#1A1A1A;font-weight:400">${edition}</strong> ships october 2026.
     we collect preorders through the year so we can produce to the highest
     sustainability standard — and you're <strong style="color:#1A1A1A;font-weight:400">fully refundable anytime</strong> until it ships.
   </p>

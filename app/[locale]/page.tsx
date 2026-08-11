@@ -79,7 +79,7 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
           style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
-          {isDE ? 'ein Kartenset mit echten Momenten für euch zwei — Dates, Acts, Questions. Plus eine Saatpapierkarte mit Sonnenblumensamen.\nKarte erleben · QR scannen · Moment festhalten · ab august 2026.' : 'a deck of real moments for the two of you — dates, acts, questions. plus one seed paper card with sunflower seeds.\nlive the card · scan the QR · keep the moment · launching august 2026.'}
+          {isDE ? 'ein Kartenset mit echten Momenten für euch zwei — Dates, Acts, Questions. Plus eine Saatpapierkarte mit Sonnenblumensamen.\nKarte erleben · QR scannen · Moment festhalten · ab oktober 2026.' : 'a deck of real moments for the two of you — dates, acts, questions. plus one seed paper card with sunflower seeds.\nlive the card · scan the QR · keep the moment · launching october 2026.'}
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }}
           style={{ marginTop: 36, display: 'flex', alignItems: 'baseline', gap: 14 }}>

@@ -21,7 +21,7 @@ function SuccessContent() {
           your preorder is confirmed. we've sent a confirmation to your inbox —
           including your sneak peek into the digital world, as a thank you.
           <br /><br />
-          edition 01 ships mid-august 2026. your card is charged now to reserve
+          edition 01 ships october 2026. your card is charged now to reserve
           your box, and you're fully refundable anytime until it ships.
         </p>
 

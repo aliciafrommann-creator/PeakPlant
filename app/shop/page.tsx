@@ -52,7 +52,7 @@ function WaitlistModal({ onClose, source }: { onClose: () => void; source: strin
           <>
             <p style={{ fontFamily: PP, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#1A1A1A', marginBottom: '1rem' }}>join the waitlist</p>
             <p style={{ fontFamily: PP, fontSize: '1rem', color: '#555', lineHeight: 1.7, marginBottom: '2rem' }}>
-              edition 01 — the sunflower — ships mid-august 2026. leave your email and you&apos;ll be first to know when it&apos;s ready. no payment, no noise.
+              edition 01 — the sunflower — ships october 2026. leave your email and you&apos;ll be first to know when it&apos;s ready. no payment, no noise.
             </p>
             <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <input
@@ -124,7 +124,7 @@ export default function ShopPage() {
             Not just a product.<br />A decision to feel.
           </p>
           <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.45)', marginBottom: '2.5rem' }}>
-            a card deck for couples · edition 01 · the sunflower · ships mid-august 2026
+            a card deck for couples · edition 01 · the sunflower · ships october 2026
           </p>
           <button
             style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
@@ -174,7 +174,7 @@ export default function ShopPage() {
             </div>
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#CF4B2C', opacity: 0.85 }}>
-                preorder opens soon · ships mid-august 2026
+                preorder opens soon · ships october 2026
               </p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'flex-start' }}>

@@ -28,7 +28,7 @@ function makeUnsubToken(email: string): string {
 const BODY_EN = (unsubUrl: string) => `∧ peakplant
 
 you're in.
-edition 01 drops in august 2026.
+edition 01 drops in october 2026.
 
 while you wait — a first taste. edition 01 is the sunflower:
 warmth, growing together, giving each other light without taking the other's.
@@ -49,7 +49,7 @@ unsubscribe: ${unsubUrl}`
 const BODY_DE = (unsubUrl: string) => `∧ peakplant
 
 du bist dabei.
-edition 01 startet im august 2026.
+edition 01 startet im oktober 2026.
 
 für die zwischenzeit — ein vorgeschmack. edition 01 ist die sonnenblume:
 wärme, gemeinsames wachsen, einander licht geben, ohne dem anderen das eigene zu nehmen.
