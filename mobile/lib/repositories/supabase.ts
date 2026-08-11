@@ -51,11 +51,15 @@ function mapSpace(r: any): Space {
 function mapMember(r: any): SpaceMember {
   return { id: r.id, spaceId: r.space_id, userId: r.user_id, name: r.name, role: r.role, joinedAt: r.joined_at };
 }
+// memories.card_id is NOT NULL in the schema; free moments (no scanned card)
+// are stored as this sentinel and surfaced as `undefined` in the app.
+const FREE_MOMENT_CARD_ID = 'free-moment';
+
 function mapMemory(r: any): Memory {
   return {
     id: r.id,
     spaceId: r.space_id,
-    cardId: r.card_id,
+    cardId: r.card_id === FREE_MOMENT_CARD_ID ? undefined : r.card_id,
     note: r.note,
     photoUri: r.photo_path ?? undefined,
     createdAt: r.created_at,
@@ -99,7 +103,7 @@ export const supabaseMemoryRepository: IMemoryRepository = {
       .from('memories')
       .insert({
         space_id: data.spaceId,
-        card_id: data.cardId,
+        card_id: data.cardId ?? FREE_MOMENT_CARD_ID,
         note: data.note,
         photo_path: photoPath,
         created_by: user.user?.id ?? null,

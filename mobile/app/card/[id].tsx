@@ -16,6 +16,7 @@ import { Spacing, Radii } from '../../constants/spacing';
 import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
+import { useBiometric } from '../../lib/hooks/useBiometric';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import type { CardGroup, CardSection } from '../../lib/types';
 
@@ -23,6 +24,27 @@ export default function CardDetailScreen() {
   const { id, unlocked } = useLocalSearchParams<{ id: string; unlocked?: string }>();
   const { t, l } = useLanguage();
   const obscured = usePrivacyOverlay();
+  const { authenticate } = useBiometric();
+  // Gate lives HERE, not only at the callers: deep links (/c/<id>) and the
+  // scanner reach this screen directly, bypassing the tab-level gates (A6-4.1).
+  const [bioGranted, setBioGranted] = useState(false);
+  const cardForGate = SEED_CARDS.find((c) => c.id === id);
+  const editionForGate = cardForGate ? getEdition(cardForGate.edition) : undefined;
+  const needsBio = !!editionForGate?.sensitive && !bioGranted;
+  useEffect(() => {
+    if (!editionForGate?.sensitive || bioGranted) return;
+    let cancelled = false;
+    void authenticate(t('unlock your private diary', 'privates Tagebuch entsperren')).then(
+      (granted) => {
+        if (cancelled) return;
+        if (granted) setBioGranted(true);
+        else router.back();
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [editionForGate?.sensitive, bioGranted, authenticate, t]);
 
   const bannerOpacity = useRef(new Animated.Value(0)).current;
   const [showBanner, setShowBanner] = useState(false);
@@ -49,6 +71,15 @@ export default function CardDetailScreen() {
             <Text style={styles.backLink}>{t('go back', 'zurück')}</Text>
           </TouchableOpacity>
         </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Never paint sensitive content before Face ID/passcode granted access.
+  if (needsBio) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <PrivacyScreen />
       </SafeAreaView>
     );
   }

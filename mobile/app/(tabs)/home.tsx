@@ -44,7 +44,7 @@ export default function HomeScreen() {
   const { t, language } = useLanguage();
   const { latestNote, latestFromPartner } = useNotes(activeSpace?.id);
   const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
-    useWeeklyChallenge(activeSpace?.id);
+    useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
 
   // The hub challenge card acts in place — one clear action per state:
   // not enrolled → take it on; in progress → add a moment (note/photo);
@@ -147,7 +147,7 @@ export default function HomeScreen() {
   const cardById = useMemo(() => new Map(SEED_CARDS.map((c) => [c.id, c])), []);
   const renderMemory = useCallback(
     ({ item }: { item: Memory }) => {
-      const card = cardById.get(item.cardId);
+      const card = item.cardId ? cardById.get(item.cardId) : undefined;
       return (
         <MemoryCard
           memory={item}

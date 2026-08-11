@@ -19,7 +19,9 @@
  */
 export type NotificationCategory =
   | 'date_plan_reminder'   // "you have a date plan coming up"
-  | 'streak_at_risk'       // "your streak is at risk"
+  // NOTE: a former 'streak_at_risk' category was removed deliberately —
+  // loss-aversion pushes are exactly the pressure MANIFESTO §3 prohibits
+  // ("keine Streaks als Druck, keine aggressiven Notifications").
   | 'partner_activity'     // "your partner added a moment" (no content)
   | 'weekly_recap';        // "your week in PeakPlant" (no content, open app to see)
 
@@ -28,7 +30,6 @@ export type NotificationPreferences = Record<NotificationCategory, boolean>;
 
 export const DEFAULT_NOTIFICATION_PREFS: NotificationPreferences = {
   date_plan_reminder: true,
-  streak_at_risk: true,
   partner_activity: false,   // opt-in by default (privacy-first)
   weekly_recap: false,       // opt-in by default
 };

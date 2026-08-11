@@ -23,11 +23,20 @@ const sunny: LiveWeather = {
 const base: DateConstraints = { spaceType: 'couple' };
 
 describe('enrichWithLiveWeather', () => {
-  it('applies live weather when none is set', async () => {
-    const out = await enrichWithLiveWeather(base, { provider: fakeProvider({ ok: true, data: sunny }) });
+  it('applies live weather when none is set and coords are known', async () => {
+    const out = await enrichWithLiveWeather(base, {
+      provider: fakeProvider({ ok: true, data: sunny }),
+      coords: { lat: 52.37, lng: 9.73 },
+    });
     expect(out.usedLiveWeather).toBe(true);
     expect(out.constraints.weather).toBe('sunny');
     expect(out.weather?.sourceId).toBe('fake');
+  });
+
+  it('never invents weather without coordinates (no fixed-city fallback)', async () => {
+    const out = await enrichWithLiveWeather(base, { provider: fakeProvider({ ok: true, data: sunny }) });
+    expect(out.usedLiveWeather).toBe(false);
+    expect(out.constraints.weather).toBeUndefined();
   });
 
   it('never overrides an explicit user choice', async () => {

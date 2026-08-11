@@ -20,8 +20,10 @@ import type { DateConstraints, DateRecommendation, RecommendationFact } from './
 
 const PRICE_ORDER: Record<PriceBand, number> = { free: 0, '€': 1, '€€': 2, '€€€': 3 };
 
-/** Signals the MVP recommender genuinely cannot use yet — surfaced honestly. */
-const ALWAYS_UNUSED = ['live weather', 'your device location'];
+/** Signals the recommender genuinely cannot use — surfaced honestly.
+ *  Live weather is NOT in this list: when a weather constraint is set it IS
+ *  used (and said so in `used`) — claiming both would be a lie (A6-1.1). */
+const ALWAYS_UNUSED = ['your device location'];
 
 const PRICE_LABEL: Record<PriceBand, string> = {
   free: 'free',
@@ -56,6 +58,9 @@ function passesHardFilters(
       return false;
     }
   }
+  // The energy chips promise a filter, so they must BE one — as a mere score
+  // bonus, "🔥 aktiv" could recommend a slow coffee (A3-1).
+  if (c.energy && moment.energy !== c.energy) return false;
   return true;
 }
 
@@ -143,7 +148,7 @@ function buildFacts(moment: TogetherMoment, place?: LocalPlace): RecommendationF
 function signalsNotUsed(used: string[], c: DateConstraints): string[] {
   const notUsed = [...ALWAYS_UNUSED];
   if (!c.timeOfDay && !used.some((u) => u.includes('in the'))) notUsed.push('time of day');
-  if (!c.weather) notUsed.push('weather');
+  if (!c.weather) notUsed.push('live weather');
   return notUsed;
 }
 

@@ -42,7 +42,7 @@ export default function ChallengesScreen() {
         <Text style={styles.intro}>
           {t(
             'gentle, finite goals you can take on together. complete one, keep the badge. no scores, no rush.',
-            'sanfte, endliche Ziele, die ihr gemeinsam angehen konnt. eines abschliessen, das Abzeichen behalten. keine Punkte, keine Eile.',
+            'sanfte, endliche Ziele, die ihr gemeinsam angehen könnt. eines abschließen, das Abzeichen behalten. keine Punkte, keine Eile.',
           )}
         </Text>
 
@@ -70,7 +70,7 @@ export default function ChallengesScreen() {
         {available.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionLabel}>
-              {joined.length > 0 ? t('MORE TO TRY', 'MEHR ZUM AUSPROBIEREN') : t('AVAILABLE', 'VERFUGBAR')}
+              {joined.length > 0 ? t('MORE TO TRY', 'MEHR ZUM AUSPROBIEREN') : t('AVAILABLE', 'VERFÜGBAR')}
             </Text>
             <View style={styles.list}>
               {available.map((c) => (

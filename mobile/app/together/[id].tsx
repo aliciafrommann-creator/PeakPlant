@@ -210,7 +210,7 @@ export default function TogetherDetailScreen() {
           if (tags.length === 0) return null;
           return (
             <View style={styles.experience}>
-              <Text style={styles.experienceLabel}>{t('WHAT THIS IS LIKE', 'WIE SICH DAS ANFUHLT')}</Text>
+              <Text style={styles.experienceLabel}>{t('WHAT THIS IS LIKE', 'WIE SICH DAS ANFÜHLT')}</Text>
               <View style={styles.tagRow}>
                 {tags.map((tg) => (
                   <View key={tg.key} style={styles.tag}>
@@ -219,7 +219,7 @@ export default function TogetherDetailScreen() {
                 ))}
               </View>
               <Text style={styles.experienceNote}>
-                {t('estimated from this idea, not live data', 'geschatzt aus dieser Idee, keine Live-Daten')}
+                {t('estimated from this idea, not live data', 'geschätzt aus dieser Idee, keine Live-Daten')}
               </Text>
             </View>
           );
@@ -252,7 +252,7 @@ export default function TogetherDetailScreen() {
 
         {place && (
           <View style={styles.placeCard}>
-            <Text style={styles.placeLabel}>{t('A PLACE FOR IT', 'EIN ORT DAFUR')}</Text>
+            <Text style={styles.placeLabel}>{t('A PLACE FOR IT', 'EIN ORT DAFÜR')}</Text>
             <View style={styles.placeHead}>
               <Text style={styles.placeName}>{place.name.toLowerCase()}</Text>
               {place.isPartner && <Text style={styles.partner}>{t('PARTNER', 'PARTNER')}</Text>}

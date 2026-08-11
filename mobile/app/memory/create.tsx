@@ -23,6 +23,8 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { savedDateRepository } from '../../lib/repositories';
 import { confirmSuccess } from '../../lib/haptics';
 import { setPendingReward } from '../../lib/pendingReward';
+import { getEnrollments } from '../../lib/challenges';
+import { currentWeeklyChallenge, weeklyProgressFor, inSameIsoWeek } from '../../lib/weeklyChallenge';
 import { persistPickedPhoto } from '../../lib/photoStorage';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { FadeInImage } from '../../components/ui/FadeInImage';
@@ -64,11 +66,14 @@ export default function CreateMemoryScreen() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { activeSpace } = useSpaces();
-  const { createMemory } = useMemories(activeSpace?.id);
+  const { memories, createMemory } = useMemories(activeSpace?.id);
 
   const { t, l } = useLanguage();
-  const selectedCardId = cardId ?? 'card-01';
-  const card = SEED_CARDS.find((c) => c.id === selectedCardId);
+  // A moment only belongs to a card when a card actually sent us here (scan /
+  // card screen). Everything else is a free moment — attributing it to card-01
+  // would fake the collection count (MANIFESTO §1).
+  const selectedCardId = typeof cardId === 'string' && cardId.length > 0 ? cardId : undefined;
+  const card = selectedCardId ? SEED_CARDS.find((c) => c.id === selectedCardId) : undefined;
 
   const cardTitle = card?.content ? l(card.content.title) : card?.prompt ?? '';
   const notePlaceholder = t(
@@ -106,15 +111,34 @@ export default function CreateMemoryScreen() {
       const durablePhotoUri = photoUri
         ? await persistPickedPhoto(photoUri, 'memory')
         : undefined;
+      // A photo-only moment keeps an empty note — we never invent user words.
       const memory = await createMemory({
         cardId: selectedCardId,
-        note: note.trim() || t('photo moment', 'Fotomoment'),
+        note: note.trim(),
         photoUri: durablePhotoUri,
       });
       // Preserving a moment is the app's most meaningful create — confirm it.
       void confirmSuccess();
-      // Queue a little celebration for when they land back on the feed.
-      setPendingReward('moment');
+      // Queue a celebration for the feed. If this very moment completed this
+      // week's challenge, celebrate THAT — completion used to be silent (§5).
+      let rewardKind: 'moment' | 'challenge' = 'moment';
+      if (activeSpace) {
+        try {
+          const weeklyNow = currentWeeklyChallenge(activeSpace.type);
+          const enrollment = (await getEnrollments(activeSpace.id)).find(
+            (e) => e.challengeId === weeklyNow.id && inSameIsoWeek(e.joinedAt, new Date()),
+          );
+          if (enrollment) {
+            const dates = memories.map((m) => m.createdAt);
+            const before = weeklyProgressFor(weeklyNow, enrollment.joinedAt, dates);
+            const after = weeklyProgressFor(weeklyNow, enrollment.joinedAt, [...dates, memory.createdAt]);
+            if (!before.complete && after.complete) rewardKind = 'challenge';
+          }
+        } catch {
+          // The celebration must never block the save itself.
+        }
+      }
+      setPendingReward(rewardKind);
       // Close the loop: write memory id back to the saved date so learning
       // can confirm this was a real completed experience.
       if (savedDateId) {

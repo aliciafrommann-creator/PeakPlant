@@ -122,7 +122,7 @@ export default function DiscoverScreen() {
   const streak = computeWeeklyStreak(memories.map((m) => m.createdAt));
   const timeOfDay = useMemo(currentTimeOfDay, []);
   const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
-    useWeeklyChallenge(activeSpace?.id);
+    useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
 
   // Fetch live weather once (Open-Meteo, no key). Used as a gentle default when
   // the user hasn't picked a weather chip. Best-effort: silent no-op on failure.

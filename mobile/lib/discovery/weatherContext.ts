@@ -11,7 +11,7 @@
  */
 
 import type { DateConstraints } from './types';
-import { openMeteoWeather, toConstraintWeather, INNSBRUCK } from './providers/openMeteo';
+import { openMeteoWeather, toConstraintWeather } from './providers/openMeteo';
 import type { IWeatherProvider, LiveWeather, GeoCoords } from './providers/interface';
 
 export interface WeatherEnrichment {
@@ -36,7 +36,14 @@ export async function enrichWithLiveWeather(
     return { constraints, usedLiveWeather: false };
   }
 
-  const result = await provider.getCurrent(options.coords ?? INNSBRUCK);
+  // No coordinates → no weather. Falling back to a fixed city would quietly
+  // rank ideas by Innsbruck's rain for a couple in Hannover (A3-6) — an
+  // invented "local" fact the card would then explain as truth.
+  if (!options.coords) {
+    return { constraints, usedLiveWeather: false };
+  }
+
+  const result = await provider.getCurrent(options.coords);
   if (!result.ok || result.data.condition === 'unknown') {
     return { constraints, usedLiveWeather: false };
   }

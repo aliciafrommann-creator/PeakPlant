@@ -178,7 +178,7 @@ export default function EditSpaceScreen() {
           <TouchableOpacity
             onPress={() => router.back()}
             accessibilityRole="button"
-            accessibilityLabel={t('Close', 'Schliessen')}
+            accessibilityLabel={t('Close', 'Schließen')}
           >
             <Text style={styles.close}>{t('CLOSE', 'SCHLIESSEN')}</Text>
           </TouchableOpacity>

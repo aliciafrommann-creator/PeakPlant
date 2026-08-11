@@ -62,7 +62,7 @@ export default function RootLayout() {
           />
           <Stack.Screen
             name="memory/create"
-            options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+            options={{ presentation: 'modal', animation: 'slide_from_bottom', gestureEnabled: false }}
           />
           <Stack.Screen name="memory/[id]" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen name="editions/[id]" options={{ animation: 'slide_from_right' }} />
@@ -73,11 +73,11 @@ export default function RootLayout() {
           <Stack.Screen name="discover/browse" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen
             name="space/new"
-            options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+            options={{ presentation: 'modal', animation: 'slide_from_bottom', gestureEnabled: false }}
           />
           <Stack.Screen
             name="space/edit"
-            options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+            options={{ presentation: 'modal', animation: 'slide_from_bottom', gestureEnabled: false }}
           />
           <Stack.Screen
             name="customize"
@@ -89,7 +89,7 @@ export default function RootLayout() {
           <Stack.Screen name="settings/preferences" options={{ animation: 'slide_from_right' }} />
           <Stack.Screen
             name="note/compose"
-            options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+            options={{ presentation: 'modal', animation: 'slide_from_bottom', gestureEnabled: false }}
           />
           <Stack.Screen
             name="plus"

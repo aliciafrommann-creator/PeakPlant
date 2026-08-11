@@ -43,7 +43,7 @@ export default function OnboardingScreen() {
           <Text style={styles.subtitle}>
             {t(
               'choose what feels true. you can always change this.',
-              'wählt, was sich richtig anfühlt. ihr konnt es jederzeit andern.',
+              'wählt, was sich richtig anfühlt. ihr könnt es jederzeit ändern.',
             )}
           </Text>
         </View>
@@ -88,9 +88,9 @@ export default function OnboardingScreen() {
             onPress={goNext}
             activeOpacity={0.7}
             accessibilityRole="button"
-            accessibilityLabel={t('Skip for now', 'Vorerst uberspringen')}
+            accessibilityLabel={t('Skip for now', 'Vorerst überspringen')}
           >
-            <Text style={styles.skip}>{t('skip for now', 'vorerst uberspringen')}</Text>
+            <Text style={styles.skip}>{t('skip for now', 'vorerst überspringen')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

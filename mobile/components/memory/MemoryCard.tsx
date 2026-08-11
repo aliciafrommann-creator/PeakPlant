@@ -48,9 +48,11 @@ export function MemoryCard({ memory, card, onPress, onLongPress }: MemoryCardPro
             {card.prompt}
           </Text>
         )}
-        <Text style={styles.note} numberOfLines={3}>
-          {memory.note}
-        </Text>
+        {memory.note.length > 0 && (
+          <Text style={styles.note} numberOfLines={3}>
+            {memory.note}
+          </Text>
+        )}
         <Text style={styles.date}>{when}</Text>
       </View>
     </PressableScale>

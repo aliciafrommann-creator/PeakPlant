@@ -31,7 +31,7 @@ export default function SignInScreen() {
   const sendCode = async () => {
     if (busy) return;
     if (!isValidEmail(email)) {
-      setError(t('please enter a valid email address.', 'Bitte gib eine gultige E-Mail-Adresse ein.'));
+      setError(t('please enter a valid email address.', 'Bitte gib eine gültige E-Mail-Adresse ein.'));
       return;
     }
     setBusy(true);
@@ -149,7 +149,7 @@ export default function SignInScreen() {
               disabled={busy}
               activeOpacity={0.85}
               accessibilityRole="button"
-              accessibilityLabel={stage === 'email' ? t('Send code', 'Code senden') : t('Verify code', 'Code bestatigen')}
+              accessibilityLabel={stage === 'email' ? t('Send code', 'Code senden') : t('Verify code', 'Code bestätigen')}
             >
               {busy ? (
                 <ActivityIndicator color={Colors.white} size="small" />

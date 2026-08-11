@@ -26,7 +26,7 @@ export default function ProfileScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { t } = useLanguage();
   const { memories } = useMemories(activeSpace?.id);
-  const { chillyCount } = useWeeklyChallenge(activeSpace?.id);
+  const { chillyCount } = useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
   const ritualsEnabled = useAppStore((s) => s.features.rituals);
   const [pickerOpen, setPickerOpen] = useState(false);
 

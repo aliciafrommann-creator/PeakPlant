@@ -96,7 +96,7 @@ export default function InviteScreen() {
       await completeOnboarding();
       router.replace('/(tabs)/home');
     } catch {
-      setError(t("that code didn't work. check it with your partner and try again.", 'Dieser Code hat nicht funktioniert. Prufe ihn mit deinem Partner und versuche es erneut.'));
+      setError(t("that code didn't work. check it with your partner and try again.", 'Dieser Code hat nicht funktioniert. Prüfe ihn mit deinem Partner und versuche es erneut.'));
       setJoining(false);
     }
   }, [joining, code, requireUser, setActiveSpace, completeOnboarding, t]);

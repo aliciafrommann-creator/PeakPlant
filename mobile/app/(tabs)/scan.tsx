@@ -71,7 +71,7 @@ export default function ScanScreen() {
         setError(t("that doesn't look like a PeakPlant card.", 'Das sieht nicht wie eine PeakPlant-Karte aus.'));
         return;
       case 'unknown_card':
-        setError(t("this card belongs to an edition that isn't out yet.", 'Diese Karte gehort zu einer Edition, die noch nicht erschienen ist.'));
+        setError(t("this card belongs to an edition that isn't out yet.", 'Diese Karte gehört zu einer Edition, die noch nicht erschienen ist.'));
         return;
       case 'expired':
         setError(t('this unlock code has expired.', 'Dieser Freischalt-Code ist abgelaufen.'));

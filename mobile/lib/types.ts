@@ -93,7 +93,8 @@ export interface MomentCard {
 
 export interface Memory {
   id: string;
-  cardId: string;
+  /** Undefined for free moments (challenge, discover, places) — only real scans carry a card. */
+  cardId?: string;
   spaceId: string;
   note: string;
   photoUri?: string;

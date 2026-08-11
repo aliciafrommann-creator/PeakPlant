@@ -171,7 +171,7 @@ export default function RitualsScreen() {
           <Text style={styles.emptyHint}>
             {t(
               'when a moment is worth repeating, make it a ritual — a Sunday walk, a yearly trip, a small thing that is yours.',
-              'wenn ein Moment es wert ist, wiederholt zu werden, macht ein Ritual daraus - ein Sonntagsspaziergang, eine jahrliche Reise, eine kleine Sache, die euch gehort.',
+              'wenn ein Moment es wert ist, wiederholt zu werden, macht ein Ritual daraus - ein Sonntagsspaziergang, eine jährliche Reise, eine kleine Sache, die euch gehört.',
             )}
           </Text>
           <TouchableOpacity style={styles.cta} onPress={openCreate} accessibilityRole="button">
@@ -225,7 +225,7 @@ export default function RitualsScreen() {
           style={styles.modalBackdrop}
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         >
-          <TouchableOpacity style={StyleSheet.absoluteFill} onPress={closeCreate} accessibilityLabel={t('Close', 'Schliessen')} />
+          <TouchableOpacity style={StyleSheet.absoluteFill} onPress={closeCreate} accessibilityLabel={t('Close', 'Schließen')} />
           <View style={styles.sheet}>
             <Text style={styles.sheetTitle}>{t('a ritual you return to', 'ein Ritual, zu dem ihr zurückkehrt')}</Text>
             <TextInput

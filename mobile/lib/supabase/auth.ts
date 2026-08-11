@@ -33,19 +33,28 @@ export async function verifyEmailCode(email: string, token: string): Promise<voi
   if (error) throw error;
 }
 
-/** Current signed-in user (with profile name), or null. */
+/** Current signed-in user (with profile name), or null.
+ *
+ *  Gating uses the LOCAL session (`getSession`), not the network-bound
+ *  `getUser()` — otherwise an offline cold start reports "no user" and locks
+ *  a validly signed-in person out at the login screen (audit A5-3.2). */
 export async function getSessionUser(): Promise<SessionUser | null> {
   if (!supabase) return null;
-  const { data } = await supabase.auth.getUser();
-  const user = data.user;
+  const { data } = await supabase.auth.getSession();
+  const user = data.session?.user;
   if (!user) return null;
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('name')
-    .eq('id', user.id)
-    .maybeSingle();
   const fallback = user.email ? user.email.split('@')[0] : '';
-  return { id: user.id, name: profile?.name?.trim() || fallback };
+  // Profile name is best-effort — offline we still let people in.
+  try {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('name')
+      .eq('id', user.id)
+      .maybeSingle();
+    return { id: user.id, name: profile?.name?.trim() || fallback };
+  } catch {
+    return { id: user.id, name: fallback };
+  }
 }
 
 /** Create or update the caller's profile row. */

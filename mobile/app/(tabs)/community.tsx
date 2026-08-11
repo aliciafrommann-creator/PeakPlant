@@ -90,17 +90,17 @@ function liveFailureMessage(
     case 'monthly_limit':
       return t(
         'monthly live-search limit reached on this device. curated places still work.',
-        'Monatslimit fuer Live-Suchen auf diesem Geraet erreicht. Kuratierte Orte funktionieren weiter.',
+        'Für diesen Monat sind die Live-Suchen aufgebraucht. Kuratierte Orte funktionieren weiter.',
       );
     case 'rate_limited':
       return t(
         'Google is rate-limiting live places right now. try again later.',
-        'Google limitiert Live-Orte gerade. Versuch es spaeter nochmal.',
+        'Google limitiert Live-Orte gerade. Versuch es später nochmal.',
       );
     case 'no_results':
       return t(
         'no nearby live places matched. try again somewhere else.',
-        'Keine passenden Live-Orte in der Naehe gefunden. Versuch es an einem anderen Ort nochmal.',
+        'Keine passenden Live-Orte in der Nähe gefunden. Versuch es an einem anderen Ort nochmal.',
       );
     case 'storage_unavailable':
       return t(
