@@ -287,6 +287,76 @@ function CollectAndSurprise({ locale, isMobile }: { locale: string; isMobile: bo
   )
 }
 
+/* Sneak peek of the app — a stylised phone mock built from the app's real
+   design tokens (warm stone, chili, pill CTAs) so nothing is faked. The app
+   ships with edition 01; until then the honest CTA is the waitlist. */
+function AppPeek({ locale, isMobile }: { locale: string; isMobile: boolean }) {
+  const isDE = locale === 'de'
+  const features = isDE ? [
+    ['scannen', 'karte erleben, QR scannen — foto und notiz werden ein moment in eurem tagebuch.'],
+    ['entdecken', 'kuratierte date-ideen, die zu wetter, zeit und euch passen — mit ehrlichem „warum dieser vorschlag".'],
+    ['orte', 'eine karte mit euren orten, anonymen community-tipps — und „unser ort" für die plätze, die nur euch gehören.'],
+    ['wochen-moment', 'eine sanfte weekly challenge als gemeinsamer anlass — nie als druck.'],
+  ] : [
+    ['scan', 'live the card, scan the QR — photo and note become a moment in your shared diary.'],
+    ['discover', 'curated date ideas that fit the weather, the hour and you — with an honest "why this".'],
+    ['places', 'a map of your places, anonymous community tips — and "our place" for the spots only you two know.'],
+    ['weekly moment', 'one gentle weekly challenge as a shared occasion — never as pressure.'],
+  ]
+  return (
+    <section style={{ backgroundColor: '#F3F1EC', borderTop: '1px solid #ebebeb', padding: '8rem 2.5rem' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'center' }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
+          <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#CF4B2C', marginBottom: '1.25rem', fontFamily: PP }}>
+            {isDE ? 'sneak peek — die app' : 'sneak peek — the app'}
+          </p>
+          <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: PP }}>
+            {isDE ? 'euer space. euer tagebuch.' : 'your space. your diary.'}
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', marginBottom: '2rem' }}>
+            {features.map(([k, v]) => (
+              <div key={k} style={{ display: 'flex', gap: '0.9rem', alignItems: 'baseline' }}>
+                <span style={{ fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#CF4B2C', fontFamily: PP, minWidth: 110 }}>{k}</span>
+                <p style={{ fontSize: '0.9rem', color: '#555', fontWeight: 300, lineHeight: 1.7, fontFamily: PP, margin: 0 }}>{v}</p>
+              </div>
+            ))}
+          </div>
+          <a href="#waitlist" style={{ display: 'inline-block', padding: '0.9rem 2rem', borderRadius: 999, background: '#1A1A1A', color: '#ffffff', fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', textDecoration: 'none', fontFamily: PP }}>
+            {isDE ? 'app kommt mit edition 01 — dabei sein' : 'the app ships with edition 01 — get in'}
+          </a>
+          <p style={{ marginTop: '1rem', fontSize: '0.72rem', color: '#999', fontWeight: 300, fontFamily: PP }}>
+            {isDE ? 'privat für euren space. keine likes, keine follower, kein feed für fremde.' : 'private to your space. no likes, no followers, no feed for strangers.'}
+          </p>
+        </motion.div>
+        {/* Stylised phone mock in the app's real look — not a fake screenshot */}
+        <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{ width: 270, borderRadius: 36, border: '1px solid #d8d4cc', background: '#F3F1EC', boxShadow: '0 24px 60px rgba(30,28,26,0.14)', padding: '1.1rem', fontFamily: PP }}>
+            <div style={{ fontSize: 9, letterSpacing: '0.22em', color: '#857F76', textTransform: 'uppercase', marginBottom: 10 }}>{isDE ? 'paar-space' : 'couple space'}</div>
+            <div style={{ fontSize: 17, fontWeight: 400, color: '#1E1C1A', marginBottom: 12 }}>anna & jo 🌶️</div>
+            <div style={{ background: '#FBFAF7', borderRadius: 14, padding: '0.8rem', marginBottom: 10, border: '1px solid #ebe7df' }}>
+              <div style={{ fontSize: 8.5, letterSpacing: '0.2em', color: '#CF4B2C', marginBottom: 6 }}>{isDE ? 'KARTE 06 · GROWING QUESTION' : 'CARD 06 · GROWING QUESTION'}</div>
+              <div style={{ fontSize: 12.5, fontWeight: 300, lineHeight: 1.55, color: '#1E1C1A', fontStyle: 'italic' }}>
+                “what is already growing beautifully between us?”
+              </div>
+            </div>
+            <div style={{ background: '#FBFAF7', borderRadius: 14, padding: '0.8rem', marginBottom: 10, border: '1px solid #ebe7df' }}>
+              <div style={{ height: 84, borderRadius: 10, background: 'linear-gradient(135deg, #E3B23C 0%, #E08A4F 60%, #CF4B2C 100%)', marginBottom: 8, opacity: 0.85 }} />
+              <div style={{ fontSize: 11.5, fontWeight: 300, color: '#5A554E', lineHeight: 1.5 }}>
+                {isDE ? 'sonnenuntergang am fluss — wir haben bis zehn geredet. ✦' : 'sunset by the river — we talked till ten. ✦'}
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.35rem 0.2rem 0' }}>
+              <span style={{ fontSize: 9, letterSpacing: '0.14em', color: '#857F76' }}>{isDE ? '4 VON 20 BEWAHRT' : '4 OF 20 KEPT'}</span>
+              <span style={{ fontSize: 9, letterSpacing: '0.2em', color: '#ffffff', background: '#1E1C1A', borderRadius: 999, padding: '0.45rem 0.9rem' }}>{isDE ? 'MOMENT FESTHALTEN' : 'PRESERVE MOMENT'}</span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
 function Testimonials({ locale, isMobile }: { locale: string; isMobile: boolean }) {
   const isDE = locale === 'de'
   const quotes = isDE ? [
@@ -468,6 +538,7 @@ export default function Home({ params }: { params: { locale: string } }) {
       <Testimonials locale={locale} isMobile={isMobile} />
       <SixQuestions locale={locale} />
       <CollectAndSurprise locale={locale} isMobile={isMobile} />
+      <AppPeek locale={locale} isMobile={isMobile} />
       <Manifesto locale={locale} />
       <Waitlist locale={locale} />
       <EditionSystem locale={locale} isMobile={isMobile} />
