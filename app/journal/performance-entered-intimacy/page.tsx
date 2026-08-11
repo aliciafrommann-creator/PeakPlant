@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../../components/NavBar'
 
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function Article() {
   return (
@@ -21,7 +21,7 @@ export default function Article() {
         </motion.div>
 
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '3rem' }}>
+          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', marginBottom: '3rem' }}>
           Performance entered intimacy.
         </motion.h1>
 
@@ -45,7 +45,7 @@ export default function Article() {
             This is not weakness. It is an entirely rational response to a culture that rewards performance. We were trained from early on: the version of you that succeeds is the version worth keeping. And so we brought that logic into the bedroom, into the relationship, into the most intimate corners of our lives.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>We learned to optimize everything.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>We learned to optimize everything.</h2>
 
           <p>
             Simon Sinek talks about organizations losing their purpose — the drift from <em>why</em> to <em>what</em> that happens slowly, almost without anyone noticing. The same thing happens in relationships. You begin with a feeling. A pull toward another person that has nothing to do with performance. And somewhere, over time, you start optimizing. You track the impression. You manage the image. You stop letting yourself be seen in the spaces between.
@@ -59,7 +59,7 @@ export default function Article() {
             That is what performance costs intimacy. Not the relationship itself, necessarily. But the rawness. The realness. The thing that makes closeness feel like closeness rather than like two people managing each other's experience of them.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>What presence actually requires.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>What presence actually requires.</h2>
 
           <p>
             There is a concept from systems thinking: feedback loops that reinforce behavior over time. The longer you perform in a relationship, the more the other person responds to the performance. Which makes it harder to stop. You become, in a sense, trapped by your own consistency — because authenticity now feels like a disruption rather than a return.
@@ -77,7 +77,7 @@ export default function Article() {
             Brené Brown calls this wholehearted living. The willingness to engage with life from a place of worthiness rather than worthiness-to-be-earned. And the research is consistent: people who do this — who allow themselves to be seen, imperfections and all — report deeper connections, more meaningful relationships, and a kind of aliveness that the performance never delivers.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>This is what PeakPlant is really about.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>This is what PeakPlant is really about.</h2>
 
           <p>
             The question on every PeakPlant card is not decoration. It is an invitation to pause. To arrive. To notice whether you are about to be present with another human being, or whether you are about to manage an experience.

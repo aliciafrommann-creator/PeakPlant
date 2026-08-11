@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
 
 type Order = {
   id: string
@@ -137,7 +137,7 @@ export default function AdminPage() {
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <p style={{ fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', opacity: 0.4, marginBottom: 6 }}>∧ peakplant admin</p>
-            <h1 style={{ fontSize: 28, fontWeight: 200, letterSpacing: '-0.02em' }}>bestellungen</h1>
+            <h1 style={{ fontSize: 28, fontWeight: 200, letterSpacing: '0.015em' }}>bestellungen</h1>
           </div>
           <div style={{ display: 'flex', gap: '1.5rem', fontSize: 13 }}>
             <span style={{ opacity: 0.5 }}>{orders.length} gesamt</span>

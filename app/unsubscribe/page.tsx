@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import { motion } from 'framer-motion'
 
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
 
 function UnsubscribeContent() {
   const params = useSearchParams()
@@ -24,7 +24,7 @@ function UnsubscribeContent() {
 
         {error ? (
           <>
-            <p style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)', fontWeight: 200, lineHeight: 1.4, letterSpacing: '-0.02em' }}>
+            <p style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)', fontWeight: 200, lineHeight: 1.4, letterSpacing: '0.015em' }}>
               that link didn't work.
             </p>
             <p style={{ fontSize: '0.95rem', color: '#666', lineHeight: 1.7, fontWeight: 300 }}>
@@ -37,7 +37,7 @@ function UnsubscribeContent() {
           </>
         ) : done ? (
           <>
-            <p style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)', fontWeight: 200, lineHeight: 1.4, letterSpacing: '-0.02em' }}>
+            <p style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)', fontWeight: 200, lineHeight: 1.4, letterSpacing: '0.015em' }}>
               you've been unsubscribed.
             </p>
             <p style={{ fontSize: '1rem', color: '#666', lineHeight: 1.7, fontWeight: 300 }}>
@@ -49,7 +49,7 @@ function UnsubscribeContent() {
           </>
         ) : (
           <>
-            <p style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)', fontWeight: 200, lineHeight: 1.4, letterSpacing: '-0.02em' }}>
+            <p style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.8rem)', fontWeight: 200, lineHeight: 1.4, letterSpacing: '0.015em' }}>
               unsubscribing…
             </p>
           </>

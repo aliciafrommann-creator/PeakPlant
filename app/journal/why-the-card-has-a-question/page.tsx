@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../../components/NavBar'
 
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function Article() {
   return (
@@ -21,7 +21,7 @@ export default function Article() {
         </motion.div>
 
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '3rem' }}>
+          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', marginBottom: '3rem' }}>
           Why every card asks a question.
         </motion.h1>
 
@@ -45,7 +45,7 @@ export default function Article() {
             Because there is a moment. Between drawing a card and reading it out loud, there is a beat — brief, often unexamined — where something could be different. Where instead of rushing into the next activity, two people could actually arrive in the room with each other.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>The card as design philosophy.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>The card as design philosophy.</h2>
 
           <p>
             We put a question on the cards. Not as decoration. Not as a brand flourish. As an invitation to pause. To look at the person you are with. To be, for a moment, present rather than procedural.
@@ -63,7 +63,7 @@ export default function Article() {
             Simon Sinek's work on intentionality in leadership keeps coming back to the same insight: behavior changes when you change the environment that prompts it. We are trying to design a small environmental prompt — a card in your hand — in a way that points toward presence rather than away from it.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Why a card is never only a card.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Why a card is never only a card.</h2>
 
           <p>
             The object you hold shapes how you feel about what you are about to do. A screen says: this is content. A game says: this is competition. A card with a question says: this is about the two of you.

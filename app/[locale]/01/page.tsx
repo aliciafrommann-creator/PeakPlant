@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { NavBar } from '../../../components/NavBar'
 
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
 
 // The REAL ten Growing Questions from the finalized deck
 // (mobile/lib/content/edition01.ts) — never invented approximations.
@@ -230,7 +230,7 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
       <section style={{ padding: '160px 40px 80px', textAlign: 'center', maxWidth: 640, margin: '0 auto' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}>
           <span style={label(isDE)}>{isDE ? 'edition 01 — die digitale welt' : 'edition 01 — the digital world'}</span>
-          <h1 style={{ marginTop: 32, fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 200, letterSpacing: '-0.03em', lineHeight: 1.2 }}>
+          <h1 style={{ marginTop: 32, fontSize: 'clamp(1.8rem, 4vw, 3rem)', fontWeight: 200, letterSpacing: '0.02em', lineHeight: 1.2 }}>
             {isDE ? 'du bist nicht allein hier.' : 'you are not alone in here.'}
           </h1>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: 1 }}
@@ -252,7 +252,7 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
           {thisMonth ? (isDE ? `dieser monat — ${thisMonth.name}` : `this month — ${thisMonth.name}`) : (isDE ? 'dieser monat' : 'this month')}
         </p>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9 }}
-          style={{ fontSize: 'clamp(1.3rem, 3vw, 1.9rem)', fontWeight: 200, fontStyle: 'italic', lineHeight: 1.5, letterSpacing: '-0.01em', marginBottom: 16, minHeight: '1.5em' }}>
+          style={{ fontSize: 'clamp(1.3rem, 3vw, 1.9rem)', fontWeight: 200, fontStyle: 'italic', lineHeight: 1.5, letterSpacing: '0.01em', marginBottom: 16, minHeight: '1.5em' }}>
           {thisMonth ? `“${thisMonth.question}”` : ''}
         </motion.p>
         <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.3)', fontWeight: 300, lineHeight: 1.7, marginBottom: 56 }}>
@@ -276,7 +276,7 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
       {/* The plant of this edition — sunflower */}
       <section style={{ padding: '60px 40px 100px', maxWidth: 640, margin: '0 auto', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
         <p style={{ ...label(isDE), marginBottom: 20 }}>{isDE ? 'die pflanze dieser edition' : 'the plant of this edition'}</p>
-        <h2 style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.25, marginBottom: 28 }}>
+        <h2 style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 200, letterSpacing: '0.015em', lineHeight: 1.25, marginBottom: 28 }}>
           {isDE ? 'die sonnenblume.' : 'the sunflower.'}
         </h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -310,7 +310,7 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
             transition={{ duration: 0.9, delay: li * 0.1, ease: [0.16, 1, 0.3, 1] }}
             style={{ marginBottom: li < letters.length - 1 ? 72 : 0 }}>
             <p style={{ fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', opacity: 0.25, marginBottom: 16, fontFamily: PP }}>{letter.month}</p>
-            <h2 style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 200, letterSpacing: '-0.02em', marginBottom: 28, lineHeight: 1.3 }}>
+            <h2 style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 200, letterSpacing: '0.015em', marginBottom: 28, lineHeight: 1.3 }}>
               {letter.title}
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

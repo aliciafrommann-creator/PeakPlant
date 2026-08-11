@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../../components/NavBar'
 
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function PhilosophyPage({ params }: { params: { locale: string } }) {
   const { locale } = params
@@ -172,7 +172,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
           {isDE ? 'philosophie' : 'philosophy'}
         </motion.p>
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', fontFamily: PP }}>
+          style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', fontFamily: PP }}>
           {isDE ? 'mehr fühlen.' : 'feel more.'}
         </motion.h1>
       </section>
@@ -183,7 +183,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
           {isDE ? '01 — die forschung' : '01 — the research'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '2.5rem', fontFamily: PP }}>
+          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '0.015em', marginBottom: '2.5rem', fontFamily: PP }}>
           {isDE ? 'google wusste es zuerst.' : 'google knew it first.'}
         </motion.h2>
         {researchParas.map((text, i) => (
@@ -201,7 +201,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
           {isDE ? '02 — die wissenschaft' : '02 — the science'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '4rem', fontFamily: PP }}>
+          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '0.015em', marginBottom: '4rem', fontFamily: PP }}>
           {isDE ? 'drei forscher. ein ergebnis.' : 'three researchers. one finding.'}
         </motion.h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4rem' }}>
@@ -210,7 +210,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
               transition={{ duration: 0.9, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
               style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.35, fontFamily: PP }}>{r.role}</p>
-              <p style={{ fontSize: '1.1rem', fontWeight: 400, letterSpacing: '-0.01em', color: '#1A1A1A', fontFamily: PP }}>{r.name}</p>
+              <p style={{ fontSize: '1.1rem', fontWeight: 400, letterSpacing: '0.01em', color: '#1A1A1A', fontFamily: PP }}>{r.name}</p>
               <p style={{ fontSize: '0.95rem', lineHeight: 1.8, color: '#555', fontWeight: 300, fontFamily: PP }}>{r.body}</p>
             </motion.div>
           ))}
@@ -223,7 +223,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
           {isDE ? '02b — vertrauen' : '02b — trust'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '3rem', fontFamily: PP }}>
+          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '0.015em', marginBottom: '3rem', fontFamily: PP }}>
           {isDE ? 'hochleistung neu definieren.' : 'redefining high performance.'}
         </motion.h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
@@ -247,7 +247,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
           {isDE ? '03 — die verbindung' : '03 — the connection'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '2.5rem', fontFamily: PP }}>
+          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '0.015em', marginBottom: '2.5rem', fontFamily: PP }}>
           {isDE ? 'was das mit uns zu tun hat.' : 'what this has to do with us.'}
         </motion.h2>
         {connectionParas.map((text, i) => (
@@ -261,7 +261,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
 
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '6rem 2.5rem', maxWidth: 800, margin: '0 auto' }}>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '3rem', fontFamily: PP }}>
+          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '0.015em', marginBottom: '3rem', fontFamily: PP }}>
           {isDE ? 'es erfordert mut.' : 'it requires courage.'}
         </motion.h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
@@ -285,7 +285,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
           {isDE ? '04 — die mechanik' : '04 — the mechanic'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '3rem', fontFamily: PP }}>
+          style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '0.015em', marginBottom: '3rem', fontFamily: PP }}>
           {isDE ? 'wie es funktioniert.' : 'how it works.'}
         </motion.h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
@@ -302,7 +302,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', textAlign: 'center' }}>
         <motion.p
           initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', fontWeight: 300, lineHeight: 1.45, maxWidth: 640, margin: '0 auto 3rem', letterSpacing: '-0.015em', fontFamily: PP }}
+          style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', fontWeight: 300, lineHeight: 1.45, maxWidth: 640, margin: '0 auto 3rem', letterSpacing: '0.01em', fontFamily: PP }}
         >
           {isDE ? 'lust zu üben?' : 'want to practice?'}
         </motion.p>

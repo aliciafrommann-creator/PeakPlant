@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { NavBar } from '../../../components/NavBar'
 import { useIsMobile } from '../../../hooks/useIsMobile'
 
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
 
 function Logo({ size = 28, color = '#1A1A1A' }: { size?: number; color?: string }) {
   return (
@@ -28,7 +28,7 @@ function TransformRow({ before, after, index }: { before: string; after: string;
         style={{ position: 'absolute', inset: 0, background: '#f8f8f8', zIndex: 0, pointerEvents: 'none' }} />
       <div style={{ position: 'relative', zIndex: 1 }}>
         <motion.p animate={{ opacity: hovered ? 0.15 : 0.6, x: hovered ? -10 : 0 }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.45rem)', fontWeight: 300, fontFamily: PP, letterSpacing: '-0.01em', position: 'relative', display: 'inline-block' }}>
+          style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.45rem)', fontWeight: 300, fontFamily: PP, letterSpacing: '0.01em', position: 'relative', display: 'inline-block' }}>
           {before}
           <motion.span animate={{ scaleX: hovered ? 1 : 0 }} transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             style={{ position: 'absolute', top: '52%', left: 0, right: 0, height: '1.5px', background: '#1A1A1A', opacity: 0.55, transformOrigin: 'left', display: 'block' }} />
@@ -41,7 +41,7 @@ function TransformRow({ before, after, index }: { before: string; after: string;
         </motion.svg>
       </div>
       <motion.p animate={{ opacity: hovered ? 1 : 0.6, x: hovered ? 0 : 8, color: hovered ? '#1A1A1A' : '#666' }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-        style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.45rem)', fontWeight: hovered ? 500 : 300, fontFamily: PP, letterSpacing: '-0.01em', zIndex: 1 }}>
+        style={{ fontSize: 'clamp(1.1rem, 1.8vw, 1.45rem)', fontWeight: hovered ? 500 : 300, fontFamily: PP, letterSpacing: '0.01em', zIndex: 1 }}>
         {after}
       </motion.p>
     </motion.div>
@@ -168,7 +168,7 @@ export default function CommunityPage({ params }: { params: { locale: string } }
           <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
             style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem' }}>Community</motion.p>
           <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-            style={{ fontSize: 'clamp(2rem, 3.5vw, 3.2rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '2.5rem' }}>
+            style={{ fontSize: 'clamp(2rem, 3.5vw, 3.2rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', marginBottom: '2.5rem' }}>
             {isDE ? 'Für Menschen, denen Verbindung wichtig ist.' : 'For people who take connection seriously.'}
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
@@ -196,7 +196,7 @@ export default function CommunityPage({ params }: { params: { locale: string } }
               transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               whileHover={{ y: -4 }} style={{ cursor: 'default' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '1rem' }}>0{i + 1}</p>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '0.85rem' }}>{item.label}</h3>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 400, letterSpacing: '0.01em', marginBottom: '0.85rem' }}>{item.label}</h3>
               <p style={{ fontSize: '0.95rem', lineHeight: 1.75, color: '#555' }}>{item.body}</p>
             </motion.div>
           ))}
@@ -227,7 +227,7 @@ export default function CommunityPage({ params }: { params: { locale: string } }
               transition={{ duration: 0.7, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               whileHover={{ y: -4 }} style={{ cursor: 'default' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '1rem' }}>0{i + 1}</p>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '0.85rem', lineHeight: 1.3 }}>{v.label}</h3>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 400, letterSpacing: '0.01em', marginBottom: '0.85rem', lineHeight: 1.3 }}>{v.label}</h3>
               <p style={{ fontSize: '0.95rem', lineHeight: 1.75, color: '#555' }}>{v.body}</p>
             </motion.div>
           ))}
@@ -238,7 +238,7 @@ export default function CommunityPage({ params }: { params: { locale: string } }
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ maxWidth: 580, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2.5rem' }}>
           <Logo size={40} color="#ffffff" />
-          <p style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 300, lineHeight: 1.45, letterSpacing: '-0.015em', color: '#ffffff' }}>
+          <p style={{ fontSize: 'clamp(1.4rem, 3vw, 2rem)', fontWeight: 300, lineHeight: 1.45, letterSpacing: '0.01em', color: '#ffffff' }}>
             {isDE
               ? 'die community ist bewusst klein. keine werbung, kein algorithmus, kein lärm. nur menschen, die das anders machen wollen.'
               : 'The community is small on purpose. There are no ads, no algorithm, no noise. Just people who want to do this differently.'}

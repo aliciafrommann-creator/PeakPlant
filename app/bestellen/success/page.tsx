@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
 
 function SuccessContent() {
   return (
@@ -13,7 +13,7 @@ function SuccessContent() {
         style={{ maxWidth: 480, textAlign: 'center' }}>
         <p style={{ fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '2.5rem' }}>∧ peakplant</p>
 
-        <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 200, letterSpacing: '-0.03em', lineHeight: 1.2, marginBottom: '1.5rem' }}>
+        <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.6rem)', fontWeight: 200, letterSpacing: '0.02em', lineHeight: 1.2, marginBottom: '1.5rem' }}>
           thank you.<br />you're part of it now.
         </h1>
 

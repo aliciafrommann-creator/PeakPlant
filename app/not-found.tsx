@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function NotFound() {
   return (

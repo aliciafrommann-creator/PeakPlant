@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../../components/NavBar'
 
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function AboutPage({ params }: { params: { locale: string } }) {
   const { locale } = params
@@ -50,7 +50,7 @@ export default function AboutPage({ params }: { params: { locale: string } }) {
           {isDE ? 'unsere geschichte' : 'Our story'}
         </motion.p>
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', fontFamily: PP }}>
+          style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', fontFamily: PP }}>
           {isDE ? 'von innen nach außen gebaut.' : 'built from the inside out.'}
         </motion.h1>
         <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
@@ -69,7 +69,7 @@ export default function AboutPage({ params }: { params: { locale: string } }) {
             <img src="/alicia.jpg" alt="Alicia Frommann, founder of PeakPlant" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', filter: 'grayscale(100%)' }} />
           </div>
           <div style={{ marginTop: '1.5rem' }}>
-            <p style={{ fontSize: '1rem', fontWeight: 400, letterSpacing: '-0.01em', color: '#1A1A1A', fontFamily: PP }}>alicia frommann</p>
+            <p style={{ fontSize: '1rem', fontWeight: 400, letterSpacing: '0.01em', color: '#1A1A1A', fontFamily: PP }}>alicia frommann</p>
             <p style={{ fontSize: '0.75rem', letterSpacing: '0.1em', textTransform: 'uppercase', opacity: 0.4, marginTop: '0.25rem', fontFamily: PP }}>{isDE ? 'gründerin' : 'founder'}, peakplant</p>
           </div>
         </motion.div>
@@ -101,7 +101,7 @@ export default function AboutPage({ params }: { params: { locale: string } }) {
 
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', textAlign: 'center' }}>
         <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', fontWeight: 300, lineHeight: 1.45, maxWidth: 640, margin: '0 auto 3rem', letterSpacing: '-0.015em', fontFamily: PP }}>
+          style={{ fontSize: 'clamp(1.4rem, 3vw, 2.2rem)', fontWeight: 300, lineHeight: 1.45, maxWidth: 640, margin: '0 auto 3rem', letterSpacing: '0.01em', fontFamily: PP }}>
           {isDE ? 'du musst nicht performen, um liebenswert zu sein.' : 'you do not have to perform to be worthy of love.'}
         </motion.p>
         <Link href={localHref('/philosophy')} style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', borderBottom: '1px solid rgba(26,26,26,0.3)', paddingBottom: 3 }}>

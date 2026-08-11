@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../../components/NavBar'
 
-const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function Article() {
   return (
@@ -21,7 +21,7 @@ export default function Article() {
         </motion.div>
 
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '3rem' }}>
+          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', marginBottom: '3rem' }}>
           The systems behind disconnected intimacy.
         </motion.h1>
 
@@ -45,7 +45,7 @@ export default function Article() {
             I spent years studying systems thinking — how mental models, feedback loops, and structural conditions shape behavior at scale. What I kept coming back to was a pattern: the behaviors we pathologize as individual failures are almost always the logical outputs of the systems people are embedded in.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Four systems doing the most damage.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Four systems doing the most damage.</h2>
 
           <p>
             <strong>Social media</strong> is the most visible. Platforms built on external validation teach us, through thousands of micro-reinforcements, that our worth is proportional to how we are perceived. We learn to present. To curate. To manage the gap between who we are and who we appear to be. When that becomes habitual online, it bleeds offline — into conversations, into bedrooms, into the most vulnerable spaces of our lives.
@@ -63,7 +63,7 @@ export default function Article() {
             <strong>Emotional illiteracy</strong> is the oldest system of all. Most of us were never taught how to name what we feel, how to communicate needs, or how to stay in the room when things get hard. Donella Meadows, the systems thinker, wrote about how systems perpetuate themselves through the mental models of the people inside them. The mental model most of us inherited was: emotions are private, vulnerability is weakness, needing people is a liability. That model is still running.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Why understanding the system changes everything.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Why understanding the system changes everything.</h2>
 
           <p>
             Donella Meadows also wrote that the highest leverage point in any system is not a policy or a rule — it is the paradigm. The shared belief from which the system emerges. Changing behavior is hard. Changing the story behind the behavior is transformational.
