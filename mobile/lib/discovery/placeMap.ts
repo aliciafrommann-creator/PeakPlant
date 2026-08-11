@@ -118,20 +118,41 @@ export function buildPlaceMapHtml(places: LocalPlace[], selectedId?: string): st
       osmTiles.on('tileerror', () => {
         if (!tilesShown) post('map-failed');
       });
+      // Watchdog inside the page: tiles that never fire tileload OR tileerror
+      // (captive portal, DNS blackhole) must still resolve to an honest state.
+      setTimeout(() => { if (!tilesShown) post('map-failed'); }, 7000);
       const bounds = [];
-      points.forEach((point) => {
-        const classes = ['peak-pin', point.partner ? 'partner' : '', point.id === selectedId ? 'selected' : '']
+      const markers = {};
+      let currentSelected = selectedId;
+      function iconFor(point, isSelected) {
+        const classes = ['peak-pin', point.partner ? 'partner' : '', isSelected ? 'selected' : '']
           .filter(Boolean).join(' ');
         const html = '<div class="' + classes + '" style="background:' + point.color + '">' + point.emoji + '</div>';
-        const icon = L.divIcon({ className: '', html: html, iconSize: [40, 40], iconAnchor: [20, 20] });
-        const marker = L.marker([point.lat, point.lng], { icon, title: point.name }).addTo(map);
+        return L.divIcon({ className: '', html: html, iconSize: [40, 40], iconAnchor: [20, 20] });
+      }
+      points.forEach((point) => {
+        const marker = L.marker([point.lat, point.lng], { icon: iconFor(point, point.id === selectedId), title: point.name }).addTo(map);
         marker.on('click', () => window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'select-place', id: point.id })));
+        markers[point.id] = { marker: marker, point: point };
         bounds.push([point.lat, point.lng]);
       });
+      // Selection updates come in via injectJavaScript — no page reload, so
+      // tapping a chip no longer refetches Leaflet + tiles from the CDN.
+      window.__ppSelect = function (id) {
+        if (currentSelected && markers[currentSelected]) {
+          markers[currentSelected].marker.setIcon(iconFor(markers[currentSelected].point, false));
+        }
+        currentSelected = id;
+        const entry = id ? markers[id] : undefined;
+        if (entry) {
+          entry.marker.setIcon(iconFor(entry.point, true));
+          map.setView([entry.point.lat, entry.point.lng], 14);
+        }
+      };
       const selected = points.find((point) => point.id === selectedId);
       if (selected) map.setView([selected.lat, selected.lng], 14);
       else if (bounds.length) map.fitBounds(bounds, { padding: [28, 28], maxZoom: 13 });
-      else map.setView([47.2692, 11.4041], 12);
+      else map.setView([51.163, 10.447], 6);
     } catch (e) {
       post('map-failed');
     }

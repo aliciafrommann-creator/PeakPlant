@@ -288,6 +288,42 @@ export function placeById(id?: string): LocalPlace | undefined {
   return LOCAL_PLACES.find((p) => p.id === id);
 }
 
+/** Resolve a library idea (idea-*) into the TogetherMoment shape so the
+ *  detail screen works for the whole library, not only the curated pool —
+ *  library links used to dead-end in "Idee nicht gefunden" (audit A3-18/24). */
+export function libraryIdeaAsMoment(idea: {
+  id: string;
+  title: string;
+  idea: string;
+  category: string;
+  spaceTypes: TogetherMoment['spaceTypes'];
+  priceBand: TogetherMoment['priceBand'];
+  indoorOutdoor: TogetherMoment['indoorOutdoor'];
+  avgDurationMin: number;
+  energy: TogetherMoment['energy'];
+  idealTimeOfDay: TogetherMoment['idealTimeOfDay'];
+  weatherFit: TogetherMoment['weatherFit'];
+}): TogetherMoment {
+  const knownCategories: MomentCategory[] = ['food', 'outdoors', 'create', 'calm', 'play'];
+  const category = knownCategories.includes(idea.category as MomentCategory)
+    ? (idea.category as MomentCategory)
+    : 'calm';
+  return {
+    id: idea.id,
+    title: idea.title,
+    idea: idea.idea,
+    category,
+    linkedCardIds: [],
+    spaceTypes: idea.spaceTypes,
+    priceBand: idea.priceBand,
+    indoorOutdoor: idea.indoorOutdoor,
+    avgDurationMin: idea.avgDurationMin,
+    energy: idea.energy,
+    idealTimeOfDay: idea.idealTimeOfDay,
+    weatherFit: idea.weatherFit,
+  };
+}
+
 export function momentById(id: string): TogetherMoment | undefined {
   return TOGETHER_MOMENTS.find((m) => m.id === id);
 }

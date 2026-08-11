@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   View,
@@ -17,7 +17,8 @@ import { Typography } from '../../constants/typography';
 import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useSpaces } from '../../lib/hooks/useSpaces';
-import { momentById, placeById } from '../../lib/together';
+import { momentById, libraryIdeaAsMoment, placeById } from '../../lib/together';
+import { ideaById } from '../../lib/discovery/ideaCatalog';
 import { experienceTags } from '../../lib/discovery/experience';
 import { feedbackRepository, savedDateRepository } from '../../lib/repositories';
 import { aggregateRatings, ratingsForMoment } from '../../lib/discovery/ratings';
@@ -32,7 +33,14 @@ export default function TogetherDetailScreen() {
   const placesEnabled = useAppStore((s) => s.features.localShops);
   const { t } = useLanguage();
   const { activeSpace } = useSpaces();
-  const moment = momentById(id);
+  // Curated pool first; any library idea (idea-*) resolves too, so links and
+  // taps from the browse library never dead-end (A3-18/24).
+  const moment = useMemo(() => {
+    const curated = momentById(id);
+    if (curated) return curated;
+    const idea = ideaById(id);
+    return idea ? libraryIdeaAsMoment(idea) : undefined;
+  }, [id]);
   const place = placesEnabled ? placeById(moment?.placeId) : undefined;
 
   const [summary, setSummary] = useState<RatingSummary | null>(null);

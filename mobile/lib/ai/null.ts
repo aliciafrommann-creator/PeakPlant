@@ -8,7 +8,7 @@
 import type { MomentCard } from '../types';
 import type { TogetherMoment } from '../together';
 import { pickTogetherMoment } from '../together';
-import { recommendDates } from '../discovery/recommend';
+import { dayVarietySeed, recommendDates } from '../discovery/recommend';
 import type { DateConstraints, DateRecommendation } from '../discovery/types';
 import type { IAIPersonalization, IDateDiscovery } from './interface';
 import type { AIContext, CardSuggestion, ReflectionPrompt, MomentSuggestion } from './types';
@@ -81,7 +81,9 @@ export const nullAI: IAIPersonalization = {
  */
 export const nullDiscovery: IDateDiscovery = {
   async recommend(constraints: DateConstraints): Promise<DateRecommendation[]> {
-    return recommendDates(constraints);
+    // Rotate the featured pick daily — same inputs shouldn't greet the couple
+    // with the identical idea every day.
+    return recommendDates(constraints, { varietySeed: dayVarietySeed() });
   },
   explain(rec: DateRecommendation) {
     return { signalsUsed: rec.signalsUsed, signalsNotUsed: rec.signalsNotUsed };

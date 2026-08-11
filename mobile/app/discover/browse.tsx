@@ -12,17 +12,16 @@ import {
   UIManager,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { BackButton } from '../../components/ui/BackButton';
+import { PressableScale } from '../../components/ui/PressableScale';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { savedDateRepository } from '../../lib/repositories';
-import { shareCalendarEvent } from '../../lib/calendarShare';
-import { ideaLink } from '../../lib/links';
 import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
 import {
   IDEA_CATALOG,
@@ -34,8 +33,16 @@ import {
   type IdeaFilter,
   type IdeaCategory,
 } from '../../lib/discovery/ideaCatalog';
-import type { TimeOfDay, Energy, PriceBand, IndoorOutdoor } from '../../lib/together';
+import { TOGETHER_MOMENTS } from '../../lib/together';
+import { CURATED_MOMENTS } from '../../lib/discovery/curatedMoments';
+import type { TimeOfDay, Energy, PriceBand, IndoorOutdoor, TogetherMoment } from '../../lib/together';
 import type { Season } from '../../lib/discovery/ideaCatalog';
+
+// The curated pool in the library's row shape. Season/tags are neutral — the
+// curated ideas are hand-written and season-agnostic.
+function curatedAsIdea(m: TogetherMoment): DateIdea {
+  return { ...m, category: m.category as DateIdea['category'], season: ['any'], tags: [] };
+}
 
 // LayoutAnimation needs an explicit opt-in on old-architecture Android.
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -78,8 +85,23 @@ export default function BrowseIdeasScreen() {
     [filter, query],
   );
 
-  const results = useMemo(() => filterIdeas(effectiveFilter), [effectiveFilter]);
   const count = activeFilterCount(effectiveFilter);
+
+  // Quality first: the default view is our hand-curated pool (~110 ideas that
+  // each sound like themselves). The full generated catalog (1200+) only opens
+  // when you search or filter — "alle Optionen, jede klingt gleich" was the
+  // exact anti-goal (Klarheit vor Vollständigkeit).
+  const curatedList = useMemo(() => {
+    const type = activeSpace?.type ?? 'couple';
+    return [...TOGETHER_MOMENTS, ...CURATED_MOMENTS]
+      .filter((m) => m.spaceTypes.includes(type))
+      .map(curatedAsIdea);
+  }, [activeSpace?.type]);
+  const results = useMemo(
+    () => (count > 0 ? filterIdeas(effectiveFilter) : curatedList),
+    [count, effectiveFilter, curatedList],
+  );
+  const browsingCurated = count === 0;
 
   const patch = useCallback((p: Partial<IdeaFilter>) => {
     void acknowledgeSelection();
@@ -130,19 +152,52 @@ export default function BrowseIdeasScreen() {
     [activeSpace, t],
   );
 
-  const addToCalendar = useCallback(
+  // "planen" creates a REAL plan (saved date → plan flow). It used to only
+  // export an ICS file, so nothing ever appeared under "gemerkte Pläne" and
+  // the loop never started from the library (audit A3-17).
+  const planIdea = useCallback(
     async (idea: DateIdea) => {
       void acknowledgeSelection();
+      if (!activeSpace) {
+        Alert.alert(
+          t('Create a space first', 'Erstelle zuerst einen Space'),
+          t(
+            'Plans need a shared space so they can become moments later.',
+            'Pläne brauchen einen gemeinsamen Space, damit daraus später Momente werden.',
+          ),
+          [
+            { text: t('not now', 'nicht jetzt'), style: 'cancel' },
+            { text: t('START A SPACE', 'SPACE STARTEN'), onPress: () => router.push('/space/new') },
+          ],
+        );
+        return;
+      }
       try {
-        await shareCalendarEvent({ title: idea.title, link: ideaLink(idea.id) });
+        const existing = savedIds.has(idea.id);
+        const all = existing ? await savedDateRepository.getAll(activeSpace.id) : [];
+        const match = all.find((s) => s.momentId === idea.id && s.status !== 'dismissed');
+        const date =
+          match ??
+          (await savedDateRepository.save({
+            spaceId: activeSpace.id,
+            momentId: idea.id,
+            title: idea.title,
+            concept: idea.idea,
+            priceBand: idea.priceBand,
+            estDurationMin: idea.avgDurationMin,
+            status: 'saved',
+          }));
+        setSavedIds((prev) => new Set(prev).add(idea.id));
+        void confirmSuccess();
+        router.push({ pathname: '/discover/saved', params: { plan: date.id } });
       } catch {
         Alert.alert(
-          t('Could not open calendar', 'Kalender konnte nicht geöffnet werden'),
-          t('Please try again in a moment.', 'Bitte versuche es gleich noch einmal.'),
+          t('Could not plan this idea', 'Die Idee konnte nicht geplant werden'),
+          t('Please try again in a moment.', 'Versuch es gleich nochmal.'),
         );
       }
     },
-    [t],
+    [activeSpace, savedIds, t],
   );
 
   const renderItem = useCallback(
@@ -154,10 +209,11 @@ export default function BrowseIdeasScreen() {
         completed={completedIds.has(item.id)}
         onSave={() => void saveIdea(item, false)}
         onComplete={() => void saveIdea(item, true)}
-        onCalendar={() => void addToCalendar(item)}
+        onCalendar={() => void planIdea(item)}
+        onOpen={() => router.push(`/together/${item.id}`)}
       />
     ),
-    [t, savedIds, completedIds, saveIdea, addToCalendar],
+    [t, savedIds, completedIds, saveIdea, planIdea],
   );
 
   return (
@@ -181,17 +237,22 @@ export default function BrowseIdeasScreen() {
           <View style={styles.headerBlock}>
             <Text style={styles.bigTitle}>{t('the idea library', 'die Ideen-Bibliothek')}</Text>
             <Text style={styles.lead}>
-              {t(
-                `${IDEA_CATALOG.length.toLocaleString()} real, doable ideas. filter, save, or plan one in.`,
-                `${IDEA_CATALOG.length.toLocaleString()} echte, machbare Ideen. filtern, merken oder einplanen.`,
-              )}
+              {browsingCurated
+                ? t(
+                    'our curated favourites — each one written by hand. search or filter to open the full library.',
+                    'unsere kuratierten Lieblinge — jede von Hand geschrieben. Suchen oder Filtern öffnet die ganze Bibliothek.',
+                  )
+                : t(
+                    `browsing the full library (${IDEA_CATALOG.length.toLocaleString()} ideas, in english). tap one to see it.`,
+                    `du stöberst in der ganzen Bibliothek (${IDEA_CATALOG.length.toLocaleString()} Ideen, auf Englisch). Tippen zum Ansehen.`,
+                  )}
             </Text>
 
             <View style={styles.searchRow}>
               <Ionicons name="search" size={16} color={Colors.textFaint} />
               <TextInput
                 style={styles.search}
-                placeholder={t('search ideas…', 'Ideen suchen…')}
+                placeholder={t('search ideas (english)…', 'Ideen suchen (englisch)…')}
                 placeholderTextColor={Colors.textFaint}
                 value={query}
                 onChangeText={setQuery}
@@ -237,7 +298,9 @@ export default function BrowseIdeasScreen() {
               )}
               <View style={{ flex: 1 }} />
               <Text style={styles.resultCount}>
-                {t(`${results.length} ideas`, `${results.length} Ideen`)}
+                {browsingCurated
+                  ? t(`${results.length} curated`, `${results.length} kuratiert`)
+                  : t(`${results.length} ideas`, `${results.length} Ideen`)}
               </Text>
             </View>
 
@@ -354,7 +417,7 @@ function Chip({ label, on, onPress }: { label: string; on: boolean; onPress: () 
 }
 
 function IdeaRow({
-  idea, t, saved, completed, onSave, onComplete, onCalendar,
+  idea, t, saved, completed, onSave, onComplete, onCalendar, onOpen,
 }: {
   idea: DateIdea;
   t: Lang;
@@ -363,12 +426,18 @@ function IdeaRow({
   onSave: () => void;
   onComplete: () => void;
   onCalendar: () => void;
+  onOpen: () => void;
 }) {
   const hours = idea.avgDurationMin >= 60
     ? `${Math.round((idea.avgDurationMin / 60) * 10) / 10}h`
     : `${idea.avgDurationMin}m`;
   return (
-    <View style={styles.card}>
+    <PressableScale
+      style={styles.card}
+      onPress={onOpen}
+      scaleTo={0.99}
+      accessibilityLabel={t(`See this idea: ${idea.title}`, `Diese Idee ansehen: ${idea.title}`)}
+    >
       <View style={styles.cardTop}>
         <Text style={styles.cardEmoji}>{CATEGORY_EMOJI[idea.category]}</Text>
         <View style={styles.cardBody}>
@@ -424,7 +493,7 @@ function IdeaRow({
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </PressableScale>
   );
 }
 
