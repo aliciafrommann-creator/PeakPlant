@@ -29,12 +29,15 @@ import { PressableScale } from '../../components/ui/PressableScale';
 import { Ionicons } from '@expo/vector-icons';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
-import { cardRepository } from '../../lib/repositories';
+import { cardRepository, savedDateRepository } from '../../lib/repositories';
 import { shareMemory } from '../../lib/share';
 import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
 import { Toast } from '../../components/ui/Toast';
 import { consumePendingReward } from '../../lib/pendingReward';
-import type { Memory } from '../../lib/types';
+import { discovery } from '../../lib/ai';
+import { momentById } from '../../lib/together';
+import type { DateRecommendation } from '../../lib/discovery/types';
+import type { Memory, SavedDate } from '../../lib/types';
 
 const TOGETHER = Sections.together;
 
@@ -68,6 +71,61 @@ export default function HomeScreen() {
   }, [challengeProgress?.complete, enrolled, acceptChallenge, weekly.id, weekly.title, t]);
   const { authenticate } = useBiometric();
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
+
+  // Time-based greeting — the home is "entering your shared world", not a
+  // dashboard (design north star: the reference home opens with a greeting).
+  const hour = new Date().getHours();
+  const greeting =
+    hour < 11
+      ? t('GOOD MORNING', 'GUTEN MORGEN')
+      : hour < 17
+        ? t('GOOD AFTERNOON', 'SCHÖNEN TAG')
+        : t('GOOD EVENING', 'GUTEN ABEND');
+  const timeOfDay: 'morning' | 'afternoon' | 'evening' =
+    hour < 11 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+
+  // Today's Moment — one editorial suggestion from the same daily-variety
+  // recommender Discover uses. One idea, not a menu.
+  const [todaysMoment, setTodaysMoment] = useState<DateRecommendation | null>(null);
+  useEffect(() => {
+    if (!activeSpace) {
+      setTodaysMoment(null);
+      return;
+    }
+    let alive = true;
+    discovery
+      .recommend({ spaceType: activeSpace.type, timeOfDay })
+      .then((r) => {
+        if (alive) setTodaysMoment(r[0] ?? null);
+      })
+      .catch(() => {
+        if (alive) setTodaysMoment(null);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [activeSpace, timeOfDay]);
+
+  // Saved dates feed YOUR STORY (dates/places) and the COMING UP card.
+  const [savedDates, setSavedDates] = useState<SavedDate[]>([]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!activeSpace) {
+        setSavedDates([]);
+        return;
+      }
+      let alive = true;
+      savedDateRepository
+        .getAll(activeSpace.id)
+        .then((all) => {
+          if (alive) setSavedDates(all);
+        })
+        .catch(() => {});
+      return () => {
+        alive = false;
+      };
+    }, [activeSpace]),
+  );
   const [pickerOpen, setPickerOpen] = useState(false);
   const [reward, setReward] = useState<string | null>(null);
 
@@ -137,10 +195,42 @@ export default function HomeScreen() {
     return memories.filter((m) => new Date(m.createdAt).getTime() >= weekAgo).length;
   }, [memories]);
 
-  const spaceLabel =
-    activeSpace?.type === 'couple'
-      ? t('COUPLE SPACE', 'PAAR-SPACE')
-      : t('FRIENDS SPACE', 'FREUNDE-SPACE');
+  // Warm tint per category for the hero card — colour communicates the idea's
+  // mood, never decoration (design north star §4).
+  const heroTint = useMemo(() => {
+    const category = todaysMoment ? momentById(todaysMoment.momentId)?.category : undefined;
+    switch (category) {
+      case 'food':
+        return { bg: '#3A2A22', bloom: Accents.ember };
+      case 'outdoors':
+        return { bg: '#33301F', bloom: Accents.sunflower };
+      case 'create':
+        return { bg: '#37232C', bloom: Accents.blossom };
+      case 'play':
+        return { bg: '#3A2E20', bloom: Accents.apricot };
+      default:
+        return { bg: '#2A2D24', bloom: Accents.sage };
+    }
+  }, [todaysMoment]);
+
+  // YOUR STORY — honest numbers only: every figure is counted from real data.
+  const datesDone = useMemo(
+    () => savedDates.filter((d) => d.status === 'completed').length,
+    [savedDates],
+  );
+  const placesCount = useMemo(
+    () => new Set(savedDates.filter((d) => d.placeName).map((d) => d.placeName)).size,
+    [savedDates],
+  );
+  const nextPlanned = useMemo(() => {
+    const planned = savedDates.filter((d) => d.status === 'planned');
+    return planned.sort((a, b) => {
+      const ta = a.plannedFor ? new Date(a.plannedFor).getTime() : Infinity;
+      const tb = b.plannedFor ? new Date(b.plannedFor).getTime() : Infinity;
+      return ta - tb;
+    })[0];
+  }, [savedDates]);
+
 
   // One lookup map instead of a SEED_CARDS.find per row per render, and a
   // stable renderItem so FlatList can skip re-rendering unchanged rows.
@@ -185,7 +275,7 @@ export default function HomeScreen() {
           <View style={styles.headerText}>
             <View style={styles.kickerRow}>
               <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
-              <Text style={styles.kicker}>{spaceLabel}</Text>
+              <Text style={styles.kicker}>{greeting}</Text>
             </View>
             <View style={styles.nameRow}>
               <Text style={styles.spaceName} numberOfLines={1}>
@@ -226,6 +316,44 @@ export default function HomeScreen() {
         }
         ListHeaderComponent={
           <>
+            {/* TODAY'S MOMENT — one editorial suggestion, the door into the
+                loop. One idea, generous type, one arrow (design north star). */}
+            {activeSpace && todaysMoment && (
+              <PressableScale
+                style={[styles.heroCard, { backgroundColor: heroTint.bg }]}
+                onPress={() => router.push(`/together/${todaysMoment.momentId}`)}
+                scaleTo={0.985}
+                accessibilityLabel={t(
+                  `Today's moment: ${todaysMoment.title}`,
+                  `Moment des Tages: ${todaysMoment.title}`,
+                )}
+              >
+                <View style={[styles.heroBloom, { backgroundColor: heroTint.bloom }]} />
+                <Text style={styles.heroKicker}>☀ {t("TODAY'S MOMENT", 'MOMENT DES TAGES')}</Text>
+                <Text style={styles.heroTitle} numberOfLines={3}>
+                  {todaysMoment.title}
+                </Text>
+                <View style={styles.heroMetaRow}>
+                  <View style={styles.heroPill}>
+                    <Text style={styles.heroPillText}>
+                      {todaysMoment.priceBand === 'free' ? t('FREE', 'GRATIS') : todaysMoment.priceBand}
+                    </Text>
+                  </View>
+                  <View style={styles.heroPill}>
+                    <Text style={styles.heroPillText}>
+                      ◷ {todaysMoment.estDurationMin >= 60
+                        ? `${Math.round((todaysMoment.estDurationMin / 60) * 10) / 10} h`
+                        : `${todaysMoment.estDurationMin} min`}
+                    </Text>
+                  </View>
+                  <View style={styles.heroSpacer} />
+                  <View style={styles.heroArrow}>
+                    <Ionicons name="arrow-forward" size={18} color={Colors.text} />
+                  </View>
+                </View>
+              </PressableScale>
+            )}
+
             {/* Hub — the couple space is where everything starts: this week's
                 challenge, a fitted idea, your saved plans. */}
             {activeSpace && (
@@ -327,24 +455,73 @@ export default function HomeScreen() {
             )}
 
             {/* Heartbeat stats — visible once there's content */}
+            {/* YOUR STORY — poetic, honest numbers, all counted from real data
+                (moments kept, dates completed, distinct places, cards kept). */}
             {memories.length > 0 && (
               <View style={styles.heartbeat}>
-                <View style={styles.heartbeatStat}>
-                  <Text style={styles.heartbeatNum}>{memories.length}</Text>
-                  <Text style={styles.heartbeatLabel}>{t('MOMENTS', 'MOMENTE')}</Text>
+                <Text style={styles.storyLabel}>{t('YOUR STORY', 'EURE GESCHICHTE')}</Text>
+                <View style={styles.storyRow}>
+                  <View style={styles.heartbeatStat}>
+                    <Text style={styles.heartbeatNum}>{memories.length}</Text>
+                    <Text style={styles.heartbeatLabel}>{t('MOMENTS', 'MOMENTE')}</Text>
+                  </View>
+                  {datesDone > 0 && (
+                    <>
+                      <View style={styles.heartbeatDiv} />
+                      <View style={styles.heartbeatStat}>
+                        <Text style={styles.heartbeatNum}>{datesDone}</Text>
+                        <Text style={styles.heartbeatLabel}>{t('DATES', 'DATES')}</Text>
+                      </View>
+                    </>
+                  )}
+                  {placesCount > 0 && (
+                    <>
+                      <View style={styles.heartbeatDiv} />
+                      <View style={styles.heartbeatStat}>
+                        <Text style={styles.heartbeatNum}>{placesCount}</Text>
+                        <Text style={styles.heartbeatLabel}>{t('PLACES', 'ORTE')}</Text>
+                      </View>
+                    </>
+                  )}
+                  {totalCards > 0 && (
+                    <>
+                      <View style={styles.heartbeatDiv} />
+                      <View style={styles.heartbeatStat}>
+                        <Text style={styles.heartbeatNum}>{totalCards}</Text>
+                        <Text style={styles.heartbeatLabel}>{t('CARDS', 'KARTEN')}</Text>
+                      </View>
+                    </>
+                  )}
                 </View>
-                {totalCards > 0 && (
-                  <>
-                    <View style={styles.heartbeatDiv} />
-                    <View style={styles.heartbeatStat}>
-                      <Text style={styles.heartbeatNum}>{totalCards}</Text>
-                      <Text style={styles.heartbeatLabel}>{t('CARDS', 'KARTEN')}</Text>
-                    </View>
-                  </>
-                )}
                 <View style={styles.heartbeatFill} />
                 <Text style={styles.heartbeatGlyph}>♥</Text>
               </View>
+            )}
+
+            {/* COMING UP — the next planned date, so anticipation lives on Home. */}
+            {nextPlanned && (
+              <PressableScale
+                style={styles.comingCard}
+                onPress={() => router.push({ pathname: '/discover/saved', params: { plan: nextPlanned.id } })}
+                scaleTo={0.985}
+                accessibilityLabel={t(
+                  `Coming up: ${nextPlanned.title}`,
+                  `Bald bei euch: ${nextPlanned.title}`,
+                )}
+              >
+                <Text style={styles.comingKicker}>{t('COMING UP', 'BALD BEI EUCH')}</Text>
+                <Text style={styles.comingTitle} numberOfLines={2}>{nextPlanned.title}</Text>
+                <Text style={styles.comingMeta}>
+                  {nextPlanned.plannedFor
+                    ? new Date(nextPlanned.plannedFor).toLocaleDateString(t('en-US', 'de-DE'), {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                      })
+                    : t('no date yet — tap to plan it in', 'noch kein Datum — tippen zum Einplanen')}
+                  {nextPlanned.placeName ? ` · 📍 ${nextPlanned.placeName}` : ''}
+                </Text>
+              </PressableScale>
             )}
 
             {/* Memory filmstrip — a little album of your latest moments */}
@@ -598,14 +775,107 @@ const styles = StyleSheet.create({
 
   // Heartbeat strip
   heartbeat: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xl,
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
+  },
+  storyLabel: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 2.5,
+    color: Colors.textSubtle,
+    marginBottom: Spacing.sm,
+  },
+  storyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xl,
+  },
+  heroCard: {
+    marginHorizontal: Spacing.screen,
+    marginTop: Spacing.md,
+    borderRadius: 22,
+    padding: Spacing.lg,
+    overflow: 'hidden',
+    gap: Spacing.sm,
+  },
+  heroBloom: {
+    position: 'absolute',
+    right: -70,
+    top: -70,
+    width: 190,
+    height: 190,
+    borderRadius: 95,
+    opacity: 0.32,
+  },
+  heroKicker: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 2.5,
+    color: 'rgba(250,247,240,0.75)',
+  },
+  heroTitle: {
+    ...Typography.display,
+    fontSize: 30,
+    lineHeight: 36,
+    color: '#FAF7F0',
+    maxWidth: '92%',
+  },
+  heroMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    marginTop: Spacing.xs,
+  },
+  heroPill: {
+    borderWidth: 1,
+    borderColor: 'rgba(250,247,240,0.35)',
+    borderRadius: Radii.pill,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+  },
+  heroPillText: {
+    fontSize: 10,
+    fontWeight: '500',
+    letterSpacing: 1.5,
+    color: 'rgba(250,247,240,0.85)',
+  },
+  heroSpacer: { flex: 1 },
+  heroArrow: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: '#FAF7F0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  comingCard: {
+    marginHorizontal: Spacing.screen,
+    marginTop: Spacing.md,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.surface,
+    padding: Spacing.md,
+    gap: 4,
+  },
+  comingKicker: {
+    fontSize: 9,
+    fontWeight: '500',
+    letterSpacing: 2.2,
+    color: Accents.chili,
+  },
+  comingTitle: {
+    ...Typography.editorial,
+    fontSize: 19,
+    lineHeight: 24,
+  },
+  comingMeta: {
+    fontSize: 12,
+    fontWeight: '300',
+    color: Colors.textMuted,
   },
   heartbeatStat: { alignItems: 'center' },
   heartbeatNum: {
