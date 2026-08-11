@@ -73,12 +73,15 @@ Tabs: `home` (Together), `discover`, `editions`, `community` (Places), `profile`
 
 - Tokens: `constants/colors.ts` (`Colors`, `Accents`, `Sections`),
   `constants/spacing.ts` (`Spacing`, `Radii`, `Shadows`, `Opacity`),
-  `constants/typography.ts` (`Typography.editorial`/`display` = light
-  Helvetica Neue / system sans, weight 300 — same voice as the website).
+  `constants/typography.ts` (`Typography.editorial`/`display` = geometric
+  modern-clean: Futura on iOS, system sans on Android, weight 500, slightly
+  tracked-out — same voice as the website; Jost is the free bundle option
+  for Android parity).
 - Base is warm-stone paper (`#F3F1EC`); primary accent is sun-faded chili
   (`#CF4B2C`). One dominant accent per section, never a rainbow.
-- CTAs use `Radii.pill`. Titles / idea / memory names use the light editorial
-  sans (`Typography.editorial`) — never a serif, never bold shouting.
+- CTAs use `Radii.pill`. Titles / idea / memory names use the geometric
+  editorial sans (`Typography.editorial`, Futura-style with a little air) —
+  never a serif, never bold shouting.
 - **Interaction primitives (use them, don't reinvent):** `PressableScale`
   (spring + dim + haptic — the default tap), `FadeInImage` (photos),
   `AnimatedFill` (progress bars), `Skeleton`/`*Skeleton` (loading), `Toast`
