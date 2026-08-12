@@ -232,6 +232,11 @@ export default function HomeScreen() {
   }, [savedDates]);
 
 
+  // Home shows the three most recent moments as a warm preview — the full
+  // album lives in the MOMENTS tab (target IA), so Home stays "what is
+  // happening in our relationship right now" instead of an endless feed.
+  const feedPreview = useMemo(() => recentMemories.slice(0, 3), [recentMemories]);
+
   // One lookup map instead of a SEED_CARDS.find per row per render, and a
   // stable renderItem so FlatList can skip re-rendering unchanged rows.
   const cardById = useMemo(() => new Map(SEED_CARDS.map((c) => [c.id, c])), []);
@@ -285,6 +290,19 @@ export default function HomeScreen() {
             </View>
           </View>
         </TouchableOpacity>
+
+        {/* Trust & control live one quiet tap away — "Me" is no longer a tab
+            (target IA: HOME · MOMENTS · DISCOVER · STORY · COLLECTION). */}
+        <TouchableOpacity
+          style={styles.headerMe}
+          onPress={() => { void acknowledgeSelection(); router.push('/(tabs)/profile'); }}
+          activeOpacity={0.7}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityRole="button"
+          accessibilityLabel={t('You and your settings', 'Du und deine Einstellungen')}
+        >
+          <Ionicons name="person-circle-outline" size={26} color={Colors.textMuted} />
+        </TouchableOpacity>
       </View>
 
       <SpacePicker
@@ -299,7 +317,7 @@ export default function HomeScreen() {
       />
 
       <FlatList
-        data={recentMemories}
+        data={feedPreview}
         keyExtractor={(item) => item.id}
         renderItem={renderMemory}
         initialNumToRender={6}
@@ -699,6 +717,24 @@ export default function HomeScreen() {
             )}
           </>
         }
+        ListFooterComponent={
+          // Home is the preview; the whole album lives in MOMENTS.
+          recentMemories.length > feedPreview.length ? (
+            <PressableScale
+              style={styles.allMomentsLink}
+              onPress={() => router.push('/(tabs)/moments')}
+              scaleTo={0.985}
+              accessibilityLabel={t('Open all your moments', 'Alle eure Momente öffnen')}
+            >
+              <Text style={styles.allMomentsText}>
+                {t(
+                  `READ ALL ${recentMemories.length} MOMENTS`,
+                  `ALLE ${recentMemories.length} MOMENTE LESEN`,
+                )}
+              </Text>
+            </PressableScale>
+          ) : null
+        }
       />
 
       {/* Hidden on the empty feed: the EmptyState's SCAN-CTA is then the one
@@ -729,6 +765,18 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
 
   // Header
+  headerMe: { paddingLeft: Spacing.sm, paddingBottom: 4 },
+  allMomentsLink: {
+    marginHorizontal: Spacing.screen,
+    marginTop: Spacing.sm,
+    height: 50,
+    borderRadius: Radii.pill,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  allMomentsText: { fontSize: 11, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

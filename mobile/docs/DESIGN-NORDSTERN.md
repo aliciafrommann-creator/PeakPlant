@@ -61,14 +61,17 @@ Ziel-Navigation aus dem Brief: **HOME · MOMENTS · DISCOVER · STORY · COLLECT
 
 | Ziel | Heute | Migrationsweg |
 |---|---|---|
-| HOME | home | ✅ Umbau läuft (Greeting, Today's Moment, Your Story, Coming Up) |
-| MOMENTS | Feed lebt in home | später eigener Tab: der editoriale Zwei-Personen-Feed |
-| DISCOVER | discover | ✅ bleibt; Places-Funktionen wandern perspektivisch hierher (finden) |
-| STORY | — | neu: Timeline · Karte · Kalender · poetische Stats (aus community-Map + Profil-Statistik) |
-| COLLECTION | editions | umbenennen + Karten-Grid (erledigt sichtbar, offene subtil) |
-| profile | profile | wird Header-Avatar → Einstellungen (kein eigener Tab im Zielbild) |
+| HOME | home | ✅ Greeting, Today's Moment, Your Story, Coming Up, 3er-Vorschau |
+| MOMENTS | ✅ eigener Tab | editorialer Zwei-Personen-Feed, nach Monaten gruppiert |
+| DISCOVER | discover | ✅ bleibt; Places über den 🗺️-Toggle |
+| STORY | ✅ neu | echte Zahlen + stille Beobachtungen (`lib/storyInsights.ts`) + Orte |
+| COLLECTION | editions | ✅ umbenannt; Karten-Grid folgt |
+| Places | community | ✅ aus der Leiste; erreichbar über den 🗺️-Toggle auf Discover |
+| Me | profile | ✅ aus der Leiste; erreichbar über das Personen-Icon im Home-Header |
 
-Nicht big-bang umbauen — Screen für Screen, jede Stufe grün verifiziert.
+**Die Ziel-Navigation steht (12.08.):** HOME · MOMENTS · DISCOVER · STORY ·
+COLLECTION. Offen: Karten-Grid in COLLECTION, Timeline/Kalender-Ansichten in
+STORY.
 
 ## Die 8 Kern-Screens (Reihenfolge der Umsetzung)
 
