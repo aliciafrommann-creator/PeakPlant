@@ -25,44 +25,68 @@ function makeUnsubToken(email: string): string {
   return createHmac('sha256', secret).update(email).digest('base64url')
 }
 
+// Alicia's own letter. Written by her, not assembled from product copy —
+// that is the point of it. Translated, not rewritten.
 const BODY_EN = (unsubUrl: string) => `∧ peakplant
 
-you're in.
-edition 01 drops in october 2026.
+Hi,
 
-while you wait — a first taste. edition 01 is the sunflower:
-warmth, growing together, giving each other light without taking the other's.
-twenty moment cards per edition — grow dates, small acts, growing questions. use one tonight.
+thank you so much for joining our community.
 
-01. “what makes you feel seen by me?”
-02. “when do you feel most alive with me?”
-03. “what helps you open up to me?”
+I'm Alicia, and for the past six months I've been building on the things I'm
+most passionate about. PeakPlant is one of them, because I firmly believe that
+loving — a partner, a friend, strangers, the world, ourselves, and so much
+more — makes life so much better. But it asks a lot of us. It asks that we
+look at ourselves and at each other. Sometimes that's exhausting. It's also
+wonderfully eye-opening, and intimate.
 
-the other seven growing questions unfold inside the box.
+How much love can a person feel in one lifetime? Sometimes it feels like my
+heart is bursting with it. Part of that is you, wanting to be part of
+PeakPlant.
 
-safe. soft. wild.
-∧ peakplant
+I hope you like what I'm making. Either way, what's in it is the belief in a
+world we share.
+
+Read my newsletters and journal entries if you like — and tell someone about
+them.
+
+See you soon, with more.
+Alicia
+
+edition 01 — the sunflower — ships october 2026.
+
+mind the moment. max the love.
 
 —
 unsubscribe: ${unsubUrl}`
 
 const BODY_DE = (unsubUrl: string) => `∧ peakplant
 
-du bist dabei.
-edition 01 startet im oktober 2026.
+Hi,
 
-für die zwischenzeit — ein vorgeschmack. edition 01 ist die sonnenblume:
-wärme, gemeinsames wachsen, einander licht geben, ohne dem anderen das eigene zu nehmen.
-zwanzig moment cards pro edition — grow dates, small acts, growing questions. nimm dir eine davon heute abend.
+vielen Dank, dass du dich zu unserer Community angemeldet hast.
 
-01. „was lässt dich von mir gesehen fühlen?”
-02. „wann fühlst du dich mit mir am lebendigsten?”
-03. „was hilft dir, dich mir zu öffnen?”
+Ich bin Alicia und baue seit einem halben Jahr an meinen Passion-Themen.
+PeakPlant gehört dazu, weil ich der festen Überzeugung bin, dass zu lieben —
+Partner*in, Freund*in, Fremde, die Welt, uns selbst und so vieles mehr — das
+Leben so viel besser macht. Aber es setzt ganz viele Faktoren voraus, die
+voraussetzen, dass wir uns mit uns selbst und miteinander auseinandersetzen.
+Manchmal anstrengend, aber wundervoll augenöffnend und intim.
 
-die übrigen sieben growing questions entfalten sich in der box.
+Wie viel Liebe kann man in einem Leben fühlen? Ich habe manchmal das Gefühl,
+mein Herz bricht aus vor Liebe. Auch, weil du Teil von PeakPlant sein magst.
 
-safe. soft. wild.
-∧ peakplant
+Ich hoffe, dir gefällt, was ich mache. Auf jeden Fall steckt die Überzeugung
+einer gemeinsamen Welt darin.
+
+Lies gerne meine Newsletter und Journals, wenn du magst, und erzähl davon.
+
+Bis bald mit mehr Informationen,
+Alicia
+
+edition 01 — die sonnenblume — erscheint im oktober 2026.
+
+mind the moment. max the love.
 
 —
 abmelden: ${unsubUrl}`

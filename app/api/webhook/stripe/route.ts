@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
   </div>
 
   <p style="font-size:12px;line-height:1.8;opacity:0.35;font-weight:300">
-    safe. soft. wild.<br>
+    mind the moment. max the love.<br>
     ∧ peakplant
   </p>
 </div>`,

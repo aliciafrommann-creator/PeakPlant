@@ -54,7 +54,7 @@ export default function CardPrintPage() {
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
             <p style={{ fontSize: '6.5pt', letterSpacing: '0.22em', textTransform: 'uppercase', opacity: 0.45 }}>edition 01</p>
-            <p style={{ fontSize: '6.5pt', letterSpacing: '0.12em', opacity: 0.45 }}>safe. soft. wild.</p>
+            <p style={{ fontSize: '6.5pt', letterSpacing: '0.12em', opacity: 0.45 }}>mind the moment. max the love.</p>
           </div>
         </div>
 
