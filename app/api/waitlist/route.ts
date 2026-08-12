@@ -25,8 +25,25 @@ function makeUnsubToken(email: string): string {
   return createHmac('sha256', secret).update(email).digest('base64url')
 }
 
-// Alicia's own letter. Written by her, not assembled from product copy —
-// that is the point of it. Translated, not rewritten.
+/**
+ * Alicia's own letter. Written by her, not assembled from product copy — that
+ * is the point of it.
+ *
+ * The letter names Instagram and the WhatsApp community, so it must carry the
+ * links: a letter that says "come join us" without a way in is worse than not
+ * mentioning it. Both are read from the environment, and the sentence is only
+ * included when the links actually exist.
+ */
+const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? ''
+const WHATSAPP_URL = process.env.NEXT_PUBLIC_WHATSAPP_URL ?? ''
+
+function communityLines(isDE: boolean): string {
+  const links = [
+    INSTAGRAM_URL && `Instagram: ${INSTAGRAM_URL}`,
+    WHATSAPP_URL && (isDE ? `WhatsApp-Community: ${WHATSAPP_URL}` : `WhatsApp community: ${WHATSAPP_URL}`),
+  ].filter(Boolean)
+  return links.length ? `\n${links.join('\n')}\n` : ''
+}
 const BODY_EN = (unsubUrl: string) => `∧ peakplant
 
 Hi,
@@ -52,16 +69,18 @@ I hope you’ll enjoy what I’m creating. At its heart is a simple belief: that
 we can create a more connected, loving world together — by paying attention to
 the moments that matter and making a little more room for love.
 
-If you’d like, follow along through my newsletters and journals, share them
-with someone you love, and tell me what you think.
+Mind the Moment.
+Max the Love.
 
+If you’d like, come along for a bit: read my newsletters and journals, follow
+PeakPlant on Instagram and join our WhatsApp community. And if any of it
+speaks to you, tell someone about it.
+${communityLines(false)}
 More from PeakPlant soon.
 
 Alicia
 
 edition 01 — the sunflower — ships october 2026.
-
-mind the moment. max the love.
 
 —
 unsubscribe: ${unsubUrl}`
@@ -70,38 +89,47 @@ const BODY_DE = (unsubUrl: string) => `∧ peakplant
 
 Hi,
 
-vielen Dank, dass du Teil unserer Community geworden bist.
+vielen Dank, dass du dich für unsere Community angemeldet hast.
 
-Ich bin Alicia, und seit einem halben Jahr baue ich rund um die Themen, für
-die ich wirklich brenne. PeakPlant ist eines davon.
+Ich bin Alicia und arbeite seit einem halben Jahr an den Themen, für die ich
+wirklich brenne. PeakPlant gehört dazu.
 
-Ich glaube fest daran, dass Lieben — Partner*in, Freund*in, Fremde, die Welt,
-uns selbst — das Leben so viel reicher machen kann. Aber Liebe verlangt auch
-etwas von uns. Sie verlangt, dass wir uns selbst ansehen, einander, und die
-Welt um uns herum. Das kann manchmal herausfordernd sein. Es kann aber auch
-wundervoll augenöffnend sein, intim und verändernd.
+Ich bin fest davon überzeugt, dass Lieben unser Leben unglaublich viel schöner
+machen kann. Einen Partner oder eine Partnerin zu lieben. Freund. Fremde
+Menschen. Die Welt. Und nicht zuletzt uns selbst.
 
-Wie viel Liebe passt in ein Leben? Manchmal habe ich das Gefühl, mein Herz
-könnte davon zerspringen.
+Aber Liebe passiert nicht einfach nebenbei. Sie braucht Aufmerksamkeit.
+Offenheit. Mut. Und manchmal auch die Bereitschaft, uns mit uns selbst und
+miteinander auseinanderzusetzen.
 
-Und ehrlich gesagt ist genau dieses Gefühl ein Teil davon, warum ich mich so
-freue, dass auch du Teil von PeakPlant sein willst.
+Das kann anstrengend sein. Aber gleichzeitig ist es eines der schönsten Dinge,
+die ich kenne: wundervoll augenöffnend, ehrlich und intim.
 
-Ich hoffe, dir gefällt, was ich hier schaffe. Im Kern steckt ein einfacher
-Glaube: dass wir gemeinsam eine verbundenere, liebevollere Welt schaffen
-können — indem wir den Momenten Aufmerksamkeit schenken, auf die es ankommt,
-und der Liebe ein bisschen mehr Raum geben.
+Manchmal frage ich mich, wie viel Liebe eigentlich in ein einziges Leben
+passt. Und manchmal habe ich das Gefühl, mein Herz könnte daran zerbrechen,
+weil so viel davon da ist.
 
-Wenn du magst, begleite mich durch meine Newsletter und Journals, teile sie
-mit jemandem, den du liebst, und erzähl mir, was du denkst.
+Vielleicht auch deshalb freue ich mich so sehr, dass du Teil von PeakPlant
+sein möchtest.
 
-Bald mehr von PeakPlant.
+Ich hoffe, dir gefällt, was ich hier erschaffe. Im Kern steckt eine ganz
+einfache Überzeugung: Dass wir unsere gemeinsame Welt ein kleines Stück
+liebevoller machen können, wenn wir bewusster wahrnehmen, was gerade da ist,
+und ein bisschen mehr Raum für Liebe schaffen.
+
+Mind the Moment.
+Max the Love.
+
+Wenn du magst, begleite mich ein Stück auf diesem Weg: Lies meine Newsletter
+und Journals, folge PeakPlant auf Instagram und komm in unsere
+WhatsApp-Community. Und wenn dir etwas davon gefällt, erzähl gerne jemandem
+davon.
+${communityLines(true)}
+Mehr von PeakPlant kommt ganz bald.
 
 Alicia
 
 edition 01 — die sonnenblume — erscheint im oktober 2026.
-
-mind the moment. max the love.
 
 —
 abmelden: ${unsubUrl}`

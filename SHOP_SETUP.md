@@ -172,3 +172,14 @@ Senden zeigt das Panel „✓ rechnung gesendet" mit Zeitstempel.
 - [ ] Kärtchen-Design (1 Karte, 6 Fragen) mit QR auf `https://peak-plant.com/01` finalisieren & drucken
 - [ ] Test-Bestellung im Stripe-Testmodus durchspielen (Karte `4242 4242 4242 4242`)
 - [ ] Entscheiden: Abo-Modell (27€ + 12,90€/mo) im Preorder-Jahr behalten oder pausieren?
+
+## Social-Links für die Willkommensmail
+
+Der Brief nennt Instagram und die WhatsApp-Community. Die Links kommen aus der
+Umgebung; fehlen sie, wird die Zeile mit den Links weggelassen (der Satz bleibt
+stehen). In Vercel setzen, Production und Preview:
+
+```
+NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/…
+NEXT_PUBLIC_WHATSAPP_URL=https://chat.whatsapp.com/…
+```
