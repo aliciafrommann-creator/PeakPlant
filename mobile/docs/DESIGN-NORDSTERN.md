@@ -42,12 +42,12 @@ Confetti-Gamification, SaaS-Dashboard.
 - **Farbe:** bestehende Tokens (`constants/colors.ts`) — warm stone Basis,
   Farbe kommuniziert Edition/Zustand/Stimmung, nie Dekoration. Hero-Karten:
   warme dunkle Tints + Kategorie-Bloom (siehe Home `heroTint`).
-- **Typografie — ENTSCHEIDUNG STEHT AUS:** Der Referenz-Mock nutzt eine
-  elegante Serif für Display. Alicia hat aber am 11.08. für Website UND App
-  ausdrücklich die **leichte Helvetica** gewählt („die schrift war vorher
-  besser"). Bis sie es anders entscheidet gilt: **leichte Sans bleibt**
-  (`Typography.display/editorial`, weight 300). Falls Serif zurückkommen soll:
-  ein Satz von ihr genügt, das Token ist zentral.
+- **Typografie — FINAL ENTSCHIEDEN (12.08., Alicia):** die **leichte
+  Helvetica Neue** (weight 300, eng gesetzt) ist die Markenstimme für App
+  UND Website — „die ursprüngliche schrift war besser". Ein Futura-Versuch
+  wurde am 12.08. auf ihren Wunsch revertiert; die Serif aus dem
+  Referenz-Mock war schon vorher raus. Diese Entscheidung nicht erneut
+  aufmachen, außer Alicia sagt es ausdrücklich.
 - **Fotografie:** echt, warm, unperfekt — Hände, Kochen, Spaziergänge, chaotische
   Tische. Nie Influencer-Paare. Die App hat (noch) keine Lifestyle-Assets:
   Momente zeigen die ECHTEN Fotos des Paars; Vorschlags-Karten nutzen bis dahin
