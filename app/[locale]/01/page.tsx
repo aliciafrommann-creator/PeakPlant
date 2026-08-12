@@ -123,7 +123,8 @@ function StayCloseForm({ isDE }: { isDE: boolean }) {
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: 'digital-world-01' }),
+        // locale matters: without it every German signup got the English mail.
+        body: JSON.stringify({ email, source: 'digital-world-01', locale: isDE ? 'de' : 'en' }),
       })
       const data = await res.json()
       if (data.duplicate) finalStatus = 'duplicate'

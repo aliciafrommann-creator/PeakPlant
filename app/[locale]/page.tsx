@@ -116,6 +116,9 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
 function Waitlist({ locale }: { locale: string }) {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle')
+  // Whether the welcome mail actually went out. We only promise an inbox when
+  // the server confirms it sent one.
+  const [mailed, setMailed] = useState(false)
   const isDE = locale === 'de'
 
   const submit = async (e: React.FormEvent) => {
@@ -126,7 +129,7 @@ function Waitlist({ locale }: { locale: string }) {
       const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, locale }) })
       const data = await res.json()
       if (data.duplicate) finalStatus = 'duplicate'
-      else if (res.ok) finalStatus = 'success'
+      else if (res.ok) { finalStatus = 'success'; setMailed(!!data.mailed) }
     } catch { finalStatus = 'error' }
     finally { setStatus(finalStatus) }
   }
@@ -146,7 +149,9 @@ function Waitlist({ locale }: { locale: string }) {
         {status === 'success' ? (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <p style={{ fontSize: 15, color: '#ffffff', opacity: 0.75, fontFamily: PP, fontWeight: 300, lineHeight: 1.7 }}>
-              {isDE ? 'gut. schau in dein postfach —\nwir haben dir einen vorgeschmack auf edition 01 gelassen.' : 'good. check your inbox —\nwe left you a first taste of edition 01.'}
+              {mailed
+                ? (isDE ? 'gut. schau in dein postfach —\nwir haben dir einen vorgeschmack auf edition 01 gelassen.' : 'good. check your inbox —\nwe left you a first taste of edition 01.')
+                : (isDE ? 'gut. du stehst auf der liste.\nwir melden uns, wenn edition 01 kommt.' : "good. you're on the list.\nwe'll reach out when edition 01 is ready.")}
             </p>
           </motion.div>
         ) : status === 'duplicate' ? (
@@ -363,32 +368,6 @@ function AppPeek({ locale, isMobile }: { locale: string; isMobile: boolean }) {
   )
 }
 
-function Testimonials({ locale, isMobile }: { locale: string; isMobile: boolean }) {
-  const isDE = locale === 'de'
-  const quotes = isDE ? [
-    { text: 'wir hatten seit jahren nicht mehr so geredet. nicht weil wir nicht wollten – wir wussten einfach nicht, wie wir anfangen sollten.', author: '— beta tester, stuttgart' },
-    { text: 'ich bin definitiv teil der hook-up-culture. aber echte intime momente sind einfach wunderschön. wir reden danach immer. jetzt können wir diese momente sammeln und festhalten. ich wusste nicht, dass uns das noch näher bringen kann.', author: '— beta tester, münchen' },
-  ] : [
-    { text: "we hadn't talked like that in years. not because we didn't want to — we just didn't know how to start.", author: '— beta tester, stuttgart' },
-    { text: "i'm definitely part of the hook-up culture. but moments of real intimacy are just beautiful. we always talk after. now we can collect these moments and remember them. i didn't know this could bring us even closer together.", author: '— beta tester, münchen' },
-  ]
-  return (
-    <section style={{ backgroundColor: '#FBFAF7', borderTop: '1px solid #ebebeb', padding: '8rem 2.5rem' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '5rem' }}>
-        {quotes.map((q, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: i * 0.15 }}
-            style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <span style={{ fontFamily: PP, fontSize: '1.4rem', color: '#CF4B2C', lineHeight: 1 }}>∧</span>
-            <p style={{ fontFamily: PP, fontSize: 'clamp(1rem, 1.8vw, 1.3rem)', fontWeight: 300, fontStyle: 'italic', lineHeight: 1.7, color: '#1A1A1A' }}>"{q.text}"</p>
-            <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.1em', color: '#1A1A1A', opacity: 0.4, fontWeight: 300 }}>{q.author}</p>
-          </motion.div>
-        ))}
-      </div>
-    </section>
-  )
-}
-
 function EditionCard01({ locale }: { locale: string }) {
   const [hovered, setHovered] = useState(false)
   const isDE = locale === 'de'
@@ -430,7 +409,9 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
         </motion.h2>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '4rem' }}>
           <EditionCard01 locale={locale} />
-          {(isDE ? ['edition 02 — herbst 2026', 'edition 03 — winter 2026'] : ['edition 02 — autumn 2026', 'edition 03 — winter 2026']).map((label, i) => (
+          {/* No dates on 02/03: edition 01 has not shipped yet, so a season
+              printed here is a promise we cannot keep — and it ages by itself. */}
+          {['edition 02', 'edition 03'].map((label, i) => (
             <motion.div key={label}
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.9, delay: (i + 1) * 0.1, ease: [0.16, 1, 0.3, 1] }}
@@ -449,8 +430,8 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }}
           style={{ fontSize: '0.95rem', color: '#ffffff', opacity: 0.45, lineHeight: 1.75, fontWeight: 300, maxWidth: 480, fontFamily: PP, whiteSpace: 'pre-line' }}>
           {isDE
-            ? 'jede edition eine pflanze, drei monate lang. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deines decks.\nneue edition: neue pflanze, neue karten, neue fragen, neue digitale welt.\nund mehr ist unterwegs: eine friends edition für freundeskreise und eine solo edition für die liebe zu dir selbst — weil beides genauso zählt. freundeskreise kann die app schon heute.'
-            : 'every edition is a plant, for three months. edition 01 is the sunflower — its seeds are pressed into the seed paper in your deck.\nnew edition: new plant, new cards, new questions, new digital world.\nand more is on the way: a friends edition for your circle and a solo edition for the love you give yourself — because both matter just as much. the app already holds circles of friends.'}
+            ? 'jede edition ist eine pflanze. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deines decks.\njede weitere edition bringt eine neue pflanze, neue karten, neue fragen.\ngeplant sind außerdem eine friends edition für freundeskreise und eine solo edition für die liebe zu dir selbst — weil beides genauso zählt. freundeskreise kann die app schon heute.'
+            : 'every edition is a plant. edition 01 is the sunflower — its seeds are pressed into the seed paper in your deck.\neach edition after it brings a new plant, new cards, new questions.\nalso planned: a friends edition for your circle and a solo edition for the love you give yourself — because both matter just as much. the app already holds circles of friends.'}
         </motion.p>
       </div>
     </section>
@@ -510,7 +491,6 @@ export default function Home({ params }: { params: { locale: string } }) {
       <CouplesHero locale={locale} />
       <Product locale={locale} isMobile={isMobile} />
       <LifestyleMoment />
-      <Testimonials locale={locale} isMobile={isMobile} />
       <SixQuestions locale={locale} />
       <CollectAndSurprise locale={locale} isMobile={isMobile} />
       <AppPeek locale={locale} isMobile={isMobile} />
