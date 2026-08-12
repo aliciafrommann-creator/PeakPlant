@@ -29,21 +29,16 @@ function makeUnsubToken(email: string): string {
  * Alicia's own letter. Written by her, not assembled from product copy — that
  * is the point of it.
  *
- * The letter names Instagram and the WhatsApp community, so it must carry the
- * links: a letter that says "come join us" without a way in is worse than not
- * mentioning it. Both are read from the environment, and the sentence is only
- * included when the links actually exist.
+ * Instagram only. The WhatsApp invite is deliberately not in here: a group
+ * link in a mail to every subscriber can be forwarded to anyone, so it lives
+ * behind the login instead (decision Alicia, 12.08.).
+ *
+ * Public brand address, so it belongs in the code rather than in an env var
+ * someone has to remember to set in two environments. The share tracking
+ * parameter from the app link is stripped — it identifies the sharing session
+ * and has no business in a mail to thousands of people.
  */
-const INSTAGRAM_URL = process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? ''
-const WHATSAPP_URL = process.env.NEXT_PUBLIC_WHATSAPP_URL ?? ''
-
-function communityLines(isDE: boolean): string {
-  const links = [
-    INSTAGRAM_URL && `Instagram: ${INSTAGRAM_URL}`,
-    WHATSAPP_URL && (isDE ? `WhatsApp-Community: ${WHATSAPP_URL}` : `WhatsApp community: ${WHATSAPP_URL}`),
-  ].filter(Boolean)
-  return links.length ? `\n${links.join('\n')}\n` : ''
-}
+const INSTAGRAM_URL = 'https://www.instagram.com/peak.plant'
 const BODY_EN = (unsubUrl: string) => `∧ peakplant
 
 Hi,
@@ -72,10 +67,12 @@ the moments that matter and making a little more room for love.
 Mind the Moment.
 Max the Love.
 
-If you’d like, come along for a bit: read my newsletters and journals, follow
-PeakPlant on Instagram and join our WhatsApp community. And if any of it
-speaks to you, tell someone about it.
-${communityLines(false)}
+If you’d like, come along for a bit: read my newsletters and journals and
+follow PeakPlant on Instagram. And if any of it speaks to you, tell someone
+about it.
+
+${INSTAGRAM_URL}
+
 More from PeakPlant soon.
 
 Alicia
@@ -121,10 +118,11 @@ Mind the Moment.
 Max the Love.
 
 Wenn du magst, begleite mich ein Stück auf diesem Weg: Lies meine Newsletter
-und Journals, folge PeakPlant auf Instagram und komm in unsere
-WhatsApp-Community. Und wenn dir etwas davon gefällt, erzähl gerne jemandem
-davon.
-${communityLines(true)}
+und Journals und folge PeakPlant auf Instagram. Und wenn dir etwas davon
+gefällt, erzähl gerne jemandem davon.
+
+${INSTAGRAM_URL}
+
 Mehr von PeakPlant kommt ganz bald.
 
 Alicia
