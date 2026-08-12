@@ -31,26 +31,32 @@ const BODY_EN = (unsubUrl: string) => `∧ peakplant
 
 Hi,
 
-thank you so much for joining our community.
+Thank you so much for joining our community.
 
-I'm Alicia, and for the past six months I've been building on the things I'm
-most passionate about. PeakPlant is one of them, because I firmly believe that
-loving — a partner, a friend, strangers, the world, ourselves, and so much
-more — makes life so much better. But it asks a lot of us. It asks that we
-look at ourselves and at each other. Sometimes that's exhausting. It's also
-wonderfully eye-opening, and intimate.
+I’m Alicia, and for the past six months I’ve been building around the things
+I’m deeply passionate about. PeakPlant is one of them.
 
-How much love can a person feel in one lifetime? Sometimes it feels like my
-heart is bursting with it. Part of that is you, wanting to be part of
-PeakPlant.
+I truly believe that loving — a partner, a friend, a stranger, the world,
+ourselves — can make life so much richer. But love also asks something of us.
+It asks us to look at ourselves, at each other, and at the world around us.
+Sometimes that can be challenging. But it can also be wonderfully eye-opening,
+intimate, and transformative.
 
-I hope you like what I'm making. Either way, what's in it is the belief in a
-world we share.
+How much love can one life hold? Sometimes I feel like my heart could burst
+from it.
 
-Read my newsletters and journal entries if you like — and tell someone about
-them.
+And honestly, that feeling is part of why I’m so happy that you want to be
+part of PeakPlant, too.
 
-See you soon, with more.
+I hope you’ll enjoy what I’m creating. At its heart is a simple belief: that
+we can create a more connected, loving world together — by paying attention to
+the moments that matter and making a little more room for love.
+
+If you’d like, follow along through my newsletters and journals, share them
+with someone you love, and tell me what you think.
+
+More from PeakPlant soon.
+
 Alicia
 
 edition 01 — the sunflower — ships october 2026.
@@ -64,24 +70,33 @@ const BODY_DE = (unsubUrl: string) => `∧ peakplant
 
 Hi,
 
-vielen Dank, dass du dich zu unserer Community angemeldet hast.
+vielen Dank, dass du Teil unserer Community geworden bist.
 
-Ich bin Alicia und baue seit einem halben Jahr an meinen Passion-Themen.
-PeakPlant gehört dazu, weil ich der festen Überzeugung bin, dass zu lieben —
-Partner*in, Freund*in, Fremde, die Welt, uns selbst und so vieles mehr — das
-Leben so viel besser macht. Aber es setzt ganz viele Faktoren voraus, die
-voraussetzen, dass wir uns mit uns selbst und miteinander auseinandersetzen.
-Manchmal anstrengend, aber wundervoll augenöffnend und intim.
+Ich bin Alicia, und seit einem halben Jahr baue ich rund um die Themen, für
+die ich wirklich brenne. PeakPlant ist eines davon.
 
-Wie viel Liebe kann man in einem Leben fühlen? Ich habe manchmal das Gefühl,
-mein Herz bricht aus vor Liebe. Auch, weil du Teil von PeakPlant sein magst.
+Ich glaube fest daran, dass Lieben — Partner*in, Freund*in, Fremde, die Welt,
+uns selbst — das Leben so viel reicher machen kann. Aber Liebe verlangt auch
+etwas von uns. Sie verlangt, dass wir uns selbst ansehen, einander, und die
+Welt um uns herum. Das kann manchmal herausfordernd sein. Es kann aber auch
+wundervoll augenöffnend sein, intim und verändernd.
 
-Ich hoffe, dir gefällt, was ich mache. Auf jeden Fall steckt die Überzeugung
-einer gemeinsamen Welt darin.
+Wie viel Liebe passt in ein Leben? Manchmal habe ich das Gefühl, mein Herz
+könnte davon zerspringen.
 
-Lies gerne meine Newsletter und Journals, wenn du magst, und erzähl davon.
+Und ehrlich gesagt ist genau dieses Gefühl ein Teil davon, warum ich mich so
+freue, dass auch du Teil von PeakPlant sein willst.
 
-Bis bald mit mehr Informationen,
+Ich hoffe, dir gefällt, was ich hier schaffe. Im Kern steckt ein einfacher
+Glaube: dass wir gemeinsam eine verbundenere, liebevollere Welt schaffen
+können — indem wir den Momenten Aufmerksamkeit schenken, auf die es ankommt,
+und der Liebe ein bisschen mehr Raum geben.
+
+Wenn du magst, begleite mich durch meine Newsletter und Journals, teile sie
+mit jemandem, den du liebst, und erzähl mir, was du denkst.
+
+Bald mehr von PeakPlant.
+
 Alicia
 
 edition 01 — die sonnenblume — erscheint im oktober 2026.
