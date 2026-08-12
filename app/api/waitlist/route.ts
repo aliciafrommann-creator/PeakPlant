@@ -39,6 +39,7 @@ function makeUnsubToken(email: string): string {
  * and has no business in a mail to thousands of people.
  */
 const INSTAGRAM_URL = 'https://www.instagram.com/peak.plant'
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peak-plant.com').replace(/\/$/, '')
 const BODY_EN = (unsubUrl: string) => `∧ peakplant
 
 Hi,
@@ -48,11 +49,12 @@ Thank you so much for joining our community.
 I’m Alicia, and for the past six months I’ve been building around the things
 I’m deeply passionate about. PeakPlant is one of them.
 
-I truly believe that loving — a partner, a friend, a stranger, the world,
-ourselves — can make life so much richer. But love also asks something of us.
-It asks us to look at ourselves, at each other, and at the world around us.
-Sometimes that can be challenging. But it can also be wonderfully eye-opening,
-intimate, and transformative.
+I truly believe that loving can make life so much richer. Loving a partner.
+A friend. A stranger. The world. And not least ourselves.
+
+But love also asks something of us. It asks us to look at ourselves, at each
+other, and at the world around us. Sometimes that can be challenging. But it
+can also be wonderfully eye-opening, intimate, and transformative.
 
 How much love can one life hold? Sometimes I feel like my heart could burst
 from it.
@@ -61,25 +63,26 @@ And honestly, that feeling is part of why I’m so happy that you want to be
 part of PeakPlant, too.
 
 I hope you’ll enjoy what I’m creating. At its heart is a simple belief: that
-we can create a more connected, loving world together — by paying attention to
+we can create a more connected, loving world together, by paying attention to
 the moments that matter and making a little more room for love.
 
 Mind the Moment.
 Max the Love.
 
-If you’d like, come along for a bit: read my newsletters and journals and
-follow PeakPlant on Instagram. And if any of it speaks to you, tell someone
-about it.
+If you’d like, come along for a bit. Read my journal, follow PeakPlant on
+Instagram, and if you want to try the app before anyone else, put your name
+down as a beta tester. And if any of it speaks to you, tell someone about it.
 
-${INSTAGRAM_URL}
+journal:   ${SITE}/journal
+instagram: ${INSTAGRAM_URL}
+beta:      ${SITE}/beta
 
 More from PeakPlant soon.
 
 Alicia
 
-edition 01 — the sunflower — ships october 2026.
+edition 01, the sunflower, ships october 2026.
 
-—
 unsubscribe: ${unsubUrl}`
 
 const BODY_DE = (unsubUrl: string) => `∧ peakplant
@@ -117,19 +120,21 @@ und ein bisschen mehr Raum für Liebe schaffen.
 Mind the Moment.
 Max the Love.
 
-Wenn du magst, begleite mich ein Stück auf diesem Weg: Lies meine Newsletter
-und Journals und folge PeakPlant auf Instagram. Und wenn dir etwas davon
-gefällt, erzähl gerne jemandem davon.
+Wenn du magst, begleite mich ein Stück auf diesem Weg. Lies mein Journal,
+folge PeakPlant auf Instagram, und wenn du die App vor allen anderen
+ausprobieren willst, trag dich als Beta-Testerin ein. Und wenn dir etwas
+davon gefällt, erzähl gerne jemandem davon.
 
-${INSTAGRAM_URL}
+journal:   ${SITE}/journal
+instagram: ${INSTAGRAM_URL}
+beta:      ${SITE}/beta
 
 Mehr von PeakPlant kommt ganz bald.
 
 Alicia
 
-edition 01 — die sonnenblume — erscheint im oktober 2026.
+edition 01, die sonnenblume, erscheint im oktober 2026.
 
-—
 abmelden: ${unsubUrl}`
 
 function supabaseHeaders(key: string) {

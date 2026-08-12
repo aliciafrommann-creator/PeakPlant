@@ -59,7 +59,7 @@ export default function AboutPage({ params }: { params: { locale: string } }) {
         </motion.p>
       </section>
 
-      <section style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2.5rem 7rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '7rem', alignItems: 'start', borderTop: '1px solid #e8e8e8' }}>
+      <section className="pp-stack" style={{ maxWidth: 1100, margin: '0 auto', padding: '0 2.5rem 7rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '7rem', alignItems: 'start', borderTop: '1px solid #e8e8e8' }}>
         <motion.div
           initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }} whileInView={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }} viewport={{ once: true }}
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
