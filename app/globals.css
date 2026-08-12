@@ -276,11 +276,17 @@ body {
    it stacks. Font size stays at 16px: anything smaller makes iOS Safari zoom
    in on focus and the visitor is left on a sideways-scrolled page. */
 
+/* One shape, not two. The button used to be a pill sitting inside a thin
+   rectangle, so it bulged out at both ends and read as an accident. The whole
+   row is the pill now; the button is squared off and the wrapper clips it. */
 .pp-waitlist {
   display: flex;
+  align-items: stretch;
   width: 100%;
   max-width: 460px;
   border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
 .pp-waitlist input,
@@ -291,7 +297,7 @@ body {
 .pp-waitlist input {
   flex: 1;
   min-width: 0;
-  padding: 16px 22px;
+  padding: 17px 26px;
   background: transparent;
   border: 0;
   outline: none;
@@ -305,16 +311,22 @@ body {
 }
 
 .pp-waitlist button {
-  padding: 16px 26px;
+  padding: 0 30px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 0;
   background: #ffffff;
   color: #1a1a1a;
   font-size: 11px;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.pp-waitlist button:hover {
+  opacity: 0.85;
 }
 
 @media (max-width: 640px) {
@@ -322,6 +334,8 @@ body {
     flex-direction: column;
     gap: 0.65rem;
     border: 0;
+    border-radius: 0;
+    overflow: visible;
   }
   .pp-waitlist input {
     border: 1px solid rgba(255, 255, 255, 0.22);
@@ -330,9 +344,10 @@ body {
     text-align: center;
   }
   .pp-waitlist button {
+    border-radius: 999px;
     padding: 17px 22px;
     font-size: 12px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
   }
 }
 
@@ -367,6 +382,110 @@ body {
 @keyframes pp-rise {
   from { transform: translateY(100%); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+/* --- Column grids that never collapsed ------------------------------------
+   Three, four, sometimes two fixed columns on a 390px screen leave roughly
+   90px per column: body copy broke into one or two words per line, and the
+   outer columns were cut off entirely. These stack instead. */
+
+@media (max-width: 860px) {
+  .pp-stack {
+    grid-template-columns: 1fr !important;
+    gap: 2.75rem !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+  /* A sticky column inside a stacked grid pins itself over the text below. */
+  .pp-stack > * {
+    position: static !important;
+    top: auto !important;
+  }
+}
+
+/* --- Hover-only content on touch screens ----------------------------------
+   The four intimacy panels hid their entire argument behind :hover. A phone
+   has no hover, so the page showed four grey photographs and no words at all.
+   !important is required: framer-motion animates through inline styles. */
+
+@media (hover: none) {
+  .pp-quad-scrim {
+    opacity: 0.55 !important;
+  }
+  .pp-quad-text {
+    opacity: 1 !important;
+  }
+  .pp-quad-title,
+  .pp-quad-body {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 860px) {
+  /* One panel per row: two columns of a full-bleed photograph leave about
+     140px for a headline and a paragraph. */
+  .pp-quad-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
+  }
+  .pp-quad {
+    min-height: 58vw;
+  }
+  .pp-quad-text {
+    padding: 2rem 1.5rem !important;
+  }
+  .pp-quad-title {
+    font-size: 1.35rem !important;
+  }
+  .pp-quad-body {
+    font-size: 0.95rem !important;
+    max-width: 30rem !important;
+  }
+}
+
+/* --- Journal index --------------------------------------------------------- */
+
+.pp-journal-head {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 11rem 2.5rem 4rem;
+}
+
+.pp-journal-list {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2.5rem 8rem;
+  display: grid;
+  gap: 0;
+}
+
+.pp-journal-item {
+  display: block;
+  padding: 3rem 0;
+  border-top: 1px solid #ece7dd;
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.pp-journal-item:last-child {
+  border-bottom: 1px solid #ece7dd;
+}
+
+.pp-journal-item:hover {
+  opacity: 0.72;
+}
+
+@media (max-width: 860px) {
+  .pp-journal-head {
+    padding: 7.5rem 1.5rem 2.5rem;
+  }
+  .pp-journal-list {
+    padding: 0 1.5rem 5rem;
+  }
+  .pp-journal-item {
+    padding: 2.25rem 0;
+  }
 }
 
 /* --- Footer ---------------------------------------------------------------

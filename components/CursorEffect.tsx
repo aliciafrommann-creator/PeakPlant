@@ -21,16 +21,30 @@ function getBgLuminance(x: number, y: number): 'dark' | 'light' {
   return 'light'
 }
 
+/**
+ * The custom cursor — a small ∧ that follows the mouse.
+ *
+ * It must not run on a touch screen. There is no cursor to replace there, and
+ * the mark simply stays wherever the last tap landed: a stray arrow parked on
+ * top of a photograph or a button. It also costs a luminance sample of the
+ * page on every pointer move, which is pure waste on a phone.
+ */
 export function CursorEffect() {
   const mx = useMotionValue(-100)
   const my = useMotionValue(-100)
   const [hovered, setHovered] = useState(false)
   const [onDark, setOnDark] = useState(false)
+  const [hasPointer, setHasPointer] = useState(false)
 
   const x = useSpring(mx, { stiffness: 500, damping: 38 })
   const y = useSpring(my, { stiffness: 500, damping: 38 })
 
   useEffect(() => {
+    setHasPointer(window.matchMedia('(hover: hover) and (pointer: fine)').matches)
+  }, [])
+
+  useEffect(() => {
+    if (!hasPointer) return
     const move = (e: MouseEvent) => {
       mx.set(e.clientX)
       my.set(e.clientY)
@@ -46,7 +60,9 @@ export function CursorEffect() {
       window.removeEventListener('mousemove', move)
       window.removeEventListener('mouseover', over)
     }
-  }, [mx, my])
+  }, [mx, my, hasPointer])
+
+  if (!hasPointer) return null
 
   const color = onDark ? '#ffffff' : '#1A1A1A'
   const size = hovered ? 26 : 16

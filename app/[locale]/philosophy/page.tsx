@@ -204,7 +204,7 @@ export default function PhilosophyPage({ params }: { params: { locale: string } 
           style={{ fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '4rem', fontFamily: PP }}>
           {isDE ? 'drei forscher. ein ergebnis.' : 'three researchers. one finding.'}
         </motion.h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4rem' }}>
+        <div className="pp-stack" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4rem' }}>
           {researchers.map((r, i) => (
             <motion.div key={r.name} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.9, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}

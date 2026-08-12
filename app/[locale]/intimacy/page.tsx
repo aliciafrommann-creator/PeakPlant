@@ -17,20 +17,29 @@ function ParallaxImage({ src, alt }: { src: string; alt: string }) {
   )
 }
 
+/**
+ * One of the four panels. The text is revealed on hover — which means that on
+ * a touch screen it was never revealed at all: four grey photographs and not
+ * one word of the argument they illustrate.
+ *
+ * `@media (hover: none)` in globals.css forces the copy visible on anything
+ * without a mouse. It needs !important because framer-motion writes its
+ * animated values into the inline style attribute.
+ */
 function QuadPanel({ bgPosition, title, body }: { bgPosition: string; title: string; body: string }) {
   const [hovered, setHovered] = useState(false)
   return (
-    <div onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
+    <div className="pp-quad" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
       style={{ position: 'relative', overflow: 'hidden', cursor: 'default', backgroundImage: 'url(/couples-bw.jpg)', backgroundSize: '200% 200%', backgroundPosition: bgPosition, filter: 'grayscale(1)' }}>
-      <motion.div animate={{ opacity: hovered ? 0.62 : 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      <motion.div className="pp-quad-scrim" animate={{ opacity: hovered ? 0.62 : 0 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         style={{ position: 'absolute', inset: 0, background: '#000', pointerEvents: 'none' }} />
-      <motion.div animate={{ opacity: hovered ? 1 : 0 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      <motion.div className="pp-quad-text" animate={{ opacity: hovered ? 1 : 0 }} transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '2.5rem', textAlign: 'center', pointerEvents: 'none' }}>
-        <motion.p animate={{ y: hovered ? 0 : 20 }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+        <motion.p className="pp-quad-title" animate={{ y: hovered ? 0 : 20 }} transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontSize: 'clamp(1rem, 1.6vw, 1.5rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.02em', lineHeight: 1.2, marginBottom: '1rem' }}>
           {title}
         </motion.p>
-        <motion.p animate={{ y: hovered ? 0 : 24 }} transition={{ duration: 0.5, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+        <motion.p className="pp-quad-body" animate={{ y: hovered ? 0 : 24 }} transition={{ duration: 0.5, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
           style={{ fontSize: 'clamp(0.75rem, 1vw, 0.9rem)', fontWeight: 300, color: 'rgba(255,255,255,0.75)', fontFamily: PP, lineHeight: 1.65, maxWidth: 280 }}>
           {body}
         </motion.p>
@@ -127,7 +136,7 @@ export default function IntimacyPage({ params }: { params: { locale: string } })
         </motion.p>
       </section>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '50vh 50vh' }}>
+      <div className="pp-quad-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '50vh 50vh' }}>
         {quadPanels.map((q, i) => <QuadPanel key={i} bgPosition={q.bgPosition} title={q.title} body={q.body} />)}
       </div>
     </div>
