@@ -1,31 +1,28 @@
 import { Platform } from 'react-native';
 
 /**
- * Editorial voice = geometric modern-clean, with a little air (Alicia,
- * 11.08.: "am liebsten futura oder so, mit etwas abstand und modern clean").
- * Futura ships with iOS (Medium is its lightest cut); Android falls back to
- * the system sans — no bundled asset, no licence risk. For pixel-identical
- * Android parity later: bundle Jost (free Futura-alike) via expo-font.
+ * Editorial voice = the website's light Helvetica: airy, tight-set, lowercase.
+ * Helvetica Neue ships with iOS; Android falls back to the system sans
+ * (Roboto Light via fontWeight) — no bundled font asset required.
  */
-const editorialSans = Platform.select({ ios: 'Futura', android: undefined, default: undefined });
+const editorialSans = Platform.select({ ios: 'Helvetica Neue', android: undefined, default: undefined });
 
 export const Typography = {
-  /** Big editorial moment — screen openings, onboarding statements.
-   *  Geometric, slightly tracked-out — never cramped. */
+  /** Big editorial moment — screen openings, onboarding statements. Light sans. */
   display: {
     fontFamily: editorialSans,
-    fontSize: 38,
-    fontWeight: '500' as const,
-    letterSpacing: 0.6,
+    fontSize: 40,
+    fontWeight: '300' as const,
+    letterSpacing: -0.8,
     color: '#1E1C1A',
-    lineHeight: 46,
+    lineHeight: 44,
   },
-  /** Editorial title — idea/memory titles, section openings. */
+  /** Editorial title — idea/memory titles, section openings. Light sans. */
   editorial: {
     fontFamily: editorialSans,
-    fontSize: 25,
-    fontWeight: '500' as const,
-    letterSpacing: 0.4,
+    fontSize: 26,
+    fontWeight: '300' as const,
+    letterSpacing: -0.4,
     color: '#1E1C1A',
     lineHeight: 32,
   },
