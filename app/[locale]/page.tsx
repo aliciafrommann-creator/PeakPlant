@@ -34,10 +34,11 @@ function CouplesHero({ locale }: { locale: string }) {
     // chrome, so a bottom-aligned hero puts its call to action underneath the
     // address bar — invisible until you scroll. svh is the visible height.
     <section className="pp-hero" style={{ overflow: 'hidden', position: 'relative', background: '#1E1C1A' }}>
-      {/* poster: what a phone on a slow connection sees before the film loads.
-          It has to be one photograph — couples-bw.jpg is a four-up contact
-          sheet and renders as a seamed grid at full-bleed. */}
-      <video autoPlay muted playsInline loop poster="/couples-rain.jpg"
+      {/* No poster image. The section background is already the dark stone the
+          film sits on, so nothing flashes while it loads — and any still we
+          have is a different shoot than the film, which reads as a stock photo
+          swapped in for a second. Better nothing than the wrong picture. */}
+      <video autoPlay muted playsInline loop
         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
         <source src="/film-intimacy.mp4" type="video/mp4" />
       </video>

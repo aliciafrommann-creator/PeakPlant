@@ -115,9 +115,8 @@ export default function ShopPage() {
 
       {/* Hero */}
       <section className="pp-hero" style={{ overflow: 'hidden', position: 'relative', background: '#1E1C1A' }}>
-        {/* poster: one photograph, not a contact sheet — see the note on the
-            home hero. This is what a slow phone connection shows first. */}
-        <video autoPlay muted playsInline loop poster="/couples-yosemite.png"
+        {/* No poster — see the note on the home hero. */}
+        <video autoPlay muted playsInline loop
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
           <source src="/film-wildness.mp4" type="video/mp4" />
         </video>
