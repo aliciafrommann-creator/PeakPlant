@@ -347,11 +347,11 @@ export default function ShopPage() {
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}>
             <p style={{ fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.25rem' }}>the surprise</p>
             <h2 style={{ fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem' }}>
-              twenty boxes hide more.
+              twenty decks hide more.
             </h2>
             <p style={{ fontSize: '0.95rem', color: '#555', fontWeight: 300, lineHeight: 1.8 }}>
-              twenty boxes per edition carry a special card. behind it: a free workshop, a little goodie,
-              or your next box on us. you&apos;ll know the moment you open it.
+              twenty decks per edition carry a special card. behind it: a free workshop, a little goodie,
+              or your next deck on us. you&apos;ll know the moment you draw it.
             </p>
           </motion.div>
         </div>
