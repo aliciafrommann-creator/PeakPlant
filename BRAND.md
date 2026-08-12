@@ -29,6 +29,13 @@ der Default; die Familie nur für Editionen/Status.
   der Kontrast entsteht über Größe + Gewicht, nie über einen Schriftwechsel.
 - **Labels**: UPPERCASE, 9–11px-Äquivalent, `letter-spacing 0.15–0.28em`.
 - Emotionale Copy ist **lowercase**; Deutsch natürlich & warm, echte Umlaute.
+- **Sonderstimme für spezielle Visuals (Entscheidung 12.08.):** NUR für
+  besondere Social-/Kampagnen-Visuals (Drops, Ankündigungen, einzelne
+  Hero-Kacheln) darf die Kombination **Playfair Display (Kursive) ×
+  Poppins (kräftig)** verwendet werden — wie im Referenz-Reel. Website und
+  App bleiben IMMER bei der Helvetica; die Sonderstimme taucht nie in
+  Produkt-UI oder auf der Website auf. Vorlage: `brand/ig-templates.html`
+  Kachel 07.
 
 ## Form & Motive
 
