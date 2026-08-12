@@ -107,8 +107,10 @@ const FOUNDER_DE = [
 
 type CommunityQuestion = { text: string; created_at: string }
 
+// Shared section eyebrow. Was 9.6px at 25% opacity on black — technically
+// present, practically invisible, and unreadable on a phone.
 const label = (isDE: boolean): React.CSSProperties => ({
-  fontSize: '0.6rem', letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.25, fontFamily: PP,
+  fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, fontFamily: PP,
 })
 
 function StayCloseForm({ isDE }: { isDE: boolean }) {
@@ -308,7 +310,7 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
             initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             transition={{ duration: 0.9, delay: li * 0.1, ease: [0.16, 1, 0.3, 1] }}
             style={{ marginBottom: li < letters.length - 1 ? 72 : 0 }}>
-            <p style={{ fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', opacity: 0.25, marginBottom: 16, fontFamily: PP }}>{letter.month}</p>
+            <p style={{ fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: 16, fontFamily: PP }}>{letter.month}</p>
             <h2 style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 200, letterSpacing: '-0.02em', marginBottom: 28, lineHeight: 1.3 }}>
               {letter.title}
             </h2>
