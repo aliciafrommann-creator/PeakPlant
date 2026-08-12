@@ -140,7 +140,6 @@ async function sendNewsletter(): Promise<NextResponse> {
     const subject = isDE ? `∧ peakplant — der monatsbrief` : `∧ peakplant — the monthly`
     try {
       await sendMail({
-        from: 'alicia@peak-plant.com',
         to: email,
         subject,
         html: buildHtml(email, isDE),

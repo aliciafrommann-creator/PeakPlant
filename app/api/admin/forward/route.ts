@@ -42,7 +42,6 @@ export async function POST(req: NextRequest) {
     : `Abo-Lieferung — ${qty} Stück`
 
   await sendMail({
-    from: 'peakplant <hello@peak-plant.com>',
     to: supplierEmail,
     subject: `Versandauftrag #${order.id.slice(0, 8).toUpperCase()} — peakplant`,
     html: `

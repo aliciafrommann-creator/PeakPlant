@@ -119,7 +119,6 @@ export async function POST(req: Request) {
     const token = makeUnsubToken(sanitized)
     const unsubUrl = `${siteUrl}/api/unsubscribe?email=${encodeURIComponent(sanitized)}&token=${encodeURIComponent(token)}`
     const mail = await sendMail({
-      from: 'alicia <alicia@peak-plant.com>',
       to: sanitized,
       subject: isDE ? 'du bist dabei.' : "you're in.",
       text: isDE ? BODY_DE(unsubUrl) : BODY_EN(unsubUrl),

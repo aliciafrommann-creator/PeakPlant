@@ -60,7 +60,6 @@ export async function POST(req: NextRequest) {
     if (mailProvider()) {
       await Promise.all([
         sendMail({
-          from: 'peakplant <hello@peak-plant.com>',
           to: sanitized,
           subject: 'your spot is reserved — pay whenever you\'re ready.',
           html: `
@@ -94,7 +93,6 @@ export async function POST(req: NextRequest) {
 </div>`,
         }),
         sendMail({
-          from: 'peakplant <hello@peak-plant.com>',
           to: ADMIN_EMAIL,
           subject: `reservierung (auf rechnung) — ${edition} · ${sanitized}`,
           html: `

@@ -84,7 +84,6 @@ export async function POST(req: NextRequest) {
     await Promise.all([
       // ── Kundenbestätigung ────────────────────────────────────────────
       email && sendMail({
-        from: 'peakplant <hello@peak-plant.com>',
         to: email,
         subject: 'your preorder is confirmed — and your sneak peek is inside.',
         html: `
@@ -140,7 +139,6 @@ export async function POST(req: NextRequest) {
 
       // ── Admin-Benachrichtigung ───────────────────────────────────────
       sendMail({
-        from: 'peakplant <hello@peak-plant.com>',
         to: ADMIN_EMAIL,
         subject: `neue bestellung — ${edition} · ${email}`,
         html: `

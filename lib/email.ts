@@ -17,7 +17,19 @@ import { Resend } from 'resend'
  * verified there via DNS or the provider rejects the message.
  */
 
-export const DEFAULT_FROM = 'peakplant <hello@peak-plant.com>'
+/**
+ * The one sender identity. Everything goes out as this — routes do not set
+ * their own `from` any more.
+ *
+ * Two reasons. Practically, a provider only sends from an address it knows,
+ * and this is the one registered in Brevo; a second address would be a second
+ * thing to keep verified. And for recipients, one consistent sender is easier
+ * to recognise than mail arriving from two different addresses.
+ *
+ * Replies land in this mailbox — it needs to exist, or at least forward
+ * somewhere real.
+ */
+export const DEFAULT_FROM = 'PeakPlant <alicia@peak-plant.com>'
 
 export type MailProvider = 'brevo' | 'resend'
 
