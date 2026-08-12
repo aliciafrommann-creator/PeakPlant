@@ -3,9 +3,13 @@ import type { NextRequest } from 'next/server'
 
 const LOCALES = ['en', 'de']
 // Global pages that live at root level (not locale-prefixed)
+// Global pages live at root level and must NOT be redirected into a locale
+// segment — there is no app/[locale]/shop, so a redirect there is a 404.
+// Anything added under app/ at root level belongs in this list.
 const SKIP = [
   '/impressum', '/datenschutz', '/app-datenschutz', '/agb', '/api', '/_next', '/favicon', '/sitemap', '/robots',
   '/shop', '/journal', '/unsubscribe', '/admin', '/bestellen',
+  '/letters', '/beta',
 ]
 
 function preferredLocale(req: NextRequest): string {
