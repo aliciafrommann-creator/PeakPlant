@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../../components/NavBar'
 
-const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function Article() {
   return (
@@ -21,7 +21,7 @@ export default function Article() {
         </motion.div>
 
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', marginBottom: '3rem' }}>
+          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '3rem' }}>
           The case for slowness.
         </motion.h1>
 
@@ -45,7 +45,7 @@ export default function Article() {
             But intimacy lives in the in-between. It lives in the moment of slowing down long enough to actually arrive in the room with another person. And we have, collectively, become very bad at this.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>What speed costs us.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>What speed costs us.</h2>
 
           <p>
             The nervous system is not indifferent to pace. Bessel van der Kolk, who spent decades studying trauma and the body, writes about how unresolved stress keeps the nervous system in a state of chronic activation — scanning for threat, braced for impact. In this state, true intimacy is physiologically unavailable. You cannot fully open to another person when your body is busy anticipating danger.
@@ -59,7 +59,7 @@ export default function Article() {
             This is why a slow meal can feel more intimate than a fast conversation. Why a long walk changes something that a quick text cannot. Why the moments most people remember from their closest relationships are almost never the peak experiences — the vacations, the milestones — but the ordinary, unhurried ones. The ones where time felt briefly like it belonged to you both.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Nature knows this.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Nature knows this.</h2>
 
           <p>
             There is a reason people go to mountains and forests to feel something again. It is not only the scenery. It is the pace. Nature does not rush. Seasons do not optimize. A river does not apologize for moving at its own speed.
@@ -73,7 +73,7 @@ export default function Article() {
             This is what wildness actually is. Not chaos, not recklessness — but the freedom that comes from dropping the performance long enough to be moved by what is actually in front of you. A meadow. A person you love. The quiet sound of your own breathing.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>A small practice.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>A small practice.</h2>
 
           <p>
             You do not need to rearrange your life. You need to find five minutes inside it. Before a conversation you care about, sit quietly. Before intimacy, breathe. Let arrival be a real thing rather than a transition you skip.

@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion'
 import { NavBar } from '../../components/NavBar'
 
-const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 const sections = [
   {
@@ -132,7 +132,7 @@ export default function AGBPage() {
           legal
         </motion.p>
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 200, letterSpacing: '0.02em', marginBottom: '1rem', fontFamily: PP }}>
+          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 200, letterSpacing: '-0.025em', marginBottom: '1rem', fontFamily: PP }}>
           allgemeine geschäftsbedingungen
         </motion.h1>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.7, delay: 0.2 }}

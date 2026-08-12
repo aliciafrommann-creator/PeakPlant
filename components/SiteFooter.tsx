@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 /**
  * Global footer for all locale pages. Exists primarily so the legal pages

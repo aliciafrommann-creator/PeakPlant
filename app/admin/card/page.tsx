@@ -1,6 +1,6 @@
 'use client'
 
-const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 // Physical insert card: 85 × 55 mm (credit-card footprint, fits the box).
 // The QR is a fixed target (peak-plant.com/01) since cards are printed in bulk —
@@ -48,7 +48,7 @@ export default function CardPrintPage() {
         }}>
           <p style={{ fontSize: '7pt', letterSpacing: '0.28em', textTransform: 'uppercase', opacity: 0.55 }}>∧ peakplant</p>
           <div>
-            <p style={{ fontSize: '15pt', fontWeight: 200, letterSpacing: '0.015em', lineHeight: 1.25 }}>
+            <p style={{ fontSize: '15pt', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.25 }}>
               your digital world<br />is waiting.
             </p>
           </div>
@@ -72,7 +72,7 @@ export default function CardPrintPage() {
           {/* instructions */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2mm' }}>
             <p style={{ fontSize: '6.5pt', letterSpacing: '0.2em', textTransform: 'uppercase', opacity: 0.4 }}>scan to enter</p>
-            <p style={{ fontSize: '11pt', fontWeight: 300, letterSpacing: '0.01em', lineHeight: 1.25 }}>
+            <p style={{ fontSize: '11pt', fontWeight: 300, letterSpacing: '-0.01em', lineHeight: 1.25 }}>
               step into edition 01
             </p>
             <p style={{ fontSize: '7.5pt', lineHeight: 1.55, color: '#666', fontWeight: 300 }}>

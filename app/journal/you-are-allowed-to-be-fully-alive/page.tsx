@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../../components/NavBar'
 
-const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function Article() {
   return (
@@ -21,7 +21,7 @@ export default function Article() {
         </motion.div>
 
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', marginBottom: '3rem' }}>
+          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '3rem' }}>
           You are allowed to be fully alive.
         </motion.h1>
 
@@ -49,7 +49,7 @@ export default function Article() {
             And we miss them. We are there, but we are managing our experience of being there. We are alive, but at some reduced percentage of what alive actually means.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>What full aliveness costs.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>What full aliveness costs.</h2>
 
           <p>
             The poet Rilke wrote about the necessity of living the questions — of staying open to experience even when it does not resolve into clarity. There is a version of that in how we live: not trying to get life right, but letting it actually touch you.
@@ -63,7 +63,7 @@ export default function Article() {
             Most of us walk past these things, not because we do not value them, but because we have learned to stay slightly behind the glass. Close enough to observe. Far enough to stay safe.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>What worth has to do with it.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>What worth has to do with it.</h2>
 
           <p>
             Here is the thing I keep coming back to: full aliveness requires believing you are allowed to have it. That your presence in your own life is not contingent on performance or usefulness or becoming enough. That you do not need to earn the right to feel good, to feel held, to feel your own aliveness without justifying it.
@@ -77,7 +77,7 @@ export default function Article() {
             Brené Brown's research on wholehearted living keeps arriving at the same finding: people who live with the most vitality are not the ones who have the most. They are the ones who believe, in their bones, that they are enough. That they are worthy of belonging. That the full version of themselves is welcome.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>This is what PeakPlant is about.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>This is what PeakPlant is about.</h2>
 
           <p>
             Not the product. Not the packaging. The underlying conviction that you are allowed to feel things — deeply, without apology. That intimacy can be a place where you become more yourself, not less. That wildness is not something you have to earn but something you can return to.

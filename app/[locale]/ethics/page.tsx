@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion'
 import { NavBar } from '../../../components/NavBar'
 
-const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 function IconLeaf() {
   return (
@@ -133,7 +133,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
           {isDE ? 'Ethik' : 'Ethics'}
         </motion.p>
         <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(2.8rem, 6vw, 5rem)', fontWeight: 300, lineHeight: 1.1, letterSpacing: '0.02em', marginBottom: '2rem' }}>
+          style={{ fontSize: 'clamp(2.8rem, 6vw, 5rem)', fontWeight: 300, lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '2rem' }}>
           {isDE ? 'wir haben nichts\nzu verbergen.' : 'we have nothing\nto hide.'}
         </motion.h1>
         <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
@@ -148,7 +148,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
           {isDE ? '01 — versprechen' : '01 — commitments'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', marginBottom: '5rem' }}>
+          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '5rem' }}>
           {isDE ? 'was wir versprechen.' : 'what we commit to.'}
         </motion.h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '4rem 6rem' }}>
@@ -157,7 +157,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
               transition={{ duration: 0.8, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               <div style={{ opacity: 0.85 }}>{c.icon}</div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 500, letterSpacing: '0.01em', lineHeight: 1.3 }}>{c.headline}</h3>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 500, letterSpacing: '-0.01em', lineHeight: 1.3 }}>{c.headline}</h3>
               <p style={{ fontSize: '0.95rem', lineHeight: 1.8, color: '#555', fontWeight: 300 }}>{c.text}</p>
             </motion.div>
           ))}
@@ -171,7 +171,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
             {isDE ? '02 — grenzen' : '02 — limits'}
           </motion.p>
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-            style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', marginBottom: '3.5rem' }}>
+            style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '3.5rem' }}>
             {isDE ? 'was wir noch nicht tun.' : "what we don't do yet."}
           </motion.h2>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}>
@@ -196,7 +196,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
           {isDE ? '03 — zertifizierungen' : '03 — certifications'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', marginBottom: '4rem' }}>
+          style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '4rem' }}>
           {isDE ? 'zertifiziert.' : 'certified.'}
         </motion.h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
@@ -218,7 +218,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
             {isDE ? '04 — philosophie' : '04 — philosophy'}
           </motion.p>
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
-            style={{ fontSize: 'clamp(1.5rem, 3vw, 2.4rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '0.015em', marginBottom: '3rem' }}>
+            style={{ fontSize: 'clamp(1.5rem, 3vw, 2.4rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em', marginBottom: '3rem' }}>
             {isDE ? 'nachhaltigkeit ist kein feature.' : 'sustainability is not a feature.'}
           </motion.h2>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
@@ -236,7 +236,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
         <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           style={{ maxWidth: 480, margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.75rem' }}>
           <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4 }}>05 — {isDE ? 'kontakt' : 'contact'}</p>
-          <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '0.015em' }}>
+          <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 300, lineHeight: 1.2, letterSpacing: '-0.02em' }}>
             {isDE ? 'fragen? wir antworten.' : 'questions? we answer.'}
           </h2>
           <p style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555' }}>

@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../../components/NavBar'
 
-const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 export default function Article() {
   return (
@@ -21,7 +21,7 @@ export default function Article() {
         </motion.div>
 
         <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '0.02em', marginBottom: '3rem' }}>
+          style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '3rem' }}>
           What emotional safety actually feels like.
         </motion.h1>
 
@@ -45,7 +45,7 @@ export default function Article() {
             It is the knowledge that you can say what you feel without losing the person. That your needs are not inconvenient. That being seen — fully, in your uncertainty and your mess — will not result in rejection. That you are allowed to not have it together.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Why so few people have it.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>Why so few people have it.</h2>
 
           <p>
             Amy Edmondson at Harvard has spent decades studying psychological safety in teams — what she calls "the shared belief that the team is safe for interpersonal risk-taking." Her research consistently shows that high-performing groups are not the ones where people agree the most. They are the ones where people feel safe enough to disagree, to fail, to admit they do not know.
@@ -59,7 +59,7 @@ export default function Article() {
             Most of us were not modeled this. We learned, instead, that conflict is dangerous, that need is burdensome, that the way to stay in relationships is to stay manageable. Those early lessons run deep — they shape our attachment styles, our communication patterns, the way we brace even in relationships that are genuinely safe.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>What it feels like when you find it.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>What it feels like when you find it.</h2>
 
           <p>
             There is a particular quality to it. A kind of loosening. The sense that you can let your guard down not because nothing bad will ever happen, but because you trust that whatever happens can be worked through. That the relationship is not so fragile that it requires management.
@@ -73,7 +73,7 @@ export default function Article() {
             In intimacy specifically, emotional safety is what makes wildness possible. This sounds counterintuitive — safety as the prerequisite for wildness. But it is precisely right. When you trust the container, you can stop managing what you put in it. You can be loud when you are loud. Soft when you are soft. Uncertain when you are uncertain. You can be more fully yourself because the risk of being yourself has been removed.
           </p>
 
-          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>How it is built.</h2>
+          <h2 style={{ fontSize: '1.3rem', fontWeight: 400, letterSpacing: '-0.01em', marginTop: '1.5rem', marginBottom: '-0.5rem' }}>How it is built.</h2>
 
           <p>
             Not in a single conversation. Through small consistent actions: saying what you mean, following through, responding to someone's vulnerability with care rather than deflection. Through repair when things go wrong — which they will — and through the accumulation of evidence that this person, in this relationship, can be trusted with what is true.

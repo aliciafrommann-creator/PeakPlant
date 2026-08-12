@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { navItems } from '../lib/translations'
 import { useIsMobile } from '../hooks/useIsMobile'
 
-const PP = 'Futura, "Century Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif'
+const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 // Pages that live at root level, not under /[locale]/
 // /shop + /journal stay global (single source, not locale-split)
