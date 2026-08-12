@@ -55,7 +55,7 @@ function CouplesHero({ locale }: { locale: string }) {
           {isDE ? 'wann hat das leben begonnen, sich so schnell anzufühlen?' : 'when did life start feeling this fast?'}
         </h1>
         <p style={{ fontFamily: PP, fontSize: '0.8rem', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.75)', fontWeight: 300, maxWidth: 420, margin: '0 auto 2rem', lineHeight: 1.7 }}>
-          {isDE ? 'ein kartenset für paare — dates, acts, questions. jede karte wird ein festgehaltener moment.' : 'a card deck for couples — dates, acts, questions. every card becomes a moment you keep.'}
+          {isDE ? 'ein kartenset für paare — dates, acts, questions. jede karte wird ein festgehaltener moment. friends & solo edition sind unterwegs.' : 'a card deck for couples — dates, acts, questions. every card becomes a moment you keep. friends & solo editions are on their way.'}
         </p>
         <a href="#waitlist"
           style={{ display: 'inline-block', marginBottom: '2rem', padding: '0.85rem 2.2rem', borderRadius: 999, border: '1px solid rgba(255,255,255,0.5)', fontSize: '0.65rem', letterSpacing: '0.28em', color: '#ffffff', textDecoration: 'none', fontFamily: PP, textTransform: 'uppercase' }}>
@@ -385,8 +385,8 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }}
           style={{ fontSize: '0.95rem', color: '#ffffff', opacity: 0.45, lineHeight: 1.75, fontWeight: 300, maxWidth: 480, fontFamily: PP, whiteSpace: 'pre-line' }}>
           {isDE
-            ? 'jede edition eine pflanze, drei monate lang. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deines decks.\nneue edition: neue pflanze, neue karten, neue fragen, neue digitale welt.'
-            : 'every edition is a plant, for three months. edition 01 is the sunflower — its seeds are pressed into the seed paper in your deck.\nnew edition: new plant, new cards, new questions, new digital world.'}
+            ? 'jede edition eine pflanze, drei monate lang. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deines decks.\nneue edition: neue pflanze, neue karten, neue fragen, neue digitale welt.\nund mehr ist unterwegs: eine friends edition für freundeskreise und eine solo edition für die liebe zu dir selbst — weil beides genauso zählt. freundeskreise kann die app schon heute.'
+            : 'every edition is a plant, for three months. edition 01 is the sunflower — its seeds are pressed into the seed paper in your deck.\nnew edition: new plant, new cards, new questions, new digital world.\nand more is on the way: a friends edition for your circle and a solo edition for the love you give yourself — because both matter just as much. the app already holds circles of friends.'}
         </motion.p>
       </div>
     </section>

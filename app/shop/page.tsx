@@ -169,7 +169,7 @@ export default function ShopPage() {
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1rem' }}>
               <p style={{ fontSize: '0.6rem', letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '0.6rem', fontFamily: PP }}>the app — your space</p>
               <p style={{ fontSize: '0.82rem', color: '#777', fontWeight: 300, lineHeight: 1.7, fontFamily: PP }}>
-                a private couple space · your growing moment diary · a gentle weekly challenge · curated date ideas & a places map · how to grow your seed paper · one free workshop per edition
+                a private space — for couples or your circle of friends · your growing moment diary · a gentle weekly challenge · curated date ideas & a places map · how to grow your seed paper · one free workshop per edition
               </p>
             </div>
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
