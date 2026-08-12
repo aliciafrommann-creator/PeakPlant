@@ -25,44 +25,109 @@ function makeUnsubToken(email: string): string {
   return createHmac('sha256', secret).update(email).digest('base64url')
 }
 
+/**
+ * Alicia's own letter. Written by her, not assembled from product copy — that
+ * is the point of it.
+ *
+ * Instagram only. The WhatsApp invite is deliberately not in here: a group
+ * link in a mail to every subscriber can be forwarded to anyone, so it lives
+ * behind the login instead (decision Alicia, 12.08.).
+ *
+ * Public brand address, so it belongs in the code rather than in an env var
+ * someone has to remember to set in two environments. The share tracking
+ * parameter from the app link is stripped — it identifies the sharing session
+ * and has no business in a mail to thousands of people.
+ */
+const INSTAGRAM_URL = 'https://www.instagram.com/peak.plant'
 const BODY_EN = (unsubUrl: string) => `∧ peakplant
 
-you're in.
-edition 01 drops in october 2026.
+Hi,
 
-while you wait — a first taste. edition 01 is the sunflower:
-warmth, growing together, giving each other light without taking the other's.
-twenty moment cards per edition — grow dates, small acts, growing questions. use one tonight.
+Thank you so much for joining our community.
 
-01. “what makes you feel seen by me?”
-02. “when do you feel most alive with me?”
-03. “what helps you open up to me?”
+I’m Alicia, and for the past six months I’ve been building around the things
+I’m deeply passionate about. PeakPlant is one of them.
 
-the other seven growing questions unfold inside the box.
+I truly believe that loving — a partner, a friend, a stranger, the world,
+ourselves — can make life so much richer. But love also asks something of us.
+It asks us to look at ourselves, at each other, and at the world around us.
+Sometimes that can be challenging. But it can also be wonderfully eye-opening,
+intimate, and transformative.
 
-safe. soft. wild.
-∧ peakplant
+How much love can one life hold? Sometimes I feel like my heart could burst
+from it.
+
+And honestly, that feeling is part of why I’m so happy that you want to be
+part of PeakPlant, too.
+
+I hope you’ll enjoy what I’m creating. At its heart is a simple belief: that
+we can create a more connected, loving world together — by paying attention to
+the moments that matter and making a little more room for love.
+
+Mind the Moment.
+Max the Love.
+
+If you’d like, come along for a bit: read my newsletters and journals and
+follow PeakPlant on Instagram. And if any of it speaks to you, tell someone
+about it.
+
+${INSTAGRAM_URL}
+
+More from PeakPlant soon.
+
+Alicia
+
+edition 01 — the sunflower — ships october 2026.
 
 —
 unsubscribe: ${unsubUrl}`
 
 const BODY_DE = (unsubUrl: string) => `∧ peakplant
 
-du bist dabei.
-edition 01 startet im oktober 2026.
+Hi,
 
-für die zwischenzeit — ein vorgeschmack. edition 01 ist die sonnenblume:
-wärme, gemeinsames wachsen, einander licht geben, ohne dem anderen das eigene zu nehmen.
-zwanzig moment cards pro edition — grow dates, small acts, growing questions. nimm dir eine davon heute abend.
+vielen Dank, dass du dich für unsere Community angemeldet hast.
 
-01. „was lässt dich von mir gesehen fühlen?”
-02. „wann fühlst du dich mit mir am lebendigsten?”
-03. „was hilft dir, dich mir zu öffnen?”
+Ich bin Alicia und arbeite seit einem halben Jahr an den Themen, für die ich
+wirklich brenne. PeakPlant gehört dazu.
 
-die übrigen sieben growing questions entfalten sich in der box.
+Ich bin fest davon überzeugt, dass Lieben unser Leben unglaublich viel schöner
+machen kann. Einen Partner oder eine Partnerin zu lieben. Freund. Fremde
+Menschen. Die Welt. Und nicht zuletzt uns selbst.
 
-safe. soft. wild.
-∧ peakplant
+Aber Liebe passiert nicht einfach nebenbei. Sie braucht Aufmerksamkeit.
+Offenheit. Mut. Und manchmal auch die Bereitschaft, uns mit uns selbst und
+miteinander auseinanderzusetzen.
+
+Das kann anstrengend sein. Aber gleichzeitig ist es eines der schönsten Dinge,
+die ich kenne: wundervoll augenöffnend, ehrlich und intim.
+
+Manchmal frage ich mich, wie viel Liebe eigentlich in ein einziges Leben
+passt. Und manchmal habe ich das Gefühl, mein Herz könnte daran zerbrechen,
+weil so viel davon da ist.
+
+Vielleicht auch deshalb freue ich mich so sehr, dass du Teil von PeakPlant
+sein möchtest.
+
+Ich hoffe, dir gefällt, was ich hier erschaffe. Im Kern steckt eine ganz
+einfache Überzeugung: Dass wir unsere gemeinsame Welt ein kleines Stück
+liebevoller machen können, wenn wir bewusster wahrnehmen, was gerade da ist,
+und ein bisschen mehr Raum für Liebe schaffen.
+
+Mind the Moment.
+Max the Love.
+
+Wenn du magst, begleite mich ein Stück auf diesem Weg: Lies meine Newsletter
+und Journals und folge PeakPlant auf Instagram. Und wenn dir etwas davon
+gefällt, erzähl gerne jemandem davon.
+
+${INSTAGRAM_URL}
+
+Mehr von PeakPlant kommt ganz bald.
+
+Alicia
+
+edition 01 — die sonnenblume — erscheint im oktober 2026.
 
 —
 abmelden: ${unsubUrl}`

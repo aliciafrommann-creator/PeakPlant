@@ -35,7 +35,7 @@ function buildHtml(email: string, isDE: boolean): string {
           'einmal im monat ein brief — kein lärm, kein verkaufen. nur ein gedanke, ein stück aus dem journal, und wo wir mit peakplant gerade stehen.',
         founderLabel: 'aus meinem notizbuch',
         founderNote:
-          'edition 01 ist die sonnenblume. sie steht für wärme, treue und gemeinsames wachsen — und für etwas, das ich gerade selbst lerne: einander licht zu geben, ohne dem anderen das eigene zu nehmen. genau darum drehen sich die zehn fragen dieser edition.',
+          'edition 01 ist die sonnenblume. sie steht für wärme, treue und gemeinsames wachsen — und für etwas, das ich gerade selbst lerne: einander licht zu geben, ohne dem anderen das eigene zu nehmen. genau darum drehen sich die zwanzig karten dieser edition.',
         readLabel: 'aus dem journal',
         read: 'lesen (auf englisch) →',
         editionLine: 'edition 01 — die sonnenblume — erscheint oktober 2026.',

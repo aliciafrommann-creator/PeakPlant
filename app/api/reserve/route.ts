@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
     want to pay now and support the first production run?
     <a href="${SITE}/shop" style="color:#1A1A1A">do it here →</a>
   </p>
-  <p style="font-size:12px;line-height:1.8;opacity:0.35;font-weight:300">safe. soft. wild.<br>∧ peakplant</p>
+  <p style="font-size:12px;line-height:1.8;opacity:0.35;font-weight:300">mind the moment. max the love.<br>∧ peakplant</p>
 </div>`,
         }),
         sendMail({

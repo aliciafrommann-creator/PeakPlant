@@ -301,7 +301,7 @@ export default function ShopPage() {
         </motion.p>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.05 }}
           style={{ fontSize: '0.95rem', fontWeight: 300, color: '#777', lineHeight: 1.7, marginBottom: '3rem', maxWidth: 460 }}>
-          ten questions per edition, one in every box. here&apos;s a taste of edition 01 — the rest unfold as you collect, and live forever in the digital world.
+          ten growing questions in the deck, alongside the dates and the acts. here&apos;s a taste of edition 01 — the rest unfold as you live them, and stay in your shared diary.
         </motion.p>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, 1fr)', gap: '0' }}>
           {[

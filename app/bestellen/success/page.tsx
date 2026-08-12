@@ -37,7 +37,7 @@ function SuccessContent() {
         </div>
 
         <p style={{ marginTop: '3rem', fontSize: 12, opacity: 0.3, fontWeight: 300, lineHeight: 1.6 }}>
-          safe. soft. wild.
+          mind the moment. max the love.
         </p>
       </motion.div>
     </div>
