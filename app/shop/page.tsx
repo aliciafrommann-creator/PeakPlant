@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { useScroll, useTransform } from 'framer-motion'
 import { NavBar } from '../../components/NavBar'
+import { HeroFilm } from '../../components/HeroFilm'
 import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
@@ -115,11 +116,11 @@ export default function ShopPage() {
 
       {/* Hero */}
       <section className="pp-hero" style={{ overflow: 'hidden', position: 'relative', background: '#1E1C1A' }}>
-        {/* No poster — see the note on the home hero. */}
-        <video autoPlay muted playsInline loop
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
-          <source src="/film-wildness.mp4" type="video/mp4" />
-        </video>
+        <HeroFilm
+          film="/film-wildness.mp4"
+          poster="/hero-wildness.webp"
+          alt="two people running through a meadow"
+        />
         <div className="pp-hero-scrim" style={{ position: 'absolute', inset: 0 }} />
         <motion.div
           initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}

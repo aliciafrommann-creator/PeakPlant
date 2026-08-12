@@ -336,6 +336,39 @@ body {
   }
 }
 
+/* --- Sticky call to action (phones only) ----------------------------------
+   Desktop keeps the top bar; a fixed bottom bar there would just eat the
+   viewport. Below the nav breakpoint the thumb rules, so the CTA moves down. */
+
+.pp-sticky-cta {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .pp-sticky-cta {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 90;
+    padding: 0.75rem 1rem;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, rgba(251, 250, 247, 0.98) 62%, rgba(251, 250, 247, 0));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pp-sticky-cta {
+    animation: pp-rise 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+@keyframes pp-rise {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 /* --- Footer ---------------------------------------------------------------
    Legal links must stay readable and tappable on a phone (Impressumspflicht is
    not served by 10px text you cannot hit). */

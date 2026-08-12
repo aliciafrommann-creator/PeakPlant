@@ -169,7 +169,18 @@ export async function POST(req: Request) {
     const res = await fetch(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/subscribers`, {
       method: 'POST',
       headers: supabaseHeaders(supabaseKey),
-      body: JSON.stringify({ email: sanitized, source: source ?? 'homepage', edition: 'edition_01', status: 'active', locale: isDE ? 'de' : 'en' }),
+      // Only columns that exist in `subscribers` (id, email, source, edition,
+      // created_at). Sending `status` and `locale` made PostgREST reject every
+      // insert with a 400 — every signup on the live site failed.
+      //
+      // The language rides along in `source` ("homepage-de") because there is
+      // no locale column and `subscribers` is a table we do not alter. The
+      // monthly letter reads it back from there to pick a language.
+      body: JSON.stringify({
+        email: sanitized,
+        source: `${source ?? 'homepage'}-${isDE ? 'de' : 'en'}`,
+        edition: 'edition_01',
+      }),
     })
     if (res.status === 409) return NextResponse.json({ duplicate: true })
     if (!res.ok) {

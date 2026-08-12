@@ -24,19 +24,27 @@ export async function GET(req: Request) {
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (supabaseUrl && supabaseKey) {
-    await fetch(
+    // Delete the row rather than flag it. `subscribers` has no `status`
+    // column, so the previous PATCH was rejected with a 400 and every
+    // unsubscribe silently did nothing — the one request that must never
+    // fail quietly. Removing the address is also the cleaner answer to
+    // "stop writing to me": nothing is left behind to write to.
+    const res = await fetch(
       `${supabaseUrl}/rest/v1/subscribers?email=eq.${encodeURIComponent(email)}`,
       {
-        method: 'PATCH',
+        method: 'DELETE',
         headers: {
-          'Content-Type': 'application/json',
           'apikey': supabaseKey,
           'Authorization': `Bearer ${supabaseKey}`,
           'Prefer': 'return=minimal',
         },
-        body: JSON.stringify({ status: 'unsubscribed' }),
       }
     )
+    if (!res.ok) {
+      // Loud, because an unsubscribe that fails is a legal problem, not a bug.
+      console.error('[Unsubscribe] failed:', res.status, await res.text().catch(() => ''))
+      return NextResponse.redirect(new URL('/unsubscribe?error=1', req.url))
+    }
   }
 
   return NextResponse.redirect(new URL('/unsubscribe?done=1', req.url))
