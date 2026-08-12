@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import { sendMail, mailProvider } from '../../../../lib/email'
 import { createHmac } from 'crypto'
 import { articleForMonth } from '../../../../lib/journal'
 
@@ -112,9 +112,8 @@ function buildHtml(email: string, isDE: boolean): string {
 async function sendNewsletter(): Promise<NextResponse> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  const resendKey = process.env.RESEND_API_KEY
 
-  if (!supabaseUrl || !supabaseKey || !resendKey) {
+  if (!supabaseUrl || !supabaseKey || !mailProvider()) {
     return NextResponse.json({ error: 'Missing env vars' }, { status: 500 })
   }
 
@@ -133,7 +132,6 @@ async function sendNewsletter(): Promise<NextResponse> {
   const now = new Date()
   const month = now.toLocaleString('en', { month: 'long' })
   const edition = 'edition 01'
-  const resend = new Resend(resendKey)
   let sent = 0
   const errors: string[] = []
 
@@ -141,7 +139,7 @@ async function sendNewsletter(): Promise<NextResponse> {
     const isDE = locale === 'de'
     const subject = isDE ? `∧ peakplant — der monatsbrief` : `∧ peakplant — the monthly`
     try {
-      await resend.emails.send({
+      await sendMail({
         from: 'alicia@peak-plant.com',
         to: email,
         subject,

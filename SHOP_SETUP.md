@@ -69,8 +69,12 @@ NEXT_PUBLIC_SUPABASE_URL=https://….supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ…
 SUPABASE_SERVICE_ROLE_KEY=eyJ…          # NUR server-seitig, niemals öffentlich
 
-# ── E-Mail (Resend) ──────────────────────────────────────
-RESEND_API_KEY=re_…
+# ── E-Mail (ein Anbieter genügt) ─────────────────────────
+# Der Versand läuft über lib/email.ts. Gesetzt wird EINER der beiden Keys;
+# ist Brevo gesetzt, gewinnt Brevo. Ist keiner gesetzt, wird nichts versendet
+# und die Seite sagt das ehrlich, statt ein Postfach zu versprechen.
+BREVO_API_KEY=xkeysib-…                  # Brevo, Free-Tarif reicht für die Warteliste
+RESEND_API_KEY=re_…                      # Alternative
 
 # ── Admin & Supplier ─────────────────────────────────────
 ADMIN_SECRET=ein-langes-zufälliges-passwort
@@ -159,7 +163,12 @@ Senden zeigt das Panel „✓ rechnung gesendet" mit Zeitstempel.
 - [ ] Stripe Live-Keys statt Test-Keys eintragen, sobald bereit
 - [ ] `orders.sql` in Supabase ausführen
 - [ ] Supplier-E-Mail final festlegen (`SUPPLIER_EMAIL`)
-- [ ] Domain `peak-plant.com` in Resend verifizieren (für Absender `hello@peak-plant.com`)
+- [ ] Domain `peak-plant.com` beim Mail-Anbieter verifizieren (für Absender
+      `hello@peak-plant.com`). Ohne verifizierte Domain lehnt jeder Anbieter
+      die Mails ab — betrifft Warteliste, Bestellbestätigung, Reservierung,
+      Newsletter und Versandauftrag.
+- [ ] Versand einmal prüfen: `GET /api/health?key=<ADMIN_SECRET>&testmail=deine@adresse.de`
+      schickt eine Testmail und gibt die Antwort des Anbieters im Klartext zurück.
 - [ ] Kärtchen-Design (1 Karte, 6 Fragen) mit QR auf `https://peak-plant.com/01` finalisieren & drucken
 - [ ] Test-Bestellung im Stripe-Testmodus durchspielen (Karte `4242 4242 4242 4242`)
 - [ ] Entscheiden: Abo-Modell (27€ + 12,90€/mo) im Preorder-Jahr behalten oder pausieren?

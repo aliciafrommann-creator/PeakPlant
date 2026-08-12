@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { Resend } from 'resend'
+import { sendMail } from '../../../../lib/email'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -81,10 +81,9 @@ export async function POST(req: NextRequest) {
     const accessLink = `${SITE}/01?token=${accessToken}`
     const edition    = editionLabel(product)
 
-    const resend = new Resend(process.env.RESEND_API_KEY)
     await Promise.all([
       // ── Kundenbestätigung ────────────────────────────────────────────
-      email && resend.emails.send({
+      email && sendMail({
         from: 'peakplant <hello@peak-plant.com>',
         to: email,
         subject: 'your preorder is confirmed — and your sneak peek is inside.',
@@ -140,7 +139,7 @@ export async function POST(req: NextRequest) {
       }),
 
       // ── Admin-Benachrichtigung ───────────────────────────────────────
-      resend.emails.send({
+      sendMail({
         from: 'peakplant <hello@peak-plant.com>',
         to: ADMIN_EMAIL,
         subject: `neue bestellung — ${edition} · ${email}`,

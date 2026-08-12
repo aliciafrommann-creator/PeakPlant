@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import { sendMail, mailProvider } from '../../../lib/email'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -57,10 +57,9 @@ export async function POST(req: NextRequest) {
     const accessLink = `${SITE}/01?token=${accessToken}`
     const edition    = editionLabel(product)
 
-    if (process.env.RESEND_API_KEY) {
-      const resend = new Resend(process.env.RESEND_API_KEY)
+    if (mailProvider()) {
       await Promise.all([
-        resend.emails.send({
+        sendMail({
           from: 'peakplant <hello@peak-plant.com>',
           to: sanitized,
           subject: 'your spot is reserved — pay whenever you\'re ready.',
@@ -94,7 +93,7 @@ export async function POST(req: NextRequest) {
   <p style="font-size:12px;line-height:1.8;opacity:0.35;font-weight:300">safe. soft. wild.<br>∧ peakplant</p>
 </div>`,
         }),
-        resend.emails.send({
+        sendMail({
           from: 'peakplant <hello@peak-plant.com>',
           to: ADMIN_EMAIL,
           subject: `reservierung (auf rechnung) — ${edition} · ${sanitized}`,

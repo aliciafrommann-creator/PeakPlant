@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import { sendMail } from '../../../../lib/email'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -41,8 +41,7 @@ export async function POST(req: NextRequest) {
     ? 'Founders Edition (1×)'
     : `Abo-Lieferung — ${qty} Stück`
 
-  const resend = new Resend(process.env.RESEND_API_KEY)
-  await resend.emails.send({
+  await sendMail({
     from: 'peakplant <hello@peak-plant.com>',
     to: supplierEmail,
     subject: `Versandauftrag #${order.id.slice(0, 8).toUpperCase()} — peakplant`,
