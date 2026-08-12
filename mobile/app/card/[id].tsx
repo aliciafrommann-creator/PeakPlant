@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -18,6 +17,7 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { useBiometric } from '../../lib/hooks/useBiometric';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
+import { UnlockCurtain } from '../../components/card/UnlockCurtain';
 import type { CardGroup, CardSection } from '../../lib/types';
 
 export default function CardDetailScreen() {
@@ -46,18 +46,10 @@ export default function CardDetailScreen() {
     };
   }, [editionForGate?.sensitive, bioGranted, authenticate, t]);
 
-  const bannerOpacity = useRef(new Animated.Value(0)).current;
-  const [showBanner, setShowBanner] = useState(false);
-
-  useEffect(() => {
-    if (unlocked !== 'true') return;
-    setShowBanner(true);
-    Animated.sequence([
-      Animated.timing(bannerOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
-      Animated.delay(2000),
-      Animated.timing(bannerOpacity, { toValue: 0, duration: 500, useNativeDriver: true }),
-    ]).start(() => setShowBanner(false));
-  }, [unlocked, bannerOpacity]);
+  // QR magic: a scan opens a short curtain ("ihr habt diesen moment gemacht")
+  // before the card appears — the physical→digital handover deserves a beat.
+  const [showCurtain, setShowCurtain] = useState(unlocked === 'true');
+  const dismissCurtain = useCallback(() => setShowCurtain(false), []);
 
   const card = SEED_CARDS.find((c) => c.id === id);
   const edition = card ? (getEdition(card.edition) ?? SEED_EDITION) : SEED_EDITION;
@@ -158,12 +150,12 @@ export default function CardDetailScreen() {
     <SafeAreaView style={styles.container}>
       {/* Sensitive-edition content is hidden in the app switcher / on background. */}
       {edition.sensitive && obscured && <PrivacyScreen />}
-      {showBanner && (
-        <Animated.View style={[styles.unlockedBanner, { opacity: bannerOpacity }]} pointerEvents="none">
-          <Text style={styles.unlockedBannerText}>
-            {t('✓ CARD UNLOCKED', '✓ KARTE FREIGESCHALTET')}
-          </Text>
-        </Animated.View>
+      {showCurtain && (
+        <UnlockCurtain
+          title={t('you made this moment.', 'ihr habt diesen moment gemacht.')}
+          subtitle={title}
+          onDone={dismissCurtain}
+        />
       )}
       <View style={styles.header}>
         <BackButton variant="close" label={t('CLOSE', 'SCHLIESSEN')} />
