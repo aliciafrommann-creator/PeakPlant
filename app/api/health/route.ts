@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { mailProvider, sendMail } from '../../../lib/email'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -20,6 +21,20 @@ export async function GET(req: NextRequest) {
   }
 
   const has = (name: string) => Boolean(process.env[name])
+
+  // ?testmail=you@example.com sends one real mail and hands back the
+  // provider's own answer. Configuring a mail provider otherwise means
+  // guessing from the outside whether it works; this makes it a 10-second
+  // check, and a rejection comes back with the provider's exact wording.
+  const testTo = req.nextUrl.searchParams.get('testmail')
+  if (testTo) {
+    const result = await sendMail({
+      to: testTo,
+      subject: 'peakplant — test',
+      text: 'Wenn diese Mail ankommt, ist der Versand richtig eingerichtet.\n\n∧ peakplant',
+    })
+    return NextResponse.json({ test: true, to: testTo, ...result })
+  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -48,12 +63,15 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     waitlistCanStore: subscribersReachable,
-    waitlistCanMail: has('RESEND_API_KEY'),
+    waitlistCanMail: mailProvider() !== null,
+    // Which provider will actually be used — Brevo wins when both keys exist.
+    mailProvider: mailProvider(),
     subscriberCount,
     env: {
       NEXT_PUBLIC_SUPABASE_URL: has('NEXT_PUBLIC_SUPABASE_URL'),
       NEXT_PUBLIC_SUPABASE_ANON_KEY: has('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
       SUPABASE_SERVICE_ROLE_KEY: has('SUPABASE_SERVICE_ROLE_KEY'),
+      BREVO_API_KEY: has('BREVO_API_KEY'),
       RESEND_API_KEY: has('RESEND_API_KEY'),
       NEWSLETTER_SECRET: has('NEWSLETTER_SECRET'),
       NEXT_PUBLIC_SITE_URL: has('NEXT_PUBLIC_SITE_URL'),

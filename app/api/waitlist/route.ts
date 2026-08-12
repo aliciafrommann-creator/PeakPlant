@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import { sendMail } from '../../../lib/email'
 import { createHmac } from 'crypto'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -115,30 +115,16 @@ export async function POST(req: Request) {
     // The address is stored — that part is done and must not be rolled back if
     // the welcome mail fails. But we report honestly whether it went out, so
     // the page never says "check your inbox" when nothing was sent.
-    let mailed = false
-    if (process.env.RESEND_API_KEY) {
-      try {
-        const resend = new Resend(process.env.RESEND_API_KEY)
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peak-plant.com'
-        const token = makeUnsubToken(sanitized)
-        const unsubUrl = `${siteUrl}/api/unsubscribe?email=${encodeURIComponent(sanitized)}&token=${encodeURIComponent(token)}`
-        const sent = await resend.emails.send({
-          from: 'alicia@peak-plant.com',
-          to: sanitized,
-          subject: isDE ? 'du bist dabei.' : "you're in.",
-          text: isDE ? BODY_DE(unsubUrl) : BODY_EN(unsubUrl),
-        })
-        // The SDK reports delivery problems in `error` rather than throwing.
-        if (sent.error) console.error('[Waitlist] Resend rejected:', sent.error)
-        else mailed = true
-      } catch (err) {
-        console.error('[Waitlist] Resend error:', err)
-      }
-    } else {
-      console.error('[Waitlist] RESEND_API_KEY missing — stored, but no welcome mail sent')
-    }
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peak-plant.com'
+    const token = makeUnsubToken(sanitized)
+    const unsubUrl = `${siteUrl}/api/unsubscribe?email=${encodeURIComponent(sanitized)}&token=${encodeURIComponent(token)}`
+    const mail = await sendMail({
+      to: sanitized,
+      subject: isDE ? 'du bist dabei.' : "you're in.",
+      text: isDE ? BODY_DE(unsubUrl) : BODY_EN(unsubUrl),
+    })
 
-    return NextResponse.json({ success: true, mailed })
+    return NextResponse.json({ success: true, mailed: mail.sent })
   } catch (err) {
     console.error('[Waitlist] Uncaught error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

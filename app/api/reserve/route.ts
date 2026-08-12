@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { Resend } from 'resend'
+import { sendMail, mailProvider } from '../../../lib/email'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -57,11 +57,9 @@ export async function POST(req: NextRequest) {
     const accessLink = `${SITE}/01?token=${accessToken}`
     const edition    = editionLabel(product)
 
-    if (process.env.RESEND_API_KEY) {
-      const resend = new Resend(process.env.RESEND_API_KEY)
+    if (mailProvider()) {
       await Promise.all([
-        resend.emails.send({
-          from: 'peakplant <hello@peak-plant.com>',
+        sendMail({
           to: sanitized,
           subject: 'your spot is reserved — pay whenever you\'re ready.',
           html: `
@@ -73,11 +71,11 @@ export async function POST(req: NextRequest) {
     we'll send you an invoice you can settle anytime before then — or pay now if you'd like to lock it in.
   </p>
   <div style="border:1px solid #e8e8e8;padding:24px;margin-bottom:28px">
-    <p style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">your card · one of ten</p>
+    <p style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">your deck · twenty cards</p>
     <p style="font-size:14px;line-height:1.7;font-weight:300;color:#555">
-      inside your box: one question card — the first of ten in edition 01. collect the set over the three months it runs.
-      and somewhere across the edition, twenty boxes hide a special card — a free workshop, a little goodie,
-      or your next box on us.
+      inside: one deck — twenty moment cards, split into grow dates, small acts and growing questions.
+      and across the edition, twenty decks carry a special card — a free workshop, a little goodie,
+      or your next deck on us.
     </p>
   </div>
   <div style="background:#faf9f7;border:1px solid #e8e8e8;padding:24px;margin-bottom:28px">
@@ -94,8 +92,7 @@ export async function POST(req: NextRequest) {
   <p style="font-size:12px;line-height:1.8;opacity:0.35;font-weight:300">safe. soft. wild.<br>∧ peakplant</p>
 </div>`,
         }),
-        resend.emails.send({
-          from: 'peakplant <hello@peak-plant.com>',
+        sendMail({
           to: ADMIN_EMAIL,
           subject: `reservierung (auf rechnung) — ${edition} · ${sanitized}`,
           html: `

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
-import { Resend } from 'resend'
+import { sendMail } from '../../../../lib/email'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -81,11 +81,9 @@ export async function POST(req: NextRequest) {
     const accessLink = `${SITE}/01?token=${accessToken}`
     const edition    = editionLabel(product)
 
-    const resend = new Resend(process.env.RESEND_API_KEY)
     await Promise.all([
       // ── Kundenbestätigung ────────────────────────────────────────────
-      email && resend.emails.send({
-        from: 'peakplant <hello@peak-plant.com>',
+      email && sendMail({
         to: email,
         subject: 'your preorder is confirmed — and your sneak peek is inside.',
         html: `
@@ -113,11 +111,11 @@ export async function POST(req: NextRequest) {
   </div>
 
   <div style="border:1px solid #e8e8e8;padding:24px;margin-bottom:32px">
-    <p style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">your card · one of ten</p>
+    <p style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">your deck · twenty cards</p>
     <p style="font-size:14px;line-height:1.7;font-weight:300;color:#555">
-      inside: one question card — the first of ten in edition 01. collect the set over the three months it runs.
-      and somewhere across the edition, twenty boxes hide a special card — a free workshop, a little goodie,
-      or your next box on us. you'll know the moment you open it.
+      inside: one deck — twenty moment cards, split into grow dates, small acts and growing questions.
+      and across the edition, twenty decks carry a special card — a free workshop, a little goodie,
+      or your next deck on us. you'll know the moment you draw it.
     </p>
   </div>
 
@@ -140,8 +138,7 @@ export async function POST(req: NextRequest) {
       }),
 
       // ── Admin-Benachrichtigung ───────────────────────────────────────
-      resend.emails.send({
-        from: 'peakplant <hello@peak-plant.com>',
+      sendMail({
         to: ADMIN_EMAIL,
         subject: `neue bestellung — ${edition} · ${email}`,
         html: `
