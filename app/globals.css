@@ -11,6 +11,15 @@
 
 html {
   scroll-behavior: smooth;
+  /* iOS Safari otherwise inflates type on rotate, breaking tight editorial
+     layouts. We size for small screens explicitly instead. */
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Nothing may push the page wider than the phone. Media, embeds and long
+   unbroken strings are the usual culprits behind horizontal scroll. */
+img, svg, video, canvas, iframe {
+  max-width: 100%;
 }
 
 * {
@@ -21,6 +30,380 @@ html {
 
 body {
   background: var(--edition-white);
+}
+
+/* --- Navigation -----------------------------------------------------------
+   The breakpoint lives in CSS, not in JS: a JS-only breakpoint renders the
+   desktop bar on the server and only corrects itself after hydration, which on
+   a 390px phone means a visibly broken, overflowing bar on first paint. */
+
+.pp-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem 2.5rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 0.4s ease;
+}
+
+.pp-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+/* Mobile cluster: the waitlist CTA stays visible, everything else folds into
+   the menu. The CTA is the one thing Instagram traffic is here for. */
+.pp-nav-mobile {
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pp-burger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 0 10px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.pp-burger span {
+  display: block;
+  height: 1.5px;
+  width: 100%;
+  border-radius: 2px;
+  background: currentColor;
+}
+
+@media (max-width: 860px) {
+  .pp-nav {
+    padding: 0.6rem 1rem;
+  }
+  .pp-nav-links {
+    display: none;
+  }
+  .pp-nav-mobile {
+    display: flex;
+  }
+}
+
+.pp-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #1a1a1a;
+  color: #fbfaf7;
+  display: flex;
+  flex-direction: column;
+  padding: 0.6rem 1rem 2.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.pp-drawer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Comfortable, thumb-sized rows — 44px is the iOS minimum, these are taller. */
+.pp-drawer-link {
+  display: block;
+  padding: 1.05rem 0;
+  font-size: 1.35rem;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  border-bottom: 1px solid rgba(251, 250, 247, 0.12);
+}
+
+/* --- Hero -----------------------------------------------------------------
+   svh = "small viewport height": the visible area with the browser chrome
+   showing. Plain vh is measured without it on iOS, which hides whatever sits
+   at the bottom of a full-height hero. The vh line is the fallback for the
+   handful of browsers that do not know svh yet. */
+.pp-hero {
+  height: 100vh;
+  height: 100svh;
+}
+
+.pp-hero-scrim {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.15) 0%, transparent 35%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+.pp-hero-sub {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  line-height: 1.7;
+  max-width: 34rem;
+}
+
+.pp-hero-cta {
+  display: inline-block;
+  padding: 0.85rem 2.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  font-size: 0.65rem;
+  letter-spacing: 0.28em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+@media (max-width: 860px) {
+  /* Bottom-aligned reads as a huge empty void on a phone, and puts the call to
+     action right where the cookie notice sits. Centred fills the screen. */
+  .pp-hero-inner {
+    justify-content: center !important;
+    padding: 4.5rem 1.25rem 5.5rem !important;
+  }
+  /* The text now sits mid-screen, where the desktop gradient is transparent —
+     over a bright frame of the film it becomes unreadable. */
+  .pp-hero-scrim {
+    background: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.35) 0%,
+      rgba(0, 0, 0, 0.5) 45%,
+      rgba(0, 0, 0, 0.6) 100%
+    );
+  }
+  /* Tighter tracking and a bigger type size so the label stays on one line and
+     the pill clears the 44px tap minimum. */
+  .pp-hero-cta {
+    padding: 0.9rem 1.4rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+  }
+  .pp-hero-sub {
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+  }
+}
+
+/* --- Shared editorial bits ------------------------------------------------
+   Wide letter-spacing at 10px is an editorial look that only works at desktop
+   reading distance. On a phone it turns into a grey smear, so these three
+   trade tracking for size. */
+
+.pp-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+}
+
+.pp-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 2rem;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #ffffff;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.pp-feature-row {
+  display: flex;
+  gap: 0.9rem;
+  align-items: baseline;
+}
+
+.pp-feature-key {
+  min-width: 110px;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.pp-quiet-link {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: #1a1a1a;
+  opacity: 0.5;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(26, 26, 26, 0.25);
+  padding-bottom: 4px;
+}
+
+@media (max-width: 860px) {
+  .pp-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.28em;
+  }
+  .pp-cta {
+    min-height: 50px;
+    padding: 0 1.6rem;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+  }
+  .pp-quiet-link {
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    opacity: 0.7;
+    padding: 10px 0;
+  }
+  /* A 110px label column next to body copy leaves ~200px for the sentence.
+     Stack instead. */
+  .pp-feature-row {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .pp-feature-key {
+    min-width: 0;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+  }
+}
+
+/* --- Waitlist form --------------------------------------------------------
+   The one conversion surface on the site, and the one Instagram traffic lands
+   on. On a phone the side-by-side row squeezes the field down to nothing, so
+   it stacks. Font size stays at 16px: anything smaller makes iOS Safari zoom
+   in on focus and the visitor is left on a sideways-scrolled page. */
+
+.pp-waitlist {
+  display: flex;
+  width: 100%;
+  max-width: 460px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.pp-waitlist input,
+.pp-waitlist button {
+  font-family: inherit;
+}
+
+.pp-waitlist input {
+  flex: 1;
+  min-width: 0;
+  padding: 16px 22px;
+  background: transparent;
+  border: 0;
+  outline: none;
+  font-size: 16px;
+  font-weight: 300;
+  color: #ffffff;
+}
+
+.pp-waitlist input::placeholder {
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.pp-waitlist button {
+  padding: 16px 26px;
+  border: 0;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .pp-waitlist {
+    flex-direction: column;
+    gap: 0.65rem;
+    border: 0;
+  }
+  .pp-waitlist input {
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    padding: 15px 22px;
+    text-align: center;
+  }
+  .pp-waitlist button {
+    padding: 17px 22px;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+  }
+}
+
+/* --- Footer ---------------------------------------------------------------
+   Legal links must stay readable and tappable on a phone (Impressumspflicht is
+   not served by 10px text you cannot hit). */
+
+.pp-footer-link {
+  display: inline-block;
+  padding: 0.5rem 0;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  opacity: 0.5;
+  text-decoration: none;
+}
+
+@media (max-width: 860px) {
+  .pp-footer {
+    padding: 2.5rem 1.5rem !important;
+  }
+  /* Three columns squeezed side by side leave a wide empty gutter and push the
+     link lists into a narrow right-hand strip. One column reads better. */
+  .pp-footer-inner {
+    flex-direction: column;
+    gap: 1.5rem !important;
+  }
+  .pp-footer-inner nav {
+    display: flex;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    gap: 0 1.5rem;
+  }
+  .pp-footer-link {
+    font-size: 0.8rem;
+    padding: 0.85rem 0;
+    opacity: 0.65;
+  }
+}
+
+/* Dark footer on the locale home page. 9px at 22% opacity is decorative, not
+   readable — the legal links have to be findable and hittable on a phone. */
+.pp-dark-link {
+  display: inline-block;
+  color: #ffffff;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-decoration: none;
+  opacity: 0.45;
+}
+
+.pp-dark-link.is-legal {
+  letter-spacing: 0.2em;
+  opacity: 0.35;
+}
+
+@media (max-width: 860px) {
+  .pp-dark-footer {
+    padding: 40px 24px !important;
+    gap: 20px !important;
+  }
+  .pp-dark-link {
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    padding: 0.8rem 0;
+    opacity: 0.6;
+  }
+  .pp-dark-link.is-legal {
+    opacity: 0.5;
+  }
 }
 
 .h-scroll::-webkit-scrollbar {

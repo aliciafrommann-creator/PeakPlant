@@ -30,15 +30,22 @@ function ScrollBar() {
 function CouplesHero({ locale }: { locale: string }) {
   const isDE = locale === 'de'
   return (
-    <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#1E1C1A' }}>
-      <video autoPlay muted playsInline loop
+    // 100svh, not 100vh: on iOS Safari 100vh is the height WITHOUT the browser
+    // chrome, so a bottom-aligned hero puts its call to action underneath the
+    // address bar — invisible until you scroll. svh is the visible height.
+    <section className="pp-hero" style={{ overflow: 'hidden', position: 'relative', background: '#1E1C1A' }}>
+      {/* poster: what a phone on a slow connection sees before the film loads.
+          It has to be one photograph — couples-bw.jpg is a four-up contact
+          sheet and renders as a seamed grid at full-bleed. */}
+      <video autoPlay muted playsInline loop poster="/couples-rain.jpg"
         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
         <source src="/film-intimacy.mp4" type="video/mp4" />
       </video>
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 35%, rgba(0,0,0,0.45) 100%)' }} />
+      <div className="pp-hero-scrim" style={{ position: 'absolute', inset: 0 }} />
       <motion.div
         initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+        className="pp-hero-inner"
         style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}
       >
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, delay: 0.2 }}
@@ -51,11 +58,11 @@ function CouplesHero({ locale }: { locale: string }) {
         <p style={{ fontFamily: PP, fontSize: '0.8rem', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.75)', fontWeight: 300, maxWidth: 420, margin: '0 auto 2rem', lineHeight: 1.7 }}>
           {isDE ? 'ein kartenset für paare — dates, acts, questions. jede karte wird ein festgehaltener moment. friends & solo edition sind unterwegs.' : 'a card deck for couples — dates, acts, questions. every card becomes a moment you keep. friends & solo editions are on their way.'}
         </p>
-        <a href="#waitlist"
-          style={{ display: 'inline-block', marginBottom: '2rem', padding: '0.85rem 2.2rem', borderRadius: 999, border: '1px solid rgba(255,255,255,0.5)', fontSize: '0.65rem', letterSpacing: '0.28em', color: '#ffffff', textDecoration: 'none', fontFamily: PP, textTransform: 'uppercase' }}>
+        <a href="#waitlist" className="pp-hero-cta"
+          style={{ marginBottom: '1.75rem', color: '#ffffff', textDecoration: 'none', fontFamily: PP }}>
           {isDE ? 'edition 01 — auf die warteliste' : 'edition 01 — join the waitlist'}
         </a>
-        <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
+        <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.28em', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>
           {isDE ? 'weiterscrollen' : 'scroll to explore'}
         </p>
       </motion.div>
@@ -70,7 +77,8 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
     <section style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', minHeight: '80vh', backgroundColor: '#FBFAF7', borderTop: '1px solid #ebebeb', borderBottom: '1px solid #ebebeb' }}>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: isMobile ? '80px 32px' : '120px 80px' }}>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
-          style={{ fontSize: 10, letterSpacing: '0.55em', color: '#1A1A1A', opacity: 0.35, marginBottom: 36, fontFamily: PP }}>
+          className="pp-eyebrow"
+          style={{ color: '#1A1A1A', opacity: 0.35, marginBottom: 36, fontFamily: PP }}>
           {isDE ? 'WAS WIR GEMACHT HABEN' : 'WHAT WE MADE'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
@@ -87,10 +95,10 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}
           style={{ marginTop: 28, display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' }}>
-          <a href="#waitlist" style={{ display: 'inline-block', padding: '0.9rem 2rem', borderRadius: 999, background: '#1A1A1A', color: '#ffffff', fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', textDecoration: 'none', fontFamily: PP }}>
+          <a href="#waitlist" className="pp-cta" style={{ fontFamily: PP }}>
             {isDE ? 'auf die warteliste' : 'join the waitlist'}
           </a>
-          <Link href={localHref('/shop')} style={{ fontSize: 10, letterSpacing: '0.35em', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.25)', paddingBottom: 4 }}>
+          <Link href={localHref('/shop')} className="pp-quiet-link" style={{ fontFamily: PP }}>
             {isDE ? 'ENTDECKEN →' : 'SEE IT →'}
           </Link>
         </motion.div>
@@ -147,11 +155,9 @@ function Waitlist({ locale }: { locale: string }) {
             {isDE ? 'du bist bereits auf der liste.' : "you're already on the list."}
           </motion.p>
         ) : (
-          <form onSubmit={submit} style={{ display: 'inline-flex', maxWidth: 460, width: '100%', border: '1px solid rgba(255,255,255,0.22)' }}>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={isDE ? 'deine@email.com' : 'your@email.com'} required
-              style={{ flex: 1, padding: '16px 24px', background: 'transparent', border: 'none', outline: 'none', fontSize: 13, fontFamily: PP, color: '#ffffff' }} />
-            <button type="submit" disabled={status === 'loading'}
-              style={{ padding: '16px 28px', borderRadius: 999, backgroundColor: '#ffffff', color: '#1A1A1A', border: 'none', cursor: 'pointer', fontSize: 10, letterSpacing: '0.4em', fontFamily: PP, fontWeight: 500 }}>
+          <form onSubmit={submit} className="pp-waitlist" style={{ fontFamily: PP, margin: '0 auto' }}>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={isDE ? 'deine@email.com' : 'your@email.com'} required />
+            <button type="submit" disabled={status === 'loading'}>
               {status === 'loading' ? '...' : (isDE ? 'edition 01 sichern' : 'get early access')}
             </button>
           </form>
@@ -315,13 +321,13 @@ function AppPeek({ locale, isMobile }: { locale: string; isMobile: boolean }) {
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', marginBottom: '2rem' }}>
             {features.map(([k, v]) => (
-              <div key={k} style={{ display: 'flex', gap: '0.9rem', alignItems: 'baseline' }}>
-                <span style={{ fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#CF4B2C', fontFamily: PP, minWidth: 110 }}>{k}</span>
-                <p style={{ fontSize: '0.9rem', color: '#555', fontWeight: 300, lineHeight: 1.7, fontFamily: PP, margin: 0 }}>{v}</p>
+              <div key={k} className="pp-feature-row" style={{ fontFamily: PP }}>
+                <span className="pp-feature-key" style={{ color: '#CF4B2C' }}>{k}</span>
+                <p style={{ fontSize: '0.9rem', color: '#555', fontWeight: 300, lineHeight: 1.7, margin: 0 }}>{v}</p>
               </div>
             ))}
           </div>
-          <a href="#waitlist" style={{ display: 'inline-block', padding: '0.9rem 2rem', borderRadius: 999, background: '#1A1A1A', color: '#ffffff', fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', textDecoration: 'none', fontFamily: PP }}>
+          <a href="#waitlist" className="pp-cta" style={{ fontFamily: PP }}>
             {isDE ? 'app kommt mit edition 01 — dabei sein' : 'the app ships with edition 01 — get in'}
           </a>
           <p style={{ marginTop: '1rem', fontSize: '0.72rem', color: '#999', fontWeight: 300, fontFamily: PP }}>
@@ -494,37 +500,6 @@ function LifestyleMoment() {
   )
 }
 
-function Footer({ locale }: { locale: string }) {
-  const isDE = locale === 'de'
-  const localHref = (path: string) => GLOBAL_PAGES.includes(path) ? path : `/${locale}${path}`
-  const footerNav = isDE
-    ? [['INTIMITÄT', '/intimacy'], ['PHILOSOPHIE', '/philosophy'], ['SHOP', '/shop'], ['COMMUNITY', '/community']]
-    : [['INTIMACY', '/intimacy'], ['PHILOSOPHY', '/philosophy'], ['SHOP', '/shop'], ['COMMUNITY', '/community']]
-  return (
-    <footer style={{ padding: '48px 40px', backgroundColor: '#1A1A1A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <Logo color="#ffffff" size={18} />
-        <span style={{ color: '#ffffff', fontSize: 10, letterSpacing: '0.4em', fontFamily: PP, opacity: 0.55 }}>PEAKPLANT</span>
-      </div>
-      <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
-        {footerNav.map(([label, href]) => (
-          <Link key={href} href={localHref(href)} style={{ color: '#ffffff', fontSize: 9, letterSpacing: '0.35em', fontFamily: PP, textDecoration: 'none', opacity: 0.35 }}>
-            {label}
-          </Link>
-        ))}
-      </div>
-      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
-        {[['impressum', '/impressum'], ['datenschutz', '/datenschutz'], ['agb', '/agb']].map(([label, href]) => (
-          <Link key={href} href={href} style={{ color: '#ffffff', fontSize: 9, letterSpacing: '0.25em', fontFamily: PP, textDecoration: 'none', opacity: 0.22 }}>
-            {label}
-          </Link>
-        ))}
-        <p style={{ fontSize: 9, letterSpacing: '0.3em', color: '#ffffff', opacity: 0.18, fontFamily: PP }}>© 2026 PEAKPLANT</p>
-      </div>
-    </footer>
-  )
-}
-
 export default function Home({ params }: { params: { locale: string } }) {
   const { locale } = params
   const isMobile = useIsMobile()
@@ -542,7 +517,6 @@ export default function Home({ params }: { params: { locale: string } }) {
       <Manifesto locale={locale} />
       <Waitlist locale={locale} />
       <EditionSystem locale={locale} isMobile={isMobile} />
-      <Footer locale={locale} />
     </main>
   )
 }

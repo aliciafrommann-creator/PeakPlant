@@ -109,27 +109,29 @@ export default function ShopPage() {
       <NavBar activePath="/shop" />
 
       {/* Hero */}
-      <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#1E1C1A' }}>
-        <video autoPlay muted playsInline loop
+      <section className="pp-hero" style={{ overflow: 'hidden', position: 'relative', background: '#1E1C1A' }}>
+        {/* poster: one photograph, not a contact sheet — see the note on the
+            home hero. This is what a slow phone connection shows first. */}
+        <video autoPlay muted playsInline loop poster="/couples-yosemite.png"
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
           <source src="/film-wildness.mp4" type="video/mp4" />
         </video>
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55) 100%)' }} />
+        <div className="pp-hero-scrim" style={{ position: 'absolute', inset: 0 }} />
         <motion.div
           initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+          className="pp-hero-inner"
           style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}
         >
           <p style={{ fontFamily: PP, fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 600, marginBottom: '1rem' }}>
             Not just a product.<br />A decision to feel.
           </p>
-          <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', color: 'rgba(255,255,255,0.45)', marginBottom: '2.5rem' }}>
+          <p className="pp-hero-sub" style={{ fontFamily: PP, color: 'rgba(255,255,255,0.6)', marginBottom: '2.5rem' }}>
             a card deck for couples · edition 01 · the sunflower · ships october 2026
           </p>
           <button
-            style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', padding: '1rem 2.5rem', background: 'transparent', color: '#ffffff', border: '1px solid rgba(255,255,255,0.6)', cursor: 'pointer' }}
-            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.15)')}
-            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            className="pp-hero-cta"
+            style={{ fontFamily: PP, background: 'transparent', color: '#ffffff', cursor: 'pointer' }}
             onClick={() => setWaitlistOpen(true)}>
             join the waitlist →
           </button>
@@ -369,13 +371,13 @@ export default function ShopPage() {
         {waitlistOpen && <WaitlistModal onClose={() => setWaitlistOpen(false)} source="shop" />}
       </AnimatePresence>
 
-      <footer style={{ padding: '48px 40px', backgroundColor: '#1A1A1A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-        <span style={{ color: '#ffffff', fontSize: 10, letterSpacing: '0.4em', fontFamily: PP, opacity: 0.55 }}>PEAKPLANT</span>
-        <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
+      <footer className="pp-dark-footer" style={{ padding: '48px 40px', backgroundColor: '#1A1A1A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24, borderTop: '1px solid rgba(255,255,255,0.07)', fontFamily: PP }}>
+        <span style={{ color: '#ffffff', fontSize: 11, letterSpacing: '0.35em', fontFamily: PP, opacity: 0.55 }}>PEAKPLANT</span>
+        <div style={{ display: 'flex', gap: '4px 24px', flexWrap: 'wrap', alignItems: 'center' }}>
           {[['impressum', '/impressum'], ['datenschutz', '/datenschutz'], ['agb', '/agb']].map(([label, href]) => (
-            <Link key={href} href={href} style={{ color: '#ffffff', fontSize: 9, letterSpacing: '0.25em', fontFamily: PP, textDecoration: 'none', opacity: 0.22 }}>{label}</Link>
+            <Link key={href} href={href} className="pp-dark-link is-legal">{label}</Link>
           ))}
-          <p style={{ fontSize: 9, letterSpacing: '0.3em', color: '#ffffff', opacity: 0.18, fontFamily: PP }}>© 2026 PEAKPLANT</p>
+          <p style={{ fontSize: 10, letterSpacing: '0.3em', color: '#ffffff', opacity: 0.25, fontFamily: PP }}>© 2026 PEAKPLANT</p>
         </div>
       </footer>
     </div>
