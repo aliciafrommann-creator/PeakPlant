@@ -419,6 +419,69 @@ body {
   .pp-quad-body {
     transform: none !important;
   }
+  /* The edition 01 card lays white type over a bright photograph. The darkening
+     layer behind the type was tied to hover, so on a phone it stayed at 0.15
+     and the quote was barely there. Same value the mouse would have produced. */
+  .pp-edition-scrim {
+    opacity: 0.5 !important;
+  }
+  /* The before/after rows: the strike-through IS the statement ("this falls
+     away, this arrives"), and on touch it never appeared. Forced on, together
+     with the arrow and the after-state, which otherwise stay at the greyed-out
+     resting values the mouse was supposed to lift. */
+  .pp-transform-strike {
+    transform: scaleX(1) !important;
+  }
+  .pp-transform-arrow svg {
+    opacity: 0.5 !important;
+  }
+  .pp-transform-after {
+    opacity: 1 !important;
+    color: #1a1a1a !important;
+  }
+}
+
+/* --- Before / after rows (community) --------------------------------------
+   1fr 80px 1fr on a 390px screen leaves ~139px per text column: four lines of
+   one word each, in the section that carries the page's argument. Stacked, the
+   arrow turns to point down from the before-state to the after-state. */
+
+@media (max-width: 860px) {
+  .pp-transform-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem;
+    padding: 1.6rem 0.25rem !important;
+  }
+  .pp-transform-arrow {
+    justify-content: flex-start !important;
+    width: 32px;
+    margin: 0.45rem 0;
+    transform: rotate(90deg);
+  }
+  /* A two-column "Vorher / Nachher" header above one-column rows labels the
+     wrong things. The rows read top-to-bottom on their own. */
+  .pp-transform-head {
+    display: none !important;
+  }
+}
+
+/* --- Question cards (shop) -------------------------------------------------
+   Two columns of 2rem-padded cells on a phone leave ~91px of text width. One
+   column, with the vertical rules dropped since there is nothing beside them. */
+
+.pp-question-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (max-width: 860px) {
+  .pp-question-grid {
+    grid-template-columns: 1fr;
+  }
+  .pp-question-cell {
+    padding: 1.5rem !important;
+    border-right: 0 !important;
+  }
 }
 
 @media (max-width: 860px) {

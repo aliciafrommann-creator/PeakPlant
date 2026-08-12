@@ -47,19 +47,36 @@ export default function AdminPage() {
   const [orders, setOrders]   = useState<Order[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState('')
+  // Separate from "list is empty": a failed load must not look like zero orders.
+  const [loadFailed, setLoadFailed] = useState(false)
   const [forwarding, setForwarding] = useState<string | null>(null)
   const [invoicing, setInvoicing]   = useState<string | null>(null)
   const [filter, setFilter]   = useState<'all' | 'pending' | 'forwarded'>('all')
 
   const load = useCallback(async (s: string) => {
-    setLoading(true); setError('')
+    setLoading(true); setError(''); setLoadFailed(false)
     try {
       const res = await fetch('/api/admin/orders', { headers: { 'x-admin-secret': s } })
       if (res.status === 401) { setError('Falsches Passwort.'); setAuthed(false); return }
-      const data = await res.json()
-      setOrders(Array.isArray(data.orders) ? data.orders : [])
+      const data = await res.json().catch(() => ({} as { orders?: unknown; error?: string }))
+      // Ein Fehler ist nicht dasselbe wie "keine Bestellungen". Früher landete
+      // beides in derselben leeren Liste.
+      if (!res.ok || !Array.isArray(data.orders)) {
+        console.error('[Admin] Bestellungen konnten nicht geladen werden:', res.status, data?.error ?? data)
+        setOrders([])
+        setLoadFailed(true)
+        setError(data?.error ?? `Bestellungen konnten nicht geladen werden (${res.status}).`)
+        setAuthed(true)
+        return
+      }
+      setOrders(data.orders as Order[])
       setAuthed(true)
-    } catch { setError('Fehler beim Laden.') }
+    } catch (err) {
+      console.error('[Admin] Netzwerkfehler beim Laden der Bestellungen:', err)
+      setOrders([])
+      setLoadFailed(true)
+      setError('Fehler beim Laden.')
+    }
     finally { setLoading(false) }
   }, [])
 
@@ -100,6 +117,9 @@ export default function AdminPage() {
       })
       const data = await res.json()
       if (!res.ok) { alert(data.error ?? 'Fehler'); return }
+      // Zweiter Klick auf eine bereits verschickte Rechnung: die Route legt
+      // keine zweite an, sondern gibt die bestehende zurück. Das gehört gesagt.
+      if (data.alreadySent) alert('Für diese Bestellung wurde bereits eine Rechnung verschickt — es wurde keine zweite erstellt.')
       await load(secret)
     } finally { setInvoicing(null) }
   }
@@ -164,14 +184,24 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {visible.length === 0 ? (
+        {loadFailed ? (
+          <div style={{ padding: '2rem 0' }}>
+            <p style={{ fontSize: 14, color: '#e74c3c', marginBottom: 8 }}>
+              bestellungen konnten nicht geladen werden.
+            </p>
+            <p style={{ fontSize: 13, opacity: 0.5, lineHeight: 1.6 }}>
+              {error || 'Die Datenbank hat nicht geantwortet.'}<br />
+              Das heißt NICHT, dass keine Bestellungen da sind — die Liste ist ungeprüft.
+            </p>
+          </div>
+        ) : visible.length === 0 ? (
           <p style={{ fontSize: 14, opacity: 0.4, padding: '3rem 0' }}>keine bestellungen.</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: '#ececec', border: '1px solid #ececec' }}>
             {visible.map(o => {
               const st = STATUS_LABEL[o.status] ?? { label: o.status, color: '#888' }
               return (
-                <div key={o.id} style={{ background: '#fff', padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1.2fr 1fr auto', gap: '1.5rem', alignItems: 'center' }}>
+                <div key={o.id} className="pp-stack" style={{ background: '#fff', padding: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1.2fr 1fr auto', gap: '1.5rem', alignItems: 'center' }}>
                   <div>
                     <p style={{ fontSize: 10, fontFamily: 'monospace', opacity: 0.4, marginBottom: 4 }}>#{o.id.slice(0, 8).toUpperCase()}</p>
                     <p style={{ fontSize: 14, fontWeight: 400 }}>{o.email}</p>

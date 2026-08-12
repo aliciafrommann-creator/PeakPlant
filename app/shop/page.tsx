@@ -304,7 +304,10 @@ export default function ShopPage() {
           style={{ fontSize: '0.95rem', fontWeight: 300, color: '#777', lineHeight: 1.7, marginBottom: '3rem', maxWidth: 460 }}>
           ten growing questions in the deck, alongside the dates and the acts. here&apos;s a taste of edition 01 — the rest unfold as you live them, and stay in your shared diary.
         </motion.p>
-        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, 1fr)', gap: '0' }}>
+        {/* Breakpoint in CSS, not in JS: the server renders the desktop grid
+            either way, so a JS-only breakpoint ships the phone a three-column
+            layout and only corrects it after hydration. */}
+        <div className="pp-question-grid" style={{ gap: '0' }}>
           {[
             'what makes you feel seen by me?',
             'when do you feel most alive with me?',
@@ -313,7 +316,8 @@ export default function ShopPage() {
             <motion.div key={i}
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.06 }}
-              style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', borderRight: isMobile ? (i % 2 !== 1 ? '1px solid #e8e8e8' : 'none') : (i % 3 !== 2 ? '1px solid #e8e8e8' : 'none') }}>
+              className="pp-question-cell"
+              style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', borderRight: i % 3 !== 2 ? '1px solid #e8e8e8' : 'none' }}>
               <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem' }}>0{i + 1}</p>
               <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, fontStyle: 'italic', color: '#1A1A1A' }}>"{q}"</p>
             </motion.div>
@@ -321,6 +325,7 @@ export default function ShopPage() {
           <motion.div
             initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.18 }}
+            className="pp-question-cell"
             style={{ padding: '2rem', borderBottom: '1px solid #e8e8e8', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <p style={{ fontSize: '0.65rem', letterSpacing: '0.12em', opacity: 0.3, marginBottom: '0.75rem' }}>∧</p>
             <p style={{ fontSize: '0.95rem', lineHeight: 1.7, fontWeight: 300, color: '#bbb' }}>seven more — to discover in your box.</p>

@@ -381,8 +381,16 @@ function EditionCard01({ locale }: { locale: string }) {
       onMouseLeave={() => setHovered(false)}
       style={{ position: 'relative', overflow: 'hidden', minHeight: 280, border: '1px solid rgba(255,255,255,0.12)', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'default' }}
     >
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/product-hero.png)', backgroundSize: 'cover', backgroundPosition: 'center', pointerEvents: 'none' }} />
+      {/* As next/image, not a CSS background: as a background the raw 456 KB PNG
+          went to every phone at full size, for a card that is a third of the
+          row wide. */}
+      <Image
+        src="/product-hero.png" alt="" aria-hidden fill
+        sizes="(max-width: 860px) 100vw, 33vw"
+        style={{ objectFit: 'cover', objectPosition: 'center', pointerEvents: 'none' }}
+      />
       <motion.div
+        className="pp-edition-scrim"
         animate={{ opacity: hovered ? 0.5 : 0.15 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', pointerEvents: 'none' }}

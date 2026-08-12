@@ -100,15 +100,20 @@ export default function IntimacyPage({ params }: { params: { locale: string } })
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
       <NavBar activePath="/intimacy" />
 
-      <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
+      {/* Same hero mechanics as the home and shop heroes: 100svh so the bottom
+          of the hero is not hidden under the iOS address bar, the shared scrim
+          (which darkens the middle of the frame on a phone, where the text
+          sits) and the shared inner layout, which centres the copy there. */}
+      <section className="pp-hero" style={{ overflow: 'hidden', position: 'relative', background: '#000' }}>
         <HeroFilm
           film="/film-presence.mp4"
           poster="/hero-presence.webp"
           alt={isDE ? 'zwei menschen auf einer motorhaube bei sonnenuntergang' : 'two people on a car hood at sunset'}
         />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55) 100%)' }} />
+        <div className="pp-hero-scrim" style={{ position: 'absolute', inset: 0 }} />
         <motion.div initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+          className="pp-hero-inner"
           style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}>
           <p style={{ fontFamily: PP, fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 600, marginBottom: '0.75rem' }}>
             {isDE ? 'Intimität ist kein einzelner Moment.' : 'Intimacy is not a single moment.'}

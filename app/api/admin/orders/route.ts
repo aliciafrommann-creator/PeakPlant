@@ -16,6 +16,23 @@ export async function GET(req: NextRequest) {
     { headers: { 'apikey': SUP_KEY, 'Authorization': `Bearer ${SUP_KEY}` } }
   )
 
+  // A PostgREST error is a JSON object, not an array. Passing it through made
+  // the panel show a calm, empty order list — indistinguishable from "no orders
+  // yet" at exactly the moment the difference matters.
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '')
+    console.error('[Admin/orders] load failed:', res.status, detail.slice(0, 300))
+    return NextResponse.json(
+      { error: `Bestellungen konnten nicht geladen werden (${res.status})` },
+      { status: 500 },
+    )
+  }
+
   const orders = await res.json()
+  if (!Array.isArray(orders)) {
+    console.error('[Admin/orders] unexpected response shape:', JSON.stringify(orders).slice(0, 300))
+    return NextResponse.json({ error: 'Unerwartete Antwort der Datenbank' }, { status: 500 })
+  }
+
   return NextResponse.json({ orders })
 }
