@@ -101,7 +101,7 @@ export default function DiscoverScreen() {
   const ritualsEnabled = useAppStore((s) => s.features.rituals);
   const personalization = useAppStore((s) => s.personalization);
   const personalizationResetAt = useAppStore((s) => s.personalizationResetAt);
-  const { t } = useLanguage();
+  const { t, l } = useLanguage();
 
   const [active, setActive] = useState<Set<string>>(new Set());
   const [excludeIds, setExcludeIds] = useState<string[]>([]);
@@ -560,8 +560,8 @@ export default function DiscoverScreen() {
             <Text style={styles.challengePrompt}>
               {t('a little extra energy today?', 'ein bisschen extra Energie heute?')}
             </Text>
-            <Text style={styles.challengeTitle}>{weekly.title}</Text>
-            <Text style={styles.challengeSubtitle}>{weekly.subtitle}</Text>
+            <Text style={styles.challengeTitle}>{l(weekly.title)}</Text>
+            <Text style={styles.challengeSubtitle}>{l(weekly.subtitle)}</Text>
 
             {challengeProgress?.complete ? (
               <View style={styles.challengeDone}>

@@ -1,6 +1,6 @@
 import { storage } from './storage';
 import { supabase, isSupabaseConfigured } from './supabase/client';
-import type { SpaceType } from './types';
+import type { LocalizedText, SpaceType } from './types';
 
 /**
  * Challenges — finite, opt-in, badge-not-score (PP-024).
@@ -12,15 +12,16 @@ import type { SpaceType } from './types';
 
 export interface Challenge {
   id: string;
-  title: string;
-  subtitle: string;
+  /** Bilingual — resolve with `l()` before rendering (never render raw). */
+  title: LocalizedText;
+  subtitle: LocalizedText;
   /** How many moments to preserve to complete it. */
   goalCount: number;
   spaceTypes: SpaceType[];
   /** Collectible badge shown on completion. */
   badge: string;
   /** A soft, finite duration label — never a ticking countdown. */
-  durationLabel: string;
+  durationLabel: LocalizedText;
 }
 
 export interface Enrollment {
@@ -34,12 +35,57 @@ export interface ChallengeProgress {
   complete: boolean;
 }
 
+const SEASON: LocalizedText = { en: 'this season', de: 'diese saison' };
+
 export const CHALLENGES: Challenge[] = [
-  { id: 'ch-1', title: 'a season together', subtitle: 'preserve four moments this season — any cards, any order.', goalCount: 4, spaceTypes: ['couple', 'friends'], badge: '🌻', durationLabel: 'this season' },
-  { id: 'ch-2', title: 'slow weeks', subtitle: 'three calm, unhurried moments. no plans, just presence.', goalCount: 3, spaceTypes: ['couple', 'friends'], badge: '🌙', durationLabel: 'over a few weeks' },
-  { id: 'ch-3', title: 'out in the world', subtitle: 'five moments made somewhere new together.', goalCount: 5, spaceTypes: ['couple', 'friends'], badge: '🧭', durationLabel: 'whenever it fits' },
-  { id: 'ch-4', title: 'the spice run', subtitle: 'six bold, playful moments. turn up the heat a little.', goalCount: 6, spaceTypes: ['couple'], badge: '🌶️', durationLabel: 'no rush' },
-  { id: 'ch-5', title: 'the crew', subtitle: 'four moments with the whole group.', goalCount: 4, spaceTypes: ['friends'], badge: '✨', durationLabel: 'this season' },
+  {
+    id: 'ch-1',
+    title: { en: 'a season together', de: 'eine saison zusammen' },
+    subtitle: {
+      en: 'preserve four moments this season — any cards, any order.',
+      de: 'haltet vier momente in dieser saison fest — welche karten, welche reihenfolge, ganz euch überlassen.',
+    },
+    goalCount: 4, spaceTypes: ['couple', 'friends'], badge: '🌻', durationLabel: SEASON,
+  },
+  {
+    id: 'ch-2',
+    title: { en: 'slow weeks', de: 'langsame wochen' },
+    subtitle: {
+      en: 'three calm, unhurried moments. no plans, just presence.',
+      de: 'drei ruhige momente ohne eile. keine pläne, einfach da sein.',
+    },
+    goalCount: 3, spaceTypes: ['couple', 'friends'], badge: '🌙',
+    durationLabel: { en: 'over a few weeks', de: 'über ein paar wochen' },
+  },
+  {
+    id: 'ch-3',
+    title: { en: 'out in the world', de: 'raus in die welt' },
+    subtitle: {
+      en: 'five moments made somewhere new together.',
+      de: 'fünf momente an orten, an denen ihr noch nie wart.',
+    },
+    goalCount: 5, spaceTypes: ['couple', 'friends'], badge: '🧭',
+    durationLabel: { en: 'whenever it fits', de: 'wann immer es passt' },
+  },
+  {
+    id: 'ch-4',
+    title: { en: 'the spice run', de: 'ein bisschen schärfe' },
+    subtitle: {
+      en: 'six bold, playful moments. turn up the heat a little.',
+      de: 'sechs mutige, verspielte momente. dreht die wärme ein wenig hoch.',
+    },
+    goalCount: 6, spaceTypes: ['couple'], badge: '🌶️',
+    durationLabel: { en: 'no rush', de: 'ohne eile' },
+  },
+  {
+    id: 'ch-5',
+    title: { en: 'the crew', de: 'die ganze runde' },
+    subtitle: {
+      en: 'four moments with the whole group.',
+      de: 'vier momente mit allen zusammen.',
+    },
+    goalCount: 4, spaceTypes: ['friends'], badge: '✨', durationLabel: SEASON,
+  },
 ];
 
 /**
@@ -48,16 +94,58 @@ export const CHALLENGES: Challenge[] = [
  * mark. Kept separate from the season-long CHALLENGES above so the challenges
  * list stays uncluttered; both are resolvable via challengeById/ALL_CHALLENGES.
  */
+const THIS_WEEK: LocalizedText = { en: 'this week', de: 'diese woche' };
+
 export const WEEKLY_CHALLENGES: Challenge[] = [
-  { id: 'wk-1', title: 'one soft evening', subtitle: 'do one calm, unhurried thing together this week.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🌙', durationLabel: 'this week' },
-  { id: 'wk-2', title: 'one out the door', subtitle: 'get outside together once this week — however small.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🌿', durationLabel: 'this week' },
-  { id: 'wk-3', title: 'one good laugh', subtitle: 'do one playful thing that makes you both laugh.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '✨', durationLabel: 'this week' },
-  { id: 'wk-4', title: 'one new thing', subtitle: 'try one small thing neither of you has done.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🧭', durationLabel: 'this week' },
-  { id: 'wk-5', title: 'one slow meal', subtitle: 'share one unhurried meal together, no phones.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🍽️', durationLabel: 'this week' },
-  { id: 'wk-6', title: 'one little adventure', subtitle: 'one tiny adventure, somewhere not far.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🗺️', durationLabel: 'this week' },
-  { id: 'wk-7', title: 'one kind word', subtitle: 'tell or write each other one real thank-you.', goalCount: 1, spaceTypes: ['couple'], badge: '💛', durationLabel: 'this week' },
+  {
+    id: 'wk-1',
+    title: { en: 'one soft evening', de: 'ein sanfter abend' },
+    subtitle: { en: 'do one calm, unhurried thing together this week.', de: 'macht diese woche eine ruhige sache zusammen, ganz ohne eile.' },
+    goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🌙', durationLabel: THIS_WEEK,
+  },
+  {
+    id: 'wk-2',
+    title: { en: 'one out the door', de: 'einmal vor die tür' },
+    subtitle: { en: 'get outside together once this week — however small.', de: 'geht diese woche einmal zusammen raus — und sei es nur kurz.' },
+    goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🌿', durationLabel: THIS_WEEK,
+  },
+  {
+    id: 'wk-3',
+    title: { en: 'one good laugh', de: 'einmal richtig lachen' },
+    subtitle: { en: 'do one playful thing that makes you laugh together.', de: 'macht etwas verspieltes, bei dem ihr zusammen lachen müsst.' },
+    goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '✨', durationLabel: THIS_WEEK,
+  },
+  {
+    id: 'wk-4',
+    title: { en: 'one new thing', de: 'einmal etwas neues' },
+    subtitle: { en: 'try one small thing neither of you has done.', de: 'probiert eine kleine sache, die ihr beide noch nie gemacht habt.' },
+    goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🧭', durationLabel: THIS_WEEK,
+  },
+  {
+    id: 'wk-5',
+    title: { en: 'one slow meal', de: 'einmal in ruhe essen' },
+    subtitle: { en: 'share one unhurried meal together, no phones.', de: 'esst einmal in ruhe zusammen — ohne handys.' },
+    goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🍽️', durationLabel: THIS_WEEK,
+  },
+  {
+    id: 'wk-6',
+    title: { en: 'one little adventure', de: 'ein kleines abenteuer' },
+    subtitle: { en: 'one tiny adventure, somewhere not far.', de: 'ein winziges abenteuer, irgendwo ganz in der nähe.' },
+    goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🗺️', durationLabel: THIS_WEEK,
+  },
+  {
+    id: 'wk-7',
+    title: { en: 'one kind word', de: 'ein liebes wort' },
+    subtitle: { en: 'tell or write each other one real thank-you.', de: 'sagt oder schreibt euch ein ehrliches dankeschön.' },
+    goalCount: 1, spaceTypes: ['couple'], badge: '💛', durationLabel: THIS_WEEK,
+  },
   // Copy is explicitly two-people — couple only (audit A4-10).
-  { id: 'wk-8', title: 'one cosy night in', subtitle: 'one cosy night in, just the two of you.', goalCount: 1, spaceTypes: ['couple'], badge: '🕯️', durationLabel: 'this week' },
+  {
+    id: 'wk-8',
+    title: { en: 'one cosy night in', de: 'ein gemütlicher abend zu hause' },
+    subtitle: { en: 'one cosy night in, just the two of you.', de: 'ein gemütlicher abend zu hause, nur ihr zwei.' },
+    goalCount: 1, spaceTypes: ['couple'], badge: '🕯️', durationLabel: THIS_WEEK,
+  },
 ];
 
 /** Everything resolvable by id — season + weekly. */

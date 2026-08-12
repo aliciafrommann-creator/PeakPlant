@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { AnimatedFill } from '../ui/AnimatedFill';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 
 interface ProgressBarProps {
   count: number;
@@ -11,17 +12,20 @@ interface ProgressBarProps {
 
 export function ProgressBar({ count, goal, complete }: ProgressBarProps) {
   const ratio = goal > 0 ? Math.min(count / goal, 1) : 0;
+  const { t } = useLanguage();
+  const shown = Math.min(count, goal);
+  const countLabel = t(`${shown} of ${goal} moments`, `${shown} von ${goal} Momenten`);
   return (
     <View
       accessibilityRole="progressbar"
       accessibilityValue={{ min: 0, max: goal, now: Math.min(count, goal) }}
-      accessibilityLabel={`${Math.min(count, goal)} of ${goal} moments`}
+      accessibilityLabel={countLabel}
     >
       <View style={styles.track}>
         <AnimatedFill ratio={ratio} style={styles.fill} />
       </View>
       <Text style={styles.label}>
-        {complete ? 'complete' : `${Math.min(count, goal)} of ${goal} moments`}
+        {complete ? t('complete', 'geschafft') : countLabel}
       </Text>
     </View>
   );

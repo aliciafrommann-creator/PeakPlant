@@ -107,8 +107,10 @@ const FOUNDER_DE = [
 
 type CommunityQuestion = { text: string; created_at: string }
 
+// Shared section eyebrow. Was 9.6px at 25% opacity on black — technically
+// present, practically invisible, and unreadable on a phone.
 const label = (isDE: boolean): React.CSSProperties => ({
-  fontSize: '0.6rem', letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.25, fontFamily: PP,
+  fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, fontFamily: PP,
 })
 
 function StayCloseForm({ isDE }: { isDE: boolean }) {
@@ -123,7 +125,8 @@ function StayCloseForm({ isDE }: { isDE: boolean }) {
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: 'digital-world-01' }),
+        // locale matters: without it every German signup got the English mail.
+        body: JSON.stringify({ email, source: 'digital-world-01', locale: isDE ? 'de' : 'en' }),
       })
       const data = await res.json()
       if (data.duplicate) finalStatus = 'duplicate'
@@ -153,14 +156,12 @@ function StayCloseForm({ isDE }: { isDE: boolean }) {
   }
   return (
     <form onSubmit={submit}>
-      <div style={{ display: 'flex', border: '1px solid rgba(255,255,255,0.12)', maxWidth: 420 }}>
+      <div className="pp-waitlist" style={{ fontFamily: PP, maxWidth: 420 }}>
         <input
           type="email" required value={email} onChange={e => setEmail(e.target.value)}
           placeholder={isDE ? 'deine@email.com' : 'your@email.com'}
-          style={{ flex: 1, padding: '14px 20px', background: 'transparent', border: 'none', outline: 'none', fontSize: '0.9rem', fontFamily: PP, color: '#ffffff' }}
         />
-        <button type="submit" disabled={status === 'loading'}
-          style={{ padding: '14px 20px', background: 'transparent', border: 'none', borderLeft: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '0.65rem', letterSpacing: '0.2em', fontFamily: PP, whiteSpace: 'nowrap' }}>
+        <button type="submit" disabled={status === 'loading'}>
           {status === 'loading' ? '…' : (isDE ? 'sag mir bescheid' : 'tell me')}
         </button>
       </div>
@@ -309,7 +310,7 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
             initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             transition={{ duration: 0.9, delay: li * 0.1, ease: [0.16, 1, 0.3, 1] }}
             style={{ marginBottom: li < letters.length - 1 ? 72 : 0 }}>
-            <p style={{ fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', opacity: 0.25, marginBottom: 16, fontFamily: PP }}>{letter.month}</p>
+            <p style={{ fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: 16, fontFamily: PP }}>{letter.month}</p>
             <h2 style={{ fontSize: 'clamp(1.2rem, 2.5vw, 1.6rem)', fontWeight: 200, letterSpacing: '-0.02em', marginBottom: 28, lineHeight: 1.3 }}>
               {letter.title}
             </h2>
@@ -366,15 +367,13 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
             <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.7, marginBottom: 24, fontWeight: 300, fontFamily: PP }}>
               {isDE ? 'stell eine frage. anonym. für alle, die nach dir kommen.' : 'ask something. anonymously. for everyone who comes after you.'}
             </p>
-            <div style={{ display: 'flex', border: '1px solid rgba(255,255,255,0.12)' }}>
+            <div className="pp-waitlist" style={{ fontFamily: PP }}>
               <input
                 value={input} onChange={e => setInput(e.target.value)}
                 placeholder={isDE ? 'deine frage…' : 'your question…'}
                 maxLength={200}
-                style={{ flex: 1, padding: '14px 20px', background: 'transparent', border: 'none', outline: 'none', fontSize: '0.9rem', fontFamily: PP, color: '#ffffff' }}
               />
-              <button type="submit" disabled={submitting || !input.trim()}
-                style={{ padding: '14px 20px', background: 'transparent', border: 'none', borderLeft: '1px solid rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: '0.65rem', letterSpacing: '0.2em', fontFamily: PP, whiteSpace: 'nowrap' }}>
+              <button type="submit" disabled={submitting || !input.trim()}>
                 {submitting ? '…' : (isDE ? 'senden' : 'send')}
               </button>
             </div>
@@ -424,14 +423,14 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
         <StayCloseForm isDE={isDE} />
       </section>
 
-      <footer style={{ padding: '48px 40px', borderTop: '1px solid rgba(255,255,255,0.07)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-        <Link href={`/${params.locale}`} style={{ fontSize: '0.65rem', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.3)', textDecoration: 'none', fontFamily: PP }}>∧ peakplant</Link>
-        <div style={{ display: 'flex', gap: 24 }}>
-          {[['impressum', '/impressum'], ['datenschutz', '/datenschutz']].map(([l, h]) => (
-            <Link key={h} href={h} style={{ fontSize: '0.6rem', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.2)', textDecoration: 'none', fontFamily: PP }}>{l}</Link>
-          ))}
-        </div>
-      </footer>
+      {/* The legal + navigation footer is SiteFooter, rendered once by the
+          locale layout — this page used to add a second one below it. */}
+      <div style={{ padding: '48px 40px', borderTop: '1px solid rgba(255,255,255,0.07)', textAlign: 'center' }}>
+        <Link href={`/${params.locale}`} className="pp-quiet-link"
+          style={{ color: 'rgba(255,255,255,0.45)', borderBottomColor: 'rgba(255,255,255,0.2)', opacity: 1, fontFamily: PP }}>
+          ∧ peakplant
+        </Link>
+      </div>
     </div>
   )
 }

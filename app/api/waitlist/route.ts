@@ -38,7 +38,7 @@ twenty moment cards per edition — grow dates, small acts, growing questions. u
 02. “when do you feel most alive with me?”
 03. “what helps you open up to me?”
 
-the other seven unfold inside the box.
+the other seven growing questions unfold inside the box.
 
 safe. soft. wild.
 ∧ peakplant
@@ -59,7 +59,7 @@ zwanzig moment cards pro edition — grow dates, small acts, growing questions. 
 02. „wann fühlst du dich mit mir am lebendigsten?”
 03. „was hilft dir, dich mir zu öffnen?”
 
-die übrigen sieben entfalten sich in der box.
+die übrigen sieben growing questions entfalten sich in der box.
 
 safe. soft. wild.
 ∧ peakplant
@@ -93,39 +93,52 @@ export async function POST(req: Request) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+    // Fail closed. Without a store the address is simply gone, and answering
+    // "success" would tell a real visitor they are on a list that does not
+    // exist. Better a visible error she can retry than a silent loss.
     if (!supabaseUrl || !supabaseKey) {
-      console.warn('[Waitlist] Supabase env vars missing — logging only:', sanitized)
-    } else {
-      const res = await fetch(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/subscribers`, {
-        method: 'POST',
-        headers: supabaseHeaders(supabaseKey),
-        body: JSON.stringify({ email: sanitized, source: source ?? 'homepage', edition: 'edition_01', status: 'active', locale: isDE ? 'de' : 'en' }),
-      })
-      if (res.status === 409) return NextResponse.json({ duplicate: true })
-      if (!res.ok) {
-        console.error(`[Waitlist] Supabase ${res.status}:`, await res.text())
-        return NextResponse.json({ error: 'Server error' }, { status: 500 })
-      }
+      console.error('[Waitlist] Supabase env vars missing — cannot store:', sanitized)
+      return NextResponse.json({ error: 'Server error' }, { status: 500 })
     }
 
+    const res = await fetch(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/subscribers`, {
+      method: 'POST',
+      headers: supabaseHeaders(supabaseKey),
+      body: JSON.stringify({ email: sanitized, source: source ?? 'homepage', edition: 'edition_01', status: 'active', locale: isDE ? 'de' : 'en' }),
+    })
+    if (res.status === 409) return NextResponse.json({ duplicate: true })
+    if (!res.ok) {
+      console.error(`[Waitlist] Supabase ${res.status}:`, await res.text())
+      return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    }
+
+    // The address is stored — that part is done and must not be rolled back if
+    // the welcome mail fails. But we report honestly whether it went out, so
+    // the page never says "check your inbox" when nothing was sent.
+    let mailed = false
     if (process.env.RESEND_API_KEY) {
       try {
         const resend = new Resend(process.env.RESEND_API_KEY)
         const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peak-plant.com'
         const token = makeUnsubToken(sanitized)
         const unsubUrl = `${siteUrl}/api/unsubscribe?email=${encodeURIComponent(sanitized)}&token=${encodeURIComponent(token)}`
-        await resend.emails.send({
+        const sent = await resend.emails.send({
           from: 'alicia@peak-plant.com',
           to: sanitized,
           subject: isDE ? 'du bist dabei.' : "you're in.",
           text: isDE ? BODY_DE(unsubUrl) : BODY_EN(unsubUrl),
         })
+        // The SDK reports delivery problems in `error` rather than throwing.
+        if (sent.error) console.error('[Waitlist] Resend rejected:', sent.error)
+        else mailed = true
       } catch (err) {
         console.error('[Waitlist] Resend error:', err)
       }
+    } else {
+      console.error('[Waitlist] RESEND_API_KEY missing — stored, but no welcome mail sent')
     }
 
-    return NextResponse.json({ success: true })
+    return NextResponse.json({ success: true, mailed })
   } catch (err) {
     console.error('[Waitlist] Uncaught error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

@@ -6,7 +6,16 @@ describe('weekly challenge', () => {
   it('is lightweight — one shared moment completes it', () => {
     expect(WEEKLY_CHALLENGES.length).toBeGreaterThan(0);
     expect(WEEKLY_CHALLENGES.every((c) => c.goalCount === 1)).toBe(true);
-    expect(WEEKLY_CHALLENGES.every((c) => c.durationLabel === 'this week')).toBe(true);
+    // durationLabel is bilingual now — check both languages resolve to the
+    // soft "this week" label (never a ticking countdown).
+    expect(
+      WEEKLY_CHALLENGES.every(
+        (c) =>
+          typeof c.durationLabel === 'object' &&
+          c.durationLabel.en === 'this week' &&
+          c.durationLabel.de === 'diese woche',
+      ),
+    ).toBe(true);
   });
 
   it('picks a weekly challenge (goal 1)', () => {

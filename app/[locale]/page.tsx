@@ -30,15 +30,22 @@ function ScrollBar() {
 function CouplesHero({ locale }: { locale: string }) {
   const isDE = locale === 'de'
   return (
-    <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#1E1C1A' }}>
-      <video autoPlay muted playsInline loop
+    // 100svh, not 100vh: on iOS Safari 100vh is the height WITHOUT the browser
+    // chrome, so a bottom-aligned hero puts its call to action underneath the
+    // address bar — invisible until you scroll. svh is the visible height.
+    <section className="pp-hero" style={{ overflow: 'hidden', position: 'relative', background: '#1E1C1A' }}>
+      {/* poster: what a phone on a slow connection sees before the film loads.
+          It has to be one photograph — couples-bw.jpg is a four-up contact
+          sheet and renders as a seamed grid at full-bleed. */}
+      <video autoPlay muted playsInline loop poster="/couples-rain.jpg"
         style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
         <source src="/film-intimacy.mp4" type="video/mp4" />
       </video>
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 35%, rgba(0,0,0,0.45) 100%)' }} />
+      <div className="pp-hero-scrim" style={{ position: 'absolute', inset: 0 }} />
       <motion.div
         initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+        className="pp-hero-inner"
         style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', padding: '5rem 2.5rem', textAlign: 'center' }}
       >
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, delay: 0.2 }}
@@ -51,11 +58,11 @@ function CouplesHero({ locale }: { locale: string }) {
         <p style={{ fontFamily: PP, fontSize: '0.8rem', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.75)', fontWeight: 300, maxWidth: 420, margin: '0 auto 2rem', lineHeight: 1.7 }}>
           {isDE ? 'ein kartenset für paare — dates, acts, questions. jede karte wird ein festgehaltener moment. friends & solo edition sind unterwegs.' : 'a card deck for couples — dates, acts, questions. every card becomes a moment you keep. friends & solo editions are on their way.'}
         </p>
-        <a href="#waitlist"
-          style={{ display: 'inline-block', marginBottom: '2rem', padding: '0.85rem 2.2rem', borderRadius: 999, border: '1px solid rgba(255,255,255,0.5)', fontSize: '0.65rem', letterSpacing: '0.28em', color: '#ffffff', textDecoration: 'none', fontFamily: PP, textTransform: 'uppercase' }}>
+        <a href="#waitlist" className="pp-hero-cta"
+          style={{ marginBottom: '1.75rem', color: '#ffffff', textDecoration: 'none', fontFamily: PP }}>
           {isDE ? 'edition 01 — auf die warteliste' : 'edition 01 — join the waitlist'}
         </a>
-        <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' }}>
+        <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.28em', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' }}>
           {isDE ? 'weiterscrollen' : 'scroll to explore'}
         </p>
       </motion.div>
@@ -70,7 +77,8 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
     <section style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', minHeight: '80vh', backgroundColor: '#FBFAF7', borderTop: '1px solid #ebebeb', borderBottom: '1px solid #ebebeb' }}>
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: isMobile ? '80px 32px' : '120px 80px' }}>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} viewport={{ once: true }}
-          style={{ fontSize: 10, letterSpacing: '0.55em', color: '#1A1A1A', opacity: 0.35, marginBottom: 36, fontFamily: PP }}>
+          className="pp-eyebrow"
+          style={{ color: '#1A1A1A', opacity: 0.35, marginBottom: 36, fontFamily: PP }}>
           {isDE ? 'WAS WIR GEMACHT HABEN' : 'WHAT WE MADE'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }} viewport={{ once: true }}
@@ -87,10 +95,10 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}
           style={{ marginTop: 28, display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' }}>
-          <a href="#waitlist" style={{ display: 'inline-block', padding: '0.9rem 2rem', borderRadius: 999, background: '#1A1A1A', color: '#ffffff', fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', textDecoration: 'none', fontFamily: PP }}>
+          <a href="#waitlist" className="pp-cta" style={{ fontFamily: PP }}>
             {isDE ? 'auf die warteliste' : 'join the waitlist'}
           </a>
-          <Link href={localHref('/shop')} style={{ fontSize: 10, letterSpacing: '0.35em', color: '#1A1A1A', opacity: 0.5, textDecoration: 'none', fontFamily: PP, borderBottom: '1px solid rgba(26,26,26,0.25)', paddingBottom: 4 }}>
+          <Link href={localHref('/shop')} className="pp-quiet-link" style={{ fontFamily: PP }}>
             {isDE ? 'ENTDECKEN →' : 'SEE IT →'}
           </Link>
         </motion.div>
@@ -108,6 +116,9 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
 function Waitlist({ locale }: { locale: string }) {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle')
+  // Whether the welcome mail actually went out. We only promise an inbox when
+  // the server confirms it sent one.
+  const [mailed, setMailed] = useState(false)
   const isDE = locale === 'de'
 
   const submit = async (e: React.FormEvent) => {
@@ -118,7 +129,7 @@ function Waitlist({ locale }: { locale: string }) {
       const res = await fetch('/api/waitlist', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, locale }) })
       const data = await res.json()
       if (data.duplicate) finalStatus = 'duplicate'
-      else if (res.ok) finalStatus = 'success'
+      else if (res.ok) { finalStatus = 'success'; setMailed(!!data.mailed) }
     } catch { finalStatus = 'error' }
     finally { setStatus(finalStatus) }
   }
@@ -138,7 +149,9 @@ function Waitlist({ locale }: { locale: string }) {
         {status === 'success' ? (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
             <p style={{ fontSize: 15, color: '#ffffff', opacity: 0.75, fontFamily: PP, fontWeight: 300, lineHeight: 1.7 }}>
-              {isDE ? 'gut. schau in dein postfach —\nwir haben dir einen vorgeschmack auf edition 01 gelassen.' : 'good. check your inbox —\nwe left you a first taste of edition 01.'}
+              {mailed
+                ? (isDE ? 'gut. schau in dein postfach —\nwir haben dir einen vorgeschmack auf edition 01 gelassen.' : 'good. check your inbox —\nwe left you a first taste of edition 01.')
+                : (isDE ? 'gut. du stehst auf der liste.\nwir melden uns, wenn edition 01 kommt.' : "good. you're on the list.\nwe'll reach out when edition 01 is ready.")}
             </p>
           </motion.div>
         ) : status === 'duplicate' ? (
@@ -147,11 +160,9 @@ function Waitlist({ locale }: { locale: string }) {
             {isDE ? 'du bist bereits auf der liste.' : "you're already on the list."}
           </motion.p>
         ) : (
-          <form onSubmit={submit} style={{ display: 'inline-flex', maxWidth: 460, width: '100%', border: '1px solid rgba(255,255,255,0.22)' }}>
-            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={isDE ? 'deine@email.com' : 'your@email.com'} required
-              style={{ flex: 1, padding: '16px 24px', background: 'transparent', border: 'none', outline: 'none', fontSize: 13, fontFamily: PP, color: '#ffffff' }} />
-            <button type="submit" disabled={status === 'loading'}
-              style={{ padding: '16px 28px', borderRadius: 999, backgroundColor: '#ffffff', color: '#1A1A1A', border: 'none', cursor: 'pointer', fontSize: 10, letterSpacing: '0.4em', fontFamily: PP, fontWeight: 500 }}>
+          <form onSubmit={submit} className="pp-waitlist" style={{ fontFamily: PP, margin: '0 auto' }}>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={isDE ? 'deine@email.com' : 'your@email.com'} required />
+            <button type="submit" disabled={status === 'loading'}>
               {status === 'loading' ? '...' : (isDE ? 'edition 01 sichern' : 'get early access')}
             </button>
           </form>
@@ -315,13 +326,13 @@ function AppPeek({ locale, isMobile }: { locale: string; isMobile: boolean }) {
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', marginBottom: '2rem' }}>
             {features.map(([k, v]) => (
-              <div key={k} style={{ display: 'flex', gap: '0.9rem', alignItems: 'baseline' }}>
-                <span style={{ fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#CF4B2C', fontFamily: PP, minWidth: 110 }}>{k}</span>
-                <p style={{ fontSize: '0.9rem', color: '#555', fontWeight: 300, lineHeight: 1.7, fontFamily: PP, margin: 0 }}>{v}</p>
+              <div key={k} className="pp-feature-row" style={{ fontFamily: PP }}>
+                <span className="pp-feature-key" style={{ color: '#CF4B2C' }}>{k}</span>
+                <p style={{ fontSize: '0.9rem', color: '#555', fontWeight: 300, lineHeight: 1.7, margin: 0 }}>{v}</p>
               </div>
             ))}
           </div>
-          <a href="#waitlist" style={{ display: 'inline-block', padding: '0.9rem 2rem', borderRadius: 999, background: '#1A1A1A', color: '#ffffff', fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', textDecoration: 'none', fontFamily: PP }}>
+          <a href="#waitlist" className="pp-cta" style={{ fontFamily: PP }}>
             {isDE ? 'app kommt mit edition 01 — dabei sein' : 'the app ships with edition 01 — get in'}
           </a>
           <p style={{ marginTop: '1rem', fontSize: '0.72rem', color: '#999', fontWeight: 300, fontFamily: PP }}>
@@ -352,32 +363,6 @@ function AppPeek({ locale, isMobile }: { locale: string; isMobile: boolean }) {
             </div>
           </div>
         </motion.div>
-      </div>
-    </section>
-  )
-}
-
-function Testimonials({ locale, isMobile }: { locale: string; isMobile: boolean }) {
-  const isDE = locale === 'de'
-  const quotes = isDE ? [
-    { text: 'wir hatten seit jahren nicht mehr so geredet. nicht weil wir nicht wollten – wir wussten einfach nicht, wie wir anfangen sollten.', author: '— beta tester, stuttgart' },
-    { text: 'ich bin definitiv teil der hook-up-culture. aber echte intime momente sind einfach wunderschön. wir reden danach immer. jetzt können wir diese momente sammeln und festhalten. ich wusste nicht, dass uns das noch näher bringen kann.', author: '— beta tester, münchen' },
-  ] : [
-    { text: "we hadn't talked like that in years. not because we didn't want to — we just didn't know how to start.", author: '— beta tester, stuttgart' },
-    { text: "i'm definitely part of the hook-up culture. but moments of real intimacy are just beautiful. we always talk after. now we can collect these moments and remember them. i didn't know this could bring us even closer together.", author: '— beta tester, münchen' },
-  ]
-  return (
-    <section style={{ backgroundColor: '#FBFAF7', borderTop: '1px solid #ebebeb', padding: '8rem 2.5rem' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '5rem' }}>
-        {quotes.map((q, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: i * 0.15 }}
-            style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <span style={{ fontFamily: PP, fontSize: '1.4rem', color: '#CF4B2C', lineHeight: 1 }}>∧</span>
-            <p style={{ fontFamily: PP, fontSize: 'clamp(1rem, 1.8vw, 1.3rem)', fontWeight: 300, fontStyle: 'italic', lineHeight: 1.7, color: '#1A1A1A' }}>"{q.text}"</p>
-            <p style={{ fontFamily: PP, fontSize: '0.7rem', letterSpacing: '0.1em', color: '#1A1A1A', opacity: 0.4, fontWeight: 300 }}>{q.author}</p>
-          </motion.div>
-        ))}
       </div>
     </section>
   )
@@ -424,7 +409,9 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
         </motion.h2>
         <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)', gap: '1.5rem', marginBottom: '4rem' }}>
           <EditionCard01 locale={locale} />
-          {(isDE ? ['edition 02 — herbst 2026', 'edition 03 — winter 2026'] : ['edition 02 — autumn 2026', 'edition 03 — winter 2026']).map((label, i) => (
+          {/* No dates on 02/03: edition 01 has not shipped yet, so a season
+              printed here is a promise we cannot keep — and it ages by itself. */}
+          {['edition 02', 'edition 03'].map((label, i) => (
             <motion.div key={label}
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               transition={{ duration: 0.9, delay: (i + 1) * 0.1, ease: [0.16, 1, 0.3, 1] }}
@@ -443,8 +430,8 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }}
           style={{ fontSize: '0.95rem', color: '#ffffff', opacity: 0.45, lineHeight: 1.75, fontWeight: 300, maxWidth: 480, fontFamily: PP, whiteSpace: 'pre-line' }}>
           {isDE
-            ? 'jede edition eine pflanze, drei monate lang. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deines decks.\nneue edition: neue pflanze, neue karten, neue fragen, neue digitale welt.\nund mehr ist unterwegs: eine friends edition für freundeskreise und eine solo edition für die liebe zu dir selbst — weil beides genauso zählt. freundeskreise kann die app schon heute.'
-            : 'every edition is a plant, for three months. edition 01 is the sunflower — its seeds are pressed into the seed paper in your deck.\nnew edition: new plant, new cards, new questions, new digital world.\nand more is on the way: a friends edition for your circle and a solo edition for the love you give yourself — because both matter just as much. the app already holds circles of friends.'}
+            ? 'jede edition ist eine pflanze. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deines decks.\njede weitere edition bringt eine neue pflanze, neue karten, neue fragen.\ngeplant sind außerdem eine friends edition für freundeskreise und eine solo edition für die liebe zu dir selbst — weil beides genauso zählt. freundeskreise kann die app schon heute.'
+            : 'every edition is a plant. edition 01 is the sunflower — its seeds are pressed into the seed paper in your deck.\neach edition after it brings a new plant, new cards, new questions.\nalso planned: a friends edition for your circle and a solo edition for the love you give yourself — because both matter just as much. the app already holds circles of friends.'}
         </motion.p>
       </div>
     </section>
@@ -494,37 +481,6 @@ function LifestyleMoment() {
   )
 }
 
-function Footer({ locale }: { locale: string }) {
-  const isDE = locale === 'de'
-  const localHref = (path: string) => GLOBAL_PAGES.includes(path) ? path : `/${locale}${path}`
-  const footerNav = isDE
-    ? [['INTIMITÄT', '/intimacy'], ['PHILOSOPHIE', '/philosophy'], ['SHOP', '/shop'], ['COMMUNITY', '/community']]
-    : [['INTIMACY', '/intimacy'], ['PHILOSOPHY', '/philosophy'], ['SHOP', '/shop'], ['COMMUNITY', '/community']]
-  return (
-    <footer style={{ padding: '48px 40px', backgroundColor: '#1A1A1A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <Logo color="#ffffff" size={18} />
-        <span style={{ color: '#ffffff', fontSize: 10, letterSpacing: '0.4em', fontFamily: PP, opacity: 0.55 }}>PEAKPLANT</span>
-      </div>
-      <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap' }}>
-        {footerNav.map(([label, href]) => (
-          <Link key={href} href={localHref(href)} style={{ color: '#ffffff', fontSize: 9, letterSpacing: '0.35em', fontFamily: PP, textDecoration: 'none', opacity: 0.35 }}>
-            {label}
-          </Link>
-        ))}
-      </div>
-      <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'center' }}>
-        {[['impressum', '/impressum'], ['datenschutz', '/datenschutz'], ['agb', '/agb']].map(([label, href]) => (
-          <Link key={href} href={href} style={{ color: '#ffffff', fontSize: 9, letterSpacing: '0.25em', fontFamily: PP, textDecoration: 'none', opacity: 0.22 }}>
-            {label}
-          </Link>
-        ))}
-        <p style={{ fontSize: 9, letterSpacing: '0.3em', color: '#ffffff', opacity: 0.18, fontFamily: PP }}>© 2026 PEAKPLANT</p>
-      </div>
-    </footer>
-  )
-}
-
 export default function Home({ params }: { params: { locale: string } }) {
   const { locale } = params
   const isMobile = useIsMobile()
@@ -535,14 +491,12 @@ export default function Home({ params }: { params: { locale: string } }) {
       <CouplesHero locale={locale} />
       <Product locale={locale} isMobile={isMobile} />
       <LifestyleMoment />
-      <Testimonials locale={locale} isMobile={isMobile} />
       <SixQuestions locale={locale} />
       <CollectAndSurprise locale={locale} isMobile={isMobile} />
       <AppPeek locale={locale} isMobile={isMobile} />
       <Manifesto locale={locale} />
       <Waitlist locale={locale} />
       <EditionSystem locale={locale} isMobile={isMobile} />
-      <Footer locale={locale} />
     </main>
   )
 }
