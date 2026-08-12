@@ -4,6 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { NavBar } from '../../components/NavBar'
+import { HeroFilm } from '../../components/HeroFilm'
+import { StickyCTA } from '../../components/StickyCTA'
 import { useIsMobile } from '../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
@@ -34,14 +36,13 @@ function CouplesHero({ locale }: { locale: string }) {
     // chrome, so a bottom-aligned hero puts its call to action underneath the
     // address bar — invisible until you scroll. svh is the visible height.
     <section className="pp-hero" style={{ overflow: 'hidden', position: 'relative', background: '#1E1C1A' }}>
-      {/* No poster image. The section background is already the dark stone the
-          film sits on, so nothing flashes while it loads — and any still we
-          have is a different shoot than the film, which reads as a stock photo
-          swapped in for a second. Better nothing than the wrong picture. */}
-      <video autoPlay muted playsInline loop
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
-        <source src="/film-intimacy.mp4" type="video/mp4" />
-      </video>
+      {/* Film on a laptop, the still from that same film on a phone — see
+          HeroFilm. Same shoot, so nothing reads as a stock photo swapped in. */}
+      <HeroFilm
+        film="/film-intimacy.mp4"
+        poster="/hero-intimacy.webp"
+        alt={isDE ? 'zwei menschen im regen, stirn an stirn' : 'two people in the rain, forehead to forehead'}
+      />
       <div className="pp-hero-scrim" style={{ position: 'absolute', inset: 0 }} />
       <motion.div
         initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
@@ -498,6 +499,9 @@ export default function Home({ params }: { params: { locale: string } }) {
       <Manifesto locale={locale} />
       <Waitlist locale={locale} />
       <EditionSystem locale={locale} isMobile={isMobile} />
+      {/* Phones only: the page runs ten screens and the top bar is out of
+          thumb reach the whole way down. */}
+      <StickyCTA locale={locale} />
     </main>
   )
 }

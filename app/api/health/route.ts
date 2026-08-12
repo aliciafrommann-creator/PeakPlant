@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
   let subscriberCount: number | null = null
   if (supabaseUrl && supabaseKey) {
     try {
-      const res = await fetch(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/subscribers?select=id&status=eq.active`, {
+      const res = await fetch(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/subscribers?select=id`, {
         headers: {
           'apikey': supabaseKey,
           'Authorization': `Bearer ${supabaseKey}`,

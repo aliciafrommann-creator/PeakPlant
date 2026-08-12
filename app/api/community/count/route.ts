@@ -5,7 +5,7 @@ export async function GET() {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   if (!url || !key) return NextResponse.json({ count: 0 })
   try {
-    const res = await fetch(`${url}/rest/v1/subscribers?select=id&status=eq.active`, {
+    const res = await fetch(`${url}/rest/v1/subscribers?select=id`, {
       headers: {
         'Content-Type': 'application/json',
         'apikey': key,

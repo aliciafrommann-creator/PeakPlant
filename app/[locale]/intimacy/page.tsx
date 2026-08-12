@@ -2,6 +2,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { NavBar } from '../../../components/NavBar'
+import { HeroFilm } from '../../../components/HeroFilm'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -91,10 +92,11 @@ export default function IntimacyPage({ params }: { params: { locale: string } })
       <NavBar activePath="/intimacy" />
 
       <section style={{ height: '100vh', overflow: 'hidden', position: 'relative', background: '#000' }}>
-        <video autoPlay muted playsInline loop
-          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', position: 'absolute', inset: 0 }}>
-          <source src="/film-presence.mp4" type="video/mp4" />
-        </video>
+        <HeroFilm
+          film="/film-presence.mp4"
+          poster="/hero-presence.webp"
+          alt={isDE ? 'zwei menschen auf einer motorhaube bei sonnenuntergang' : 'two people on a car hood at sunset'}
+        />
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.55) 100%)' }} />
         <motion.div initial={{ opacity: 0, y: 32 }} animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}

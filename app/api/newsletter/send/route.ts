@@ -118,15 +118,15 @@ async function sendNewsletter(): Promise<NextResponse> {
   }
 
   const subsRes = await fetch(
-    `${supabaseUrl.replace(/\/$/, '')}/rest/v1/subscribers?status=eq.active&select=email,locale`,
+    `${supabaseUrl.replace(/\/$/, '')}/rest/v1/subscribers?select=email,source`,
     { headers: headers(supabaseKey) }
   )
   if (!subsRes.ok) {
     return NextResponse.json({ error: 'Failed to fetch subscribers' }, { status: 500 })
   }
-  const subscribers: { email: string; locale: string | null }[] = await subsRes.json()
+  const subscribers: { email: string; source: string | null }[] = await subsRes.json()
   if (subscribers.length === 0) {
-    return NextResponse.json({ sent: 0, message: 'No active subscribers' })
+    return NextResponse.json({ sent: 0, message: 'No subscribers' })
   }
 
   const now = new Date()
@@ -135,29 +135,29 @@ async function sendNewsletter(): Promise<NextResponse> {
   let sent = 0
   const errors: string[] = []
 
-  for (const { email, locale } of subscribers) {
-    const isDE = locale === 'de'
+  for (const { email, source } of subscribers) {
+    // The signup wrote the language into `source` ("homepage-de"); there is no
+    // locale column. Anything without the suffix is an older row — English.
+    const isDE = (source ?? '').endsWith('-de')
     const subject = isDE ? `∧ peakplant — der monatsbrief` : `∧ peakplant — the monthly`
-    try {
-      await sendMail({
-        to: email,
-        subject,
-        html: buildHtml(email, isDE),
-      })
-      sent++
-    } catch (err) {
+    // sendMail never throws — it reports. Counting on absence of an exception
+    // would report a full send even when the provider refused every message.
+    const mail = await sendMail({
+      to: email,
+      subject,
+      html: buildHtml(email, isDE),
+    })
+    if (mail.sent) sent++
+    else {
       errors.push(email)
-      console.error('[Newsletter] Failed to send to', email, err)
+      console.error('[Newsletter] not sent to', email, '—', mail.error)
     }
   }
 
-  await fetch(`${supabaseUrl.replace(/\/$/, '')}/rest/v1/newsletter_sends`, {
-    method: 'POST',
-    headers: { ...headers(supabaseKey), Prefer: 'return=minimal' },
-    body: JSON.stringify({ subject: `∧ peakplant — ${month}`, recipient_count: sent, edition }),
-  })
-
-  return NextResponse.json({ sent, errors: errors.length > 0 ? errors : undefined })
+  // There is no `newsletter_sends` table in this project — the write here was
+  // rejected on every run and swallowed. Dropped rather than left to fail
+  // quietly; the send count is returned instead.
+  return NextResponse.json({ sent, month, edition, errors: errors.length > 0 ? errors : undefined })
 }
 
 function isAuthorized(req: Request): boolean {
