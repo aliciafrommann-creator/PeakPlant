@@ -11,7 +11,7 @@
  *  - Fallback to deterministic is silent + transparent (labeled 'deterministic').
  */
 
-import { recommendDates, rankedCandidates } from '../discovery/recommend';
+import { dayVarietySeed, recommendDates, rankedCandidates } from '../discovery/recommend';
 import type { DateConstraints, DateRecommendation } from '../discovery/types';
 import { mergeAiRanking, type AiPick } from './aiRecommend';
 import { supabase } from '../supabase/client';
@@ -79,7 +79,7 @@ export async function askGateway(
   _freeText: string,
   aiEnabled: boolean,
 ): Promise<AskGatewayResult> {
-  const deterministic = await recommendDates(constraints);
+  const deterministic = await recommendDates(constraints, { varietySeed: dayVarietySeed() });
 
   const canUseAi = aiEnabled && aiSurfaceEnabled('askPeakPlant') && Boolean(supabase);
   if (canUseAi) {

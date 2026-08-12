@@ -40,6 +40,9 @@ export interface ISpaceRepository {
   getAllForUser(userId: string): Promise<Space[]>;
   getById(id: string): Promise<Space | null>;
   getMembers(spaceId: string): Promise<SpaceMember[]>;
+  /** Remove the given user's own membership. Diary content stays with the
+   *  space — leaving takes away access, it deletes nothing shared. */
+  leave(spaceId: string, userId: string): Promise<void>;
   create(input: CreateSpaceInput): Promise<Space>;
   /** Mock join-by-code: links the user into the matching space (or a new one). */
   joinByCode(code: string, userId: string, userName: string): Promise<Space>;

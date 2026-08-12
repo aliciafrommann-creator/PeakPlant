@@ -164,6 +164,14 @@ export const localSpaceRepository: ISpaceRepository = {
     return members.filter((m) => m.spaceId === spaceId);
   },
 
+  async leave(spaceId: string, userId: string): Promise<void> {
+    const members = await loadMembers();
+    await storage.set(
+      MEMBERS_KEY,
+      members.filter((m) => !(m.spaceId === spaceId && m.userId === userId)),
+    );
+  },
+
   async create({ type, name, ownerUserId, ownerName }: CreateSpaceInput): Promise<Space> {
     const spaces = await loadSpaces();
     const members = await loadMembers();
@@ -194,15 +202,10 @@ export const localSpaceRepository: ISpaceRepository = {
     let space = spaces.find((s) => s.inviteCode.toUpperCase() === normalized) ?? null;
 
     if (!space) {
-      // Mock: no server to validate against, so represent the joined space locally.
-      space = {
-        id: generateId('space'),
-        type: 'friends',
-        name: 'Joined space',
-        inviteCode: normalized || generateInviteCode(),
-        createdAt: now(),
-      };
-      await storage.set(SPACES_KEY, [...spaces, space]);
+      // Honest failure: without a server there is nobody to join. Inventing a
+      // "Joined space" here faked the most sensitive success in the product —
+      // the pairing (audit A2-3.1, MANIFESTO §1).
+      throw new Error('unknown invite code');
     }
 
     const alreadyMember = members.some((m) => m.spaceId === space!.id && m.userId === userId);

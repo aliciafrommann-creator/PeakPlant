@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -31,7 +32,8 @@ import { FadeInImage } from '../../components/ui/FadeInImage';
 import { confirmSuccess, acknowledgeSelection } from '../../lib/haptics';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
-import type { Space } from '../../lib/types';
+import { getActiveUser } from '../../lib/session';
+import type { Space, SpaceMember } from '../../lib/types';
 
 const EMOJI_GRID = [
   // love / warmth
@@ -82,14 +84,78 @@ export default function EditSpaceScreen() {
     }
   }, [space]);
 
+  // WHO IS HERE — the members list makes "private to your space" checkable.
+  const [members, setMembers] = useState<SpaceMember[]>([]);
   useEffect(() => {
     if (!id) return;
-    void getSpaceEmoji(id).then((e) => {
-      if (e) setEmoji(e);
-    });
-    void getCollectibleEmoji(id).then((e) => {
-      if (e) setCollectible(e);
-    });
+    let alive = true;
+    void spaceRepository
+      .getMembers(id)
+      .then((m) => {
+        if (alive) setMembers(m);
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [id]);
+
+  const confirmLeave = () => {
+    if (!space) return;
+    Alert.alert(
+      t('leave this space?', 'Diesen Space verlassen?'),
+      t(
+        'you lose access to this shared diary. nothing shared gets deleted — the others keep every moment.',
+        'Du verlierst den Zugang zu diesem gemeinsamen Tagebuch. Nichts Geteiltes wird gelöscht — die anderen behalten jeden Moment.',
+      ),
+      [
+        { text: t('stay', 'bleiben'), style: 'cancel' },
+        {
+          text: t('leave', 'verlassen'),
+          style: 'destructive',
+          onPress: () => {
+            void (async () => {
+              setBusy(true);
+              try {
+                const user = await getActiveUser();
+                if (!user) throw new Error('no user');
+                await spaceRepository.leave(space.id, user.id);
+                await refresh();
+                void confirmSuccess();
+                router.back();
+              } catch {
+                setError(
+                  t(
+                    "couldn't leave the space. please try again.",
+                    'Der Space ließ sich nicht verlassen. Versuch es gleich nochmal.',
+                  ),
+                );
+              } finally {
+                setBusy(false);
+              }
+            })();
+          },
+        },
+      ],
+    );
+  };
+
+  // Local values are a FALLBACK only. The server value (already resolved into
+  // `space` by useSpaces) wins — otherwise a stale local emoji silently
+  // overwrites the partner's newer choice on the next save (audit A2-4.1).
+  useEffect(() => {
+    if (!id) return;
+    if (!space?.emoji) {
+      void getSpaceEmoji(id).then((e) => {
+        if (e) setEmoji(e);
+      });
+    }
+    if (!space?.collectibleEmoji) {
+      void getCollectibleEmoji(id).then((e) => {
+        if (e) setCollectible(e);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (!space) {
@@ -178,7 +244,7 @@ export default function EditSpaceScreen() {
           <TouchableOpacity
             onPress={() => router.back()}
             accessibilityRole="button"
-            accessibilityLabel={t('Close', 'Schliessen')}
+            accessibilityLabel={t('Close', 'Schließen')}
           >
             <Text style={styles.close}>{t('CLOSE', 'SCHLIESSEN')}</Text>
           </TouchableOpacity>
@@ -311,6 +377,47 @@ export default function EditSpaceScreen() {
               <Text style={styles.primaryText}>{t('SAVE', 'SPEICHERN')}</Text>
             )}
           </TouchableOpacity>
+
+          {/* Trust: WHO IS HERE — you can only trust "private to your space"
+              if you can see who your space is (audit A2-10.3). */}
+          <View style={styles.section}>
+            <Text style={styles.label}>{t('WHO IS HERE', 'WER IST HIER')}</Text>
+            {members.length === 0 ? (
+              <Text style={styles.memberHint}>
+                {t('just you so far.', 'bisher nur du.')}
+              </Text>
+            ) : (
+              members.map((m) => (
+                <View key={m.id} style={styles.memberRow}>
+                  <Text style={styles.memberName}>{m.name || t('member', 'Mitglied')}</Text>
+                  <Text style={styles.memberMeta}>
+                    {t(
+                      `since ${new Date(m.joinedAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`,
+                      `seit ${new Date(m.joinedAt).toLocaleDateString('de-DE', { month: 'short', year: 'numeric' })}`,
+                    )}
+                  </Text>
+                </View>
+              ))
+            )}
+            <Text style={styles.memberHint}>
+              {t(
+                'everyone here can see your shared diary. the invite code above lets people in — share it only with people you trust.',
+                'alle hier sehen euer gemeinsames Tagebuch. Der Einladungscode lässt Menschen herein — teil ihn nur mit Menschen, denen du vertraust.',
+              )}
+            </Text>
+          </View>
+
+          {/* Quiet exit — leaving takes away access, it deletes nothing shared. */}
+          <TouchableOpacity
+            style={styles.leaveBtn}
+            onPress={confirmLeave}
+            disabled={busy}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={t('Leave this space', 'Diesen Space verlassen')}
+          >
+            <Text style={styles.leaveText}>{t('LEAVE THIS SPACE', 'DIESEN SPACE VERLASSEN')}</Text>
+          </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
@@ -321,6 +428,19 @@ const CELL_SIZE = 48;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
+  memberRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  memberName: { fontSize: 14, fontWeight: '400', color: Colors.text },
+  memberMeta: { fontSize: 11, fontWeight: '300', color: Colors.textFaint },
+  memberHint: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18, marginTop: 8 },
+  leaveBtn: { alignItems: 'center', paddingVertical: 18, marginTop: 4 },
+  leaveText: { fontSize: 11, fontWeight: '500', letterSpacing: 2, color: '#B04A38' },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',

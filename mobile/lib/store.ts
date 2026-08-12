@@ -114,13 +114,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   reset: async () => {
-    await storage.remove(ONBOARDED_KEY);
-    await storage.remove(GOALS_KEY);
-    await storage.remove(ACTIVE_SPACE_KEY);
-    await storage.remove(FEATURES_KEY);
-    await storage.remove(LANGUAGE_KEY);
-    await storage.remove(PERSONALIZATION_KEY);
-    await storage.remove(PERSONALIZATION_RESET_KEY);
+    // Sign-out must clear EVERYTHING local — memories, saved dates, feedback,
+    // rituals, notes, enrollments, redeemed tokens. Removing only preference
+    // keys leaked the previous person's private data to the next account on
+    // the same device (audit A5-7.1, MANIFESTO §2).
+    await storage.clear();
     set({
       onboarded: false,
       language: 'en',

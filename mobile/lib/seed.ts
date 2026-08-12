@@ -16,14 +16,14 @@ export const SEED_SPACES: Space[] = [
     id: 'space-couple-01',
     type: 'couple',
     name: 'Alicia & Partner',
-    inviteCode: 'PEAK-7842',
+    inviteCode: 'PEAK-SUNF42',
     createdAt: '2026-03-15T10:00:00Z',
   },
   {
     id: 'space-friends-01',
     type: 'friends',
     name: 'The Saturday People',
-    inviteCode: 'PEAK-3310',
+    inviteCode: 'PEAK-WYLD33',
     createdAt: '2026-04-02T18:00:00Z',
   },
 ];
@@ -293,10 +293,10 @@ export const SEED_MEMORIES: Memory[] = [
 ];
 
 export const ONBOARDING_GOALS = [
-  { id: 'g1', label: 'deeper conversations', description: 'go beyond day-to-day talk', labelDe: 'tiefere Gesprache', descriptionDe: 'uber den Alltag hinausdenken' },
+  { id: 'g1', label: 'deeper conversations', description: 'go beyond day-to-day talk', labelDe: 'tiefere Gespräche', descriptionDe: 'über den Alltag hinaus denken' },
   { id: 'g2', label: 'shared adventures', description: 'discover new places and things together', labelDe: 'gemeinsame Abenteuer', descriptionDe: 'neue Orte und Dinge zusammen entdecken' },
-  { id: 'g3', label: 'more presence', description: 'be fully here, phones away', labelDe: 'mehr Prasenz', descriptionDe: 'ganz da sein, Handys weg' },
+  { id: 'g3', label: 'more presence', description: 'be fully here, phones away', labelDe: 'mehr Präsenz', descriptionDe: 'ganz da sein, Handys weg' },
   { id: 'g4', label: 'understanding each other', description: 'know what the other person carries', labelDe: 'einander verstehen', descriptionDe: 'wissen, was den anderen bewegt' },
   { id: 'g5', label: 'playful moments', description: 'laugh more, create more', labelDe: 'spielerische Momente', descriptionDe: 'mehr lachen, mehr erschaffen' },
-  { id: 'g6', label: 'quiet closeness', description: 'just being, without doing', labelDe: 'stille Nahe', descriptionDe: 'einfach sein, ohne zu tun' },
+  { id: 'g6', label: 'quiet closeness', description: 'just being, without doing', labelDe: 'stille Nähe', descriptionDe: 'einfach sein, ohne zu tun' },
 ];

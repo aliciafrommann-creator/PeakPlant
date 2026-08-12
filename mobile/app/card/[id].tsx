@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -16,26 +15,41 @@ import { Spacing, Radii } from '../../constants/spacing';
 import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
+import { useBiometric } from '../../lib/hooks/useBiometric';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
+import { UnlockCurtain } from '../../components/card/UnlockCurtain';
 import type { CardGroup, CardSection } from '../../lib/types';
 
 export default function CardDetailScreen() {
   const { id, unlocked } = useLocalSearchParams<{ id: string; unlocked?: string }>();
   const { t, l } = useLanguage();
   const obscured = usePrivacyOverlay();
-
-  const bannerOpacity = useRef(new Animated.Value(0)).current;
-  const [showBanner, setShowBanner] = useState(false);
-
+  const { authenticate } = useBiometric();
+  // Gate lives HERE, not only at the callers: deep links (/c/<id>) and the
+  // scanner reach this screen directly, bypassing the tab-level gates (A6-4.1).
+  const [bioGranted, setBioGranted] = useState(false);
+  const cardForGate = SEED_CARDS.find((c) => c.id === id);
+  const editionForGate = cardForGate ? getEdition(cardForGate.edition) : undefined;
+  const needsBio = !!editionForGate?.sensitive && !bioGranted;
   useEffect(() => {
-    if (unlocked !== 'true') return;
-    setShowBanner(true);
-    Animated.sequence([
-      Animated.timing(bannerOpacity, { toValue: 1, duration: 300, useNativeDriver: true }),
-      Animated.delay(2000),
-      Animated.timing(bannerOpacity, { toValue: 0, duration: 500, useNativeDriver: true }),
-    ]).start(() => setShowBanner(false));
-  }, [unlocked, bannerOpacity]);
+    if (!editionForGate?.sensitive || bioGranted) return;
+    let cancelled = false;
+    void authenticate(t('unlock your private diary', 'privates Tagebuch entsperren')).then(
+      (granted) => {
+        if (cancelled) return;
+        if (granted) setBioGranted(true);
+        else router.back();
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [editionForGate?.sensitive, bioGranted, authenticate, t]);
+
+  // QR magic: a scan opens a short curtain ("ihr habt diesen moment gemacht")
+  // before the card appears — the physical→digital handover deserves a beat.
+  const [showCurtain, setShowCurtain] = useState(unlocked === 'true');
+  const dismissCurtain = useCallback(() => setShowCurtain(false), []);
 
   const card = SEED_CARDS.find((c) => c.id === id);
   const edition = card ? (getEdition(card.edition) ?? SEED_EDITION) : SEED_EDITION;
@@ -49,6 +63,15 @@ export default function CardDetailScreen() {
             <Text style={styles.backLink}>{t('go back', 'zurück')}</Text>
           </TouchableOpacity>
         </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Never paint sensitive content before Face ID/passcode granted access.
+  if (needsBio) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <PrivacyScreen />
       </SafeAreaView>
     );
   }
@@ -127,12 +150,12 @@ export default function CardDetailScreen() {
     <SafeAreaView style={styles.container}>
       {/* Sensitive-edition content is hidden in the app switcher / on background. */}
       {edition.sensitive && obscured && <PrivacyScreen />}
-      {showBanner && (
-        <Animated.View style={[styles.unlockedBanner, { opacity: bannerOpacity }]} pointerEvents="none">
-          <Text style={styles.unlockedBannerText}>
-            {t('✓ CARD UNLOCKED', '✓ KARTE FREIGESCHALTET')}
-          </Text>
-        </Animated.View>
+      {showCurtain && (
+        <UnlockCurtain
+          title={t('you made this moment.', 'ihr habt diesen moment gemacht.')}
+          subtitle={title}
+          onDone={dismissCurtain}
+        />
       )}
       <View style={styles.header}>
         <BackButton variant="close" label={t('CLOSE', 'SCHLIESSEN')} />

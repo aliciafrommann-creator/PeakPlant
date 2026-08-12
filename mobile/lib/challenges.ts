@@ -56,7 +56,8 @@ export const WEEKLY_CHALLENGES: Challenge[] = [
   { id: 'wk-5', title: 'one slow meal', subtitle: 'share one unhurried meal together, no phones.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🍽️', durationLabel: 'this week' },
   { id: 'wk-6', title: 'one little adventure', subtitle: 'one tiny adventure, somewhere not far.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🗺️', durationLabel: 'this week' },
   { id: 'wk-7', title: 'one kind word', subtitle: 'tell or write each other one real thank-you.', goalCount: 1, spaceTypes: ['couple'], badge: '💛', durationLabel: 'this week' },
-  { id: 'wk-8', title: 'one cosy night in', subtitle: 'one cosy night in, just the two of you.', goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🕯️', durationLabel: 'this week' },
+  // Copy is explicitly two-people — couple only (audit A4-10).
+  { id: 'wk-8', title: 'one cosy night in', subtitle: 'one cosy night in, just the two of you.', goalCount: 1, spaceTypes: ['couple'], badge: '🕯️', durationLabel: 'this week' },
 ];
 
 /** Everything resolvable by id — season + weekly. */
@@ -105,17 +106,28 @@ export async function getEnrollments(spaceId: string): Promise<Enrollment[]> {
 }
 
 export async function joinChallenge(spaceId: string, challengeId: string): Promise<void> {
+  // Weekly challenges rotate back in — accepting again in a NEW week must
+  // restart the enrollment (fresh joined_at), or the challenge is dead after
+  // one rotation cycle (audit A4-06). Season challenges stay join-once.
+  const isWeekly = challengeId.startsWith('wk-');
   if (isSupabaseConfigured && supabase) {
     const { error } = await supabase
       .from('challenge_enrollments')
-      .upsert({ space_id: spaceId, challenge_id: challengeId }, { onConflict: 'space_id,challenge_id', ignoreDuplicates: true });
+      .upsert(
+        isWeekly
+          ? { space_id: spaceId, challenge_id: challengeId, joined_at: new Date().toISOString() }
+          : { space_id: spaceId, challenge_id: challengeId },
+        { onConflict: 'space_id,challenge_id', ignoreDuplicates: !isWeekly },
+      );
     if (error) throw error;
     return;
   }
   const all = await loadAll();
   const current = all[spaceId] ?? [];
-  if (current.some((e) => e.challengeId === challengeId)) return;
-  all[spaceId] = [...current, { challengeId, joinedAt: new Date().toISOString() }];
+  const existing = current.find((e) => e.challengeId === challengeId);
+  if (existing && !isWeekly) return;
+  const next = current.filter((e) => e.challengeId !== challengeId);
+  all[spaceId] = [...next, { challengeId, joinedAt: new Date().toISOString() }];
   await storage.set(ENROLLMENTS_KEY, all);
 }
 

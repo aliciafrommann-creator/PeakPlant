@@ -43,6 +43,15 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="moments"
+        options={{
+          title: t('Moments', 'Momente'),
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="images-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="discover"
         options={{
           title: t('Discover', 'Entdecken'),
@@ -52,36 +61,31 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="story"
+        options={{
+          title: t('Story', 'Geschichte'),
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="editions"
         options={{
-          title: t('Editions', 'Editionen'),
+          title: t('Collection', 'Sammlung'),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="layers-outline" size={size} color={color} />
           ),
         }}
       />
-      <Tabs.Screen
-        name="community"
-        options={{
-          title: t('Places', 'Orte'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="map-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: t('Me', 'Ich'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
-          ),
-        }}
-      />
 
-      {/* Hidden from tab bar but still navigable */}
+      {/* Hidden from the bar, still fully navigable:
+          - community (Places) → the 🗺️ toggle on Discover
+          - profile (Me) → the person icon in the Home header
+          Target IA is HOME · MOMENTS · DISCOVER · STORY · COLLECTION. */}
+      <Tabs.Screen name="community" options={{ href: null }} />
+      <Tabs.Screen name="profile" options={{ href: null }} />
       <Tabs.Screen name="scan" options={{ href: null }} />
-      <Tabs.Screen name="moments" options={{ href: null }} />
       <Tabs.Screen name="grow" options={{ href: null }} />
       <Tabs.Screen name="us" options={{ href: null }} />
     </Tabs>

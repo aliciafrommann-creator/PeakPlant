@@ -67,3 +67,16 @@ avatar); after it, emoji + avatar are shared across both members.
 - Local/CI rebuild from zero via migrations + seed.
 - RLS gets allow **and** deny tests (pgTAP) before any real data — a backend-
   phase task, listed in `mobile/docs/TESTING.md`.
+
+### 0014 — join & delete hardening (2026-08-12)
+
+- `redeem_invite` heilt eine fehlende `profiles`-Zeile jetzt selbst (gleicher
+  Ansatz wie `create_space`) — vorher scheiterte ein korrekter Beitritt mit der
+  falschen Meldung „Code falsch", wenn `ensureProfile` nach dem OTP-Login
+  fehlgeschlagen war (Audit A2-2.1).
+- `delete_account` räumt jetzt BEIDE privaten Buckets (`memory-photos` UND
+  `space-avatars`) — Avatar-Fotos überlebten vorher die endgültige
+  Konto-Löschung (Audit A2-6.2).
+- Anwenden: SQL-Editor → Datei-Inhalt einfügen → Run. Idempotent (CREATE OR
+  REPLACE), mehrfach ausführen schadet nicht. Danach unter „Advisors" kurz auf
+  neue Security-Hinweise schauen.

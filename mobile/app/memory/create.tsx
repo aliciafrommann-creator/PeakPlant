@@ -23,6 +23,8 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { savedDateRepository } from '../../lib/repositories';
 import { confirmSuccess } from '../../lib/haptics';
 import { setPendingReward } from '../../lib/pendingReward';
+import { getEnrollments } from '../../lib/challenges';
+import { currentWeeklyChallenge, weeklyProgressFor, inSameIsoWeek } from '../../lib/weeklyChallenge';
 import { persistPickedPhoto } from '../../lib/photoStorage';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { FadeInImage } from '../../components/ui/FadeInImage';
@@ -64,11 +66,14 @@ export default function CreateMemoryScreen() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { activeSpace } = useSpaces();
-  const { createMemory } = useMemories(activeSpace?.id);
+  const { memories, createMemory } = useMemories(activeSpace?.id);
 
   const { t, l } = useLanguage();
-  const selectedCardId = cardId ?? 'card-01';
-  const card = SEED_CARDS.find((c) => c.id === selectedCardId);
+  // A moment only belongs to a card when a card actually sent us here (scan /
+  // card screen). Everything else is a free moment — attributing it to card-01
+  // would fake the collection count (MANIFESTO §1).
+  const selectedCardId = typeof cardId === 'string' && cardId.length > 0 ? cardId : undefined;
+  const card = selectedCardId ? SEED_CARDS.find((c) => c.id === selectedCardId) : undefined;
 
   const cardTitle = card?.content ? l(card.content.title) : card?.prompt ?? '';
   const notePlaceholder = t(
@@ -92,8 +97,8 @@ export default function CreateMemoryScreen() {
     if (!activeSpace) {
       setError(
         t(
-          'no active space — set one up first, then preserve this moment.',
-          'kein aktiver Raum — richte zuerst einen ein, dann halte diesen Moment fest.',
+          'no space yet — set one up first, then keep this moment.',
+          'noch kein Space — richtet zuerst einen ein, dann haltet ihr diesen Moment fest.',
         ),
       );
       return;
@@ -106,15 +111,34 @@ export default function CreateMemoryScreen() {
       const durablePhotoUri = photoUri
         ? await persistPickedPhoto(photoUri, 'memory')
         : undefined;
+      // A photo-only moment keeps an empty note — we never invent user words.
       const memory = await createMemory({
         cardId: selectedCardId,
-        note: note.trim() || t('photo moment', 'Fotomoment'),
+        note: note.trim(),
         photoUri: durablePhotoUri,
       });
       // Preserving a moment is the app's most meaningful create — confirm it.
       void confirmSuccess();
-      // Queue a little celebration for when they land back on the feed.
-      setPendingReward('moment');
+      // Queue a celebration for the feed. If this very moment completed this
+      // week's challenge, celebrate THAT — completion used to be silent (§5).
+      let rewardKind: 'moment' | 'challenge' = 'moment';
+      if (activeSpace) {
+        try {
+          const weeklyNow = currentWeeklyChallenge(activeSpace.type);
+          const enrollment = (await getEnrollments(activeSpace.id)).find(
+            (e) => e.challengeId === weeklyNow.id && inSameIsoWeek(e.joinedAt, new Date()),
+          );
+          if (enrollment) {
+            const dates = memories.map((m) => m.createdAt);
+            const before = weeklyProgressFor(weeklyNow, enrollment.joinedAt, dates);
+            const after = weeklyProgressFor(weeklyNow, enrollment.joinedAt, [...dates, memory.createdAt]);
+            if (!before.complete && after.complete) rewardKind = 'challenge';
+          }
+        } catch {
+          // The celebration must never block the save itself.
+        }
+      }
+      setPendingReward(rewardKind);
       // Close the loop: write memory id back to the saved date so learning
       // can confirm this was a real completed experience.
       if (savedDateId) {
@@ -193,16 +217,8 @@ export default function CreateMemoryScreen() {
             <Text style={styles.backText}>{t('CLOSE', 'SCHLIESSEN')}</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>{t('PRESERVE MOMENT', 'MOMENT FESTHALTEN')}</Text>
-          <TouchableOpacity
-            onPress={handleSave}
-            disabled={(!note.trim() && !photoUri) || saving}
-            accessibilityRole="button"
-            accessibilityLabel={t('Save moment', 'Moment speichern')}
-          >
-            <Text style={[styles.saveText, ((!note.trim() && !photoUri) || saving) && styles.saveDisabled]}>
-              {saving ? t('KEEPING…', 'FESTHALTEN…') : t('KEEP', 'FESTHALTEN')}
-            </Text>
-          </TouchableOpacity>
+          {/* One primary action only — it lives at the bottom of the form. */}
+          <View style={{ width: 60 }} />
         </View>
 
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -239,9 +255,11 @@ export default function CreateMemoryScreen() {
             )}
           </PressableScale>
 
-          {/* Note input */}
+          {/* One human question, not a form label — capture is < 30 seconds. */}
           <View style={styles.noteSection}>
-            <Text style={styles.noteLabel}>{t('YOUR NOTE', 'DEINE NOTIZ')}</Text>
+            <Text style={styles.noteLabel}>
+              {t('how do you want to remember it?', 'wie wollt ihr euch daran erinnern?')}
+            </Text>
             <TextInput
               style={styles.noteInput}
               placeholder={notePlaceholder}
@@ -254,15 +272,35 @@ export default function CreateMemoryScreen() {
           </View>
 
           {error && (
-            <Text style={styles.error} accessibilityLiveRegion="polite">
-              {error}
-            </Text>
+            <View style={styles.errorBlock}>
+              <Text style={styles.error} accessibilityLiveRegion="polite">
+                {error}
+              </Text>
+              <TouchableOpacity
+                onPress={() => void handleSave()}
+                accessibilityRole="button"
+                accessibilityLabel={t('Try again', 'Nochmal versuchen')}
+              >
+                <Text style={styles.errorRetry}>{t('TRY AGAIN', 'NOCHMAL VERSUCHEN')}</Text>
+              </TouchableOpacity>
+            </View>
           )}
+
+          <PressableScale
+            style={[styles.keepButton, ((!note.trim() && !photoUri) || saving) && styles.keepButtonDisabled]}
+            onPress={() => void handleSave()}
+            disabled={(!note.trim() && !photoUri) || saving}
+            accessibilityLabel={t('Preserve this moment', 'Diesen Moment festhalten')}
+          >
+            <Text style={styles.keepButtonText}>
+              {saving ? t('KEEPING…', 'FESTHALTEN…') : t('PRESERVE THIS MOMENT', 'MOMENT FESTHALTEN')}
+            </Text>
+          </PressableScale>
 
           <Text style={styles.privateNote}>
             {t(
-              'a moment worth keeping. this stays private.',
-              'ein Moment, den es sich zu bewahren lohnt. das bleibt privat.',
+              'stays private to your space — only the two of you can see it.',
+              'bleibt privat in eurem Space — nur ihr beide könnt es sehen.',
             )}
           </Text>
         </ScrollView>
@@ -272,6 +310,28 @@ export default function CreateMemoryScreen() {
 }
 
 const styles = StyleSheet.create({
+  keepButton: {
+    height: 56,
+    borderRadius: Radii.pill,
+    backgroundColor: Colors.text,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: Spacing.lg,
+  },
+  keepButtonDisabled: { opacity: 0.35 },
+  keepButtonText: {
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 2.4,
+    color: Colors.white,
+  },
+  errorBlock: { gap: 6, marginTop: Spacing.md },
+  errorRetry: {
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 2,
+    color: Accents.chili,
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.background,

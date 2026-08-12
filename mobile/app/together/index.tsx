@@ -58,13 +58,13 @@ export default function TogetherScreen() {
         <Text style={styles.intro}>
           {t(
             'small things to do together — out in the world, then preserve them as moments. never a must.',
-            'kleine Dinge, die ihr gemeinsam tun konnt - draussen in der Welt, dann als Momente bewahren. Nie ein Muss.',
+            'kleine Dinge, die ihr gemeinsam tun könnt — draußen in der Welt, dann als Momente bewahren. Nie ein Muss.',
           )}
         </Text>
 
         {suggested && (
           <View style={styles.section}>
-            <Text style={styles.sectionLabel}>{t('SUGGESTED FOR YOU', 'FUR EUCH EMPFOHLEN')}</Text>
+            <Text style={styles.sectionLabel}>{t('SUGGESTED FOR YOU', 'FÜR EUCH EMPFOHLEN')}</Text>
             <TogetherCard
               moment={suggested}
               onPress={() => router.push(`/together/${suggested.id}`)}

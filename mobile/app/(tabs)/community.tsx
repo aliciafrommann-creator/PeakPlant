@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -28,7 +28,8 @@ import {
   type LocalPlace,
 } from '../../lib/together';
 import { aggregateRatings } from '../../lib/discovery/ratings';
-import { buildPlaceMapHtml, directionsUrl } from '../../lib/discovery/placeMap';
+import { buildPlaceMapHtml, directionsUrl, mappablePlaces } from '../../lib/discovery/placeMap';
+import { getCustomPlaces, addCustomPlace } from '../../lib/customPlaces';
 import { requestCurrentForegroundLocation } from '../../lib/location';
 import {
   resetLivePlaceSearchUsage,
@@ -90,17 +91,17 @@ function liveFailureMessage(
     case 'monthly_limit':
       return t(
         'monthly live-search limit reached on this device. curated places still work.',
-        'Monatslimit fuer Live-Suchen auf diesem Geraet erreicht. Kuratierte Orte funktionieren weiter.',
+        'Für diesen Monat sind die Live-Suchen aufgebraucht. Kuratierte Orte funktionieren weiter.',
       );
     case 'rate_limited':
       return t(
         'Google is rate-limiting live places right now. try again later.',
-        'Google limitiert Live-Orte gerade. Versuch es spaeter nochmal.',
+        'Google limitiert Live-Orte gerade. Versuch es später nochmal.',
       );
     case 'no_results':
       return t(
         'no nearby live places matched. try again somewhere else.',
-        'Keine passenden Live-Orte in der Naehe gefunden. Versuch es an einem anderen Ort nochmal.',
+        'Keine passenden Live-Orte in der Nähe gefunden. Versuch es an einem anderen Ort nochmal.',
       );
     case 'storage_unavailable':
       return t(
@@ -186,12 +187,23 @@ export default function PlacesScreen() {
     };
   }, [activeSpace]);
 
+  // The watchdog only guards the initial page load — selection no longer
+  // reloads the WebView (it's pushed into the live map via __ppSelect), so
+  // tapping chips can't reset the timer or refetch tiles (A3-13).
   useEffect(() => {
     setMapReady(false);
     setMapUnavailable(false);
     const timer = setTimeout(() => setMapUnavailable(true), 8_000);
     return () => clearTimeout(timer);
-  }, [selectedId]);
+  }, []);
+
+  const mapRef = useRef<WebView>(null);
+  useEffect(() => {
+    if (!mapReady) return;
+    mapRef.current?.injectJavaScript(
+      `window.__ppSelect && window.__ppSelect(${JSON.stringify(selectedId ?? null)}); true;`,
+    );
+  }, [selectedId, mapReady]);
 
   useEffect(() => {
     let alive = true;
@@ -208,14 +220,62 @@ export default function PlacesScreen() {
     };
   }, []);
 
+  // "Unser Ort": places the space added itself — first in the list, because
+  // your own places matter more than generic prompts.
+  const [customPlaces, setCustomPlaces] = useState<LocalPlace[]>([]);
+  useFocusEffect(
+    useCallback(() => {
+      if (!activeSpace) {
+        setCustomPlaces([]);
+        return;
+      }
+      let alive = true;
+      getCustomPlaces(activeSpace.id)
+        .then((places) => {
+          if (alive) setCustomPlaces(places);
+        })
+        .catch(() => {});
+      return () => {
+        alive = false;
+      };
+    }, [activeSpace]),
+  );
+
   const displayPlaces = useMemo(
     () => uniquePlaces([
+      ...customPlaces,
       ...LOCAL_PLACES,
       ...publicSpots.map(publicSpotToLocalPlace),
       ...livePlaces.map(livePlaceToLocalPlace),
     ]),
-    [livePlaces, publicSpots],
+    [customPlaces, livePlaces, publicSpots],
   );
+
+  // Add-your-own-place sheet state.
+  const [addOpen, setAddOpen] = useState(false);
+  const [newPlaceName, setNewPlaceName] = useState('');
+  const [newPlaceArea, setNewPlaceArea] = useState('');
+  const [addBusy, setAddBusy] = useState(false);
+  const submitCustomPlace = useCallback(async () => {
+    if (!activeSpace || !newPlaceName.trim() || addBusy) return;
+    setAddBusy(true);
+    try {
+      const place = await addCustomPlace(activeSpace.id, newPlaceName, newPlaceArea);
+      setCustomPlaces((prev) => [...prev, place]);
+      setAddOpen(false);
+      setNewPlaceName('');
+      setNewPlaceArea('');
+      setSelectedId(place.id);
+      void confirmSuccess();
+    } catch {
+      Alert.alert(
+        t('Could not add this place', 'Der Ort konnte nicht angelegt werden'),
+        t('Please try again in a moment.', 'Versuch es gleich nochmal.'),
+      );
+    } finally {
+      setAddBusy(false);
+    }
+  }, [activeSpace, newPlaceName, newPlaceArea, addBusy, t]);
 
   useEffect(() => {
     let alive = true;
@@ -248,8 +308,10 @@ export default function PlacesScreen() {
     [publicFeedback, selected?.id],
   );
   const mapHtml = useMemo(
-    () => buildPlaceMapHtml(displayPlaces, selected?.id),
-    [displayPlaces, selected?.id],
+    // Selection is injected live (__ppSelect) — the HTML depends only on the
+    // place list, so a chip tap never rebuilds the whole map.
+    () => buildPlaceMapHtml(displayPlaces, undefined),
+    [displayPlaces],
   );
   const mapSource = useMemo(
     () => ({ html: mapHtml, baseUrl: 'https://peakplant.local' }),
@@ -706,8 +768,22 @@ export default function PlacesScreen() {
           )}
         </View>
 
+        {mappablePlaces(displayPlaces).length === 0 ? (
+          // No pins yet → an honest invitation instead of an empty map of
+          // nowhere (the curated prompts carry no coordinates) (A3-8).
+          <View style={[styles.mapFrame, styles.mapEmpty]}>
+            <Text style={styles.mapEmptyMark}>🗺️</Text>
+            <Text style={styles.mapEmptyText}>
+              {t(
+                'no places on the map yet — find some near you, and every place you rate anonymously appears here.',
+                'noch keine Orte auf der Karte — such welche in eurer Nähe. Jeder anonym bewertete Ort erscheint hier.',
+              )}
+            </Text>
+          </View>
+        ) : (
         <View style={styles.mapFrame}>
           <WebView
+            ref={mapRef}
             source={mapSource}
             onMessage={onMapMessage}
             onError={() => setMapUnavailable(true)}
@@ -744,6 +820,7 @@ export default function PlacesScreen() {
             </View>
           )}
         </View>
+        )}
         <Text style={styles.attribution}>
           {t('map © OpenStreetMap · CARTO Voyager', 'Karte © OpenStreetMap · CARTO Voyager')}
         </Text>
@@ -753,6 +830,16 @@ export default function PlacesScreen() {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.placeChips}
         >
+          {activeSpace && (
+            <TouchableOpacity
+              style={[styles.placeChip, styles.addPlaceChip]}
+              onPress={() => { void acknowledgeSelection(); setAddOpen(true); }}
+              accessibilityRole="button"
+              accessibilityLabel={t('Add your own place', 'Eigenen Ort hinzufügen')}
+            >
+              <Text style={styles.addPlaceChipText}>{t('+ our place', '+ unser Ort')}</Text>
+            </TouchableOpacity>
+          )}
           {displayPlaces.map((place) => {
             const active = place.id === selected.id;
             return (
@@ -1071,6 +1158,61 @@ export default function PlacesScreen() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
+
+      {/* "Unser Ort" — add a place only you two know. Local, space-scoped,
+          never public, never on the map until it has real coordinates. */}
+      <Modal visible={addOpen} transparent animationType="fade" onRequestClose={() => setAddOpen(false)}>
+        <KeyboardAvoidingView
+          style={styles.modalBackdrop}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <TouchableOpacity
+            style={StyleSheet.absoluteFill}
+            onPress={() => setAddOpen(false)}
+            accessibilityLabel={t('Close', 'Schließen')}
+          />
+          <View style={styles.sheet}>
+            <Text style={styles.sheetKicker}>{t('OUR PLACE', 'UNSER ORT')}</Text>
+            <Text style={styles.sheetTitle}>
+              {t('a place that is yours', 'ein Ort, der euch gehört')}
+            </Text>
+            <Text style={styles.sheetNote}>
+              {t(
+                'The café where you met, your bench, the corner kiosk. Stays private in your space — plan dates there and keep moments.',
+                'Das Café vom ersten Date, eure Bank, der Kiosk an der Ecke. Bleibt privat in eurem Space — plant Dates dort und haltet Momente fest.',
+              )}
+            </Text>
+            <TextInput
+              style={styles.sheetInput}
+              value={newPlaceName}
+              onChangeText={setNewPlaceName}
+              placeholder={t('name of the place', 'Name des Orts')}
+              placeholderTextColor={Colors.textFaint}
+              maxLength={60}
+              autoFocus
+            />
+            <TextInput
+              style={styles.sheetInput}
+              value={newPlaceArea}
+              onChangeText={setNewPlaceArea}
+              placeholder={t('where is it? (optional)', 'wo ist er? (optional)')}
+              placeholderTextColor={Colors.textFaint}
+              maxLength={80}
+            />
+            <TouchableOpacity
+              style={[styles.addPlaceSubmit, (!newPlaceName.trim() || addBusy) && styles.addPlaceSubmitDisabled]}
+              onPress={() => void submitCustomPlace()}
+              disabled={!newPlaceName.trim() || addBusy}
+              accessibilityRole="button"
+              accessibilityLabel={t('Keep this place', 'Diesen Ort behalten')}
+            >
+              <Text style={styles.addPlaceSubmitText}>
+                {addBusy ? '…' : t('KEEP THIS PLACE', 'DIESEN ORT BEHALTEN')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -1144,6 +1286,21 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   resetCounterText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
+  mapEmpty: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    backgroundColor: Colors.surface,
+  },
+  mapEmptyMark: { fontSize: 28 },
+  mapEmptyText: {
+    fontSize: 13,
+    fontWeight: '300',
+    color: Colors.textMuted,
+    textAlign: 'center',
+    lineHeight: 19,
+  },
   mapFrame: {
     height: 310,
     marginHorizontal: Spacing.screen,
@@ -1189,6 +1346,18 @@ const styles = StyleSheet.create({
   },
   placeChipActive: { backgroundColor: Colors.text, borderColor: Colors.text },
   placeChipText: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
+  addPlaceChip: { borderStyle: 'dashed', borderColor: Colors.accent, backgroundColor: 'transparent' },
+  addPlaceChipText: { fontSize: 12, fontWeight: '500', color: Colors.accent },
+  addPlaceSubmit: {
+    height: 48,
+    borderRadius: Radii.pill,
+    backgroundColor: Colors.text,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: Spacing.sm,
+  },
+  addPlaceSubmitDisabled: { opacity: 0.4 },
+  addPlaceSubmitText: { fontSize: 11, fontWeight: '600', letterSpacing: 2, color: Colors.white },
   placeChipTextActive: { color: Colors.white },
   placeCard: {
     marginHorizontal: Spacing.screen,

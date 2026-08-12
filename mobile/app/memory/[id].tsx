@@ -220,7 +220,7 @@ export default function MemoryDetailScreen() {
                 placeholderTextColor={Colors.textFaint}
               />
             ) : (
-              <Text style={styles.note}>{memory.note}</Text>
+              memory.note.length > 0 ? <Text style={styles.note}>{memory.note}</Text> : null
             )}
 
             {error && (
@@ -247,7 +247,7 @@ export default function MemoryDetailScreen() {
                   accessibilityLabel={t('Delete this moment', 'Diesen Moment löschen')}
                   style={styles.actionBtn}
                 >
-                  <Text style={[styles.actionText, styles.deleteText]}>{t('DELETE', 'LOSCHEN')}</Text>
+                  <Text style={[styles.actionText, styles.deleteText]}>{t('DELETE', 'LÖSCHEN')}</Text>
                 </TouchableOpacity>
               </View>
             )}

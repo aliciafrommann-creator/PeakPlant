@@ -65,7 +65,7 @@ export default function NewSpaceScreen() {
       router.back();
     } catch {
       setBusy(false);
-      setError(t("that code didn't work. check it and try again.", 'Dieser Code hat nicht funktioniert. Prufe ihn und versuche es erneut.'));
+      setError(t("that code didn't work. check it and try again.", 'Dieser Code hat nicht funktioniert. Prüfe ihn und versuche es erneut.'));
     }
   };
 
@@ -79,7 +79,7 @@ export default function NewSpaceScreen() {
           <TouchableOpacity
             onPress={() => router.back()}
             accessibilityRole="button"
-            accessibilityLabel={t('Close', 'Schliessen')}
+            accessibilityLabel={t('Close', 'Schließen')}
           >
             <Text style={styles.close}>{t('CLOSE', 'SCHLIESSEN')}</Text>
           </TouchableOpacity>

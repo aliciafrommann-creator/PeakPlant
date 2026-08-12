@@ -468,7 +468,7 @@ export default function SavedDatesScreen() {
           <TouchableOpacity
             style={StyleSheet.absoluteFill}
             onPress={closePlan}
-            accessibilityLabel={t('Close', 'Schliessen')}
+            accessibilityLabel={t('Close', 'Schließen')}
           />
           <View style={styles.sheet}>
             <Text style={styles.sheetTitle}>{t('when will you do this?', 'wann macht ihr das?')}</Text>

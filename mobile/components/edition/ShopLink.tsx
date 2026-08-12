@@ -15,7 +15,7 @@ interface ShopLinkProps {
 export function ShopLink({ variant = 'card', label }: ShopLinkProps) {
   const { t } = useLanguage();
   const defaultText = variant === 'card'
-    ? t('GET YOUR NEXT EDITION', 'NACHSTE EDITION HOLEN')
+    ? t('GET YOUR NEXT EDITION', 'NÄCHSTE EDITION HOLEN')
     : t('get more editions ->', 'weitere Editionen holen ->');
   const text = label ?? defaultText;
 
@@ -41,7 +41,7 @@ export function ShopLink({ variant = 'card', label }: ShopLinkProps) {
       onPress={open}
       activeOpacity={0.85}
       accessibilityRole="link"
-      accessibilityLabel={t('Get your next edition in the shop', 'Nachste Edition im Shop holen')}
+      accessibilityLabel={t('Get your next edition in the shop', 'Nächste Edition im Shop holen')}
     >
       <Text style={styles.cardText}>{text}</Text>
       <Text style={styles.cardHint}>{t("collected a deck? there's always a new one.", 'Ein Deck gesammelt? Es gibt immer ein neues.')}</Text>

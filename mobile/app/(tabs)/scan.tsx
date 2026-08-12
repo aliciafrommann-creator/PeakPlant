@@ -71,7 +71,7 @@ export default function ScanScreen() {
         setError(t("that doesn't look like a PeakPlant card.", 'Das sieht nicht wie eine PeakPlant-Karte aus.'));
         return;
       case 'unknown_card':
-        setError(t("this card belongs to an edition that isn't out yet.", 'Diese Karte gehort zu einer Edition, die noch nicht erschienen ist.'));
+        setError(t("this card belongs to an edition that isn't out yet.", 'Diese Karte gehört zu einer Edition, die noch nicht erschienen ist.'));
         return;
       case 'expired':
         setError(t('this unlock code has expired.', 'Dieser Freischalt-Code ist abgelaufen.'));
@@ -256,8 +256,10 @@ const styles = StyleSheet.create({
   divider: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   dividerLine: { flex: 1, height: 1, backgroundColor: Colors.border },
   dividerText: { fontSize: 10, fontWeight: '400', letterSpacing: 2, color: Colors.textFaint },
-  demoButton: { height: 52, backgroundColor: Colors.text, justifyContent: 'center', alignItems: 'center', borderRadius: Radii.pill },
-  demoButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },
+  // Quiet secondary: the demo is an aside — the primary action is pointing
+  // the camera at a card, and the loudest button must not be the demo (A6-6.6).
+  demoButton: { height: 52, borderWidth: 1, borderColor: Colors.text, justifyContent: 'center', alignItems: 'center', borderRadius: Radii.pill },
+  demoButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.text },
   hint: {
     fontSize: 11,
     fontWeight: '300',

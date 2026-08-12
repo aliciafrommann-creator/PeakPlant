@@ -99,7 +99,7 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel={t('Close', 'Schliessen')}>
+      <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel={t('Close', 'Schließen')}>
         <SafeAreaView edges={['top']} style={styles.safe}>
           <Animated.View
             style={[styles.sheet, { opacity: anim, transform: [{ translateY }] }]}
@@ -179,7 +179,7 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
               style={styles.addRow}
               scaleTo={0.98}
               onPress={addSpace}
-              accessibilityLabel={t('Add a new space', 'Neuen Space hinzufuegen')}
+              accessibilityLabel={t('Add a new space', 'Neuen Space hinzufügen')}
               accessibilityRole="button"
             >
               <View style={styles.addIcon}>

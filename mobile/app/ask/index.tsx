@@ -53,7 +53,7 @@ export default function AskScreen() {
       role: 'assistant',
       text: t(
         "what kind of date are you in the mood for? tell me what you're feeling and I'll find something that fits.",
-        'Worauf hast du Lust? Erzahl mir wie du dich fuhlst und ich finde etwas Passendes.',
+        'Worauf hast du Lust? Erzähl mir, wie du dich fühlst — ich finde etwas Passendes.',
       ),
     },
   ]);

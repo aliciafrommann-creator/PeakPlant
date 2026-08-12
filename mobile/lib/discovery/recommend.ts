@@ -20,8 +20,10 @@ import type { DateConstraints, DateRecommendation, RecommendationFact } from './
 
 const PRICE_ORDER: Record<PriceBand, number> = { free: 0, '€': 1, '€€': 2, '€€€': 3 };
 
-/** Signals the MVP recommender genuinely cannot use yet — surfaced honestly. */
-const ALWAYS_UNUSED = ['live weather', 'your device location'];
+/** Signals the recommender genuinely cannot use — surfaced honestly.
+ *  Live weather is NOT in this list: when a weather constraint is set it IS
+ *  used (and said so in `used`) — claiming both would be a lie (A6-1.1). */
+const ALWAYS_UNUSED = ['your device location'];
 
 const PRICE_LABEL: Record<PriceBand, string> = {
   free: 'free',
@@ -56,6 +58,9 @@ function passesHardFilters(
       return false;
     }
   }
+  // The energy chips promise a filter, so they must BE one — as a mere score
+  // bonus, "🔥 aktiv" could recommend a slow coffee (A3-1).
+  if (c.energy && moment.energy !== c.energy) return false;
   return true;
 }
 
@@ -143,7 +148,7 @@ function buildFacts(moment: TogetherMoment, place?: LocalPlace): RecommendationF
 function signalsNotUsed(used: string[], c: DateConstraints): string[] {
   const notUsed = [...ALWAYS_UNUSED];
   if (!c.timeOfDay && !used.some((u) => u.includes('in the'))) notUsed.push('time of day');
-  if (!c.weather) notUsed.push('weather');
+  if (!c.weather) notUsed.push('live weather');
   return notUsed;
 }
 
@@ -174,6 +179,20 @@ function toRecommendation(s: Scored, c: DateConstraints, isAlternative: boolean)
 export interface RecommendOptions {
   moments?: TogetherMoment[];
   places?: LocalPlace[];
+  /**
+   * Rotates the primary pick within the equally-good top band so the screen
+   * doesn't greet the couple with the SAME idea every single day ("die
+   * Vorschläge sind immer dieselben"). 0 (default) keeps the strict ranking —
+   * callers pass e.g. the day-of-year. Deterministic for a given seed.
+   */
+  varietySeed?: number;
+}
+
+/** Day-of-year seed so the featured pick rotates daily (UI callers pass this;
+ *  tests keep the default 0 for strict deterministic ranking). */
+export function dayVarietySeed(now: Date = new Date()): number {
+  const start = Date.UTC(now.getUTCFullYear(), 0, 1);
+  return 1 + Math.floor((now.getTime() - start) / 86_400_000);
 }
 
 /** Score + sort all eligible candidates (shared by recommendDates + rankedCandidates). */
@@ -208,7 +227,13 @@ export function recommendDates(
   const scored = scoreEligible(constraints, options);
   if (scored.length === 0) return [];
 
-  const top = scored[0];
+  // Everything within 1 point of the best score is "equally good" — rotate
+  // inside that band by the variety seed instead of always crowning scored[0].
+  const seed = options.varietySeed ?? 0;
+  const bandLimit = Math.min(scored.length, 6);
+  const band = scored.slice(0, bandLimit).filter((s) => s.score >= scored[0].score - 1);
+  const top = band[seed > 0 ? seed % band.length : 0];
+
   const alt =
     scored.find((s) => s.moment.id !== top.moment.id && s.moment.category !== top.moment.category) ??
     scored.find((s) => s.moment.id !== top.moment.id);

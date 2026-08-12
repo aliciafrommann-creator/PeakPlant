@@ -36,9 +36,10 @@ export default function EditionScreen() {
   const editionCardIds = new Set(
     SEED_CARDS.filter((c) => c.edition === edition.id).map((c) => c.id)
   );
-  const editionMemories = memories.filter((m) => editionCardIds.has(m.cardId));
+  const editionMemories = memories.filter((m) => m.cardId !== undefined && editionCardIds.has(m.cardId));
 
-  function getCard(cardId: string) {
+  function getCard(cardId: string | undefined) {
+    if (!cardId) return undefined;
     return SEED_CARDS.find((c) => c.id === cardId);
   }
 
@@ -131,7 +132,7 @@ export default function EditionScreen() {
               <Text style={styles.emptyHint}>
                 {t(
                   'complete a card, then scan its QR code to add it to your diary.',
-                  'Schliesse eine Karte ab, dann scanne ihren QR-Code, um sie eurem Tagebuch hinzuzufügen.',
+                  'Schließe eine Karte ab, dann scanne ihren QR-Code, um sie eurem Tagebuch hinzuzufügen.',
                 )}
               </Text>
             </View>

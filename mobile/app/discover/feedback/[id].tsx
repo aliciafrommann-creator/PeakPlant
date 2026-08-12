@@ -137,9 +137,9 @@ export default function FeedbackScreen() {
           <TouchableOpacity
             onPress={goToMemory}
             accessibilityRole="button"
-            accessibilityLabel={t('Skip', 'Uberspringen')}
+            accessibilityLabel={t('Skip', 'Überspringen')}
           >
-            <Text style={styles.skip}>{t('SKIP', 'UBERSPRINGEN')}</Text>
+            <Text style={styles.skip}>{t('SKIP', 'ÜBERSPRINGEN')}</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>{t('HOW WAS IT?', 'WIE WAR ES?')}</Text>
           <TouchableOpacity

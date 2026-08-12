@@ -44,8 +44,8 @@ const TAG_LABELS: Record<ExperienceKey, [string, string]> = {
   quiet: ['quiet', 'ruhig'],
   lively: ['lively', 'lebhaft'],
   spontaneous: ['easy to do on a whim', 'spontan machbar'],
-  firstDate: ['gentle for a first date', 'sanft fur ein erstes Date'],
-  reconnecting: ['good for reconnecting', 'gut zum Wiederannahern'],
+  firstDate: ['gentle for a first date', 'sanft für ein erstes Date'],
+  reconnecting: ['good for reconnecting', 'gut, um wieder anzukommen'],
   active: ['active', 'aktiv'],
   relaxing: ['relaxing', 'entspannend'],
 };
