@@ -44,7 +44,7 @@ const TOGETHER = Sections.together;
 export default function HomeScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
-  const { t, language } = useLanguage();
+  const { t, l, language } = useLanguage();
   const { latestNote, latestFromPartner } = useNotes(activeSpace?.id);
   const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
     useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
@@ -65,10 +65,10 @@ export default function HomeScreen() {
     router.push({
       pathname: '/memory/create',
       params: {
-        prefillNote: t(`weekly challenge: ${weekly.title}`, `Wochen-Challenge: ${weekly.title}`),
+        prefillNote: t(`weekly challenge: ${l(weekly.title)}`, `Wochen-Challenge: ${l(weekly.title)}`),
       },
     });
-  }, [challengeProgress?.complete, enrolled, acceptChallenge, weekly.id, weekly.title, t]);
+  }, [challengeProgress?.complete, enrolled, acceptChallenge, weekly.id, weekly.title, t, l]);
   const { authenticate } = useBiometric();
   const [editionProgress, setEditionProgress] = useState<Record<string, number>>({});
 
@@ -399,7 +399,7 @@ export default function HomeScreen() {
                         : t('THIS WEEK', 'DIESE WOCHE')}
                     </Text>
                     <Text style={styles.quickTitleDark} numberOfLines={2}>
-                      {weekly.title}
+                      {l(weekly.title)}
                     </Text>
                     <Text style={styles.quickBodyDark} numberOfLines={2}>
                       {challengeProgress?.complete

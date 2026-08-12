@@ -15,7 +15,7 @@ describe('challengesForSpaceType', () => {
 
 describe('challengeById', () => {
   it('finds and misses', () => {
-    expect(challengeById('ch-1')?.title).toBe('a season together');
+    expect(challengeById('ch-1')?.title).toEqual({ en: 'a season together', de: 'eine saison zusammen' });
     expect(challengeById('nope')).toBeUndefined();
   });
 });

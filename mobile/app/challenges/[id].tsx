@@ -26,7 +26,7 @@ export default function ChallengeDetailScreen() {
   const { activeSpace } = useSpaces();
   const { memories } = useMemories(activeSpace?.id);
   const { enrollmentFor, join, leave } = useChallenges(activeSpace?.id);
-  const { t } = useLanguage();
+  const { t, l } = useLanguage();
 
   const handleJoin = async (challengeId: string) => {
     await join(challengeId);
@@ -73,9 +73,9 @@ export default function ChallengeDetailScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.badge}>{progress?.complete ? collectible : ''}</Text>
-        <Text style={styles.duration}>{challenge.durationLabel.toUpperCase()}</Text>
-        <Text style={styles.title}>{challenge.title}</Text>
-        <Text style={styles.subtitle}>{challenge.subtitle}</Text>
+        <Text style={styles.duration}>{l(challenge.durationLabel).toUpperCase()}</Text>
+        <Text style={styles.title}>{l(challenge.title)}</Text>
+        <Text style={styles.subtitle}>{l(challenge.subtitle)}</Text>
 
         {enrollment && progress && (
           <View style={styles.progressCard}>

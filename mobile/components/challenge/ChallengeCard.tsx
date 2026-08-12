@@ -4,6 +4,7 @@ import { Colors, Sections } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { ProgressBar } from './ProgressBar';
+import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { Challenge, ChallengeProgress } from '../../lib/challenges';
 
 interface ChallengeCardProps {
@@ -15,6 +16,7 @@ interface ChallengeCardProps {
 
 export function ChallengeCard({ challenge, joined, progress, onPress }: ChallengeCardProps) {
   const complete = progress?.complete ?? false;
+  const { t, l } = useLanguage();
 
   return (
     <TouchableOpacity
@@ -22,22 +24,26 @@ export function ChallengeCard({ challenge, joined, progress, onPress }: Challeng
       onPress={onPress}
       activeOpacity={0.85}
       accessibilityRole="button"
-      accessibilityLabel={`${challenge.title}. ${challenge.subtitle}`}
+      accessibilityLabel={`${l(challenge.title)}. ${l(challenge.subtitle)}`}
     >
       <View style={styles.head}>
         <Text style={styles.badge}>{complete ? challenge.badge : ''}</Text>
-        <Text style={styles.duration}>{challenge.durationLabel.toUpperCase()}</Text>
+        <Text style={styles.duration}>{l(challenge.durationLabel).toUpperCase()}</Text>
       </View>
-      <Text style={styles.title}>{challenge.title}</Text>
+      <Text style={styles.title}>{l(challenge.title)}</Text>
       <Text style={styles.subtitle} numberOfLines={2}>
-        {challenge.subtitle}
+        {l(challenge.subtitle)}
       </Text>
       {joined && progress ? (
         <View style={styles.progress}>
           <ProgressBar count={progress.count} goal={progress.goal} complete={progress.complete} />
         </View>
       ) : (
-        <Text style={styles.goalHint}>{challenge.goalCount} moments</Text>
+        <Text style={styles.goalHint}>
+          {challenge.goalCount === 1
+            ? t('1 moment', '1 Moment')
+            : t(`${challenge.goalCount} moments`, `${challenge.goalCount} Momente`)}
+        </Text>
       )}
     </TouchableOpacity>
   );
