@@ -11,14 +11,8 @@ const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 // Global pages — no locale prefix (shop + journal only; rest are locale-routed)
 const GLOBAL_PAGES = ['/shop', '/journal']
 
-const CARD_IMAGES = [
-  '/edition-01/8.png',
-  '/edition-01/9.png',
-  '/edition-01/10.png',
-  '/edition-01/11.png',
-  '/edition-01/12.png',
-  '/edition-01/13.png',
-]
+// NOTE: /edition-01/*.png are pink design-exploration sheets, NOT the sunflower
+// edition's card art — they are deliberately no longer shown anywhere.
 
 function Logo({ color = '#1A1A1A', size = 28 }: { color?: string; size?: number }) {
   return (
@@ -85,7 +79,7 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 0.2 }} viewport={{ once: true }}
           style={{ fontSize: 15, lineHeight: 1.85, color: '#555', fontWeight: 300, maxWidth: 360, marginBottom: 0, fontFamily: PP }}>
-          {isDE ? 'ein Kartenset mit echten Momenten für euch zwei — Dates, Acts, Questions. Plus eine Saatpapierkarte mit Sonnenblumensamen.\nKarte erleben · QR scannen · Moment festhalten · ab august 2026.' : 'a deck of real moments for the two of you — dates, acts, questions. plus one seed paper card with sunflower seeds.\nlive the card · scan the QR · keep the moment · launching august 2026.'}
+          {isDE ? 'ein Kartenset mit echten Momenten für euch zwei — Dates, Acts, Questions. Plus eine Saatpapierkarte mit Sonnenblumensamen.\nKarte erleben · QR scannen · Moment festhalten · ab oktober 2026.' : 'a deck of real moments for the two of you — dates, acts, questions. plus one seed paper card with sunflower seeds.\nlive the card · scan the QR · keep the moment · launching october 2026.'}
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }}
           style={{ marginTop: 36, display: 'flex', alignItems: 'baseline', gap: 14 }}>
@@ -175,48 +169,42 @@ function Waitlist({ locale }: { locale: string }) {
   )
 }
 
+// The REAL ten Growing Questions from the finalized deck
+// (mobile/lib/content/edition01.ts) — never invented approximations.
 const questionsEN = [
-  { n: '01', q: 'what makes you feel seen by me?' },
-  { n: '02', q: 'when do you feel most alive with me?' },
-  { n: '03', q: 'what helps you open up to me?' },
-  { n: '04', q: 'what makes our relationship feel warm?' },
-  { n: '05', q: 'where do you need more light from me?' },
-  { n: '06', q: 'when do you feel safe enough to fully bloom?' },
-  { n: '07', q: 'where do you need space to grow on your own?' },
-  { n: '08', q: 'what are we still growing into together?' },
-  { n: '09', q: 'how do we find our way back to each other?' },
-  { n: '10', q: 'what have we helped each other become?' },
+  { n: '01', q: 'where do you sometimes still feel unseen by me?' },
+  { n: '02', q: 'what helps you become more yourself?' },
+  { n: '03', q: 'what helps you feel safe enough to grow and change?' },
+  { n: '04', q: 'who are you slowly becoming?' },
+  { n: '05', q: 'what between us currently needs more light?' },
+  { n: '06', q: 'what is already growing beautifully between us?' },
+  { n: '07', q: 'what have we outgrown together?' },
+  { n: '08', q: 'how can I support your growth without taking over?' },
+  { n: '09', q: 'what part of your growth should remain entirely yours?' },
+  { n: '10', q: 'what dream would you like me to take seriously?' },
 ]
 const questionsDE = [
-  { n: '01', q: 'was lässt dich von mir gesehen fühlen?' },
-  { n: '02', q: 'wann fühlst du dich mit mir am lebendigsten?' },
-  { n: '03', q: 'was hilft dir, dich mir zu öffnen?' },
-  { n: '04', q: 'was macht unsere beziehung warm?' },
-  { n: '05', q: 'wo brauchst du mehr licht von mir?' },
-  { n: '06', q: 'wann fühlst du dich sicher genug, ganz aufzublühen?' },
-  { n: '07', q: 'wo brauchst du raum, um für dich zu wachsen?' },
-  { n: '08', q: 'worin wachsen wir noch gemeinsam hinein?' },
-  { n: '09', q: 'wie finden wir wieder zueinander?' },
-  { n: '10', q: 'wozu haben wir einander werden lassen?' },
+  { n: '01', q: 'wo fühlst du dich von mir manchmal noch ungesehen?' },
+  { n: '02', q: 'was hilft dir, mehr du selbst zu werden?' },
+  { n: '03', q: 'was hilft dir, dich sicher genug zu fühlen, um zu wachsen?' },
+  { n: '04', q: 'wer wirst du gerade langsam?' },
+  { n: '05', q: 'was zwischen uns braucht gerade mehr licht?' },
+  { n: '06', q: 'was wächst zwischen uns schon wunderschön?' },
+  { n: '07', q: 'woraus sind wir zusammen herausgewachsen?' },
+  { n: '08', q: 'wie kann ich dein wachstum unterstützen, ohne es zu übernehmen?' },
+  { n: '09', q: 'welcher teil deines wachstums soll ganz dir gehören?' },
+  { n: '10', q: 'welchen traum von dir soll ich ernst nehmen?' },
 ]
 
-function QuestionRow({ n, q, cardSrc, i }: { n: string; q: string; cardSrc: string; i: number }) {
-  const [hovered, setHovered] = useState(false)
+function QuestionRow({ n, q, i }: { n: string; q: string; i: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
       transition={{ duration: 0.7, delay: i * 0.07, ease: [0.16, 1, 0.3, 1] }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{ position: 'relative', display: 'flex', alignItems: 'baseline', gap: '2.5rem', padding: '2rem 0', borderBottom: '1px solid #ebebeb', overflow: 'hidden', cursor: 'default' }}
+      style={{ position: 'relative', display: 'flex', alignItems: 'baseline', gap: '2.5rem', padding: '2rem 0', borderBottom: '1px solid #ebebeb', cursor: 'default' }}
     >
-      <motion.div
-        animate={{ opacity: hovered ? 0.07 : 0 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        style={{ position: 'absolute', inset: 0, backgroundImage: `url(${cardSrc})`, backgroundSize: 'cover', backgroundPosition: 'center', filter: 'blur(2px)', transform: 'scale(1.04)', pointerEvents: 'none' }}
-      />
-      <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24, position: 'relative', zIndex: 1 }}>{n}</span>
-      <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', fontStyle: 'italic', color: '#1A1A1A', fontFamily: PP, position: 'relative', zIndex: 1 }}>
+      <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24 }}>{n}</span>
+      <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', fontStyle: 'italic', color: '#1A1A1A', fontFamily: PP }}>
         "{q}"
       </p>
     </motion.div>
@@ -237,15 +225,15 @@ function SixQuestions({ locale }: { locale: string }) {
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: '2rem', fontFamily: PP }}>
-          {isDE ? 'zehn fragen. eine edition.' : 'ten questions. one edition.'}
+          {isDE ? 'zwanzig karten. eine edition.' : 'twenty cards. one edition.'}
         </motion.h2>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.15 }}
           style={{ fontSize: '0.95rem', color: '#777', fontWeight: 300, lineHeight: 1.8, maxWidth: 440, marginBottom: '4rem', fontFamily: PP }}>
-          {isDE ? 'ein vorgeschmack. die übrigen warten in eurem deck — neben dates und acts.' : 'a first taste. the rest wait inside your deck — alongside dates and acts.'}
+          {isDE ? 'fünf grow dates, fünf small acts, zehn growing questions. hier ein vorgeschmack auf die fragen — echte karten aus dem deck.' : 'five grow dates, five small acts, ten growing questions. a taste of the questions — real cards from the deck.'}
         </motion.p>
         <div style={{ display: 'flex', flexDirection: 'column', borderTop: '1px solid #ebebeb' }}>
           {questions.map(({ n, q }, i) => (
-            <QuestionRow key={n} n={n} q={q} cardSrc={CARD_IMAGES[i]} i={i} />
+            <QuestionRow key={n} n={n} q={q} i={i} />
           ))}
           <motion.div
             initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -254,7 +242,7 @@ function SixQuestions({ locale }: { locale: string }) {
           >
             <span style={{ fontSize: '0.6rem', letterSpacing: '0.15em', opacity: 0.25, fontFamily: PP, minWidth: 24 }}>∧</span>
             <p style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)', fontWeight: 300, letterSpacing: '-0.01em', color: '#bbb', fontFamily: PP }}>
-              {isDE ? 'sieben weitere — zu entdecken in edition 01.' : 'seven more — to discover in edition 01.'}
+              {isDE ? 'sieben weitere fragen — und alle dates & acts — zu entdecken in edition 01.' : 'seven more questions — and every date & act — to discover in edition 01.'}
             </p>
           </motion.div>
         </div>
@@ -299,6 +287,76 @@ function CollectAndSurprise({ locale, isMobile }: { locale: string; isMobile: bo
   )
 }
 
+/* Sneak peek of the app — a stylised phone mock built from the app's real
+   design tokens (warm stone, chili, pill CTAs) so nothing is faked. The app
+   ships with edition 01; until then the honest CTA is the waitlist. */
+function AppPeek({ locale, isMobile }: { locale: string; isMobile: boolean }) {
+  const isDE = locale === 'de'
+  const features = isDE ? [
+    ['scannen', 'karte erleben, QR scannen — foto und notiz werden ein moment in eurem tagebuch.'],
+    ['entdecken', 'kuratierte date-ideen, die zu wetter, zeit und euch passen — mit ehrlichem „warum dieser vorschlag".'],
+    ['orte', 'eine karte mit euren orten, anonymen community-tipps — und „unser ort" für die plätze, die nur euch gehören.'],
+    ['wochen-moment', 'eine sanfte weekly challenge als gemeinsamer anlass — nie als druck.'],
+  ] : [
+    ['scan', 'live the card, scan the QR — photo and note become a moment in your shared diary.'],
+    ['discover', 'curated date ideas that fit the weather, the hour and you — with an honest "why this".'],
+    ['places', 'a map of your places, anonymous community tips — and "our place" for the spots only you two know.'],
+    ['weekly moment', 'one gentle weekly challenge as a shared occasion — never as pressure.'],
+  ]
+  return (
+    <section style={{ backgroundColor: '#F3F1EC', borderTop: '1px solid #ebebeb', padding: '8rem 2.5rem' }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'center' }}>
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
+          <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#CF4B2C', marginBottom: '1.25rem', fontFamily: PP }}>
+            {isDE ? 'sneak peek — die app' : 'sneak peek — the app'}
+          </p>
+          <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: PP }}>
+            {isDE ? 'euer space. euer tagebuch.' : 'your space. your diary.'}
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', marginBottom: '2rem' }}>
+            {features.map(([k, v]) => (
+              <div key={k} style={{ display: 'flex', gap: '0.9rem', alignItems: 'baseline' }}>
+                <span style={{ fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#CF4B2C', fontFamily: PP, minWidth: 110 }}>{k}</span>
+                <p style={{ fontSize: '0.9rem', color: '#555', fontWeight: 300, lineHeight: 1.7, fontFamily: PP, margin: 0 }}>{v}</p>
+              </div>
+            ))}
+          </div>
+          <a href="#waitlist" style={{ display: 'inline-block', padding: '0.9rem 2rem', borderRadius: 999, background: '#1A1A1A', color: '#ffffff', fontSize: 10, letterSpacing: '0.28em', textTransform: 'uppercase', textDecoration: 'none', fontFamily: PP }}>
+            {isDE ? 'app kommt mit edition 01 — dabei sein' : 'the app ships with edition 01 — get in'}
+          </a>
+          <p style={{ marginTop: '1rem', fontSize: '0.72rem', color: '#999', fontWeight: 300, fontFamily: PP }}>
+            {isDE ? 'privat für euren space. keine likes, keine follower, kein feed für fremde.' : 'private to your space. no likes, no followers, no feed for strangers.'}
+          </p>
+        </motion.div>
+        {/* Stylised phone mock in the app's real look — not a fake screenshot */}
+        <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          style={{ display: 'flex', justifyContent: 'center' }}>
+          <div style={{ width: 270, borderRadius: 36, border: '1px solid #d8d4cc', background: '#F3F1EC', boxShadow: '0 24px 60px rgba(30,28,26,0.14)', padding: '1.1rem', fontFamily: PP }}>
+            <div style={{ fontSize: 9, letterSpacing: '0.22em', color: '#857F76', textTransform: 'uppercase', marginBottom: 10 }}>{isDE ? 'paar-space' : 'couple space'}</div>
+            <div style={{ fontSize: 17, fontWeight: 400, color: '#1E1C1A', marginBottom: 12 }}>anna & jo 🌶️</div>
+            <div style={{ background: '#FBFAF7', borderRadius: 14, padding: '0.8rem', marginBottom: 10, border: '1px solid #ebe7df' }}>
+              <div style={{ fontSize: 8.5, letterSpacing: '0.2em', color: '#CF4B2C', marginBottom: 6 }}>{isDE ? 'KARTE 06 · GROWING QUESTION' : 'CARD 06 · GROWING QUESTION'}</div>
+              <div style={{ fontSize: 12.5, fontWeight: 300, lineHeight: 1.55, color: '#1E1C1A', fontStyle: 'italic' }}>
+                “what is already growing beautifully between us?”
+              </div>
+            </div>
+            <div style={{ background: '#FBFAF7', borderRadius: 14, padding: '0.8rem', marginBottom: 10, border: '1px solid #ebe7df' }}>
+              <div style={{ height: 84, borderRadius: 10, background: 'linear-gradient(135deg, #E3B23C 0%, #E08A4F 60%, #CF4B2C 100%)', marginBottom: 8, opacity: 0.85 }} />
+              <div style={{ fontSize: 11.5, fontWeight: 300, color: '#5A554E', lineHeight: 1.5 }}>
+                {isDE ? 'sonnenuntergang am fluss — wir haben bis zehn geredet. ✦' : 'sunset by the river — we talked till ten. ✦'}
+              </div>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.35rem 0.2rem 0' }}>
+              <span style={{ fontSize: 9, letterSpacing: '0.14em', color: '#857F76' }}>{isDE ? '4 VON 20 BEWAHRT' : '4 OF 20 KEPT'}</span>
+              <span style={{ fontSize: 9, letterSpacing: '0.2em', color: '#ffffff', background: '#1E1C1A', borderRadius: 999, padding: '0.45rem 0.9rem' }}>{isDE ? 'MOMENT FESTHALTEN' : 'PRESERVE MOMENT'}</span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
 function Testimonials({ locale, isMobile }: { locale: string; isMobile: boolean }) {
   const isDE = locale === 'de'
   const quotes = isDE ? [
@@ -336,7 +394,7 @@ function EditionCard01({ locale }: { locale: string }) {
       onMouseLeave={() => setHovered(false)}
       style={{ position: 'relative', overflow: 'hidden', minHeight: 280, border: '1px solid rgba(255,255,255,0.12)', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', cursor: 'default' }}
     >
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/edition-01/1.png)', backgroundSize: 'cover', backgroundPosition: 'center', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/product-hero.png)', backgroundSize: 'cover', backgroundPosition: 'center', pointerEvents: 'none' }} />
       <motion.div
         animate={{ opacity: hovered ? 0.5 : 0.15 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
@@ -347,7 +405,7 @@ function EditionCard01({ locale }: { locale: string }) {
       </div>
       <div style={{ position: 'relative', zIndex: 1 }}>
         <p style={{ fontFamily: PP, fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)', fontWeight: 300, color: '#ffffff', fontStyle: 'italic', lineHeight: 1.6, marginBottom: '1rem' }}>
-          {isDE ? '"wann hast du es gewusst?"' : '"when did you know?"'}
+          {isDE ? '"was wächst zwischen uns schon wunderschön?"' : '"what is already growing beautifully between us?"'}
         </p>
         <span style={{ fontSize: 'clamp(0.85rem, 1.5vw, 1.1rem)', fontWeight: 300, color: '#ffffff', fontFamily: PP, letterSpacing: '-0.01em' }}>{isDE ? 'edition 01 — die sonnenblume' : 'edition 01 — the sunflower'}</span>
       </div>
@@ -480,6 +538,7 @@ export default function Home({ params }: { params: { locale: string } }) {
       <Testimonials locale={locale} isMobile={isMobile} />
       <SixQuestions locale={locale} />
       <CollectAndSurprise locale={locale} isMobile={isMobile} />
+      <AppPeek locale={locale} isMobile={isMobile} />
       <Manifesto locale={locale} />
       <Waitlist locale={locale} />
       <EditionSystem locale={locale} isMobile={isMobile} />

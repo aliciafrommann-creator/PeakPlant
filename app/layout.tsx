@@ -17,7 +17,7 @@ const jsonLd = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://peak-plant.com'),
   title: 'peakplant — mind the moment. max the love.',
-  description: 'peakplant — moment cards for couples. mind the moment. max the love. edition 01: the sunflower. a deck of dates, acts and questions, a seed paper card, and a private couple diary app. launching august 2026.',
+  description: 'peakplant — moment cards for couples. mind the moment. max the love. edition 01: the sunflower. a deck of dates, acts and questions, a seed paper card, and a private couple diary app. launching october 2026.',
   openGraph: {
     title: 'peakplant — mind the moment. max the love.',
     description: 'one deck. real moments. a shared diary. edition 01 — the sunflower.',

@@ -36,7 +36,7 @@ export default function Image() {
           </div>
         </div>
         <div style={{ marginTop: 52, fontSize: 15, letterSpacing: '0.18em', color: 'rgba(255,255,255,0.28)', display: 'flex' }}>
-          EDITION 01 — THE SUNFLOWER · LAUNCHING AUGUST 2026
+          EDITION 01 — THE SUNFLOWER · LAUNCHING OCTOBER 2026
         </div>
       </div>
     ),

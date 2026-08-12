@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
       collection_method: 'send_invoice',
       days_until_due: 14,
       currency,
-      description: 'peakplant edition 01 — preorder. ships mid-august 2026. fully refundable until it ships.',
+      description: 'peakplant edition 01 — preorder. ships october 2026. fully refundable until it ships.',
       metadata: { order_id: order.id, product: order.product ?? 'founders' },
     })
 

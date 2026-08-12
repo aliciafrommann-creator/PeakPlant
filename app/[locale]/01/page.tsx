@@ -6,29 +6,31 @@ import { NavBar } from '../../../components/NavBar'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
+// The REAL ten Growing Questions from the finalized deck
+// (mobile/lib/content/edition01.ts) — never invented approximations.
 const QUESTIONS_EN = [
-  { n: '01', q: 'what makes you feel seen by me?' },
-  { n: '02', q: 'when do you feel most alive with me?' },
-  { n: '03', q: 'what helps you open up to me?' },
-  { n: '04', q: 'what makes our relationship feel warm?' },
-  { n: '05', q: 'where do you need more light from me?' },
-  { n: '06', q: 'when do you feel safe enough to fully bloom?' },
-  { n: '07', q: 'where do you need space to grow on your own?' },
-  { n: '08', q: 'what are we still growing into together?' },
-  { n: '09', q: 'how do we find our way back to each other?' },
-  { n: '10', q: 'what have we helped each other become?' },
+  { n: '01', q: 'where do you sometimes still feel unseen by me?' },
+  { n: '02', q: 'what helps you become more yourself?' },
+  { n: '03', q: 'what helps you feel safe enough to grow and change?' },
+  { n: '04', q: 'who are you slowly becoming?' },
+  { n: '05', q: 'what between us currently needs more light?' },
+  { n: '06', q: 'what is already growing beautifully between us?' },
+  { n: '07', q: 'what have we outgrown together?' },
+  { n: '08', q: 'how can I support your growth without taking over?' },
+  { n: '09', q: 'what part of your growth should remain entirely yours?' },
+  { n: '10', q: 'what dream would you like me to take seriously?' },
 ]
 const QUESTIONS_DE = [
-  { n: '01', q: 'was lässt dich von mir gesehen fühlen?' },
-  { n: '02', q: 'wann fühlst du dich mit mir am lebendigsten?' },
-  { n: '03', q: 'was hilft dir, dich mir zu öffnen?' },
-  { n: '04', q: 'was macht unsere beziehung warm?' },
-  { n: '05', q: 'wo brauchst du mehr licht von mir?' },
-  { n: '06', q: 'wann fühlst du dich sicher genug, ganz aufzublühen?' },
-  { n: '07', q: 'wo brauchst du raum, um für dich zu wachsen?' },
-  { n: '08', q: 'worin wachsen wir noch gemeinsam hinein?' },
-  { n: '09', q: 'wie finden wir wieder zueinander?' },
-  { n: '10', q: 'wozu haben wir einander werden lassen?' },
+  { n: '01', q: 'wo fühlst du dich von mir manchmal noch ungesehen?' },
+  { n: '02', q: 'was hilft dir, mehr du selbst zu werden?' },
+  { n: '03', q: 'was hilft dir, dich sicher genug zu fühlen, um zu wachsen?' },
+  { n: '04', q: 'wer wirst du gerade langsam?' },
+  { n: '05', q: 'was zwischen uns braucht gerade mehr licht?' },
+  { n: '06', q: 'was wächst zwischen uns schon wunderschön?' },
+  { n: '07', q: 'woraus sind wir zusammen herausgewachsen?' },
+  { n: '08', q: 'wie kann ich dein wachstum unterstützen, ohne es zu übernehmen?' },
+  { n: '09', q: 'welcher teil deines wachstums soll ganz dir gehören?' },
+  { n: '10', q: 'welchen traum von dir soll ich ernst nehmen?' },
 ]
 
 // one of these surfaces each month — rotates automatically, no deploy needed
@@ -70,7 +72,7 @@ const LETTERS_EN: Letter[] = [
     title: 'the room opens.',
     lines: [
       'this is the first letter. there will be one every month — short, honest, no marketing.',
-      'the room opens before the box does. edition 01 ships in august. until then, this is where it begins: a question, a playlist, and whatever you leave on the wall below.',
+      'the room opens before the box does. edition 01 ships in october. until then, this is where it begins: a question, a playlist, and whatever you leave on the wall below.',
       'come back next month. the question changes, the playlist changes, and a new letter will be here.',
       '— alicia',
     ],
@@ -83,7 +85,7 @@ const LETTERS_DE: Letter[] = [
     title: 'der raum öffnet sich.',
     lines: [
       'das ist der erste brief. es wird jeden monat einen geben — kurz, ehrlich, ohne marketing.',
-      'der raum öffnet, bevor die box es tut. edition 01 erscheint im august. bis dahin beginnt es hier: eine frage, eine playlist, und alles, was du unten an der wand hinterlässt.',
+      'der raum öffnet, bevor die box es tut. edition 01 erscheint im oktober. bis dahin beginnt es hier: eine frage, eine playlist, und alles, was du unten an der wand hinterlässt.',
       'komm nächsten monat wieder. die frage ändert sich, die playlist ändert sich, und ein neuer brief wartet hier.',
       '— alicia',
     ],
@@ -339,7 +341,7 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
           ))}
         </div>
         <p style={{ marginTop: 32, fontSize: '0.75rem', color: 'rgba(255,255,255,0.25)', fontWeight: 300, lineHeight: 1.7 }}>
-          {isDE ? 'zehn fragen, eine in jeder box. sammle sie über die drei monate von edition 01 — und finde sie alle hier, in deiner digitalen welt. das archiv wächst mit jeder edition.' : 'ten questions, one in every box. collect them over the three months edition 01 runs — and find them all here, in your digital world. the archive grows with every edition.'}
+          {isDE ? 'zehn growing questions, alle in eurem deck — neben fünf grow dates und fünf small acts. erlebt sie über die drei monate von edition 01, und findet sie alle hier, in eurer digitalen welt. das archiv wächst mit jeder edition.' : 'ten growing questions, all inside your deck — alongside five grow dates and five small acts. live them over the three months edition 01 runs, and find them all here, in your digital world. the archive grows with every edition.'}
         </p>
       </section>
 

@@ -28,11 +28,11 @@ function makeUnsubToken(email: string): string {
 const BODY_EN = (unsubUrl: string) => `∧ peakplant
 
 you're in.
-edition 01 drops in august 2026.
+edition 01 drops in october 2026.
 
 while you wait — a first taste. edition 01 is the sunflower:
 warmth, growing together, giving each other light without taking the other's.
-ten questions per edition, one in every box. use one tonight.
+twenty moment cards per edition — grow dates, small acts, growing questions. use one tonight.
 
 01. “what makes you feel seen by me?”
 02. “when do you feel most alive with me?”
@@ -49,11 +49,11 @@ unsubscribe: ${unsubUrl}`
 const BODY_DE = (unsubUrl: string) => `∧ peakplant
 
 du bist dabei.
-edition 01 startet im august 2026.
+edition 01 startet im oktober 2026.
 
 für die zwischenzeit — ein vorgeschmack. edition 01 ist die sonnenblume:
 wärme, gemeinsames wachsen, einander licht geben, ohne dem anderen das eigene zu nehmen.
-zehn fragen pro edition, eine in jeder box. nimm eine davon heute abend.
+zwanzig moment cards pro edition — grow dates, small acts, growing questions. nimm dir eine davon heute abend.
 
 01. „was lässt dich von mir gesehen fühlen?”
 02. „wann fühlst du dich mit mir am lebendigsten?”

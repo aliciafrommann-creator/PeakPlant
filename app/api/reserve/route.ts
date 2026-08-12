@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
   <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;opacity:0.4;margin-bottom:40px">∧ peakplant</p>
   <h1 style="font-size:28px;font-weight:200;letter-spacing:-0.03em;line-height:1.2;margin-bottom:24px">your spot is reserved.</h1>
   <p style="font-size:15px;line-height:1.8;color:#555;font-weight:300;margin-bottom:28px">
-    no payment needed yet. <strong style="color:#1A1A1A;font-weight:400">${edition}</strong> ships mid-august 2026.
+    no payment needed yet. <strong style="color:#1A1A1A;font-weight:400">${edition}</strong> ships october 2026.
     we'll send you an invoice you can settle anytime before then — or pay now if you'd like to lock it in.
   </p>
   <div style="border:1px solid #e8e8e8;padding:24px;margin-bottom:28px">
