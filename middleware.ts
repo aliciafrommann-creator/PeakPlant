@@ -16,7 +16,7 @@ const SKIP = [
   // /bestellen itself has no page — only /bestellen/success exists. The bare
   // path is caught below and sent to /shop rather than into a 404.
   '/bestellen',
-  '/letters', '/beta',
+  '/letters', '/beta', '/login', '/members',
   '/opengraph-image',
 ]
 
