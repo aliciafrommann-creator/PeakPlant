@@ -41,7 +41,7 @@ const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
    ausschliesslich als Status (Fehlermeldung) — so sieht es BRAND.md fuer die
    Farbfamilie vor. */
 const INK = '#1A1A1A'
-const CHILI = '#CF4B2C'
+const CHILI = '#857F76'
 const TERRACOTTA = '#B5532E'
 const PAPER = '#FBFAF7'
 const CREAM = '#F7F2E8'

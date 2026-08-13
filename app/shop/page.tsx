@@ -180,7 +180,7 @@ export default function ShopPage() {
               </p>
             </div>
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.5rem' }}>
-              <p style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#CF4B2C', opacity: 0.85 }}>
+              <p style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#857F76', opacity: 0.85 }}>
                 preorder opens soon · ships october 2026
               </p>
             </div>
@@ -199,7 +199,9 @@ export default function ShopPage() {
         <div style={{ maxWidth: 1100, margin: '0 auto' }}>
           <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
             style={{ fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '3rem' }}>
-            also coming
+            {/* "also coming" war falsch: das HIER ist edition 01, das Jetzt.
+                Kommen tun edition 02 und 03 — die stehen auf der Startseite. */}
+            edition 01 — the decks
           </motion.p>
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '1.5rem' : '2.5rem' }}>
 
@@ -223,7 +225,7 @@ export default function ShopPage() {
                 ))}
               </div>
               <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem' }}>
-                <p style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#CF4B2C', opacity: 0.85 }}>
+                <p style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#857F76', opacity: 0.85 }}>
                   preorder opens soon
                 </p>
               </div>
@@ -253,7 +255,7 @@ export default function ShopPage() {
                 ))}
               </div>
               <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1.25rem' }}>
-                <p style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#CF4B2C', opacity: 0.85 }}>
+                <p style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#857F76', opacity: 0.85 }}>
                   preorder opens soon
                 </p>
               </div>
@@ -337,7 +339,7 @@ export default function ShopPage() {
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'start' }}>
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
-            <p style={{ fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#CF4B2C', opacity: 0.9, marginBottom: '1.25rem' }}>every edition, a plant</p>
+            <p style={{ fontSize: '0.75rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#857F76', opacity: 0.9, marginBottom: '1.25rem' }}>every edition, a plant</p>
             <h2 style={{ fontSize: 'clamp(1.6rem, 2.6vw, 2.2rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem' }}>
               edition 01 is the sunflower.
             </h2>

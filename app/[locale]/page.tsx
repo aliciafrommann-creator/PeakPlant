@@ -58,7 +58,7 @@ function CouplesHero({ locale }: { locale: string }) {
           {isDE ? 'wann hat das leben begonnen, sich so schnell anzufühlen?' : 'when did life start feeling this fast?'}
         </h1>
         <p style={{ fontFamily: PP, fontSize: '0.8rem', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.75)', fontWeight: 300, maxWidth: 420, margin: '0 auto 2rem', lineHeight: 1.7 }}>
-          {isDE ? 'ein kartenset für paare — dates, acts, questions. jede karte wird ein festgehaltener moment. friends & solo edition sind unterwegs.' : 'a card deck for couples — dates, acts, questions. every card becomes a moment you keep. friends & solo editions are on their way.'}
+          {isDE ? 'ein kartenset für paare — dates, acts, questions. jede karte wird ein festgehaltener moment. friends, family & solo editions sind unterwegs.' : 'a card deck for couples — dates, acts, questions. every card becomes a moment you keep. friends, family & solo editions are on their way.'}
         </p>
         <a href="#waitlist" className="pp-hero-cta"
           style={{ marginBottom: '1.75rem', color: '#ffffff', textDecoration: 'none', fontFamily: PP }}>
@@ -93,7 +93,7 @@ function Product({ locale, isMobile }: { locale: string; isMobile: boolean }) {
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.3 }} viewport={{ once: true }}
           style={{ marginTop: 36, display: 'flex', alignItems: 'baseline', gap: 14 }}>
-          <span style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#CF4B2C', fontFamily: PP }}>{isDE ? 'vorbestellung folgt bald' : 'preorder opens soon'}</span>
+          <span style={{ fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#857F76', fontFamily: PP }}>{isDE ? 'vorbestellung folgt bald' : 'preorder opens soon'}</span>
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.4 }} viewport={{ once: true }}
           style={{ marginTop: 28, display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap' }}>
@@ -270,7 +270,7 @@ function CollectAndSurprise({ locale, isMobile }: { locale: string; isMobile: bo
     <section style={{ backgroundColor: '#faf9f7', borderTop: '1px solid #ebebeb', padding: '7rem 2.5rem' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
-          <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#CF4B2C', opacity: 0.9, marginBottom: '1.25rem', fontFamily: PP }}>
+          <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#857F76', opacity: 0.9, marginBottom: '1.25rem', fontFamily: PP }}>
             {isDE ? 'zum sammeln' : 'made to collect'}
           </p>
           <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: PP }}>
@@ -320,7 +320,7 @@ function AppPeek({ locale, isMobile }: { locale: string; isMobile: boolean }) {
     <section style={{ backgroundColor: '#F3F1EC', borderTop: '1px solid #ebebeb', padding: '8rem 2.5rem' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '3rem' : '6rem', alignItems: 'center' }}>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
-          <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#CF4B2C', marginBottom: '1.25rem', fontFamily: PP }}>
+          <p style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#857F76', marginBottom: '1.25rem', fontFamily: PP }}>
             {isDE ? 'sneak peek — die app' : 'sneak peek — the app'}
           </p>
           <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.3rem)', fontWeight: 200, letterSpacing: '-0.025em', lineHeight: 1.2, marginBottom: '1.25rem', fontFamily: PP }}>
@@ -329,7 +329,7 @@ function AppPeek({ locale, isMobile }: { locale: string; isMobile: boolean }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem', marginBottom: '2rem' }}>
             {features.map(([k, v]) => (
               <div key={k} className="pp-feature-row" style={{ fontFamily: PP }}>
-                <span className="pp-feature-key" style={{ color: '#CF4B2C' }}>{k}</span>
+                <span className="pp-feature-key" style={{ color: '#857F76' }}>{k}</span>
                 <p style={{ fontSize: '0.9rem', color: '#555', fontWeight: 300, lineHeight: 1.7, margin: 0 }}>{v}</p>
               </div>
             ))}
@@ -348,13 +348,13 @@ function AppPeek({ locale, isMobile }: { locale: string; isMobile: boolean }) {
             <div style={{ fontSize: 9, letterSpacing: '0.22em', color: '#857F76', textTransform: 'uppercase', marginBottom: 10 }}>{isDE ? 'paar-space' : 'couple space'}</div>
             <div style={{ fontSize: 17, fontWeight: 400, color: '#1E1C1A', marginBottom: 12 }}>anna & jo 🌶️</div>
             <div style={{ background: '#FBFAF7', borderRadius: 14, padding: '0.8rem', marginBottom: 10, border: '1px solid #ebe7df' }}>
-              <div style={{ fontSize: 8.5, letterSpacing: '0.2em', color: '#CF4B2C', marginBottom: 6 }}>{isDE ? 'KARTE 06 · GROWING QUESTION' : 'CARD 06 · GROWING QUESTION'}</div>
+              <div style={{ fontSize: 8.5, letterSpacing: '0.2em', color: '#857F76', marginBottom: 6 }}>{isDE ? 'KARTE 06 · GROWING QUESTION' : 'CARD 06 · GROWING QUESTION'}</div>
               <div style={{ fontSize: 12.5, fontWeight: 300, lineHeight: 1.55, color: '#1E1C1A', fontStyle: 'italic' }}>
                 “what is already growing beautifully between us?”
               </div>
             </div>
             <div style={{ background: '#FBFAF7', borderRadius: 14, padding: '0.8rem', marginBottom: 10, border: '1px solid #ebe7df' }}>
-              <div style={{ height: 84, borderRadius: 10, background: 'linear-gradient(135deg, #E3B23C 0%, #E08A4F 60%, #CF4B2C 100%)', marginBottom: 8, opacity: 0.85 }} />
+              <div style={{ height: 84, borderRadius: 10, background: 'linear-gradient(135deg, #E3B23C 0%, #E08A4F 60%, #857F76 100%)', marginBottom: 8, opacity: 0.85 }} />
               <div style={{ fontSize: 11.5, fontWeight: 300, color: '#5A554E', lineHeight: 1.5 }}>
                 {isDE ? 'sonnenuntergang am fluss — wir haben bis zehn geredet. ✦' : 'sunset by the river — we talked till ten. ✦'}
               </div>
@@ -396,7 +396,7 @@ function EditionCard01({ locale }: { locale: string }) {
         style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)', pointerEvents: 'none' }}
       />
       <div style={{ position: 'relative', zIndex: 1 }}>
-        <span style={{ color: '#CF4B2C', fontSize: '1rem', lineHeight: 1 }}>∧</span>
+        <span style={{ color: '#857F76', fontSize: '1rem', lineHeight: 1 }}>∧</span>
       </div>
       <div style={{ position: 'relative', zIndex: 1 }}>
         <p style={{ fontFamily: PP, fontSize: 'clamp(0.85rem, 1.5vw, 1.05rem)', fontWeight: 300, color: '#ffffff', fontStyle: 'italic', lineHeight: 1.6, marginBottom: '1rem' }}>
@@ -427,7 +427,7 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
               transition={{ duration: 0.9, delay: (i + 1) * 0.1, ease: [0.16, 1, 0.3, 1] }}
               style={{ position: 'relative', overflow: 'hidden', minHeight: 280, border: '1px solid rgba(255,255,255,0.07)', padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', opacity: 0.35 }}
             >
-              <div><span style={{ color: '#CF4B2C', fontSize: '1rem', lineHeight: 1 }}>∧</span></div>
+              <div><span style={{ color: '#857F76', fontSize: '1rem', lineHeight: 1 }}>∧</span></div>
               <div>
                 <p style={{ fontFamily: PP, fontSize: '0.65rem', letterSpacing: '0.2em', color: '#ffffff', opacity: 0.5, marginBottom: '0.75rem', textTransform: 'uppercase' }}>
                   {isDE ? 'demnächst' : 'coming soon'}
@@ -440,9 +440,20 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }}
           style={{ fontSize: '0.95rem', color: '#ffffff', opacity: 0.45, lineHeight: 1.75, fontWeight: 300, maxWidth: 480, fontFamily: PP, whiteSpace: 'pre-line' }}>
           {isDE
-            ? 'jede edition ist eine pflanze. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deines decks.\njede weitere edition bringt eine neue pflanze, neue karten, neue fragen.\ngeplant sind außerdem eine friends edition für freundeskreise und eine solo edition für die liebe zu dir selbst — weil beides genauso zählt. freundeskreise kann die app schon heute.'
-            : 'every edition is a plant. edition 01 is the sunflower — its seeds are pressed into the seed paper in your deck.\neach edition after it brings a new plant, new cards, new questions.\nalso planned: a friends edition for your circle and a solo edition for the love you give yourself — because both matter just as much. the app already holds circles of friends.'}
+            ? 'jede edition ist eine pflanze. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deines decks.\nedition 02 und 03 sind schon gedacht: neue pflanze, neue karten, neue digitale welt — und die decks sind so gestaltet, dass sie zusammenpassen. später gibt es die drei auch als triple bundle.\nwer früh dabei ist, redet mit: auf instagram und in der community entstehen die nächsten editionen.\nfür 2027 geplant: friends editions für freundeskreise, family editions — und solo editions. solo heißt nicht allein sein: es ist die edition dafür, dich selbst zu finden und mutig zu sein. dazu eine winter edition für paare.'
+            : 'every edition is a plant. edition 01 is the sunflower — its seeds are pressed into the seed paper in your deck.\neditions 02 and 03 are already taking shape: a new plant, new cards, a new digital world — and the decks are designed to belong together. later, the three will also come as a triple bundle.\njoin early and you help shape them: the next editions grow on instagram and in the community.\nplanned for 2027: friends editions for your circle, family editions — and solo editions. solo does not mean being lonely: it is the edition for finding yourself and being brave. plus a winter edition for couples.'}
         </motion.p>
+        {/* Die zwei Wege, frueh dabei zu sein — direkt unter dem Satz, der sie
+            verspricht. Ein Versprechen ohne Tuer dorthin waere nur Deko. */}
+        <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.4 }}
+          style={{ display: 'flex', gap: '4px 28px', flexWrap: 'wrap', marginTop: '1.75rem' }}>
+          <a href="https://www.instagram.com/peak.plant" target="_blank" rel="noopener noreferrer" className="pp-dark-link" style={{ fontFamily: PP }}>
+            INSTAGRAM →
+          </a>
+          <Link href="/login" className="pp-dark-link" style={{ fontFamily: PP }}>
+            {isDE ? 'COMMUNITY BEITRETEN →' : 'JOIN THE COMMUNITY →'}
+          </Link>
+        </motion.div>
       </div>
     </section>
   )
@@ -459,7 +470,7 @@ function Manifesto({ locale }: { locale: string }) {
         <h2 style={{ fontFamily: PP, fontSize: 'clamp(2rem, 5vw, 4.5rem)', fontWeight: 200, color: '#ffffff', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: 0 }}>
           {isDE ? 'im moment bleiben.' : 'mind the moment.'}
         </h2>
-        <h2 style={{ fontFamily: PP, fontSize: 'clamp(2rem, 5vw, 4.5rem)', fontWeight: 200, color: '#CF4B2C', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '2.5rem' }}>
+        <h2 style={{ fontFamily: PP, fontSize: 'clamp(2rem, 5vw, 4.5rem)', fontWeight: 200, color: '#857F76', lineHeight: 1.1, letterSpacing: '-0.03em', marginBottom: '2.5rem' }}>
           {isDE ? 'die liebe maximieren.' : 'max the love.'}
         </h2>
         <p style={{ fontFamily: PP, fontSize: '0.9rem', color: '#ffffff', opacity: 0.35, fontWeight: 300, maxWidth: 480, margin: '0 auto', lineHeight: 1.85 }}>
