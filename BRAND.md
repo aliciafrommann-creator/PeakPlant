@@ -62,3 +62,13 @@ keine Streaks-Peitsche, keine Fake-Claims (siehe `MANIFESTO.md` §1–3).
 - Mix aus **Typo-Karten** (leichte Helvetica-Frage auf Creme/Chili) und **Foto-Kacheln**
   (warme Paarfotos mit schmaler Caption-Zeile) — Verhältnis ≈ 1:1, wie ein Deck.
 - Immer ein ruhiges Element: ∧-Mark oder ✦, klein, nie beides groß.
+
+## Website-Chrome: monochrom warm (Entscheidung 13.08.)
+
+Auf der Website wirkte das Chili-Rot in Labels und Markenzeichen wie ein
+Sale-Sticker in einer sonst ruhigen, editorialen Flaeche ("das rot passt nicht
+sooo richtig", Alicia). Deshalb: **Website-Chrome ist monochrom warm** — Labels
+und ∧-Zeichen laufen in Subtle `#857F76` bzw. Ink mit Opazitaet. Chili bleibt
+die Primaerfarbe der App, der Karten und der Kampagnen-Visuals; auf der Website
+darf Farbe aus Fotografie und Produktbildern kommen, nicht aus dem Chrome.
+Fehler-/Warntexte behalten Terracotta `#B5532E` (Funktionsfarbe, kein Akzent).

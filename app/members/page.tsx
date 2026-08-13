@@ -28,7 +28,7 @@ import { getSupabaseBrowser, isSupabaseConfigured } from '../../lib/supabaseBrow
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 const INK = '#1A1A1A'
-const CHILI = '#CF4B2C'
+const ACCENT = '#857F76'
 const TERRACOTTA = '#B5532E'
 const PAPER = '#FBFAF7'
 const CREAM = '#F7F2E8'
@@ -240,7 +240,7 @@ export default function MembersPage() {
           ))}
         </div>
 
-        <p style={{ ...labelStyle, color: CHILI, marginBottom: '1.5rem' }}>{t.eyebrow}</p>
+        <p style={{ ...labelStyle, color: ACCENT, marginBottom: '1.5rem' }}>{t.eyebrow}</p>
 
         {!isSupabaseConfigured ? (
           <section style={cardStyle}>
@@ -280,7 +280,7 @@ export default function MembersPage() {
                 Konten. Ohne Link keine tote Schaltflaeche, sondern der ehrliche
                 Satz, dass der Zugang noch kommt. */}
             <section aria-labelledby="members-whatsapp" style={{ ...cardStyle, marginBottom: '1.25rem' }}>
-              <h2 id="members-whatsapp" style={{ ...labelStyle, color: CHILI, marginBottom: '1rem', fontWeight: 400 }}>
+              <h2 id="members-whatsapp" style={{ ...labelStyle, color: ACCENT, marginBottom: '1rem', fontWeight: 400 }}>
                 {t.whatsappLabel}
               </h2>
               <p style={{ fontSize: '0.95rem', fontWeight: 300, lineHeight: 1.8, color: BODY, maxWidth: 460, marginBottom: '1.25rem' }}>

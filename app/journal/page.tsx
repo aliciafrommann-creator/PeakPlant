@@ -27,7 +27,7 @@ export default function JournalIndex() {
       <NavBar activePath="/journal" />
 
       <section className="pp-journal-head">
-        <p className="pp-eyebrow" style={{ color: '#CF4B2C', marginBottom: '1.5rem' }}>
+        <p className="pp-eyebrow" style={{ color: '#857F76', marginBottom: '1.5rem' }}>
           journal
         </p>
         <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.4rem)', fontWeight: 200, letterSpacing: '-0.03em', lineHeight: 1.1, maxWidth: 720, margin: 0 }}>
@@ -43,7 +43,7 @@ export default function JournalIndex() {
       <section className="pp-journal-list">
         {journalArticles.map((a) => (
           <Link key={a.slug} href={`/journal/${a.slug}`} className="pp-journal-item">
-            <p className="pp-eyebrow" style={{ color: '#CF4B2C', opacity: 0.8, marginBottom: '0.85rem' }}>
+            <p className="pp-eyebrow" style={{ color: '#857F76', opacity: 0.8, marginBottom: '0.85rem' }}>
               {a.category}
             </p>
             <h2 style={{ fontSize: 'clamp(1.4rem, 2.6vw, 2rem)', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.2, margin: '0 0 0.9rem' }}>

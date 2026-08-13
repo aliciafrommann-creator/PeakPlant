@@ -32,7 +32,7 @@ const SITE_URL = 'https://peak-plant.com'
 
 /* Palette — warm paper tones, chili as the one accent on this surface. */
 const INK = '#1A1A1A'
-const CHILI = '#CF4B2C'
+const CHILI = '#857F76'
 const PAPER = '#FBFAF7'
 const CREAM = '#F7F2E8'
 const CREAM_EDGE = '#EFE6D4'

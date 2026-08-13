@@ -40,7 +40,7 @@ import { getSupabaseBrowser, isSupabaseConfigured } from '../../lib/supabaseBrow
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 const INK = '#1A1A1A'
-const CHILI = '#CF4B2C'
+const ACCENT = '#857F76'
 const TERRACOTTA = '#B5532E'
 const PAPER = '#FBFAF7'
 const CREAM = '#F7F2E8'
@@ -416,7 +416,7 @@ export default function LoginPage() {
           ))}
         </div>
 
-        <p style={{ ...labelStyle, color: CHILI, marginBottom: '1.5rem' }}>{t.eyebrow}</p>
+        <p style={{ ...labelStyle, color: ACCENT, marginBottom: '1.5rem' }}>{t.eyebrow}</p>
 
         <h1 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 200, letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: '1.5rem' }}>
           {title}

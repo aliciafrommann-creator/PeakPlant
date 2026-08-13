@@ -113,7 +113,7 @@ export default function LettersPage() {
                         fontSize: '0.7rem',
                         letterSpacing: '0.18em',
                         textTransform: 'uppercase',
-                        color: '#CF4B2C',
+                        color: '#857F76',
                       }}
                     >
                       letter {n}
