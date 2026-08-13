@@ -25,8 +25,16 @@ export async function POST(req: NextRequest) {
   const res = await fetch(`${SUP_URL}/rest/v1/orders?id=eq.${orderId}&select=*`, {
     headers: { 'apikey': SUP_KEY, 'Authorization': `Bearer ${SUP_KEY}` },
   })
+  // A failed lookup is not an absent order: without this check a database or
+  // auth error would be reported as "order not found".
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '')
+    console.error('[Invoice] order lookup failed:', res.status, detail.slice(0, 300))
+    return NextResponse.json({ error: `Bestellung konnte nicht geladen werden (${res.status})` }, { status: 500 })
+  }
+
   const rows = await res.json()
-  const order = rows?.[0]
+  const order = Array.isArray(rows) ? rows[0] : undefined
 
   if (!order) return NextResponse.json({ error: 'order not found' }, { status: 404 })
   if (!order.email) return NextResponse.json({ error: 'order has no email' }, { status: 400 })
@@ -39,6 +47,19 @@ export async function POST(req: NextRequest) {
   const editionLabel = order.product === 'founders' ? 'Founders Edition — peakplant edition 01' : 'peakplant edition 01'
 
   try {
+    // ── already invoiced? hand back the existing one ─────────────────
+    // The only guard used to be payment_status === 'paid', which does not help
+    // while an invoice is still open: a second click sent the customer a second
+    // real invoice. If one exists, return its link instead of creating another.
+    if (order.stripe_invoice_id) {
+      const existingInvoice = await stripe.invoices.retrieve(order.stripe_invoice_id)
+      return NextResponse.json({
+        ok: true,
+        alreadySent: true,
+        invoiceUrl: existingInvoice.hosted_invoice_url,
+      })
+    }
+
     // ── create or reuse a Stripe customer for this email ─────────────
     const existing = await stripe.customers.list({ email: order.email, limit: 1 })
     const customer = existing.data[0] ?? await stripe.customers.create({
@@ -76,7 +97,7 @@ export async function POST(req: NextRequest) {
     await stripe.invoices.sendInvoice(finalized.id)
 
     // ── mark the order ───────────────────────────────────────────────
-    await fetch(`${SUP_URL}/rest/v1/orders?id=eq.${orderId}`, {
+    const patch = await fetch(`${SUP_URL}/rest/v1/orders?id=eq.${orderId}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -89,6 +110,21 @@ export async function POST(req: NextRequest) {
         invoice_sent_at: new Date().toISOString(),
       }),
     })
+
+    // The invoice is out at Stripe either way — but if the note of it did not
+    // reach the database, the duplicate guard above is blind on the next click.
+    // Say so instead of reporting a clean success.
+    if (!patch.ok) {
+      const detail = await patch.text().catch(() => '')
+      console.error('[Invoice] status patch failed for order', order.id, patch.status, detail.slice(0, 300))
+      return NextResponse.json(
+        {
+          error: `Rechnung ${finalized.id} ist bei Stripe verschickt, konnte aber nicht an der Bestellung vermerkt werden. Bitte NICHT erneut senden.`,
+          invoiceUrl: finalized.hosted_invoice_url,
+        },
+        { status: 500 },
+      )
+    }
 
     return NextResponse.json({ ok: true, invoiceUrl: finalized.hosted_invoice_url })
   } catch (err: any) {

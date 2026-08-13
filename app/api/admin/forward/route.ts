@@ -23,8 +23,17 @@ export async function POST(req: NextRequest) {
   const res = await fetch(`${SUP_URL}/rest/v1/orders?id=eq.${orderId}&select=*`, {
     headers: { 'apikey': SUP_KEY, 'Authorization': `Bearer ${SUP_KEY}` },
   })
+  // Without this check a database or auth error would arrive as an object,
+  // `rows?.[0]` would be undefined, and the answer would be a confident
+  // "order not found" for an order that exists — sending the search the wrong way.
+  if (!res.ok) {
+    const detail = await res.text().catch(() => '')
+    console.error('[Forward] order lookup failed:', res.status, detail.slice(0, 300))
+    return NextResponse.json({ error: `Bestellung konnte nicht geladen werden (${res.status})` }, { status: 500 })
+  }
+
   const rows = await res.json()
-  const order = rows?.[0]
+  const order = Array.isArray(rows) ? rows[0] : undefined
 
   if (!order) return NextResponse.json({ error: 'order not found' }, { status: 404 })
 
@@ -41,7 +50,7 @@ export async function POST(req: NextRequest) {
     ? 'Founders Edition (1×)'
     : `Abo-Lieferung — ${qty} Stück`
 
-  await sendMail({
+  const mail = await sendMail({
     to: supplierEmail,
     subject: `Versandauftrag #${order.id.slice(0, 8).toUpperCase()} — peakplant`,
     html: `
@@ -75,7 +84,17 @@ export async function POST(req: NextRequest) {
 </div>`,
   })
 
-  await fetch(`${SUP_URL}/rest/v1/orders?id=eq.${orderId}`, {
+  // Only a mail the provider accepted may turn into status "forwarded".
+  // Otherwise the panel would show a shipping order the supplier never saw.
+  if (!mail.sent) {
+    console.error('[Forward] supplier mail not sent for order', order.id, '—', mail.error)
+    return NextResponse.json(
+      { error: `Mail an den Supplier ging nicht raus: ${mail.error ?? 'unbekannter Fehler'}. Status bleibt offen.` },
+      { status: 500 },
+    )
+  }
+
+  const patch = await fetch(`${SUP_URL}/rest/v1/orders?id=eq.${orderId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -85,6 +104,17 @@ export async function POST(req: NextRequest) {
     },
     body: JSON.stringify({ status: 'forwarded', supplier_forwarded_at: new Date().toISOString() }),
   })
+
+  // Mail is out but the status could not be stored: say exactly that, so the
+  // same order is not forwarded a second time on the next pass.
+  if (!patch.ok) {
+    const detail = await patch.text().catch(() => '')
+    console.error('[Forward] status patch failed for order', order.id, patch.status, detail.slice(0, 300))
+    return NextResponse.json(
+      { error: 'Mail an den Supplier ist raus, aber der Status konnte nicht gespeichert werden. Bitte NICHT erneut weiterleiten.' },
+      { status: 500 },
+    )
+  }
 
   return NextResponse.json({ ok: true })
 }

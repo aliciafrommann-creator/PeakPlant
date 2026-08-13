@@ -76,14 +76,29 @@ export async function POST(req: NextRequest) {
       status:                  'pending',
     }
 
-    await supabase('/orders', 'POST', orderPayload)
+    // The order has to exist before anything claims it does. If the insert
+    // fails (RLS, wrong service key, Supabase briefly away) we answer 500 so
+    // Stripe retries the webhook — answering 200 here would mean a paid order
+    // that lives in no database, with a confirmation mail already sent.
+    const insert = await supabase('/orders', 'POST', orderPayload)
+    if (!insert.ok) {
+      const detail = await insert.text().catch(() => '')
+      console.error('[Webhook] order insert failed:', insert.status, detail.slice(0, 500), '— session', session.id)
+      return NextResponse.json({ error: 'order could not be stored' }, { status: 500 })
+    }
 
     const accessLink = `${SITE}/01?token=${accessToken}`
     const edition    = editionLabel(product)
 
-    await Promise.all([
+    if (!email) {
+      // No address on the session — the customer confirmation cannot go out at
+      // all. Logged as its own case so it is not mistaken for a send failure.
+      console.error('[Webhook] no customer email on session', session.id, '— confirmation not sent')
+    }
+
+    const [customerMail, adminMail] = await Promise.all([
       // ── Kundenbestätigung ────────────────────────────────────────────
-      email && sendMail({
+      email ? sendMail({
         to: email,
         subject: 'your preorder is confirmed — and your sneak peek is inside.',
         html: `
@@ -135,7 +150,7 @@ export async function POST(req: NextRequest) {
     ∧ peakplant
   </p>
 </div>`,
-      }),
+      }) : null,
 
       // ── Admin-Benachrichtigung ───────────────────────────────────────
       sendMail({
@@ -163,6 +178,24 @@ export async function POST(req: NextRequest) {
 </div>`,
       }),
     ])
+
+    // sendMail never throws — it returns { sent, provider, error }. Without
+    // reading that, a mail the provider refused counts as delivered.
+    if (customerMail && !customerMail.sent) {
+      console.error('[Webhook] confirmation mail not sent to', email, '—', customerMail.error)
+    }
+    if (!adminMail.sent) {
+      console.error('[Webhook] admin notification not sent —', adminMail.error)
+    }
+
+    // The order is stored, so the webhook is done from Stripe's side. A failed
+    // mail must not trigger a retry (that would insert the order twice), but it
+    // is reported in the response body instead of being swallowed.
+    return NextResponse.json({
+      received: true,
+      customerMailed: email ? customerMail?.sent === true : false,
+      adminMailed: adminMail.sent,
+    })
   }
 
   return NextResponse.json({ received: true })

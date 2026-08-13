@@ -54,11 +54,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'server error' }, { status: 500 })
     }
 
+    // 409 = a row for this reservation already exists, so nothing was written —
+    // which also means the token generated above was never stored. Logged, so a
+    // customer reporting a dead access link can be traced instead of guessed at.
+    const duplicate = insert.status === 409
+    if (duplicate) {
+      console.warn('[Reserve] duplicate reservation for', sanitized, '— no new row, access token not stored')
+    }
+
     const accessLink = `${SITE}/01?token=${accessToken}`
     const edition    = editionLabel(product)
 
+    // No provider configured means no mail at all — the caller has to know that
+    // rather than being told "check your inbox" for something never sent.
+    if (!mailProvider()) {
+      console.error('[Reserve] no mail provider configured — reservation stored, no mail sent to', sanitized)
+    }
+
+    let customerMail = null as Awaited<ReturnType<typeof sendMail>> | null
+    let adminMail    = null as Awaited<ReturnType<typeof sendMail>> | null
+
     if (mailProvider()) {
-      await Promise.all([
+      ;[customerMail, adminMail] = await Promise.all([
         sendMail({
           to: sanitized,
           subject: 'your spot is reserved — pay whenever you\'re ready.',
@@ -110,7 +127,16 @@ export async function POST(req: NextRequest) {
       ])
     }
 
-    return NextResponse.json({ reserved: true })
+    if (customerMail && !customerMail.sent) {
+      console.error('[Reserve] confirmation mail not sent to', sanitized, '—', customerMail.error)
+    }
+    if (adminMail && !adminMail.sent) {
+      console.error('[Reserve] admin notification not sent —', adminMail.error)
+    }
+
+    // `mailed` is the honest half of the answer: the reservation is stored
+    // either way, but only show "look in your inbox" when something left.
+    return NextResponse.json({ reserved: true, mailed: customerMail?.sent === true, duplicate })
   } catch (err: any) {
     console.error('[Reserve] Error:', err)
     return NextResponse.json({ error: 'server error' }, { status: 500 })

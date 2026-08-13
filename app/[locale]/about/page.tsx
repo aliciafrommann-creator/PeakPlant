@@ -1,5 +1,6 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../../components/NavBar'
 
@@ -65,8 +66,12 @@ export default function AboutPage({ params }: { params: { locale: string } }) {
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
           style={{ position: 'sticky', top: '8rem', paddingTop: '5rem' }}
         >
-          <div style={{ aspectRatio: '3/4', overflow: 'hidden', background: '#f0f0f0' }}>
-            <img src="/alicia.jpg" alt="Alicia Frommann, founder of PeakPlant" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', filter: 'grayscale(100%)' }} />
+          {/* next/image, not a raw tag: the source file is 428 KB and went to
+              the phone untouched and eagerly. */}
+          <div style={{ position: 'relative', aspectRatio: '3/4', overflow: 'hidden', background: '#f0f0f0' }}>
+            <Image src="/alicia.jpg" alt="Alicia Frommann, founder of PeakPlant" fill
+              sizes="(max-width: 860px) 100vw, 460px"
+              style={{ objectFit: 'cover', objectPosition: 'center top', filter: 'grayscale(100%)' }} />
           </div>
           <div style={{ marginTop: '1.5rem' }}>
             <p style={{ fontSize: '1rem', fontWeight: 400, letterSpacing: '-0.01em', color: '#1A1A1A', fontFamily: PP }}>alicia frommann</p>
