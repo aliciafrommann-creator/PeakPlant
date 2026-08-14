@@ -85,7 +85,11 @@ avatar); after it, emoji + avatar are shared across both members.
 
 ### 0015–0019 — P0-Härtung + Messung (2026-08-14, Freigabe „APPROVED: P0")
 
-Alle fünf per SQL-Editor anwenden, **in dieser Reihenfolge**, jede idempotent.
+> **Status:** 0015–0019 sind am 14.08. per SQL-Editor **angewandt und live
+> verifiziert** (Policies weg, RPC + Views da, redeem_invite gehärtet,
+> Tracking konsistent bis 0019). Offen ist nur noch **0020** (unten).
+
+Alle per SQL-Editor anwenden, **in dieser Reihenfolge**, jede idempotent.
 Danach „Advisors" (Security) prüfen. Kein Touch von `orders`/`subscribers`/
 `community_questions`/`newsletter_subscribers` über das Entfernen einer
 fremden anon-Policy und rein lesende Views hinaus; kein Datenverlust möglich.
@@ -97,10 +101,15 @@ fremden anon-Policy und rein lesende Views hinaus; kein Datenverlust möglich.
 | `0017_rate_limits.sql` | H2 | `api_rate_limits`-Tabelle + `api_rate_hit()`-RPC (nur service_role) — persistente Drossel für /api/reserve, /api/checkout, /api/waitlist, /api/questions. |
 | `0018_invite_hardening_and_advisors.sql` | M6, M7 | `redeem_invite`: 10 Versuche/h/Nutzer, couple-Cap (genau 2), Code-Rotation sobald voll; EXECUTE für anon auf den drei RPCs entzogen. Braucht 0017. |
 | `0019_metrics_views.sql` | — | Sechs `pp_metrics_*`-Views (Aktivierung, Wochen-Kohorten mit W4, North Star „aktive Spaces", Momente/Monat, Aktivierungen/Monat, Verkäufe/Monat). Nur SQL-Editor/service_role lesbar; Brücke physisch→digital bewusst nur als Trendvergleich (Orders sind nicht mit Spaces verknüpft — keine Scheinpräzision). |
+| `0020_advisor_followups.sql` | M7 | Nacharbeit nach dem Advisors-Lauf vom 14.08.: `rls_auto_enable` als RPC dicht, `app_is_space_member` ohne anon-EXECUTE (⚠️ `authenticated` MUSS dort bleiben — RLS-Policies werten die Funktion mit den Rechten des anfragenden Nutzers aus, ein Revoke sperrt die ganze App aus). Nach 0018 anwenden. |
 
 **Dashboard-Schritte dazu (einmalig, nicht per SQL machbar):**
-1. Authentication → Settings → Passwords → **Leaked password protection**
-   aktivieren (Advisor-Hinweis; der Website-Login nutzt Passwörter).
+1. ~~Leaked password protection aktivieren~~ — **am 14.08. versucht, geht
+   nicht:** das Feature ist bei Supabase Pro-Plan-und-höher vorbehalten,
+   PeakPlant läuft auf Free. Bewusste Entscheidung: offen lassen und beim
+   Upgrade auf Pro nachholen (Advisor M7 bleibt bis dahin teiloffen).
+   Ersatz auf Free: Authentication → Sign In / Providers → Email →
+   **Minimum password length auf 10** setzen.
 2. Nach dem Anwenden: Advisors → Security einmal durchsehen.
 
 **App-Build-Schritt (M8):** `expo-secure-store` ist jetzt in
