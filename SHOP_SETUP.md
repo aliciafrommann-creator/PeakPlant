@@ -39,6 +39,15 @@ Im Stripe Dashboard → **Produkte** (alles Einmalzahlungen, keine Abos):
 
 Jeweils die **Price-ID** (`price_…`) kopieren — nicht die Produkt-ID.
 
+> **Wie der Shop entscheidet, ob er verkauft (seit P1):** Die Seite fragt beim
+> Rendern bei Stripe nach dem Preis jedes Produkts. Kommt ein aktiver Preis
+> zurück, zeigt die Karte den Betrag und „preorder now"; fehlt der Key, die
+> Price-ID oder ist der Preis inaktiv, bleibt genau diese Karte auf
+> „join the waitlist". **Der Preis steht nirgends im Code** — du setzt ihn
+> ausschließlich in Stripe, und die Website kann ihn damit nie falsch
+> anzeigen. Eine Preisänderung ist nach spätestens 5 Minuten live (kein
+> Deploy nötig).
+
 > Versandkosten sind im Preis enthalten. Die Lieferadresse wird im Checkout
 > für AT, DE, CH, LU, BE, NL automatisch abgefragt.
 >

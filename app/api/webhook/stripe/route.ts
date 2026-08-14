@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { sendMail } from '../../../../lib/email'
+import { PRODUCT_COPY, type ProductKey } from '../../../../lib/products'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -26,11 +27,11 @@ async function supabase(path: string, method: string, body?: object) {
   return res
 }
 
+// One source for product names (lib/products.ts) so mail, admin and shop
+// cannot drift apart. Unknown keys fall back to the raw value rather than
+// claiming something wrong.
 function editionLabel(product: string) {
-  if (product === 'pack_3')   return '3er pack'
-  if (product === 'founders') return 'founders edition — edition 01 deck'
-  if (product === 'pack_12')  return '12er pack'
-  return product
+  return PRODUCT_COPY[product as ProductKey]?.en ?? product
 }
 
 export async function POST(req: NextRequest) {

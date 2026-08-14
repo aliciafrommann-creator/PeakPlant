@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendMail, mailProvider } from '../../../lib/email'
 import { withinRateLimit, callerIp } from '../../../lib/rateLimit'
+import { PRODUCT_COPY, type ProductKey } from '../../../lib/products'
+import { priceCentsFor } from '../../../lib/shop'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -10,11 +12,11 @@ const SUP_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 const SITE    = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peak-plant.com'
 const ADMIN_EMAIL = process.env.OWNER_EMAIL ?? 'hello@peak-plant.com'
 
+// One source for product names (lib/products.ts) so mail, admin and shop
+// cannot drift apart. Unknown keys fall back to the raw value rather than
+// claiming something wrong.
 function editionLabel(product: string) {
-  if (product === 'pack_3')   return '3er pack'
-  if (product === 'founders') return 'founders edition — edition 01 deck'
-  if (product === 'pack_12')  return '12er pack'
-  return product
+  return PRODUCT_COPY[product as ProductKey]?.en ?? product
 }
 
 export async function POST(req: NextRequest) {
@@ -35,6 +37,15 @@ export async function POST(req: NextRequest) {
     const { nanoid } = await import('nanoid')
     const accessToken = nanoid(40)
 
+    // The amount comes from Stripe, not from this file. It used to be a
+    // hard-coded 799 cents (7,99 € — a price from the condom era), and the
+    // invoice route then billed exactly that. Null is the honest answer when
+    // no price is configured: the admin fills it in before invoicing.
+    const price = await priceCentsFor(product as ProductKey)
+    if (!price) {
+      console.warn('[Reserve] no Stripe price for', product, '— order stored without an amount')
+    }
+
     const insert = await fetch(`${SUP_URL}/rest/v1/orders`, {
       method: 'POST',
       headers: {
@@ -48,8 +59,8 @@ export async function POST(req: NextRequest) {
         product,
         edition_slug:   'edition-01',
         shipping_name:  name ?? null,
-        amount_total_cents: 799,
-        currency:       'eur',
+        amount_total_cents: price?.amountCents ?? null,
+        currency:       price?.currency ?? 'eur',
         payment_status: 'invoice',
         status:         'pending',
         access_token:   accessToken,

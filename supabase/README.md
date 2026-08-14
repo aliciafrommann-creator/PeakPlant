@@ -118,3 +118,72 @@ fremden anon-Policy und rein lesende Views hinaus; kein Datenverlust möglich.
 Sessions). Vor TestFlight: `cd mobile && npm install`, dann EAS-Build —
 ohne neuen nativen Build fällt der Adapter mit Warnung auf AsyncStorage
 zurück.
+
+---
+
+## Runbook: Auskunft, Export und Löschung (DSGVO-Grundbetrieb, P1.4)
+
+Manuell und dokumentiert — bewusst kein Selbstbedienungs-Export im Code
+(das wäre Phase 4/5). Wichtig ist, dass der Weg existiert und reproduzierbar
+ist, bevor echte Nutzerdaten da sind.
+
+**Schritt 0 — Identität prüfen (nicht überspringen).** Anfragen nur von der
+E-Mail-Adresse beantworten, die im Konto hinterlegt ist. Bei Zweifeln über die
+App verifizieren lassen (Login), nie „auf Zuruf". Antwortfrist: ein Monat.
+
+**Schritt 1 — Nutzer-ID finden.**
+```sql
+select id, email, created_at from auth.users where email = 'person@example.com';
+```
+
+**Schritt 2 — Auskunft/Export (App-Daten).** `:uid` durch die ID ersetzen.
+```sql
+-- Profil
+select * from public.profiles where id = ':uid';
+-- Mitgliedschaften und Spaces
+select s.* from public.spaces s
+  join public.space_members m on m.space_id = s.id where m.user_id = ':uid';
+-- Momente, die diese Person angelegt hat (Fotos: photo_path, s. Schritt 3)
+select * from public.memories where created_by = ':uid';
+-- Notizen an die Partnerin/den Partner
+select * from public.partner_notes where author_id = ':uid';
+-- geplante/gespeicherte Dates, Präferenzen, Signale, Challenges
+select * from public.saved_dates      where space_id in (select space_id from public.space_members where user_id = ':uid');
+select * from public.date_preferences where space_id in (select space_id from public.space_members where user_id = ':uid');
+select * from public.personalization_signals where space_id in (select space_id from public.space_members where user_id = ':uid');
+select * from public.challenge_enrollments   where space_id in (select space_id from public.space_members where user_id = ':uid');
+```
+Ergebnisse als CSV/JSON exportieren (SQL-Editor → „Export").
+
+**Schritt 3 — Fotos.** `memories.photo_path` zeigt in den privaten Bucket
+`memory-photos`. Im Dashboard unter Storage die Pfade herunterladen und dem
+Export beilegen. Nie öffentliche Links erzeugen — die Dateien bleiben privat.
+
+**Geteilte Daten, ehrlich benennen:** Momente in einem Space gehören beiden
+Mitgliedern. Beim Export wird mitgeliefert, was diese Person angelegt hat;
+beim Löschen bleiben gemeinsame Momente der anderen Person erhalten, sofern
+sie nicht selbst löscht. Das gehört so in die Antwort geschrieben (Umfang
+und Formulierung: LEGAL REVIEW REQUIRED).
+
+**Schritt 4 — Löschung (App).** Der saubere Weg ist die App selbst:
+Profil → Konto löschen. Die `delete_account()`-RPC räumt Daten, beide privaten
+Buckets und den `auth.users`-Eintrag (0004 + 0014). Nur wenn die Person keinen
+Zugang mehr hat, ersatzweise im Dashboard unter Authentication den Nutzer
+löschen und die Buckets prüfen.
+
+**Schritt 5 — Website-Daten (getrennte Systeme, nicht vergessen).**
+```sql
+-- Newsletter/Waitlist: Abmeldung löscht die Zeile bereits, hier zur Kontrolle
+select * from public.subscribers where email = 'person@example.com';
+delete from public.subscribers where email = 'person@example.com';
+-- Bestellungen: NICHT löschen, solange handels-/steuerrechtliche
+-- Aufbewahrungsfristen laufen (LEGAL REVIEW REQUIRED). Auskunft ja, Löschung
+-- erst nach Ablauf; danach:
+select * from public.orders where email = 'person@example.com';
+```
+
+**Schritt 6 — dokumentieren.** Datum, Anfrage, was herausgegeben/gelöscht
+wurde, kurz festhalten (eigene Notiz genügt, kein System nötig).
+
+> Einmal vollständig gegen einen Test-Account durchspielen, bevor die ersten
+> echten Nutzer da sind — das ist der Test dieses Runbooks.

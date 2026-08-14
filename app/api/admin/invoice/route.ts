@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { isAdmin } from '../../../../lib/adminAuth'
+import { PRODUCT_COPY, type ProductKey } from '../../../../lib/products'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -9,12 +11,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-06
 const SUP_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUP_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
-// founders preorder price in cents — fallback if the order has no amount stored
-const FOUNDERS_CENTS = 799
-
 export async function POST(req: NextRequest) {
-  const secret = req.headers.get('x-admin-secret')
-  if (secret !== process.env.ADMIN_SECRET) {
+  if (!isAdmin(req)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
@@ -42,9 +40,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'order is already paid' }, { status: 400 })
   }
 
-  const amount = order.amount_total_cents ?? FOUNDERS_CENTS
+  // No invented amount: the old fallback (799 cents) came from the condom era
+  // and would have invoiced a real customer the wrong price. If the order has
+  // no amount, that is a data problem to fix — not a number to guess.
+  const amount = order.amount_total_cents
+  if (typeof amount !== 'number' || amount <= 0) {
+    return NextResponse.json(
+      { error: 'order has no amount — set amount_total_cents before invoicing' },
+      { status: 400 }
+    )
+  }
   const currency = (order.currency ?? 'eur').toLowerCase()
-  const editionLabel = order.product === 'founders' ? 'Founders Edition — peakplant edition 01' : 'peakplant edition 01'
+  const editionLabel = PRODUCT_COPY[order.product as ProductKey]?.de ?? 'peakplant edition 01'
 
   try {
     // ── already invoiced? hand back the existing one ─────────────────
