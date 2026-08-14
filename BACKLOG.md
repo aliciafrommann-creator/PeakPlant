@@ -52,3 +52,22 @@ nach dem Rechts-Review (Minderjährige + intime Editionen, siehe
 - **Experience Library in die Datenbank** — nur wenn Website oder Redaktion
   sie brauchen; heute lebt sie im App-Bundle.
 - **Push-Benachrichtigungen** als Einladung (Phase 2, nach belegter Retention).
+
+## Zwei ungenutzte Filme (Entscheidung Alicia)
+
+Seit der „Vier Phasen"-Block auf `/intimacy` entfernt wurde (P0), werden diese
+beiden Dateien nirgends mehr geladen:
+
+| Datei | Größe |
+|---|---|
+| `public/film-distance.mp4` | 2,2 MB |
+| `public/film-logo-transform.mp4` | 2,5 MB |
+
+In Benutzung sind weiterhin `film-intimacy` (Startseite), `film-presence`
+(/intimacy) und `film-wildness` (/shop).
+
+**Bewusst nicht gelöscht:** das sind deine Aufnahmen, und die Entscheidung
+gehört dir. Drei Wege: (a) löschen — spart 4,7 MB im Deploy, die Dateien
+bleiben in der Git-Historie, (b) an anderer Stelle einsetzen, (c) liegen
+lassen (sie kosten nichts an Ladezeit, nur Repo-Größe, weil sie niemand
+abruft).

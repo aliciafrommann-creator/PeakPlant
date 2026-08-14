@@ -23,6 +23,7 @@ import { spaceRepository } from '../../lib/repositories';
 import { getActiveUser } from '../../lib/session';
 import { composeInviteText } from '../../lib/shareText';
 import { isValidInviteCode } from '../../lib/invite';
+import { classifyJoinError } from '../../lib/joinErrors';
 import type { Space } from '../../lib/types';
 
 const FIRST_SPACE = SEED_SPACES[0];
@@ -95,8 +96,41 @@ export default function InviteScreen() {
       setActiveSpace(joined.id);
       await completeOnboarding();
       router.replace('/(tabs)/home');
-    } catch {
-      setError(t("that code didn't work. check it with your partner and try again.", 'Dieser Code hat nicht funktioniert. Prüfe ihn mit deinem Partner und versuche es erneut.'));
+    } catch (err) {
+      // Say which of the refusals it was. Sending someone to re-read a code
+      // that is correct — because the space is already full, or because they
+      // tried too often — wastes their evening on a wrong explanation.
+      switch (classifyJoinError(err)) {
+        case 'space_full':
+          setError(t(
+            'this space already has two people in it. ask your partner for a fresh code — a new one appears once the first pair is complete.',
+            'In diesem Space sind schon zwei Menschen. Bitte deinen Partner um einen frischen Code — sobald das erste Paar vollständig ist, entsteht ein neuer.',
+          ));
+          break;
+        case 'too_many_attempts':
+          setError(t(
+            'that was a lot of tries in a short time. take a breath and try again in an hour.',
+            'Das waren viele Versuche in kurzer Zeit. Atme kurz durch und versuch es in einer Stunde nochmal.',
+          ));
+          break;
+        case 'not_authenticated':
+          setError(t(
+            'your sign-in expired. sign in again, then enter the code.',
+            'Deine Anmeldung ist abgelaufen. Melde dich neu an und gib den Code dann ein.',
+          ));
+          break;
+        case 'invalid_code':
+          setError(t(
+            "we don't know that code. check it with your partner and try again.",
+            'Diesen Code kennen wir nicht. Prüfe ihn mit deinem Partner und versuche es erneut.',
+          ));
+          break;
+        default:
+          setError(t(
+            "that didn't work — it may have been the connection. please try again.",
+            'Das hat nicht geklappt — vielleicht lag es an der Verbindung. Bitte versuche es erneut.',
+          ));
+      }
       setJoining(false);
     }
   }, [joining, code, requireUser, setActiveSpace, completeOnboarding, t]);
