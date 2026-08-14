@@ -8,7 +8,9 @@ const jsonLd = {
   '@type': 'Organization',
   name: 'PeakPlant',
   url: 'https://peak-plant.com',
-  description: 'A premium intimacy brand for couples seeking deeper connection.',
+  // Matches what the product actually is today (P0 honesty sprint): the old
+  // "premium intimacy brand" line described the condom-era predecessor.
+  description: 'Moment cards for couples with a private shared diary app. Edition 01: the sunflower — a deck of dates, acts and questions. Mind the moment. Max the love.',
   email: 'hello@peak-plant.com',
   foundingDate: '2026',
   founder: { '@type': 'Person', name: 'Alicia Frommann' },

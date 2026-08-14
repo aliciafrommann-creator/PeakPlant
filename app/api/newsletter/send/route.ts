@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { sendMail, mailProvider } from '../../../../lib/email'
-import { createHmac } from 'crypto'
+import { makeUnsubToken, newsletterSecret, safeEqual } from '../../../../lib/serverSecrets'
 import { articleForMonth } from '../../../../lib/journal'
 
 export const runtime = 'nodejs'
@@ -16,16 +16,14 @@ function headers(key: string) {
   }
 }
 
-function unsubToken(email: string): string {
-  const secret = process.env.NEWSLETTER_SECRET ?? process.env.CRON_SECRET ?? 'dev-secret'
-  return createHmac('sha256', secret).update(email).digest('base64url')
-}
-
 // ── the monthly letter, sunflower style — warm cream + gold ──────────
-function buildHtml(email: string, isDE: boolean): string {
+// `unsubToken` comes from lib/serverSecrets (fail-closed): the caller has
+// already verified the secret exists before any mail is built, so no letter
+// can go out with a forgeable or missing unsubscribe link (finding H3).
+function buildHtml(email: string, isDE: boolean, unsubToken: string): string {
   const article = articleForMonth()
   const articleUrl = `${SITE}/journal/${article.slug}`
-  const unsubUrl = `${SITE}/api/unsubscribe?email=${encodeURIComponent(email)}&token=${encodeURIComponent(unsubToken(email))}`
+  const unsubUrl = `${SITE}/api/unsubscribe?email=${encodeURIComponent(email)}&token=${encodeURIComponent(unsubToken)}`
 
   const t = isDE
     ? {
@@ -111,10 +109,18 @@ function buildHtml(email: string, isDE: boolean): string {
 
 async function sendNewsletter(): Promise<NextResponse> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // Service role only: `subscribers` has no anon SELECT policy, so the old
+  // anon fallback read an empty list and reported "No subscribers" — a silent
+  // failure dressed as an answer. Missing key is now an honest error.
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !supabaseKey || !mailProvider()) {
-    return NextResponse.json({ error: 'Missing env vars' }, { status: 500 })
+    return NextResponse.json({ error: 'Missing env vars (need SUPABASE_SERVICE_ROLE_KEY + a mail provider)' }, { status: 500 })
+  }
+  if (!newsletterSecret()) {
+    // Fail closed before anything is sent: without the secret every
+    // unsubscribe link in the letter would be dead or forgeable (H3).
+    return NextResponse.json({ error: 'NEWSLETTER_SECRET not set — refusing to send without working unsubscribe links' }, { status: 500 })
   }
 
   const subsRes = await fetch(
@@ -140,12 +146,19 @@ async function sendNewsletter(): Promise<NextResponse> {
     // locale column. Anything without the suffix is an older row — English.
     const isDE = (source ?? '').endsWith('-de')
     const subject = isDE ? `∧ peakplant — der monatsbrief` : `∧ peakplant — the monthly`
+    const unsubToken = makeUnsubToken(email)
+    if (!unsubToken) {
+      // Guarded above; kept per-recipient so a mid-run env change can never
+      // push a letter without a working unsubscribe link.
+      errors.push(email)
+      continue
+    }
     // sendMail never throws — it reports. Counting on absence of an exception
     // would report a full send even when the provider refused every message.
     const mail = await sendMail({
       to: email,
       subject,
-      html: buildHtml(email, isDE),
+      html: buildHtml(email, isDE, unsubToken),
     })
     if (mail.sent) sent++
     else {
@@ -165,7 +178,7 @@ function isAuthorized(req: Request): boolean {
   // use NEWSLETTER_SECRET. Accept either so the cron works even when both are set.
   const auth = req.headers.get('authorization') ?? ''
   const accepted = [process.env.CRON_SECRET, process.env.NEWSLETTER_SECRET].filter(Boolean)
-  return accepted.some(s => auth === `Bearer ${s}`)
+  return accepted.some(s => safeEqual(auth, `Bearer ${s}`))
 }
 
 export async function POST(req: Request) {

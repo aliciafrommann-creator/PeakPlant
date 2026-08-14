@@ -1,14 +1,5 @@
 import { NextResponse } from 'next/server'
-
-const rateMap = new Map<string, number>()
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now()
-  const last = rateMap.get(ip) ?? 0
-  if (now - last < 60 * 60 * 1000) return true
-  rateMap.set(ip, now)
-  return false
-}
+import { withinRateLimit, callerIp } from '../../../lib/rateLimit'
 
 function headers(key: string) {
   return { 'Content-Type': 'application/json', 'apikey': key, 'Authorization': `Bearer ${key}` }
@@ -16,6 +7,8 @@ function headers(key: string) {
 
 export async function GET() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  // Deliberately the anon key: community questions are public reads and the
+  // anon SELECT policy is exactly the right amount of access here.
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   // An empty list is a real answer ("nobody has asked anything yet"), so it
   // stays the response shape — but every reason it can be empty by accident is
@@ -39,17 +32,20 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
   // Deliberate: the rate limit answers honestly (ok: false) instead of pretending
-  // the question was stored. One question per IP per hour is the spam guard.
-  if (isRateLimited(ip)) {
+  // the question was stored. One question per IP per hour is the spam guard;
+  // the persistent layer survives cold starts (0017_rate_limits.sql).
+  if (!(await withinRateLimit('questions', callerIp(req), 1, 3600))) {
     return NextResponse.json({ ok: false, reason: 'rate_limited' }, { status: 429 })
   }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // Service role only — the write path must not silently ride on the anon key,
+  // or the route's validation and rate limit tell a story the database
+  // doesn't enforce.
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) {
-    console.error('[Questions] POST: Supabase URL or key missing — question not stored')
+    console.error('[Questions] POST: Supabase URL or SUPABASE_SERVICE_ROLE_KEY missing — question not stored')
     return NextResponse.json({ ok: false, reason: 'not_configured' }, { status: 503 })
   }
 

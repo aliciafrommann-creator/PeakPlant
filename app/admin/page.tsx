@@ -34,11 +34,13 @@ const STATUS_LABEL: Record<string, { label: string; color: string }> = {
   cancelled: { label: 'storniert',      color: '#e74c3c' },
 }
 
+// Muss zu PRICES in app/api/checkout/route.ts passen (pack_3/founders/pack_12).
+// Die alten sub_*-Labels stammten aus der Kondom-Ära und existieren im
+// Checkout nicht mehr; unbekannte Produkte zeigen den Roh-String.
 const PRODUCT_LABEL: Record<string, string> = {
-  founders: 'Founders Edition',
-  sub_6:    'Abo · 6 Stück/Monat',
-  sub_9:    'Abo · 9 Stück/Monat',
-  sub_12:   'Abo · 12 Stück/Monat',
+  pack_3:   '3er Pack · Edition 01',
+  founders: 'Founders Edition · Edition 01 Deck',
+  pack_12:  '12er Pack · Edition 01',
 }
 
 export default function AdminPage() {

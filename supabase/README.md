@@ -80,3 +80,32 @@ avatar); after it, emoji + avatar are shared across both members.
 - Anwenden: SQL-Editor → Datei-Inhalt einfügen → Run. Idempotent (CREATE OR
   REPLACE), mehrfach ausführen schadet nicht. Danach unter „Advisors" kurz auf
   neue Security-Hinweise schauen.
+- **Status:** live wirksam seit 12.08. (per SQL-Editor angewandt), aber nie in
+  `supabase_migrations.schema_migrations` getrackt — 0015 trägt das nach.
+
+### 0015–0019 — P0-Härtung + Messung (2026-08-14, Freigabe „APPROVED: P0")
+
+Alle fünf per SQL-Editor anwenden, **in dieser Reihenfolge**, jede idempotent.
+Danach „Advisors" (Security) prüfen. Kein Touch von `orders`/`subscribers`/
+`community_questions`/`newsletter_subscribers` über das Entfernen einer
+fremden anon-Policy und rein lesende Views hinaus; kein Datenverlust möglich.
+
+| Datei | Schließt | Inhalt |
+|---|---|---|
+| `0015_drift_repair.sql` | M1, M2 | anon-INSERT-Policy auf `subscribers` weg (Waitlist schreibt server-seitig mit service_role); `rls_auto_enable` verbatim ins Repo; Tracking von 0014/0015 nachgetragen. **Zuerst anwenden.** |
+| `0016_public_spots_lockdown.sql` | H1 | UPDATE-Policy auf `public_place_spots` weg (jeder konnte jeden Pin inkl. `maps_url` umschreiben); https-Check-Constraint auf `maps_url`. |
+| `0017_rate_limits.sql` | H2 | `api_rate_limits`-Tabelle + `api_rate_hit()`-RPC (nur service_role) — persistente Drossel für /api/reserve, /api/checkout, /api/waitlist, /api/questions. |
+| `0018_invite_hardening_and_advisors.sql` | M6, M7 | `redeem_invite`: 10 Versuche/h/Nutzer, couple-Cap (genau 2), Code-Rotation sobald voll; EXECUTE für anon auf den drei RPCs entzogen. Braucht 0017. |
+| `0019_metrics_views.sql` | — | Sechs `pp_metrics_*`-Views (Aktivierung, Wochen-Kohorten mit W4, North Star „aktive Spaces", Momente/Monat, Aktivierungen/Monat, Verkäufe/Monat). Nur SQL-Editor/service_role lesbar; Brücke physisch→digital bewusst nur als Trendvergleich (Orders sind nicht mit Spaces verknüpft — keine Scheinpräzision). |
+
+**Dashboard-Schritte dazu (einmalig, nicht per SQL machbar):**
+1. Authentication → Settings → Passwords → **Leaked password protection**
+   aktivieren (Advisor-Hinweis; der Website-Login nutzt Passwörter).
+2. Nach dem Anwenden: Advisors → Security einmal durchsehen.
+
+**App-Build-Schritt (M8):** `expo-secure-store` ist jetzt in
+`mobile/package.json` und `mobile/lib/supabase/client.ts` verdrahtet
+(Session verschlüsselt statt AsyncStorage, mit Einmal-Migration alter
+Sessions). Vor TestFlight: `cd mobile && npm install`, dann EAS-Build —
+ohne neuen nativen Build fällt der Adapter mit Warnung auf AsyncStorage
+zurück.

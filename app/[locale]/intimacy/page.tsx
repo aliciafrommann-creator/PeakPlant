@@ -64,37 +64,11 @@ export default function IntimacyPage({ params }: { params: { locale: string } })
     { bgPosition: '100% 100%', title: 'Your worth is not earned.',                  body: "You do not have to perform to be worthy of love. You are already enough — and intimacy should feel that way." },
   ]
 
-  const phases = isDE ? [
-    {
-      number: '01', name: 'Wahrnehmung',
-      headline: 'Der Raum zwischen zwei Menschen ist nicht leer.',
-      body: 'Er hält alles, was noch nicht gesagt wurde. Sehnsucht. Neugier. Das stille Bewusstsein, dass jemand anderes im Raum ist — und dass sie dir wichtig sind. Hier beginnt Intimität: in der Stille, bevor irgendetwas passiert.',
-      video: '/film-distance.mp4',
-    },
-    {
-      number: '02', name: 'Präsenz',
-      headline: 'Gesehen zu werden ist bereits ein Akt des Mutes.',
-      body: 'Präsenz ist der Moment, in dem du aufhörst zu spielen und wirklich da bist. Atem verlangsamt sich. Schultern werden weich. Kein Skript, keine richtige Antwort. Nur zwei Menschen, die aufeinander achten — und sich entscheiden zu bleiben.',
-      video: '/film-presence.mp4',
-    },
-    {
-      number: '03', name: 'Intimität',
-      headline: 'Nähe ist etwas, das ihr gemeinsam aufbaut.',
-      body: 'Nicht ein Ziel, sondern ein Gefühl — warm, ungehetzt, ehrlich. Intimität geschieht, wenn Sicherheit und Offenheit gleichzeitig im selben Raum ankommen. Wenn Verletzlichkeit keine Schwäche mehr ist, sondern das, was der Freiheit am nächsten kommt.',
-      video: '/film-intimacy.mp4',
-    },
-    {
-      number: '04', name: 'Wildheit',
-      headline: 'Freude darf groß sein.',
-      body: 'Wildheit ist kein Chaos. Es ist volle Erlaubnis — zu fühlen, zu lachen, zu weinen, sich frei zu bewegen, das auszudrücken, was in dir lebt. Die besten Momente der Verbindung sind die, in denen nichts zurückgehalten werden musste.',
-      video: '/film-wildness.mp4',
-    },
-  ] : [
-    { number: '01', name: 'Awareness', headline: "The space between two people is not empty.", body: "It holds everything that hasn't been said yet. Longing. Curiosity. The quiet awareness that someone else is in the room — and that they matter to you. This is where intimacy begins: in the silence before anything happens.", video: '/film-distance.mp4' },
-    { number: '02', name: 'Presence', headline: 'To be seen is already an act of courage.', body: "Presence is the moment you stop performing and start actually being there. Breath slowing. Shoulders softening. No script, no right answer. Just two people paying attention to each other — and choosing to stay.", video: '/film-presence.mp4' },
-    { number: '03', name: 'Intimacy', headline: 'Closeness is something you build together.', body: 'Not a destination but a feeling — warm, unhurried, honest. Intimacy happens when safety and openness arrive in the same room at the same time. When vulnerability is not weakness, but the closest thing to freedom.', video: '/film-intimacy.mp4' },
-    { number: '04', name: 'Wildness', headline: 'Joy is allowed to be big.', body: 'Wildness is not chaos. It is full permission — to feel, to laugh, to cry, to move freely, to express what is alive in you. The best moments of connection are the ones where nothing had to be held back.', video: '/film-wildness.mp4' },
-  ]
+  // The old "four phases" data (four headline+film sections) was defined here
+  // but never rendered — an eyebrow promised a structure the page didn't show.
+  // Removed with the P0 honesty sprint (14.08.2026); the four beliefs live on
+  // in the quad panels below. If the phases journey ever comes back, it comes
+  // back as a rendered section, not as a promise.
 
   return (
     <div style={{ fontFamily: PP, background: '#ffffff', color: '#1A1A1A', minHeight: '100vh' }}>
@@ -127,7 +101,7 @@ export default function IntimacyPage({ params }: { params: { locale: string } })
       <section style={{ padding: '10rem 2.5rem 5rem', maxWidth: 800, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.45, marginBottom: '2rem' }}>
-          {isDE ? 'Die vier Phasen' : 'The four phases'}
+          {isDE ? 'Die Landschaft' : 'The landscape'}
         </motion.p>
         <motion.h1 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '2.5rem' }}>

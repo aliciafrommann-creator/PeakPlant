@@ -87,7 +87,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'order could not be stored' }, { status: 500 })
     }
 
-    const accessLink = `${SITE}/01?token=${accessToken}`
+    // /edition-01 is a public page, not a gate — the old "/01?token=…" link
+    // implied an unlock mechanic that never existed. The token stays on the
+    // order row in case a real gate is ever built.
+    const accessLink = `${SITE}/edition-01`
     const edition    = editionLabel(product)
 
     if (!email) {
@@ -100,7 +103,7 @@ export async function POST(req: NextRequest) {
       // ── Kundenbestätigung ────────────────────────────────────────────
       email ? sendMail({
         to: email,
-        subject: 'your preorder is confirmed — and your sneak peek is inside.',
+        subject: 'your preorder is confirmed.',
         html: `
 <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;padding:40px 32px;background:#fff;color:#1A1A1A">
   <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;opacity:0.4;margin-bottom:40px">∧ peakplant</p>
@@ -135,10 +138,10 @@ export async function POST(req: NextRequest) {
   </div>
 
   <div style="background:#faf9f7;border:1px solid #e8e8e8;padding:24px;margin-bottom:40px">
-    <p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">a sneak peek, just for you</p>
+    <p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">the digital world</p>
     <p style="font-size:14px;line-height:1.7;font-weight:300;color:#555;margin-bottom:20px">
-      while you wait, step into the digital world of edition 01 — early.
-      it's our thank you for believing in this before it ships. save this link, it's yours.
+      while you wait, the digital world of edition 01 is already open — a letter from alicia,
+      a question for the two of you, and a playlist. it grows until the box ships.
     </p>
     <a href="${accessLink}" style="display:inline-block;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;padding:14px 28px;background:#1A1A1A;color:#fff;text-decoration:none">
       enter the digital world →

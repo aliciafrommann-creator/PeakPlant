@@ -130,16 +130,21 @@ export default function CommunityPage({ params }: { params: { locale: string } }
     ['Shame', 'Openness'],
   ]
 
+  // Future tense on purpose: the community is being built, not yet running.
+  // Present-tense promises (live talks, partner networks) at 3 subscribers
+  // and 0 held events were the audit's clearest honesty finding on this page
+  // (P0 sprint, 14.08.2026). What actually exists today: the letters, the
+  // journal, and the members area — everything else is stated as a plan.
   const whatYouGet = isDE ? [
-    { label: 'Workshops & Treffen', body: 'echte events in echten räumen — intime workshops in cafés, abendgespräche und treffen mit menschen, die gemeinsam an verbindung und liebe arbeiten. kleine gruppen. keine bühne, keine performance.' },
-    { label: 'Live Talks', body: 'wir gehen live zu den themen, die wirklich zählen — intimität, emotionale sicherheit, verbindung, die systeme hinter der art, wie wir lieben. manchmal ein gespräch, manchmal ein tiefer einblick. immer etwas, das bleibt.' },
-    { label: 'Das Journal — zuerst', body: 'community-mitglieder erhalten jede neue journalausgabe, bevor sie veröffentlicht wird. jede ausgabe kommt mit einem QR-code, der zu einem kuratierten podcast oder TED-talk führt — ein begleiter für den spaziergang, den pendelweg oder die stille stunde.' },
-    { label: 'Partner-Communities', body: 'wir kooperieren mit laufclubs, cafés und lokalen gruppen, denen dasselbe wichtig ist. der workshop folgt manchmal dem lauf. das gespräch beginnt bei kaffee. alles verbindet sich.' },
+    { label: 'Workshops & Treffen', body: 'das bauen wir auf: echte events in echten räumen — intime workshops in cafés, abendgespräche, treffen mit menschen, die gemeinsam an verbindung und liebe arbeiten wollen. kleine gruppen. keine bühne, keine performance. die ersten abende planen wir mit den ersten mitgliedern.' },
+    { label: 'Briefe & Journal', body: 'das gibt es schon heute: einmal im monat ein ehrlicher brief — kein lärm, kein verkaufen — und das journal mit essays über nähe, langsamkeit und die systeme hinter der art, wie wir lieben.' },
+    { label: 'Live Talks', body: 'das haben wir vor: live-gespräche zu den themen, die wirklich zählen — intimität, emotionale sicherheit, verbindung. manchmal ein gespräch, manchmal ein tiefer einblick. wir starten, sobald die community groß genug ist, dass es ein gespräch wird.' },
+    { label: 'Partner-Communities', body: 'auch das ist ein plan, kein versprechen: kooperationen mit laufclubs, cafés und lokalen gruppen, denen dasselbe wichtig ist. der workshop folgt dann manchmal dem lauf, das gespräch beginnt bei kaffee.' },
   ] : [
-    { label: 'Workshops & gatherings', body: 'Real events in real spaces — intimate workshops in cafes, evening talks, and gatherings with people building something together around how we love and connect. Small groups. No stage, no performance.' },
-    { label: 'Live talks', body: 'We go live on the topics that matter — intimacy, emotional safety, connection, the systems behind how we love. Sometimes a conversation, sometimes a deep dive. Always something worth staying for.' },
-    { label: 'The journal — early', body: 'Community members receive each new journal issue before it goes public. Every issue comes with a QR code linking to a curated podcast or TED talk that goes deeper on the essay inside — a companion for the walk, the commute, or the quiet hour.' },
-    { label: 'Partner communities', body: 'We cooperate with run clubs, cafes, and local groups who care about the same things. The workshop sometimes follows the run. The conversation starts over coffee. It all connects.' },
+    { label: 'Workshops & gatherings', body: 'This is what we are building: real events in real spaces — intimate workshops in cafes, evening talks, gatherings with people who want to work on connection and love together. Small groups. No stage, no performance. We will plan the first evenings with the first members.' },
+    { label: 'Letters & journal', body: 'This exists today: once a month an honest letter — no noise, no selling — and the journal, with essays on closeness, slowness, and the systems behind how we love.' },
+    { label: 'Live talks', body: 'This is the plan: live conversations on the topics that matter — intimacy, emotional safety, connection. Sometimes a talk, sometimes a deep dive. We start as soon as the community is big enough for it to be a conversation.' },
+    { label: 'Partner communities', body: 'Also a plan, not a promise: cooperations with run clubs, cafes, and local groups who care about the same things. The workshop sometimes follows the run; the conversation starts over coffee.' },
   ]
 
   const communityValues = isDE ? [
@@ -175,8 +180,8 @@ export default function CommunityPage({ params }: { params: { locale: string } }
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
             style={{ fontSize: '1rem', lineHeight: 1.8, color: '#555', marginBottom: '3rem' }}>
             {isDE
-              ? 'PeakPlant community ist kein newsletter und kein feed — es ist eine gruppe von menschen, die im echten leben auftauchen und gemeinsam etwas aufbauen. wir veranstalten workshops, talks, kooperieren mit cafés und lokalen communities und schaffen räume, in denen die gespräche, die zählen, wirklich stattfinden.'
-              : 'PeakPlant community is not a newsletter or a feed — it is a group of people who show up in real life and build something together. We run workshops, host talks, partner with cafes and local communities, and create moments where the conversations that matter actually happen.'}
+              ? 'PeakPlant community soll kein newsletter und kein feed werden — sondern eine gruppe von menschen, die im echten leben auftauchen und gemeinsam etwas aufbauen. wir stehen ganz am anfang: heute gibt es die briefe, das journal und den mitgliederbereich. workshops, talks und räume für die gespräche, die zählen, bauen wir mit den ersten mitgliedern auf — vielleicht mit dir.'
+              : 'PeakPlant community is not meant to be a newsletter or a feed — but a group of people who show up in real life and build something together. We are at the very beginning: today there are the letters, the journal, and the members area. Workshops, talks, and rooms for the conversations that matter are what we will build with the first members — maybe with you.'}
           </motion.p>
           <motion.button initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.35 }}
             onClick={() => setModalOpen(true)}
