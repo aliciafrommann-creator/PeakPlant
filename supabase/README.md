@@ -99,8 +99,12 @@ fremden anon-Policy und rein lesende Views hinaus; kein Datenverlust möglich.
 | `0019_metrics_views.sql` | — | Sechs `pp_metrics_*`-Views (Aktivierung, Wochen-Kohorten mit W4, North Star „aktive Spaces", Momente/Monat, Aktivierungen/Monat, Verkäufe/Monat). Nur SQL-Editor/service_role lesbar; Brücke physisch→digital bewusst nur als Trendvergleich (Orders sind nicht mit Spaces verknüpft — keine Scheinpräzision). |
 
 **Dashboard-Schritte dazu (einmalig, nicht per SQL machbar):**
-1. Authentication → Settings → Passwords → **Leaked password protection**
-   aktivieren (Advisor-Hinweis; der Website-Login nutzt Passwörter).
+1. ~~Leaked password protection aktivieren~~ — **am 14.08. versucht, geht
+   nicht:** das Feature ist bei Supabase Pro-Plan-und-höher vorbehalten,
+   PeakPlant läuft auf Free. Bewusste Entscheidung: offen lassen und beim
+   Upgrade auf Pro nachholen (Advisor M7 bleibt bis dahin teiloffen).
+   Ersatz auf Free: Authentication → Sign In / Providers → Email →
+   **Minimum password length auf 10** setzen.
 2. Nach dem Anwenden: Advisors → Security einmal durchsehen.
 
 **App-Build-Schritt (M8):** `expo-secure-store` ist jetzt in
