@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isAdmin } from '../../../../lib/adminAuth'
 
 export const dynamic = 'force-dynamic'
 
@@ -6,8 +7,7 @@ const SUP_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SUP_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
 export async function GET(req: NextRequest) {
-  const secret = req.headers.get('x-admin-secret')
-  if (secret !== process.env.ADMIN_SECRET) {
+  if (!isAdmin(req)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 

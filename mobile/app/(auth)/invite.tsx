@@ -299,9 +299,12 @@ export default function InviteScreen() {
             activeOpacity={0.8}
             disabled={creating}
             accessibilityRole="button"
-            accessibilityLabel={t('Continue', 'Weiter')}
+            accessibilityLabel={t('Go to your first moment', 'Zu eurem ersten Moment')}
           >
-            <Text style={styles.continueText}>{t('CONTINUE', 'WEITER')}</Text>
+            {/* Setup is not the finish line — the first preserved moment is.
+                A PeakPlant verb here instead of a generic CONTINUE, so the
+                last step of onboarding names where it leads (MANIFESTO §5). */}
+            <Text style={styles.continueText}>{t('YOUR FIRST MOMENT', 'EUER ERSTER MOMENT')}</Text>
           </TouchableOpacity>
           <Text style={styles.hint}>
             {t(

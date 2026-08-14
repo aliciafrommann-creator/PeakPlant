@@ -702,7 +702,13 @@ export default function HomeScreen() {
               />
             )}
 
-            {/* True empty state with brand bloom */}
+            {/* True empty state with brand bloom.
+
+                The second, quiet way out exists because the deck ships in
+                october while the app is already in people's hands: without it,
+                anyone whose cards have not arrived hits a scan screen they
+                cannot use, and the first ten minutes end in a dead end instead
+                of in a preserved moment. A free moment needs no card. */}
             {!loading && !error && recentMemories.length === 0 && (
               <EmptyState
                 mark="bloom"
@@ -713,6 +719,8 @@ export default function HomeScreen() {
                 )}
                 ctaLabel={t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
                 onCta={() => router.push('/(tabs)/scan')}
+                secondaryLabel={t('no deck yet? keep a moment anyway', 'noch kein Deck? haltet trotzdem einen Moment fest')}
+                onSecondary={() => router.push('/memory/create')}
               />
             )}
           </>

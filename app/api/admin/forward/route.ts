@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendMail } from '../../../../lib/email'
+import { isAdmin } from '../../../../lib/adminAuth'
+import { PRODUCT_COPY, type ProductKey } from '../../../../lib/products'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -12,8 +14,7 @@ function formatAddress(o: any) {
 }
 
 export async function POST(req: NextRequest) {
-  const secret = req.headers.get('x-admin-secret')
-  if (secret !== process.env.ADMIN_SECRET) {
+  if (!isAdmin(req)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
@@ -43,12 +44,12 @@ export async function POST(req: NextRequest) {
   const address = formatAddress(order)
   const orderDate = new Date(order.created_at).toLocaleDateString('de-AT', { timeZone: 'Europe/Vienna' })
 
-  // deck count by product (duo/pack_12 ships two decks; everything else one)
-  const QTY: Record<string, number> = { founders: 1, pack_3: 1, pack_12: 2, sub_6: 1, sub_9: 1, sub_12: 1 }
+  // Deck count per product — pack_12 ("duo") ships two decks, the others one.
+  // The sub_* keys are gone: there is no subscription product (the old
+  // "Abo-Lieferung" label would have told the supplier to ship the wrong thing).
+  const QTY: Record<string, number> = { founders: 1, pack_3: 1, pack_12: 2 }
   const qty = QTY[order.product] ?? 1
-  const productLabel = order.product === 'founders'
-    ? 'Founders Edition (1×)'
-    : `Abo-Lieferung — ${qty} Stück`
+  const productLabel = `${PRODUCT_COPY[order.product as ProductKey]?.de ?? order.product} (${qty}×)`
 
   const mail = await sendMail({
     to: supplierEmail,

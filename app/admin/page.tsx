@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import { PRODUCT_COPY } from '../../lib/products'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -34,14 +35,12 @@ const STATUS_LABEL: Record<string, { label: string; color: string }> = {
   cancelled: { label: 'storniert',      color: '#e74c3c' },
 }
 
-// Muss zu PRICES in app/api/checkout/route.ts passen (pack_3/founders/pack_12).
-// Die alten sub_*-Labels stammten aus der Kondom-Ära und existieren im
-// Checkout nicht mehr; unbekannte Produkte zeigen den Roh-String.
-const PRODUCT_LABEL: Record<string, string> = {
-  pack_3:   '3er Pack · Edition 01',
-  founders: 'Founders Edition · Edition 01 Deck',
-  pack_12:  '12er Pack · Edition 01',
-}
+// Eine Quelle für Produktnamen (lib/products.ts) — Shop, Admin, Rechnung und
+// Versandauftrag sagen damit garantiert dasselbe. Unbekannte Produkte zeigen
+// den Roh-String, statt still etwas Falsches zu behaupten.
+const PRODUCT_LABEL: Record<string, string> = Object.fromEntries(
+  Object.entries(PRODUCT_COPY).map(([key, copy]) => [key, copy.de])
+)
 
 export default function AdminPage() {
   const [secret, setSecret]   = useState('')

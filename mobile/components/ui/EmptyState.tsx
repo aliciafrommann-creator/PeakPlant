@@ -14,6 +14,13 @@ interface EmptyStateProps {
   /** Optional call to action. */
   ctaLabel?: string;
   onCta?: () => void;
+  /**
+   * Optional quiet second way out, rendered as a text link under the pill —
+   * never a second pill, so the primary action stays the only loud one
+   * (MANIFESTO §5: one clear action per state).
+   */
+  secondaryLabel?: string;
+  onSecondary?: () => void;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -22,7 +29,16 @@ interface EmptyStateProps {
  * optional pill CTA. Used for empty feeds AND load-error states (pass a "retry"
  * CTA) so a failure never looks identical to "you have nothing".
  */
-export function EmptyState({ mark, title, hint, ctaLabel, onCta, style }: EmptyStateProps) {
+export function EmptyState({
+  mark,
+  title,
+  hint,
+  ctaLabel,
+  onCta,
+  secondaryLabel,
+  onSecondary,
+  style,
+}: EmptyStateProps) {
   return (
     <View style={[styles.container, style]}>
       {mark === 'bloom' ? (
@@ -35,6 +51,16 @@ export function EmptyState({ mark, title, hint, ctaLabel, onCta, style }: EmptyS
       {ctaLabel && onCta ? (
         <PressableScale style={styles.cta} onPress={onCta} accessibilityLabel={ctaLabel}>
           <Text style={styles.ctaText}>{ctaLabel}</Text>
+        </PressableScale>
+      ) : null}
+      {secondaryLabel && onSecondary ? (
+        <PressableScale
+          style={styles.secondary}
+          onPress={onSecondary}
+          scaleTo={0.985}
+          accessibilityLabel={secondaryLabel}
+        >
+          <Text style={styles.secondaryText}>{secondaryLabel}</Text>
         </PressableScale>
       ) : null}
     </View>
@@ -77,5 +103,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: 2.5,
     color: Colors.white,
+  },
+  secondary: {
+    marginTop: Spacing.md,
+    paddingVertical: Spacing.sm, // keeps the tap target at 44pt
+    paddingHorizontal: Spacing.md,
+  },
+  secondaryText: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: Colors.textSubtle,
+    textAlign: 'center',
+    textDecorationLine: 'underline',
   },
 });
