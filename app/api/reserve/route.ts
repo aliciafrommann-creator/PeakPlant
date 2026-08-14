@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendMail, mailProvider } from '../../../lib/email'
+import { withinRateLimit, callerIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -18,6 +19,13 @@ function editionLabel(product: string) {
 
 export async function POST(req: NextRequest) {
   try {
+    // H2: unauthenticated, this route writes an order row and sends two mails
+    // per call. 5 per hour per IP is generous for a human buyer and ends the
+    // mail-bombing/DB-spam case. Persistent layer: 0017_rate_limits.sql.
+    if (!(await withinRateLimit('reserve', callerIp(req), 5, 3600))) {
+      return NextResponse.json({ error: 'too many requests' }, { status: 429 })
+    }
+
     const { email, name, product = 'founders' } = await req.json()
     if (!email || !email.includes('@')) {
       return NextResponse.json({ error: 'valid email required' }, { status: 400 })
@@ -55,20 +63,26 @@ export async function POST(req: NextRequest) {
     }
 
     // 409 = a row for this reservation already exists, so nothing was written —
-    // which also means the token generated above was never stored. Logged, so a
-    // customer reporting a dead access link can be traced instead of guessed at.
+    // which also means the token generated above was never stored. Logged
+    // without the address (emails are PII and have no business in Vercel logs;
+    // the admin panel is the place to look a reservation up).
     const duplicate = insert.status === 409
     if (duplicate) {
-      console.warn('[Reserve] duplicate reservation for', sanitized, '— no new row, access token not stored')
+      console.warn('[Reserve] duplicate reservation — no new row, access token not stored')
     }
 
-    const accessLink = `${SITE}/01?token=${accessToken}`
+    // The digital side of edition 01 is public — /edition-01 is a page, not a
+    // gate. The old "/01?token=…" link implied an unlock mechanic that never
+    // existed (audit: /01 was ungated and in the sitemap while sold as
+    // exclusive). The token stays stored on the order in case a real gate is
+    // ever built, but the link stops pretending.
+    const accessLink = `${SITE}/edition-01`
     const edition    = editionLabel(product)
 
     // No provider configured means no mail at all — the caller has to know that
     // rather than being told "check your inbox" for something never sent.
     if (!mailProvider()) {
-      console.error('[Reserve] no mail provider configured — reservation stored, no mail sent to', sanitized)
+      console.error('[Reserve] no mail provider configured — reservation stored, no mail sent')
     }
 
     let customerMail = null as Awaited<ReturnType<typeof sendMail>> | null
@@ -96,9 +110,10 @@ export async function POST(req: NextRequest) {
     </p>
   </div>
   <div style="background:#faf9f7;border:1px solid #e8e8e8;padding:24px;margin-bottom:28px">
-    <p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">a sneak peek, just for you</p>
+    <p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:12px">the digital world</p>
     <p style="font-size:14px;line-height:1.7;font-weight:300;color:#555;margin-bottom:20px">
-      you're part of this from the start. step into the digital world of edition 01, early.
+      while you wait, the digital world of edition 01 is already open — a letter from alicia,
+      a question for the two of you, and a playlist. it grows until the box ships.
     </p>
     <a href="${accessLink}" style="display:inline-block;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;padding:14px 28px;background:#1A1A1A;color:#fff;text-decoration:none">enter the digital world →</a>
   </div>
@@ -128,7 +143,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (customerMail && !customerMail.sent) {
-      console.error('[Reserve] confirmation mail not sent to', sanitized, '—', customerMail.error)
+      console.error('[Reserve] confirmation mail not sent —', customerMail.error)
     }
     if (adminMail && !adminMail.sent) {
       console.error('[Reserve] admin notification not sent —', adminMail.error)

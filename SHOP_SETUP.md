@@ -1,49 +1,54 @@
 # PeakPlant — Shop & Automatisierung Setup
 
+> Stand: 14.08.2026 (P0-Ehrlichkeits-Sprint). Beschreibt den Code, wie er IST —
+> die frühere Version dieser Datei beschrieb noch Kondom-Abos und ein
+> /01-Zugangs-Gate, die es im Code nie gab.
+
 Dieser Leitfaden bringt den kompletten Bestellvorgang live: Stripe-Checkout,
-automatische Bestätigungs-Mails, Bestellverwaltung im Admin-Panel,
-Supplier-Weiterleitung per Klick und den gesicherten digitalen Zugang über `/01`.
+automatische Bestätigungs-Mails, Bestellverwaltung im Admin-Panel und
+Supplier-Weiterleitung per Klick. Die digitale Welt der Edition
+(`/edition-01`, früher `/01`) ist eine **öffentliche Seite ohne Gate** —
+bewusst, damit die Karten ohne App und ohne Konto funktionieren.
 
 ---
 
 ## 1. Datenbank (Supabase) — einmalig
 
 1. Supabase Dashboard → **SQL Editor** → **New query**
-2. Inhalt von [`supabase/orders.sql`](./supabase/orders.sql) einfügen und ausführen.
+2. Inhalt von [`supabase/orders.sql`](./supabase/orders.sql) einfügen und ausführen
+   (bereits geschehen — die `orders`-Tabelle ist live).
+3. Für die Rate-Limits der öffentlichen Routen zusätzlich
+   `supabase/migrations/0017_rate_limits.sql` ausführen (Reihenfolge:
+   erst `0015`, siehe `supabase/README.md`). Ohne 0017 läuft der Shop trotzdem —
+   die Drossel fällt dann auf die schwächere In-Memory-Schicht zurück und
+   loggt das ehrlich.
 
-Damit entsteht die `orders`-Tabelle, in der jede Bestellung landet.
 Die bestehende `subscribers`-Tabelle (Waitlist/Newsletter) bleibt unverändert.
 
 ---
 
 ## 2. Stripe — Produkte & Preise anlegen
 
-Im Stripe Dashboard → **Produkte**:
+Im Stripe Dashboard → **Produkte** (alles Einmalzahlungen, keine Abos):
 
-| Produkt | Typ | Preis | Env-Variable |
-|---|---|---|---|
-| Founders Edition (Preorder) | Einmalzahlung | 7,99 € | `STRIPE_PRICE_FOUNDERS` |
-| Abo — 6 Stück/Monat | Wiederkehrend / Monat | 7,40 € | `STRIPE_PRICE_SUB_6` |
-| Abo — 9 Stück/Monat | Wiederkehrend / Monat | 10,40 € | `STRIPE_PRICE_SUB_9` |
-| Abo — 12 Stück/Monat | Wiederkehrend / Monat | 13,40 € | `STRIPE_PRICE_SUB_12` |
-
-> **Versand beim Abo:** 6-Stück-Abo schließt keinen Gratisversand ein (Stripe Shipping Rate
-> für ~1,99 € ergänzen oder direkt im Preis einrechnen). Ab 9 Stück ist der Versand frei
-> — auf der Website so kommuniziert.
+| Produkt | Env-Variable |
+|---|---|
+| Founders Edition — Edition 01 Deck (Preorder) | `STRIPE_PRICE_FOUNDERS` |
+| 3er Pack — Edition 01 | `STRIPE_PRICE_PACK_3` |
+| 12er Pack — Edition 01 | `STRIPE_PRICE_PACK_12` |
 
 Jeweils die **Price-ID** (`price_…`) kopieren — nicht die Produkt-ID.
 
-> Versandkosten sind im Founders-Preis enthalten. Die Lieferadresse wird im
-> Checkout für AT, DE, CH, LU, BE, NL automatisch abgefragt.
+> Versandkosten sind im Preis enthalten. Die Lieferadresse wird im Checkout
+> für AT, DE, CH, LU, BE, NL automatisch abgefragt.
 >
-> **Preorder-Modell:** Edition 01 läuft das ganze Jahr als Vorbestellung. Die
-> Karte wird bei Bestellung sofort belastet, Versand Mitte August 2026. Kunden
-> sind jederzeit bis zum Versand zu 100 % erstattbar — der digitale Zugang
-> kommt sofort nach der Bestellung als Sneak-Peek per Mail.
+> **Preorder-Modell:** Edition 01 läuft als Vorbestellung, **Versand Oktober
+> 2026** (eine Aussage, überall). Die Karte wird bei Bestellung sofort
+> belastet; Kund:innen sind bis zum Versand jederzeit zu 100 % erstattbar.
 >
-> **Produktinhalt:** 6 Kondome (vegan, nachhaltig) + 1 Fragenkarte (6 Fragen) +
-> digitaler Zugang. Die 6 Fragen sind auf EINER Karte (nicht 6 Karten). Druck
-> der Fragen direkt auf die Verpackung folgt in einer späteren Edition.
+> **Produktinhalt:** ein Deck mit zwanzig Moment-Karten (grow dates, small
+> acts, growing questions) + eine Saatpapierkarte (Sonnenblumen) + die
+> öffentliche digitale Welt der Edition.
 
 ### Webhook einrichten
 Stripe Dashboard → **Entwickler → Webhooks → Endpoint hinzufügen**
@@ -60,9 +65,8 @@ Stripe Dashboard → **Entwickler → Webhooks → Endpoint hinzufügen**
 STRIPE_SECRET_KEY=sk_live_…
 STRIPE_WEBHOOK_SECRET=whsec_…
 STRIPE_PRICE_FOUNDERS=price_…
-STRIPE_PRICE_SUB_6=price_…              # 6 Stück/Monat · 7,40 €
-STRIPE_PRICE_SUB_9=price_…              # 9 Stück/Monat · 10,40 € (free shipping)
-STRIPE_PRICE_SUB_12=price_…             # 12 Stück/Monat · 13,40 € (free shipping)
+STRIPE_PRICE_PACK_3=price_…
+STRIPE_PRICE_PACK_12=price_…
 
 # ── Supabase ─────────────────────────────────────────────
 NEXT_PUBLIC_SUPABASE_URL=https://….supabase.co
@@ -76,16 +80,27 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ…          # NUR server-seitig, niemals öffentli
 BREVO_API_KEY=xkeysib-…                  # Brevo, Free-Tarif reicht für die Warteliste
 RESEND_API_KEY=re_…                      # Alternative
 
-# ── Admin & Supplier ─────────────────────────────────────
+# ── Secrets (PFLICHT — die Routen sind fail-closed) ──────
+# NEWSLETTER_SECRET signiert die Abmelde-Links. Ohne gesetzten Wert lehnen
+# Waitlist-Anmeldung und Newsletter-Versand ab (kein 'dev-secret'-Fallback
+# mehr — der machte Abmelde-Token für jeden vorhersagbar, Befund H3).
+NEWSLETTER_SECRET=ein-langes-zufälliges-secret
+CRON_SECRET=ein-weiteres-zufälliges-secret   # Vercel-Cron für den Monatsbrief
 ADMIN_SECRET=ein-langes-zufälliges-passwort
+
+# ── Admin & Supplier ─────────────────────────────────────
 SUPPLIER_EMAIL=supplier@beispiel.com    # wohin Versandaufträge gehen
-OWNER_EMAIL=hello@peak-plant.com         # wohin Bestell-Benachrichtigungen gehen
+OWNER_EMAIL=…                            # wohin Bestell-Benachrichtigungen gehen
+
+# ── Community (optional, /members) ───────────────────────
+WHATSAPP_COMMUNITY_URL=https://chat.whatsapp.com/…   # nur hinter Login ausgegeben
 
 # ── Allgemein ────────────────────────────────────────────
 NEXT_PUBLIC_SITE_URL=https://peak-plant.com
 ```
 
-Nach dem Setzen: **Redeploy** auslösen, damit die Variablen greifen.
+Nach dem Setzen: **Redeploy** auslösen, damit die Variablen greifen. Prüfen:
+`GET /api/health?key=<ADMIN_SECRET>` zeigt, welche Variablen gesetzt sind.
 
 ---
 
@@ -95,13 +110,13 @@ Nach dem Setzen: **Redeploy** auslösen, damit die Variablen greifen.
 Kunde klickt "vorbestellen" im Shop
         │
         ▼
-/api/checkout  ──►  Stripe Checkout (Adresse + Zahlung)
+/api/checkout  ──►  Stripe Checkout (Adresse + Zahlung)   [Rate-Limit 10/h/IP]
         │
         ▼
-Stripe  ──►  /api/webhook/stripe  (checkout.session.completed)
+Stripe  ──►  /api/webhook/stripe  (checkout.session.completed, signaturgeprüft)
         │
         ├──►  Bestellung in Supabase `orders` gespeichert (Status: pending)
-        ├──►  Kunde bekommt Bestätigung + persönlichen Zugangslink (/01?token=…)
+        ├──►  Kunde bekommt Bestätigung + Link auf /edition-01
         └──►  Du bekommst Benachrichtigung an OWNER_EMAIL
         │
         ▼
@@ -115,35 +130,26 @@ Klick "an supplier →"  ──►  /api/admin/forward
 ```
 
 ### Zwei Wege zu bestellen
-- **Jetzt zahlen** (Stripe): gibt dir sofort Cashflow, Kunde bekommt Sneak-Peek.
-  Bestellung landet mit `payment_status = paid`.
-- **Reservieren & auf Rechnung zahlen** (`/api/reserve`): keine Zahlung nötig,
-  Kunde bekommt trotzdem den Sneak-Peek + Hinweis auf spätere Rechnung.
-  Bestellung landet mit `payment_status = invoice` (im Admin gelb „rechnung offen").
-  Die Rechnung/den Zahllink schickst du später manuell (z. B. Stripe Payment Link).
-
-> Im Admin-Panel siehst du pro Bestellung den Zahlungsstatus (bezahlt /
-> rechnung offen / erstattet) zusätzlich zum Versandstatus.
+- **Jetzt zahlen** (Stripe): gibt dir sofort Cashflow. Bestellung landet mit
+  `payment_status = paid`.
+- **Reservieren & auf Rechnung zahlen** (`/api/reserve`, Rate-Limit 5/h/IP):
+  keine Zahlung nötig. Bestellung landet mit `payment_status = invoice`
+  (im Admin gelb „rechnung offen"). Hinweis: es gibt aktuell **keinen
+  UI-Aufrufer** für diese Route — sie wartet auf Phase 1.
 
 **Rechnung per Klick senden:** Bei Bestellungen mit `payment_status = invoice`
 erscheint im Admin ein Button **„rechnung senden →"**. Ein Klick legt in Stripe
 einen Kunden + eine Rechnung an und verschickt automatisch einen gehosteten
-Zahllink per E-Mail (14 Tage Zahlungsziel). Sobald der Kunde zahlt, kommt das
-`invoice.paid`-Event — Betrag und Status kannst du in Stripe verfolgen. Nach dem
-Senden zeigt das Panel „✓ rechnung gesendet" mit Zeitstempel.
+Zahllink per E-Mail (14 Tage Zahlungsziel).
 
-### Digitaler Zugang (`/01`)
-- **Per E-Mail-Link:** `/01?token=…` entsperrt automatisch und merkt sich das
-  Gerät per Cookie (1 Jahr).
-- **Per QR-Karte in der Box:** QR führt auf `/01` → Kunde gibt die Bestell-E-Mail
-  ein → wird gegen die `orders`-Tabelle geprüft → entsperrt.
-- Wer keine Bestellung hat, sieht ein Gate mit Link zum Shop.
-
-> **QR-Karten-Hinweis:** Da die Karten in Auflage gedruckt werden, trägt der
-> QR keinen individuellen Token, sondern zeigt schlicht auf
-> `https://peak-plant.com/01`. Die Zugangskontrolle passiert dann über die
-> E-Mail-Eingabe. Wer einen individuellen Link will, bekommt ihn per
-> Bestell-Mail.
+### Die digitale Welt (`/edition-01`)
+- **Öffentliche Seite, kein Gate.** Briefe, Monatsfrage, Playlist, Fragenwand.
+  Der QR auf der Einlegekarte zeigt auf `peak-plant.com/01`, das permanent
+  auf `/edition-01` weiterleitet — die Karte funktioniert ohne Konto, ohne
+  App, ohne Bestell-Mail (Produktprinzip: die Karte hängt nie von der App ab).
+- `orders.access_token` wird weiterhin gespeichert, aber nirgends geprüft.
+  Falls je ein echtes Gate gewünscht ist, ist das der Baustein dafür — bis
+  dahin verspricht keine Mail und keine Karte mehr „exklusiven" Zugang.
 
 ---
 
@@ -152,8 +158,10 @@ Senden zeigt das Panel „✓ rechnung gesendet" mit Zeitstempel.
 `https://peak-plant.com/admin` → mit `ADMIN_SECRET` einloggen.
 
 - Alle Bestellungen, filterbar nach offen / weitergeleitet
-- Pro Bestellung: Kunde, Lieferadresse, Produkt, Betrag, Status
+- Pro Bestellung: Kunde, Lieferadresse, Produkt (`pack_3` / `founders` /
+  `pack_12`), Betrag, Zahlungs- und Versandstatus
 - **Ein-Klick-Weiterleitung** an den Supplier
+- `/admin/card`: Druckvorlage der Einlegekarte (85×55 mm)
 - Das Passwort wird nur in der Session gehalten (sessionStorage), nicht dauerhaft.
 
 ---
@@ -161,14 +169,11 @@ Senden zeigt das Panel „✓ rechnung gesendet" mit Zeitstempel.
 ## 6. Noch offen / nächste Schritte
 
 - [ ] Stripe Live-Keys statt Test-Keys eintragen, sobald bereit
-- [ ] `orders.sql` in Supabase ausführen
+- [ ] `NEWSLETTER_SECRET` in Vercel prüfen/setzen (Pflicht — s. o.)
+- [ ] Migrationen 0015–0019 im SQL-Editor ausführen (s. `supabase/README.md`)
 - [ ] Supplier-E-Mail final festlegen (`SUPPLIER_EMAIL`)
-- [ ] Domain `peak-plant.com` beim Mail-Anbieter verifizieren (für Absender
-      `hello@peak-plant.com`). Ohne verifizierte Domain lehnt jeder Anbieter
-      die Mails ab — betrifft Warteliste, Bestellbestätigung, Reservierung,
-      Newsletter und Versandauftrag.
 - [ ] Versand einmal prüfen: `GET /api/health?key=<ADMIN_SECRET>&testmail=deine@adresse.de`
-      schickt eine Testmail und gibt die Antwort des Anbieters im Klartext zurück.
-- [ ] Kärtchen-Design (1 Karte, 6 Fragen) mit QR auf `https://peak-plant.com/01` finalisieren & drucken
+- [ ] Einlegekarte (`/admin/card`) freigeben und drucken — Copy ist seit dem
+      P0-Sprint ehrlich (kein „unlocks instantly" mehr); Gedrucktes ist nicht
+      patchbar, also vor dem Druck noch einmal lesen
 - [ ] Test-Bestellung im Stripe-Testmodus durchspielen (Karte `4242 4242 4242 4242`)
-- [ ] Entscheiden: Abo-Modell (27€ + 12,90€/mo) im Preorder-Jahr behalten oder pausieren?

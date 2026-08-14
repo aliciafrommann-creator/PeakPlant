@@ -455,6 +455,11 @@ export const supabasePublicPlaceFeedbackRepository: IPublicPlaceFeedbackReposito
   },
 
   async saveSpot(item: Omit<PublicPlaceSpot, 'createdAt'>): Promise<PublicPlaceSpot> {
+    // Insert-only, never update: the UPDATE policy on `public_place_spots` was
+    // dropped (0016 — with it, ANY client could rewrite any pin's name,
+    // coordinates or maps_url; audit finding H1). `ignoreDuplicates` makes the
+    // insert a no-op when the spot already exists, so re-sharing a known place
+    // keeps working — the existing row is simply read back.
     const { data, error } = await db()
       .from('public_place_spots')
       .upsert({
@@ -466,11 +471,19 @@ export const supabasePublicPlaceFeedbackRepository: IPublicPlaceFeedbackReposito
         category: item.category,
         maps_url: item.mapsUrl,
         source_id: item.sourceId,
-      }, { onConflict: 'id' })
+      }, { onConflict: 'id', ignoreDuplicates: true })
       .select('id,name,address,lat,lng,category,maps_url,source_id,created_at')
-      .single();
+      .maybeSingle();
     if (error) throw error;
-    return mapPublicPlaceSpot(data);
+    if (data) return mapPublicPlaceSpot(data);
+    // Conflict path: nothing was inserted, so read the existing row.
+    const { data: existing, error: readError } = await db()
+      .from('public_place_spots')
+      .select('id,name,address,lat,lng,category,maps_url,source_id,created_at')
+      .eq('id', item.id)
+      .single();
+    if (readError) throw readError;
+    return mapPublicPlaceSpot(existing);
   },
 
   async getByPlaceIds(placeIds: string[]): Promise<PublicPlaceFeedback[]> {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { withinRateLimit, callerIp } from '../../../lib/rateLimit'
 
 export const runtime = 'nodejs'
 
@@ -15,6 +16,12 @@ const PRICES: Record<string, string> = {
 
 export async function POST(req: NextRequest) {
   try {
+    // H2: unauthenticated Stripe-session creation. 10 per hour per IP is far
+    // above anything a real buyer does and ends session-spam against Stripe.
+    if (!(await withinRateLimit('checkout', callerIp(req), 10, 3600))) {
+      return NextResponse.json({ error: 'too many requests' }, { status: 429 })
+    }
+
     const { product } = await req.json()
 
     const priceId = PRICES[product]

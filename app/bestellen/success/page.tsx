@@ -18,15 +18,16 @@ function SuccessContent() {
         </h1>
 
         <p style={{ fontSize: 15, lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '2.5rem' }}>
-          your preorder is confirmed. we've sent a confirmation to your inbox —
-          including your sneak peek into the digital world, as a thank you.
+          your preorder is confirmed. we've sent a confirmation to your inbox.
+          while you wait, the digital world of edition 01 is already open —
+          a letter, a question, a playlist.
           <br /><br />
           edition 01 ships october 2026. your card is charged now to reserve
           your box, and you're fully refundable anytime until it ships.
         </p>
 
         <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/01"
+          <Link href="/edition-01"
             style={{ fontFamily: PP, fontSize: 11, letterSpacing: '0.15em', textTransform: 'uppercase', padding: '1rem 2rem', background: '#1A1A1A', color: '#fff', textDecoration: 'none' }}>
             enter the digital world →
           </Link>

@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server'
 
+// Without this, Next prerenders the route at build time and the "count" would
+// be frozen at whatever the build saw — a stated number nobody measured.
+export const dynamic = 'force-dynamic'
+
 /**
  * How many people are on the list. `count: null` means "not known right now" —
  * a measured zero and a broken connection must not look the same, or the page
@@ -7,9 +11,12 @@ import { NextResponse } from 'next/server'
  */
 export async function GET() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // Service role only: `subscribers` has no anon SELECT policy, so with the
+  // anon fallback this returned a confident-looking null forever. A missing
+  // key is the same honest null, but with a log line that names the cause.
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!url || !key) {
-    console.error('[Community/count] Supabase URL or key missing')
+    console.error('[Community/count] Supabase URL or SUPABASE_SERVICE_ROLE_KEY missing')
     return NextResponse.json({ count: null })
   }
   try {

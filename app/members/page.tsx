@@ -1,6 +1,7 @@
 'use client'
 /**
- * /members — der Mitgliederbereich hinter dem E-Mail-Code-Login.
+ * /members — der Mitgliederbereich hinter dem Passwort-Login (/login:
+ * E-Mail + selbst gewähltes Passwort, Entscheidung Alicia 13.08.).
  *
  * Session-Pruefung im Client (supabase.auth.getSession): die Session lebt im
  * localStorage des Browsers, ein Server-Render kann sie nicht sehen. Ohne
@@ -64,7 +65,7 @@ const COPY: Record<Locale, Copy> = {
     checking: 'einen moment — wir schauen nach deiner anmeldung.',
     greeting: 'angemeldet als',
     noSessionTitle: 'du bist gerade nicht angemeldet.',
-    noSessionBody: 'dieser bereich gehört den mitgliedern. melde dich mit deiner e-mail an — wir schicken dir einen sechsstelligen code, kein passwort.',
+    noSessionBody: 'dieser bereich gehört den mitgliedern. melde dich mit deiner e-mail und deinem passwort an — oder leg in einer minute ein konto an.',
     loginCta: 'zum login',
     whatsappLabel: 'whatsapp-community',
     whatsappBody: 'die gruppe, in der alicia und die community sich austauschen.',
@@ -88,7 +89,7 @@ const COPY: Record<Locale, Copy> = {
     checking: 'one moment — checking your sign-in.',
     greeting: 'signed in as',
     noSessionTitle: 'you are not signed in right now.',
-    noSessionBody: 'this area belongs to the members. sign in with your email — we will send you a six-digit code, no password.',
+    noSessionBody: 'this area belongs to the members. sign in with your email and password — or create an account in a minute.',
     loginCta: 'go to login',
     whatsappLabel: 'whatsapp community',
     whatsappBody: 'the group where alicia and the community talk.',

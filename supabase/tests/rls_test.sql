@@ -9,7 +9,7 @@
 
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(8);
+select plan(16);
 
 -- ── seed two users, one space, one membership, one memory ───────────────────
 -- (run as the privileged migration role; bypasses RLS for setup)
@@ -74,6 +74,100 @@ select throws_ok(
   '42501',
   'new row violates row-level security policy for table "memories"',
   'outsider cannot insert into a space they are not a member of'
+);
+reset role;
+
+-- ═══ P0-Härtung (Migrationen 0015–0019) ═════════════════════════════════════
+
+-- ── 0015: anon kann subscribers nicht mehr direkt füllen (M1) ───────────────
+select pg_temp.act_as_anon();
+select throws_ok(
+  $$ insert into public.subscribers (email, source, edition)
+     values ('spam@test.dev','direct','edition_01') $$,
+  '42501', null,
+  'anon cannot insert into subscribers (0015 drift repair)'
+);
+reset role;
+
+-- ── 0016: public_place_spots ist nicht mehr umschreibbar (H1) ───────────────
+insert into public.public_place_spots (id, name, address, lat, lng, category, maps_url, source_id)
+values ('spot-1','Cafe Echt','Teststr. 1', 48.0, 9.0, 'cafe', 'https://maps.example/a', 'src-1');
+
+select pg_temp.act_as_anon();
+-- Ohne UPDATE-Policy wirft RLS nicht — es werden schlicht 0 Zeilen erfasst.
+update public.public_place_spots set maps_url = 'https://evil.example' where id = 'spot-1';
+reset role;
+select is(
+  (select maps_url from public.public_place_spots where id = 'spot-1'),
+  'https://maps.example/a',
+  'anon update on public_place_spots changes nothing (0016, H1)'
+);
+select throws_ok(
+  $$ insert into public.public_place_spots (id, name, address, lat, lng, category, maps_url, source_id)
+     values ('spot-2','Phish','x', 0, 0, 'cafe', 'javascript:alert(1)', 'src-2') $$,
+  '23514', null,
+  'non-https maps_url is rejected by check constraint (0016)'
+);
+
+-- ── 0017: Rate-Limit-Tabelle und RPC sind für Clients unerreichbar (H2) ─────
+select pg_temp.act_as_anon();
+select throws_ok(
+  $$ select * from public.api_rate_limits $$,
+  '42501', null,
+  'anon cannot read api_rate_limits (0017)'
+);
+select throws_ok(
+  $$ select public.api_rate_hit('x', 60, 1) $$,
+  '42501', null,
+  'anon cannot execute api_rate_hit (0017)'
+);
+reset role;
+
+-- ── 0018: couple-Cap + Code-Rotation (M6) ───────────────────────────────────
+insert into auth.users (instance_id, id, aud, role, email, encrypted_password,
+  email_confirmed_at, created_at, updated_at, raw_app_meta_data, raw_user_meta_data, is_super_admin)
+values
+  ('00000000-0000-0000-0000-000000000000', '55555555-5555-5555-5555-555555555555',
+   'authenticated','authenticated','third@test.dev','', now(), now(), now(), '{}','{}', false);
+
+-- user 2 tritt regulär bei — der Space ist danach voll und der Code rotiert.
+select pg_temp.act_as('22222222-2222-2222-2222-222222222222');
+select lives_ok(
+  $$ select public.redeem_invite('PEAK-0001') $$,
+  'second member can redeem the invite (0018)'
+);
+reset role;
+select isnt(
+  (select invite_code from public.spaces where id = '33333333-3333-3333-3333-333333333333'),
+  'PEAK-0001',
+  'invite code rotates once the couple space is full (0018, M6)'
+);
+
+-- Rotierten Code als GUC festhalten, solange wir noch privilegiert lesen —
+-- als user 3 wäre `spaces` RLS-gesperrt und die Subquery ergäbe NULL.
+select set_config('test.rotated_code', invite_code, false)
+from public.spaces where id = '33333333-3333-3333-3333-333333333333';
+
+-- user 3 scheitert: alter Code tot, neuer Code voll.
+select pg_temp.act_as('55555555-5555-5555-5555-555555555555');
+select throws_ok(
+  $$ select public.redeem_invite('PEAK-0001') $$,
+  'P0001', 'invalid invite code',
+  'rotated-away code no longer works (0018, M6)'
+);
+select throws_ok(
+  $$ select public.redeem_invite(current_setting('test.rotated_code')) $$,
+  'P0001', 'space is full',
+  'third member cannot join a full couple space (0018, M6)'
+);
+reset role;
+
+-- ── 0019: Mess-Views geben Clients nichts her ───────────────────────────────
+select pg_temp.act_as_anon();
+select throws_ok(
+  $$ select * from public.pp_metrics_north_star $$,
+  '42501', null,
+  'anon cannot read the metrics views (0019)'
 );
 reset role;
 

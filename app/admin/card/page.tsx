@@ -3,8 +3,10 @@
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
 // Physical insert card: 85 × 55 mm (credit-card footprint, fits the box).
-// The QR is a fixed target (peak-plant.com/01) since cards are printed in bulk —
-// access is verified by the order email once the customer lands on /01.
+// The QR is a fixed target (peak-plant.com/01, printed in bulk; the route
+// permanently redirects to /edition-01). The digital world is a public page,
+// NOT a gate — the card must not promise an unlock mechanic that does not
+// exist (P0 honesty decision, 14.08.2026: printed copy is unpatchable).
 
 export default function CardPrintPage() {
   return (
@@ -49,7 +51,7 @@ export default function CardPrintPage() {
           <p style={{ fontSize: '7pt', letterSpacing: '0.28em', textTransform: 'uppercase', opacity: 0.55 }}>∧ peakplant</p>
           <div>
             <p style={{ fontSize: '15pt', fontWeight: 200, letterSpacing: '-0.02em', lineHeight: 1.25 }}>
-              your digital world<br />is waiting.
+              the digital world<br />is waiting.
             </p>
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
@@ -76,7 +78,8 @@ export default function CardPrintPage() {
               step into edition 01
             </p>
             <p style={{ fontSize: '7.5pt', lineHeight: 1.55, color: '#666', fontWeight: 300 }}>
-              scan the code, then enter the email you ordered with. your world unlocks instantly.
+              scan the code and step in: a letter from alicia, a question for
+              the two of you, and a playlist that grows with the edition.
             </p>
             <p style={{ fontSize: '7pt', letterSpacing: '0.06em', color: '#1A1A1A', opacity: 0.8, marginTop: '1mm' }}>
               peak-plant.com/01

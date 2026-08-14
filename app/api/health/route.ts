@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { mailProvider, sendMail } from '../../../lib/email'
+import { safeEqual } from '../../../lib/serverSecrets'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -16,7 +17,9 @@ export const dynamic = 'force-dynamic'
 export async function GET(req: NextRequest) {
   const key = req.nextUrl.searchParams.get('key')
   const secret = process.env.ADMIN_SECRET
-  if (!secret || key !== secret) {
+  // Constant-time comparison — a plain !== leaks how many leading characters
+  // match, and this endpoint is reachable without any other auth.
+  if (!secret || !key || !safeEqual(key, secret)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
@@ -37,7 +40,10 @@ export async function GET(req: NextRequest) {
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  // Service role only — the same key the waitlist actually stores with. With
+  // the anon fallback this check could report "reachable" for a key the write
+  // path never uses, which is a diagnostic that lies.
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
   // Actually talk to the database — a set variable can still be the wrong one.
   let subscribersReachable = false

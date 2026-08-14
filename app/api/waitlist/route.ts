@@ -1,29 +1,9 @@
 import { NextResponse } from 'next/server'
 import { sendMail } from '../../../lib/email'
-import { createHmac } from 'crypto'
+import { makeUnsubToken } from '../../../lib/serverSecrets'
+import { withinRateLimit, callerIp } from '../../../lib/rateLimit'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-const rateMap = new Map<string, { count: number; reset: number }>()
-const RATE_LIMIT = 3
-const RATE_WINDOW = 10 * 60 * 1000
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now()
-  const entry = rateMap.get(ip)
-  if (!entry || now > entry.reset) {
-    rateMap.set(ip, { count: 1, reset: now + RATE_WINDOW })
-    return false
-  }
-  if (entry.count >= RATE_LIMIT) return true
-  entry.count++
-  return false
-}
-
-function makeUnsubToken(email: string): string {
-  const secret = process.env.NEWSLETTER_SECRET ?? 'dev-secret'
-  return createHmac('sha256', secret).update(email).digest('base64url')
-}
 
 /**
  * Alicia's own letter. Written by her, not assembled from product copy — that
@@ -148,8 +128,7 @@ function supabaseHeaders(key: string) {
 
 export async function POST(req: Request) {
   try {
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
-    if (isRateLimited(ip)) {
+    if (!(await withinRateLimit('waitlist', callerIp(req), 3, 600))) {
       return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
     }
 
@@ -161,13 +140,28 @@ export async function POST(req: Request) {
     const isDE = locale === 'de'
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    // Service role only. The anon fallback used to paper over a missing
+    // service key, and the matching anon INSERT policy let anyone write to
+    // `subscribers` past this route's validation (finding M1). The policy is
+    // dropped in 0015_drift_repair.sql; without the service key storing is
+    // simply not possible, and we say so.
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
     // Fail closed. Without a store the address is simply gone, and answering
     // "success" would tell a real visitor they are on a list that does not
     // exist. Better a visible error she can retry than a silent loss.
+    // (No address in the log — an email in Vercel logs is PII with no purpose.)
     if (!supabaseUrl || !supabaseKey) {
-      console.error('[Waitlist] Supabase env vars missing — cannot store:', sanitized)
+      console.error('[Waitlist] Supabase env vars missing (need SUPABASE_SERVICE_ROLE_KEY) — cannot store signup')
+      return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    }
+
+    // Fail closed on the unsubscribe secret too: a welcome mail legally needs
+    // a working unsubscribe link, and a link forged from a guessable default
+    // is worse than an honest error (finding H3).
+    const unsubToken = makeUnsubToken(sanitized)
+    if (!unsubToken) {
+      console.error('[Waitlist] NEWSLETTER_SECRET missing — cannot issue unsubscribe token, signup rejected')
       return NextResponse.json({ error: 'Server error' }, { status: 500 })
     }
 
@@ -197,8 +191,7 @@ export async function POST(req: Request) {
     // the welcome mail fails. But we report honestly whether it went out, so
     // the page never says "check your inbox" when nothing was sent.
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://peak-plant.com'
-    const token = makeUnsubToken(sanitized)
-    const unsubUrl = `${siteUrl}/api/unsubscribe?email=${encodeURIComponent(sanitized)}&token=${encodeURIComponent(token)}`
+    const unsubUrl = `${siteUrl}/api/unsubscribe?email=${encodeURIComponent(sanitized)}&token=${encodeURIComponent(unsubToken)}`
     const mail = await sendMail({
       to: sanitized,
       subject: isDE ? 'du bist dabei.' : "you're in.",

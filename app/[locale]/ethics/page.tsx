@@ -48,55 +48,61 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
   const { locale } = params
   const isDE = locale === 'de'
 
+  // Standards we hold ourselves to — deliberately in the future/goal tense.
+  // Edition 01 is not printed yet: naming certificates or partners as achieved
+  // facts before a single deck exists contradicted our own "limits" section
+  // below (P0 honesty sprint, 14.08.2026). Claims move up here only once they
+  // are real and verifiable.
   const commitments = isDE ? [
     {
       icon: <IconLeaf />,
-      headline: 'blauer engel verpackung',
-      text: 'unsere boxen tragen das Blauer Engel Zertifikat — deutschlands strengstes umweltsiegel. recycelte materialien, klimaneutrale produktion, keine schädlichen chemikalien. die box, die du erhältst, ist so sauber wie ihr inhalt.',
+      headline: 'verpackung: recycelt, unzertifiziert nichts behaupten',
+      text: 'unser maßstab für die box: recycelte materialien, keine schädlichen chemikalien, ein anerkanntes umweltsiegel (unser ziel ist der blaue engel — deutschlands strengstes). die box ist noch nicht produziert; was sie am ende trägt, steht dann hier — belegt, nicht behauptet.',
     },
     {
       icon: <IconTruck />,
-      headline: 'dhl gogreen versand',
-      text: 'jede bestellung wird klimaneutral via dhl gogreen versendet. die emissionen deiner lieferung sind vollständig kompensiert. wir wählten dhl warenpost — das kleinstmögliche format für den kleinstmöglichen fußabdruck.',
+      headline: 'versand: so klein und klimaschonend wie möglich',
+      text: 'unser plan ist klimaneutraler versand (dhl gogreen) im kleinstmöglichen format. sobald die erste bestellung tatsächlich verschickt wird, dokumentieren wir hier, wie sie reist.',
     },
     {
       icon: <IconDocument />,
-      headline: 'blauer engel karten',
-      text: 'die sechs reflexionskarten in deiner box sind auf circle offset premium white gedruckt — 300g recyclingpapier, blauer engel zertifiziert. gedruckt von dieumweltdruckerei, deutschlands nachhaltigstem druckhaus.',
+      headline: 'karten: recyclingpapier, faire druckerei',
+      text: 'die zwanzig moment-karten der edition 01 sollen auf recyclingpapier bei einer nachhaltigen druckerei entstehen. unsere druckerei steht noch nicht fest — sobald sie es tut, nennen wir sie hier mit namen.',
     },
     {
       icon: <IconSeedling />,
       headline: 'pflanzen. wachsen. sehen.',
-      text: 'die saatpapierkarte in jeder box ist 100% pflanzbar. kein müll. edition 01 wird zu sonnenblumen.',
+      text: 'die saatpapierkarte in jeder box ist als 100% pflanzbare karte konzipiert. kein müll. edition 01 wird zu sonnenblumen.',
     },
   ] : [
     {
       icon: <IconLeaf />,
-      headline: 'blauer engel packaging',
-      text: "our boxes carry the blauer engel certification — germany's strictest environmental label. recycled materials, climate-neutral production, no harmful chemicals. the box you receive is as clean as what's inside.",
+      headline: 'packaging: recycled, and no unearned labels',
+      text: "our standard for the box: recycled materials, no harmful chemicals, a recognized environmental label (our goal is the blauer engel — germany's strictest). the box is not in production yet; whatever it actually carries will be stated here — proven, not claimed.",
     },
     {
       icon: <IconTruck />,
-      headline: 'dhl gogreen shipping',
-      text: 'every order ships climate-neutral via dhl gogreen. the emissions from your delivery are fully offset. we chose dhl warenpost — the smallest possible format for the smallest possible footprint.',
+      headline: 'shipping: as small and low-impact as possible',
+      text: 'our plan is climate-neutral shipping (dhl gogreen) in the smallest possible format. once the first order actually ships, we will document here how it travels.',
     },
     {
       icon: <IconDocument />,
-      headline: 'blauer engel cards',
-      text: "the question card in your box is printed on circle offset premium white — 300g recycled paper, certified with the blauer engel. printed by dieumweltdruckerei, germany's most sustainable print shop.",
+      headline: 'cards: recycled paper, a fair print shop',
+      text: 'the twenty moment cards of edition 01 are meant to be printed on recycled paper by a sustainable print shop. our print partner is not confirmed yet — the moment it is, we will name them here.',
     },
     {
       icon: <IconSeedling />,
       headline: 'plant it. watch it grow.',
-      text: 'the seed paper card in every box is 100% plantable. no waste. edition 01 becomes sunflowers.',
+      text: 'the seed paper card in every box is designed to be 100% plantable. no waste. edition 01 becomes sunflowers.',
     },
   ]
 
+  // Target standards, not achieved certifications — see comment above.
   const certifications = [
-    { name: 'BLAUER ENGEL', description: isDE ? 'deutschlands strengstes umweltsiegel.\nunsere verpackung und karten.' : "germany's strictest environmental label.\nour packaging and cards." },
-    { name: 'DHL GOGREEN', description: isDE ? 'klimaneutraler versand.\njede bestellung, jedes mal.' : 'climate-neutral shipping.\nevery order, every time.' },
+    { name: 'BLAUER ENGEL', description: isDE ? 'unser ziel für verpackung und karten.\ndeutschlands strengstes umweltsiegel.' : "our goal for packaging and cards.\ngermany's strictest environmental label." },
+    { name: 'DHL GOGREEN', description: isDE ? 'unser plan für den versand:\nklimaneutral, kleinstes format.' : 'our plan for shipping:\nclimate-neutral, smallest format.' },
     { name: 'PAPER & PRINT', description: isDE ? 'unser ziel: fsc-zertifiziertes papier, vegane farben, faire druckereien. wir veröffentlichen unsere lieferanten, sobald sie feststehen.' : 'our goal: fsc-certified paper, vegan inks, fair print partners. we will publish our suppliers as soon as they are confirmed.' },
-    { name: 'VEGAN', description: isDE ? 'alle produkte sind 100% vegan.\nkeine tierversuche. keine tierischen produkte.' : 'all products are 100% vegan.\nno animal testing. no animal products.' },
+    { name: 'VEGAN', description: isDE ? 'unser standard: keine tierischen materialien,\nkeine tierversuche — auch bei farben und leim.' : 'our standard: no animal materials,\nno animal testing — inks and glue included.' },
   ]
 
   const limitsItems = isDE ? [
@@ -193,11 +199,11 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
       <section style={{ borderTop: '1px solid #e8e8e8', padding: '7rem 2.5rem', maxWidth: 1100, margin: '0 auto' }}>
         <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.7 }}
           style={{ fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', opacity: 0.4, marginBottom: '1.5rem' }}>
-          {isDE ? '03 — zertifizierungen' : '03 — certifications'}
+          {isDE ? '03 — unsere maßstäbe' : '03 — our standards'}
         </motion.p>
         <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.05 }}
           style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.15, letterSpacing: '-0.025em', marginBottom: '4rem' }}>
-          {isDE ? 'zertifiziert.' : 'certified.'}
+          {isDE ? 'woran wir uns messen.' : 'what we measure ourselves against.'}
         </motion.h2>
         <div className="pp-stack" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
           {certifications.map((cert, i) => (
@@ -253,7 +259,7 @@ export default function EthicsPage({ params }: { params: { locale: string } }) {
 
       <div style={{ borderTop: '1px solid #ebebeb', padding: '2rem 2.5rem', textAlign: 'center' }}>
         <p style={{ fontSize: '0.7rem', color: '#1A1A1A', opacity: 0.3, fontFamily: PP }}>
-          {isDE ? 'zuletzt aktualisiert: mai 2026. wir aktualisieren diese seite, wenn wir mehr lernen.' : 'last updated: may 2026. we update this page as we learn more.'}
+          {isDE ? 'zuletzt aktualisiert: august 2026. wir aktualisieren diese seite, wenn wir mehr lernen.' : 'last updated: august 2026. we update this page as we learn more.'}
         </p>
       </div>
     </div>
