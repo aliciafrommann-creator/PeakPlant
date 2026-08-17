@@ -9,7 +9,7 @@
 
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(16);
+select plan(18);
 
 -- ── seed two users, one space, one membership, one memory ───────────────────
 -- (run as the privileged migration role; bypasses RLS for setup)
@@ -159,6 +159,26 @@ select throws_ok(
   $$ select public.redeem_invite(current_setting('test.rotated_code')) $$,
   'P0001', 'space is full',
   'third member cannot join a full couple space (0018, M6)'
+);
+reset role;
+
+-- ── 0021: Push-Token sind privat, auch vor dem eigenen Partner ─────────────
+insert into public.push_tokens (user_id, token, platform)
+values ('11111111-1111-1111-1111-111111111111', 'ExponentPushToken[aaa]', 'ios');
+
+select pg_temp.act_as('22222222-2222-2222-2222-222222222222');
+select is(
+  (select count(*)::int from public.push_tokens),
+  0,
+  'a space member cannot see their partner''s device tokens (0021)'
+);
+reset role;
+
+select pg_temp.act_as_anon();
+select throws_ok(
+  $$ select * from public.push_deliveries $$,
+  '42501', null,
+  'anon cannot read the delivery log (0021)'
 );
 reset role;
 
