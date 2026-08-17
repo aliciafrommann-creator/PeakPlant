@@ -5,7 +5,7 @@ import {
   composeIdeaShareText,
   composeDatePlanShareText,
 } from './shareText';
-import { cardLink, ideaLink, placeLink, APP_BASE_URL } from './links';
+import { cardLink, ideaLink, placeLink, APP_BASE_URL, GET_THE_APP_URL } from './links';
 import type { Memory, MomentCard, SavedDate } from './types';
 
 const memory: Memory = {
@@ -77,9 +77,20 @@ describe('composeInviteText', () => {
     expect(text).toContain('Your invite code: PEAK-ABC123\n');
   });
 
-  it('tells the recipient how to redeem the code', () => {
+  it('names the button that actually exists in the app', () => {
+    // It used to say "join with code" — a label no screen ever had. The
+    // welcome screen's button reads "I HAVE A CODE".
     const text = composeInviteText('PEAK-ABC123');
-    expect(text.toLowerCase()).toContain('join with code');
+    expect(text.toLowerCase()).toContain('i have a code');
+    expect(text.toLowerCase()).not.toContain('join with code');
+  });
+
+  it('carries a way to GET the app — the recipient usually does not have it', () => {
+    // The whole point of an invite is reaching someone who is not here yet.
+    // Without this link the message is a dead end: a code for an app they
+    // cannot install from anywhere in the message.
+    const text = composeInviteText('PEAK-ABC123');
+    expect(text).toContain(GET_THE_APP_URL);
   });
 });
 
