@@ -51,7 +51,16 @@ nach dem Rechts-Review (Minderjährige + intime Editionen, siehe
   gilt das manuelle Runbook in `supabase/README.md`.
 - **Experience Library in die Datenbank** — nur wenn Website oder Redaktion
   sie brauchen; heute lebt sie im App-Bundle.
-- **Push-Benachrichtigungen** als Einladung (Phase 2, nach belegter Retention).
+- **Push-Warteschlange für die Nachtruhe.** Zwischen 22 und 8 Uhr verwirft der
+  Versand (`supabase/functions/push-notify`) eine Nachricht, statt sie am
+  Morgen zuzustellen — eine Edge Function kann nicht warten. Beides (Moment,
+  Beitritt) steht morgens ohnehin in der App, deshalb ist das vertretbar. Die
+  Kür wäre eine kleine Warteschlange plus Morgen-Cron; sie steht bewusst hier
+  und nicht heimlich im Code.
+- **Zeitzone pro Konto.** Die Nachtruhe rechnet mit `Europe/Berlin`, weil die
+  App keine Zeitzone speichert. Für den deutschsprachigen Start stimmt das;
+  sobald Paare außerhalb dabei sind, braucht es `profiles.timezone` — sonst
+  ist „nachts" für sie die falsche Uhrzeit.
 
 ## Zwei ungenutzte Filme (Entscheidung Alicia)
 
