@@ -233,3 +233,30 @@ select * from public.pp_metrics_north_star;
 
 Bleibt `paired` deutlich unter `spaces`, hängt es weiterhin am Beitritt — dann
 ist der nächste Blick wieder der Einladungsweg, nicht das Kartenprodukt.
+
+### 0021 — Push-Token (P2.1, Freigabe „P2 freigeben" 17.08.)
+
+Nach 0020 anwenden. Zwei Tabellen, beide additiv:
+
+| Tabelle | Zweck | Sichtbarkeit |
+|---|---|---|
+| `push_tokens` | ein Token pro Gerät, damit der Server das Telefon des *anderen* Menschen erreichen kann | nur die eigene Zeile (RLS) — **auch der Partner im selben Space sieht sie nicht**. Wer welches Gerät benutzt, geht niemanden sonst etwas an. |
+| `push_deliveries` | Zustellprotokoll (nur Space, Kategorie, Zeitpunkt — **kein Inhalt**) | für Clients komplett gesperrt; Grundlage der Frequenz-Obergrenze |
+
+**Die Regeln, wann überhaupt gesendet wird, stehen im Code und sind getestet**
+(`mobile/lib/notifications/policy.ts`, 10 Tests):
+1. Abgemeldet ist abgemeldet, pro Kategorie. `partner_activity` ist
+   standardmäßig **aus** — Zustimmung, nicht Voreinstellung.
+2. Höchstens **eine** Nachricht pro Space und Tag, kategorieübergreifend
+   gezählt. Ein Paar, das an einem Abend drei Momente bewahrt, bekommt eine.
+3. Zwischen 22 und 8 Uhr wird nichts zugestellt, sondern auf den Morgen
+   verschoben.
+4. Nie Inhalt im Sperrbildschirm: die Text-Funktionen nehmen gar keinen
+   Notiz- oder Kartentext entgegen — was man nicht hereinreicht, kann nicht
+   hinausrutschen.
+
+> **Noch nicht scharf.** Es wird nichts versendet, solange der Expo-Provider
+> nicht verdrahtet ist (braucht Expo-Push-Zugangsdaten von Alicia) und der
+> Versand-Weg (Edge Function auf `memories`-INSERT bzw. nach `redeem_invite`)
+> gebaut ist. Diese Migration legt nur den Boden — sie schadet nicht, wenn der
+> Rest noch fehlt.
