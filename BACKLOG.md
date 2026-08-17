@@ -206,6 +206,14 @@ existiert (Live-Standort von iOS/Android, Notruf): zeitlich begrenzt, selbst
 gewählte Empfängerin, läuft von allein aus, nichts Passives, nichts
 Dauerhaftes. Dazu ein einfaches „ich bin gut angekommen" nach dem Abend.
 
+**Solo ist kein Sonderfall, sondern ein Dauerzustand** (Entscheidung Alicia,
+17.08.): Ein Mensch allein soll PeakPlant benutzen können — nicht nur als
+Wartezimmer, bis jemand beitritt. Das weicht bewusst von der Audit-Empfehlung
+ab („Solo nicht jetzt, Marke heißt grow *together*") und ist Alicias Ruf.
+Teilweise ist es ohnehin schon wahr: Die App funktioniert vor dem Beitritt des
+Partners vollständig allein. Was fehlt, ist, dass sie das auch *sagt*, statt es
+als unfertigen Zustand zu behandeln.
+
 **Solo-Editionen** passen in dieses Bild (Konten sind ohnehin einzeln).
 Technischer Hinweis, damit er nicht überrascht: `spaces.type` erlaubt heute per
 Check-Constraint nur `couple` und `friends` (Migration 0001). Solo braucht also
