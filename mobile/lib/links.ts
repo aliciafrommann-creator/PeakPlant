@@ -26,7 +26,7 @@ export const APP_BASE_URL = 'https://peak-plant.com';
  * real page that explains the state and takes a request. When the app is in
  * the stores, this constant becomes the store link — one place to change.
  */
-export const GET_THE_APP_URL = `${APP_BASE_URL}/beta`;
+export const GET_THE_APP_URL = `${APP_BASE_URL}/beta?invited=1`;
 
 /** Link to a physical card's prompt. Matches the QR `/c/<id>` form (qr.ts). */
 export function cardLink(cardId: string): string {
