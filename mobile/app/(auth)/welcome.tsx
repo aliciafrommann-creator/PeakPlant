@@ -36,8 +36,13 @@ export default function WelcomeScreen() {
           >
             <Text style={styles.beginText}>BEGIN</Text>
           </TouchableOpacity>
+          {/* Stand vorher: „no account needed to explore". Im echten Betrieb
+              ist das Konto zwei Schritte vorher entstanden (app/index.tsx:57
+              schickt ohne Sitzung zuerst auf sign-in) — dieser Bildschirm
+              kommt erst danach. Ein Satz, den der Code nicht hält, ist genau
+              das, was MANIFESTO §1 verbietet. */}
           <Text style={styles.hint}>
-            no account needed to explore
+            nothing here is public — this space is yours
           </Text>
         </View>
       </View>

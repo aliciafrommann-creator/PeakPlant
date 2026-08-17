@@ -401,7 +401,10 @@ export default function EditSpaceScreen() {
             )}
             <Text style={styles.memberHint}>
               {t(
-                'everyone here can see your shared diary. the invite code above lets people in — share it only with people you trust.',
+                // „the invite code above" zeigte auf etwas, das auf diesem
+                // Bildschirm gar nicht steht (hier gibt es Name, Emoji,
+                // Sammelstück und Mitglieder — keinen Code).
+                'everyone here can see your shared diary. your invite code lets people in — share it only with people you trust.',
                 'alle hier sehen euer gemeinsames Tagebuch. Der Einladungscode lässt Menschen herein — teil ihn nur mit Menschen, denen du vertraust.',
               )}
             </Text>

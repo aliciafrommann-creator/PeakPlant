@@ -297,8 +297,11 @@ export default function InviteScreen() {
           )}
           <Text style={styles.codeHint}>
             {t(
-              'your partner taps "I have a code" on their welcome screen and enters this.',
-              'Dein Partner tippt auf "Ich habe einen Code" und gibt diesen ein.',
+              // Vorher stand hier „on their welcome screen". Der Knopf steht
+              // nicht dort, sondern erst nach der Anmeldung — wer danach auf
+              // dem Willkommensbildschirm sucht, findet ihn nie.
+              'after signing in, your partner taps "I have a code" and enters this.',
+              'Nach der Anmeldung tippt dein Mensch auf "Ich habe einen Code" und gibt diesen ein.',
             )}
           </Text>
         </View>

@@ -717,13 +717,18 @@ export default function HomeScreen() {
                 mark="bloom"
                 title={t('your first moment starts here.', 'euer erster Moment beginnt hier.')}
                 hint={t(
-                  'scan a card or take on this week’s challenge together — the first one you keep becomes your space’s first bloom.',
-                  'scannt eine Karte oder nehmt zusammen die Wochen-Challenge an — euer erster festgehaltener Moment wird eure erste Blüte.',
+                  'do something together, then keep it here — a photo, a few words. the first one you keep becomes your space’s first bloom.',
+                  'macht etwas zusammen und haltet es hier fest — ein Foto, ein paar Worte. Euer erster festgehaltener Moment wird eure erste Blüte.',
                 )}
-                ctaLabel={t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
-                onCta={() => router.push('/(tabs)/scan')}
-                secondaryLabel={t('no deck yet? keep a moment anyway', 'noch kein Deck? haltet trotzdem einen Moment fest')}
-                onSecondary={() => router.push('/memory/create')}
+                // Vertauscht: solange die Decks nicht ausgeliefert sind
+                // (Oktober), war die lauteste Handlung auf diesem Bildschirm
+                // die einzige, die niemand ausführen kann. Der laute Knopf
+                // muss einer sein, der geht; die Karte bleibt der schönere
+                // Weg hinein, nicht der einzige.
+                ctaLabel={t('KEEP YOUR FIRST MOMENT', 'ERSTEN MOMENT FESTHALTEN')}
+                onCta={() => router.push('/memory/create')}
+                secondaryLabel={t('got your deck? scan a card', 'Deck schon da? Karte scannen')}
+                onSecondary={() => router.push('/(tabs)/scan')}
               />
             )}
           </>
