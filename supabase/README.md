@@ -187,3 +187,49 @@ wurde, kurz festhalten (eigene Notiz genügt, kein System nötig).
 
 > Einmal vollständig gegen einen Test-Account durchspielen, bevor die ersten
 > echten Nutzer da sind — das ist der Test dieses Runbooks.
+
+---
+
+## Runbook: die wartenden Paare zuerst einladen (Beta-Start)
+
+Seit 17.08. trägt die Einladung aus der App einen Link auf `/beta?invited=1`.
+Wer darüber kommt, landet mit der Quelle **`beta-invited`** in `subscribers` —
+das sind Menschen, hinter denen bereits ein Partner mit einem Space wartet.
+Sie sind die wertvollsten Beta-Teilnehmer, weil nur ein *Paar* einen aktiven
+Space ergibt (North Star). Beim Beta-Start deshalb zuerst diese Liste:
+
+```sql
+-- Wartende Partner, älteste zuerst (Sprache steckt im Suffix: -de / -en)
+select email, source, created_at
+from public.subscribers
+where source like 'beta-invited%'
+order by created_at;
+
+-- Alle Beta-Interessierten, nach Herkunft gruppiert
+select
+  case
+    when source like 'beta-invited%' then 'eingeladen (Partner wartet)'
+    when source like 'beta%'         then 'selbst gefunden'
+    else 'Warteliste/Sonstiges'
+  end as herkunft,
+  count(*)
+from public.subscribers
+group by 1
+order by 2 desc;
+```
+
+**Warum die Reihenfolge zählt:** Ein selbst gefundener Tester probiert allein
+— und allein zeigt die App nur die halbe Wahrheit (kein gemeinsamer Moment,
+keine W4-Retention, kein aktiver Space). Ein eingeladener Partner bringt den
+zweiten Menschen mit, und erst dann misst
+`pp_metrics_weekly_cohorts.activated_7d` überhaupt etwas.
+
+**Gegenprobe nach den ersten Einladungen:**
+
+```sql
+select * from public.pp_metrics_weekly_cohorts order by cohort_week desc limit 8;
+select * from public.pp_metrics_north_star;
+```
+
+Bleibt `paired` deutlich unter `spaces`, hängt es weiterhin am Beitritt — dann
+ist der nächste Blick wieder der Einladungsweg, nicht das Kartenprodukt.
