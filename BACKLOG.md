@@ -80,3 +80,74 @@ gehört dir. Drei Wege: (a) löschen — spart 4,7 MB im Deploy, die Dateien
 bleiben in der Git-Historie, (b) an anderer Stelle einsetzen, (c) liegen
 lassen (sie kosten nichts an Ladezeit, nur Repo-Größe, weil sie niemand
 abruft).
+
+---
+
+## Langfrist-Vision: von Couples zur Community (Alicia, 17.08.2026)
+
+Alicias Roadmap-Grafik, hier festgehalten — **nicht in Umsetzung**. Der Zweck
+dieses Eintrags: die Idee überlebt den Chat, und die drei Stellen, an denen sie
+mit bereits getroffenen Entscheidungen kollidiert, stehen daneben statt später
+zu überraschen.
+
+### Die fünf Phasen (ihre Struktur)
+
+| Phase | Zeitraum | Inhalt |
+|---|---|---|
+| 1 — Foundations | 0–3 Monate | Couples-Kern verfeinern, Editionen verkaufen, aktive Spaces steigern, **Retention beweisen** |
+| 2 — Friends & Circles | 3–6 Monate | Freundesgruppen, gemeinsame Rituale, kleine Offline-Events |
+| 3 — Community | 6–12 Monate | thematische Communities, wertebasierte Matching-Logik, Community-Events |
+| 4 — Dating (ohne Swipes) | 12–18 Monate | Persönlichkeits- und Werteprofil, Vorschläge, Kennenlernen im realen Leben |
+| 5 — KI & Premium | 18+ Monate | KI-Begleiter, Deep Matching, exklusive Erlebnisse und Retreats |
+
+**Wichtig und richtig:** Phase 1 endet in ihrer eigenen Grafik mit „Retention
+beweisen". Das ist exakt das Gate aus dem Audit — die Roadmap widerspricht dem
+Vorgehen also nicht, sie setzt es voraus.
+
+### Die Prinzipien (übernommen)
+
+Werte vor Aussehen · Real Life First (die digitale Verbindung soll offline
+stattfinden) · Sicherheit und Vertrauen · Qualität vor Quantität · Achtsamkeit
+und Respekt. Der Ablauf ohne Swipes: **Profil mit Tiefe → Werte-Abgleich →
+Einladung statt Like → Offline-Erlebnis → Reflexion.**
+
+### Events und Premium
+
+Formate: Dinner Circles, Werte-Workshops, Outdoor-Erlebnisse, Editions-Abende,
+Retreats. Kleine Gruppen (20–40), Moderation vor Ort, Notfall- und
+Support-System, verifizierte Identität (Ausweis + Selfie/Video).
+Premium als Mitgliedschaft: Zugang zu Events, erweiterte Werteanalyse, private
+Community-Räume, Early Access, Coaching, Support.
+
+### Drei Kollisionen mit bereits Entschiedenem
+
+Das ist der eigentliche Wert dieses Eintrags — nicht als Veto, sondern damit die
+Entscheidung bewusst fällt, wenn es so weit ist:
+
+1. **„Kompatibilitäts-Scoring".** MANIFESTO §1 und §3 verbieten Beziehungs- und
+   Kompatibilitätswerte ausdrücklich („Deine Beziehung ist nichts zum
+   Optimieren"), und das Audit führt sie unter *Explicitly Not Building*. Dazu
+   kommt: Werte, Orientierung und Beziehungsangaben sind besonders geschützte
+   Daten — eine KI, die daraus Rangfolgen von **Menschen** bildet, ist rechtlich
+   ein anderes Produkt als eine, die **Abende** vorschlägt. Der gangbare Weg ist
+   der zweite: die KI ordnet Angebote, sie beurteilt keine Menschen.
+2. **„KI-gestützte Verhaltensanalyse" als Sicherheits-Frühwarnsystem.** Der
+   Gedanke ist gut gemeint und der Effekt heikel: Es ist eine Überwachung der
+   eigenen Mitglieder. Sicherheit trägt hier zuerst über Struktur (verifizierte
+   Identität, anwesende Gastgeberin, Kontakt erst bei beidseitigem Ja, Melden
+   mit menschlicher Prüfung), nicht über Mustererkennung. Falls doch, dann mit
+   Transparenzpflicht nach AI Act und menschlicher Entscheidung am Ende.
+3. **„Beziehungs- und Kommunikations-Coach".** Das Audit hält fest: die KI ist
+   Kuratorin, nie Therapeutin, und Tagebuchinhalte gehen nie in Prompts. Ein
+   Coach, der die Beziehung deutet, überschreitet beides. Vorbereitungsfragen
+   vor einem Abend sind die Version davon, die trägt.
+
+Ausführliche Begründung inklusive Sicherheitsschichten und Premium-Logik:
+Artefakt „Kennenlernen ohne Swipen" (17.08.2026).
+
+### Der billigste nächste Test (wenn es so weit ist)
+
+Zwei bis drei Abende **manuell** veranstalten — Einladung per Mail, Anmeldung
+per Formular, Alicia als Gastgeberin. Kein Code. Beantwortet mehr als ein
+Quartal Entwicklung, und erst wenn Menschen wiederkommen, ohne einzeln
+eingeladen zu werden, lohnt sich eine Zeile dafür.
