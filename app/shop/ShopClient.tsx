@@ -111,6 +111,8 @@ function PurchaseBlock({
     letterSpacing: '0.15em',
     textTransform: 'uppercase',
     padding: compact ? '0.9rem 1.75rem' : '1rem 2rem',
+    // 43px waren es ohne — knapp unter der sicheren Tippgröße.
+    minHeight: 44,
     background: '#1A1A1A',
     color: '#fff',
     border: 'none',
