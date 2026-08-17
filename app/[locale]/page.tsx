@@ -169,9 +169,9 @@ function Waitlist({ locale }: { locale: string }) {
             </button>
           </form>
         )}
-        {status === 'error' && <p style={{ marginTop: 12, fontSize: 11, color: '#e74c3c', fontFamily: PP }}>{isDE ? 'Etwas ist schiefgelaufen. Versuch es nochmal.' : 'Something went wrong. Try again.'}</p>}
+        {status === 'error' && <p style={{ marginTop: 12, fontSize: 12.5, color: '#ff8a73', fontFamily: PP }}>{isDE ? 'Etwas ist schiefgelaufen. Versuch es nochmal.' : 'Something went wrong. Try again.'}</p>}
         {status !== 'success' && status !== 'duplicate' && (
-          <p style={{ marginTop: 16, fontSize: 11, color: '#ffffff', opacity: 0.35, fontFamily: PP, lineHeight: 1.65 }}>
+          <p style={{ marginTop: 16, fontSize: 12.5, color: '#ffffff', opacity: 0.62, fontFamily: PP, lineHeight: 1.65 }}>
             mit der anmeldung stimmst du unserer{' '}
             <Link href="/datenschutz" style={{ color: '#ffffff', opacity: 0.6, textDecoration: 'underline' }}>datenschutzerklärung</Link>
             {' '}zu.
@@ -337,7 +337,7 @@ function AppPeek({ locale, isMobile }: { locale: string; isMobile: boolean }) {
           <a href="#waitlist" className="pp-cta" style={{ fontFamily: PP }}>
             {isDE ? 'app kommt mit edition 01 — dabei sein' : 'the app ships with edition 01 — get in'}
           </a>
-          <p style={{ marginTop: '1rem', fontSize: '0.72rem', color: '#999', fontWeight: 300, fontFamily: PP }}>
+          <p style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#6f6f6f', fontWeight: 300, lineHeight: 1.6, fontFamily: PP }}>
             {isDE ? 'privat für euren space. keine likes, keine follower, kein feed für fremde.' : 'private to your space. no likes, no followers, no feed for strangers.'}
           </p>
         </motion.div>
