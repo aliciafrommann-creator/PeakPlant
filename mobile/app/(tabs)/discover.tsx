@@ -23,7 +23,7 @@ import { IdeaCardSkeleton } from '../../components/ui/Skeleton';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useAppStore } from '../../lib/store';
-import { computeWeeklyStreak } from '../../lib/streaks';
+import { computeSharedWeeks } from '../../lib/streaks';
 import { discovery } from '../../lib/ai';
 import type { DateConstraints, DateRecommendation } from '../../lib/ai';
 import { momentById, type TimeOfDay, type Weather } from '../../lib/together';
@@ -119,7 +119,7 @@ export default function DiscoverScreen() {
     setSavedMomentIds(new Set(saved.map((s) => s.momentId)));
   }, [saved]);
 
-  const streak = computeWeeklyStreak(memories.map((m) => m.createdAt));
+  const sharedWeeks = computeSharedWeeks(memories.map((m) => m.createdAt));
   const timeOfDay = useMemo(currentTimeOfDay, []);
   const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
     useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
@@ -322,9 +322,8 @@ export default function DiscoverScreen() {
         {streaksEnabled && activeSpace && (
           <StreakBanner
             spaceType={activeSpace.type}
-            count={streak.count}
-            atRisk={streak.atRisk}
-            active={streak.active}
+            count={sharedWeeks.count}
+            active={sharedWeeks.active}
           />
         )}
 

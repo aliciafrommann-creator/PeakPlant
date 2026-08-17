@@ -20,6 +20,7 @@ import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import { MemoryFeedSkeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { BackButton } from '../../components/ui/BackButton';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { shareMemory } from '../../lib/share';
@@ -131,6 +132,10 @@ export default function MomentsScreen() {
         }
         ListHeaderComponent={
           <View style={styles.header}>
+            {/* Diese Seite war ein Reiter und ist jetzt das Archiv hinter der
+                Momente-Wand auf dem Startbildschirm. Ohne Reiter-Leiste
+                braucht sie einen Weg zurück (Entscheidung Alicia, 17.08.2026). */}
+            <BackButton />
             <View style={styles.kickerRow}>
               <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
               <Text style={styles.kicker}>{t('YOUR MOMENTS', 'EURE MOMENTE')}</Text>

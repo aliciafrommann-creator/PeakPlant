@@ -26,13 +26,12 @@ export default function TabsLayout() {
         tabBarActiveTintColor: Colors.text,
         tabBarInactiveTintColor: Colors.textFaint,
         tabBarLabelStyle: {
-          fontSize: 9,
+          fontSize: 10,
           fontWeight: '500',
-          // Fünf Reiter teilen sich die Breite; das längste deutsche Label
-          // („GESCHICHTE", 10 Zeichen) passt bei 1.5 Sperrung nicht mehr in
-          // ein Fünftel und wurde auf dem Gerät abgeschnitten. Die Sperrung
-          // ist Stil, ein lesbares Label ist Funktion — Funktion gewinnt.
-          letterSpacing: 0.6,
+          // Bei fünf Reitern passte „GESCHICHTE" nicht in ein Fünftel der
+          // Breite. Mit drei Reitern ist Platz — die Sperrung bleibt trotzdem
+          // moderat, weil ein lesbares Label Funktion ist und Sperrung nur Stil.
+          letterSpacing: 0.8,
           textTransform: 'uppercase',
         },
       }}
@@ -47,29 +46,11 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="moments"
-        options={{
-          title: t('Moments', 'Momente'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="images-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="discover"
         options={{
           title: t('Discover', 'Entdecken'),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="compass-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="story"
-        options={{
-          title: t('Story', 'Geschichte'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="book-outline" size={size} color={color} />
           ),
         }}
       />
@@ -83,10 +64,25 @@ export default function TabsLayout() {
         }}
       />
 
-      {/* Hidden from the bar, still fully navigable:
-          - community (Places) → the 🗺️ toggle on Discover
-          - profile (Me) → the person icon in the Home header
-          Target IA is HOME · MOMENTS · DISCOVER · STORY · COLLECTION. */}
+      {/* Drei Reiter, drei Sätze, die ein Mensch aussprechen kann:
+          „was wir behalten haben" · „was wir tun könnten" · „unsere Decks".
+          (Entscheidung Alicia, 17.08.2026.)
+
+          Ausgeblendet, aber vollständig erreichbar — nichts ist gelöscht:
+          - moments  → die Momente-Wand IST jetzt der Startbildschirm; diese
+                       Seite bleibt als nach Monaten gruppiertes Archiv, vom
+                       Fuß der Wand aus
+          - story    → ein Monatsrückblick, kein täglicher Ort; Link am Fuß
+                       der Wand
+          - community (Orte) → der 🗺️-Umschalter auf Entdecken
+          - profile  → das Personen-Symbol im Kopf des Startbildschirms
+
+          Zwei Reiter über denselben Daten (moments und story lesen beide
+          useMemories) waren zwei Fragen an einen Menschen, der noch keine
+          Antwort hat: für den einzigen real existierenden Nutzerzustand —
+          eine Person, kein Moment — waren drei der fünf Reiter leer. */}
+      <Tabs.Screen name="moments" options={{ href: null }} />
+      <Tabs.Screen name="story" options={{ href: null }} />
       <Tabs.Screen name="community" options={{ href: null }} />
       <Tabs.Screen name="profile" options={{ href: null }} />
       <Tabs.Screen name="scan" options={{ href: null }} />

@@ -19,6 +19,7 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
+import { BackButton } from '../../components/ui/BackButton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { savedDateRepository, cardRepository } from '../../lib/repositories';
@@ -108,6 +109,10 @@ export default function StoryScreen() {
       <SafeAreaView style={styles.container}>
         {obscured && <PrivacyScreen />}
         <View style={styles.header}>
+          {/* Diese Seite war ein Reiter und wird jetzt vom Fuß der
+              Momente-Wand geoeffnet — ohne Reiter-Leiste braucht sie einen
+              Weg zurück (Entscheidung Alicia, 17.08.2026). */}
+          <BackButton />
           <View style={styles.kickerRow}>
             <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
             <Text style={styles.kicker}>{t('OUR STORY', 'EURE GESCHICHTE')}</Text>
@@ -137,6 +142,7 @@ export default function StoryScreen() {
         }
       >
         <View style={styles.header}>
+          <BackButton />
           <View style={styles.kickerRow}>
             <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
             <Text style={styles.kicker}>{t('OUR STORY', 'EURE GESCHICHTE')}</Text>

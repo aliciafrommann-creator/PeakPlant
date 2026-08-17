@@ -1,17 +1,28 @@
 /**
- * Weekly streak computation — pure and testable (no React, no storage).
+ * Gesammelte Wochen — rein und testbar (kein React, kein Speicher).
  *
- * A "real" streak (Strava-style): consecutive weeks in which the space preserved
- * at least one moment. The current week being empty does not immediately break
- * the streak — it puts it `atRisk` until the week ends (one week of grace).
+ * ENTSCHEIDUNG (Alicia, 17.08.2026): Das war eine Serie im Strava-Sinn —
+ * aufeinanderfolgende Wochen, mit einem `atRisk`-Zustand, der warnte, wenn die
+ * laufende Woche noch leer war. Damit war es etwas, das man VERLIEREN kann,
+ * und genau das verbietet MANIFESTO §3 („Keine Streaks als Druck").
+ *
+ * Jetzt zählt es, was da ist: die Anzahl verschiedener Wochen, in denen dieser
+ * Space je einen Moment festgehalten hat. Die Zahl kann nur steigen. Eine
+ * ausgelassene Woche kostet nichts — sie wird bloß nicht mitgezählt.
+ *
+ * Alicias eigene Formel dafür: freischalten ja, verlieren nein.
+ *
+ * Kein Feld heißt mehr `streak`. Wer es später wieder auf Serien umbaut, muss
+ * diesen Kommentar bewusst löschen — und das ist der Punkt.
  */
 
-export interface StreakResult {
-  /** Number of consecutive active weeks (including the current/last active one). */
+export interface SharedWeeksResult {
+  /** Wie viele verschiedene Wochen mindestens einen Moment tragen. */
   count: number;
-  /** True when there is a live streak but the current week has no moment yet. */
-  atRisk: boolean;
+  /** Ob überhaupt etwas gesammelt wurde. */
   active: boolean;
+  /** Ob in der laufenden Woche schon ein Moment liegt — reine Tatsache, keine Warnung. */
+  thisWeek: boolean;
 }
 
 function localDateKey(date: Date): string {
@@ -21,45 +32,23 @@ function localDateKey(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
-/** Monday 00:00 (local) of the week containing `date`, as a YYYY-MM-DD key. */
+/** Montag 00:00 (lokal) der Woche, die `date` enthält, als YYYY-MM-DD. */
 export function weekKey(date: Date): string {
   const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  const day = d.getDay(); // 0 = Sunday … 6 = Saturday
+  const day = d.getDay(); // 0 = Sonntag … 6 = Samstag
   const diffToMonday = (day + 6) % 7;
   d.setDate(d.getDate() - diffToMonday);
   return localDateKey(d);
 }
 
-function addWeeks(key: string, weeks: number): string {
-  const d = new Date(`${key}T00:00:00`);
-  d.setDate(d.getDate() + weeks * 7);
-  return weekKey(d);
-}
-
-export function computeWeeklyStreak(isoDates: string[], now: Date = new Date()): StreakResult {
-  if (isoDates.length === 0) return { count: 0, atRisk: false, active: false };
+export function computeSharedWeeks(isoDates: string[], now: Date = new Date()): SharedWeeksResult {
+  if (isoDates.length === 0) return { count: 0, active: false, thisWeek: false };
 
   const weeks = new Set(isoDates.map((iso) => weekKey(new Date(iso))));
-  const currentWeek = weekKey(now);
 
-  let cursor = currentWeek;
-  let atRisk = false;
-
-  if (!weeks.has(currentWeek)) {
-    const previousWeek = addWeeks(currentWeek, -1);
-    if (weeks.has(previousWeek)) {
-      atRisk = true;
-      cursor = previousWeek;
-    } else {
-      return { count: 0, atRisk: false, active: false };
-    }
-  }
-
-  let count = 0;
-  while (weeks.has(cursor)) {
-    count += 1;
-    cursor = addWeeks(cursor, -1);
-  }
-
-  return { count, atRisk, active: count > 0 };
+  return {
+    count: weeks.size,
+    active: weeks.size > 0,
+    thisWeek: weeks.has(weekKey(now)),
+  };
 }

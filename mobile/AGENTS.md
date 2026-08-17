@@ -63,11 +63,51 @@ building; it reflects the **current** codebase, not the initial scaffold.
 
 ## Navigation (expo-router)
 
-Tabs: `home` (Together), `discover`, `editions`, `community` (Places), `profile`
-(Me). Hidden routes: `scan`, `moments`, `grow`, `us`. Modals: `space/new`,
-`space/edit`, `customize`, `note/compose`, `plus`. Auth flow: `welcome` →
-`language` → `intro` (60–90s explainer) → `sign-in` (email OTP) → `onboarding` →
-`invite`.
+Tabs: **`home` (Together) · `discover` (Entdecken) · `editions` (Sammlung)** —
+three, since 17.08.2026. Hidden but fully navigable: `moments`, `story`,
+`community` (Places), `profile` (Me), `scan`, `grow`, `us`. Modals:
+`space/new`, `space/edit`, `customize`, `note/compose`, `plus`. Auth flow:
+`welcome` → `language` → `intro` (60–90s explainer) → `sign-in` (email OTP) →
+`onboarding` → `invite`.
+
+Ways into the hidden screens (each has exactly one door — don't add a second):
+`moments` → the "all N moments, by month" link at the foot of the wall ·
+`story` → "what grew between you", same place · `community` → the 🗺️ toggle on
+Discover · `profile` → the person icon in the Home header · `scan` → the "scan
+a card" link on Home.
+
+### Entscheidung 021 — Startbildschirm, Reiter, Sammel-Wochen (Alicia, 17.08.2026)
+
+Nach Alicias erstem Test auf einem echten Gerät: *„das Modell funktioniert,
+aber die UX nicht"* — und, als Maßstab, *„das ist die landing page, das hooked
+mich schon hier, kann ich dies und das machen, DAS IST MEIN SPACE."*
+
+1. **Home ist die Momente-Wand.** Vorher ein Hub: Vorschlagskarte, die Frage
+   „was wollt ihr zusammen machen?", drei weitere Antwortwege, Statistiken,
+   Filmstreifen, Editionen, Notizen — **dreizehn** Abschnitts-Überschriften in
+   Großbuchstaben, und die festgehaltenen Momente erst an dritter Stelle,
+   begrenzt auf drei. Strava, Instagram und BeReal zeigen strukturell EIN
+   Objekt, groß, wiederholt, mit der Haupthandlung außerhalb der Liste und
+   ohne eine einzige Abschnitts-Überschrift auf dem Startbildschirm.
+   Die vier Regeln, die den Bildschirm offen halten, stehen im Kopfkommentar
+   von `app/(tabs)/home.tsx` — wer hier baut, liest sie zuerst.
+2. **Fünf Reiter → drei.** `moments` und `story` lasen beide `useMemories`:
+   zwei Reiter über denselben Daten. Für den einzigen real existierenden
+   Nutzerzustand (eine Person, null Momente, kein Deck) waren **drei von fünf**
+   Reitern leer. Nichts wurde gelöscht, nur umgehängt; beide Seiten haben
+   seither einen `BackButton`, weil sie ohne Reiter-Leiste sonst Sackgassen
+   wären.
+3. **Kein Streak mehr.** `lib/streaks.ts` zählte aufeinanderfolgende Wochen und
+   warnte über `atRisk`, wenn die laufende Woche noch leer war — etwas, das man
+   verlieren kann, und damit ein Verstoß gegen MANIFESTO §3. Jetzt zählt
+   `computeSharedWeeks()` verschiedene Wochen mit mindestens einem Moment; die
+   Zahl kann nur steigen. Alicias Formel: **freischalten ja, verlieren nein.**
+   Der Feature-Schlüssel heißt aus Kompatibilitätsgründen weiter `streaks`.
+
+Offen und bewusst NICHT mitgemacht (eigene Runden, damit sie einzeln beurteilbar
+bleiben): der Größen-/Dichte-Durchgang, die Kontrast-Korrektur (zwei Grautöne
+erreichen auf dem Papierton nur 2,4 bzw. 3,5:1), die neun toten Zeilen im
+Sammlung-Reiter, und der fehlende Kamera-Aufnahmeweg in `memory/create`.
 
 ## Design system (current — editorial warm-stone, NOT the old scaffold)
 
