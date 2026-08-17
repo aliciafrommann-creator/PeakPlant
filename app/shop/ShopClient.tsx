@@ -72,11 +72,11 @@ function WaitlistModal({ onClose, source }: { onClose: () => void; source: strin
                 {status === 'loading' ? '...' : 'get early access'}
               </button>
             </form>
-            <p style={{ marginTop: '1rem', fontSize: '0.7rem', color: '#1A1A1A', opacity: 0.4, lineHeight: 1.6, fontFamily: PP }}>
+            <p style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#1A1A1A', opacity: 0.62, lineHeight: 1.6, fontFamily: PP }}>
               by joining you agree to our{' '}
               <Link href="/datenschutz" style={{ color: 'inherit', textDecoration: 'underline' }}>privacy policy</Link>.
             </p>
-            {status === 'error' && <p style={{ marginTop: 8, fontSize: 11, color: '#e74c3c', fontFamily: PP }}>Something went wrong. Try again.</p>}
+            {status === 'error' && <p style={{ marginTop: 8, fontSize: 12.5, color: '#B5532E', fontFamily: PP }}>Something went wrong. Try again.</p>}
           </>
         )}
       </motion.div>
