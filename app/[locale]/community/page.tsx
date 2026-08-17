@@ -1,8 +1,11 @@
 'use client'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { NavBar } from '../../../components/NavBar'
+import { MembersArea } from '../../../components/MembersArea'
+import { getSupabaseBrowser } from '../../../lib/supabaseBrowser'
+import type { Locale } from '../../../lib/translations'
 import { useIsMobile } from '../../../hooks/useIsMobile'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
@@ -113,6 +116,44 @@ export default function CommunityPage({ params }: { params: { locale: string } }
   const { locale } = params
   const isDE = locale === 'de'
   const isMobile = useIsMobile()
+  /* Eine Adresse, zwei Zustände (P2.2): wer angemeldet ist, sieht den
+     Mitgliederbereich statt der Einladung, sich anzumelden. 'checking' ist ein
+     eigener Zustand — solange die Session geprüft wird, behauptet die Seite
+     weder das eine noch das andere. Die Prüfung läuft im Client, weil die
+     Session im localStorage des Browsers liegt und ein Server-Render sie
+     nicht sehen kann. */
+  const [session, setSession] = useState<'checking' | 'none' | 'active'>('checking')
+
+  useEffect(() => {
+    const supabase = getSupabaseBrowser()
+    if (!supabase) { setSession('none'); return }
+    let cancelled = false
+    supabase.auth.getSession()
+      .then(({ data, error }) => {
+        if (cancelled) return
+        if (error) {
+          console.error('[Community] getSession failed:', error.message)
+          setSession('none')
+          return
+        }
+        setSession(data.session ? 'active' : 'none')
+      })
+      .catch(err => {
+        if (cancelled) return
+        console.error('[Community] getSession threw:', err)
+        setSession('none')
+      })
+    return () => { cancelled = true }
+  }, [])
+
+  if (session === 'active') {
+    return (
+      <div style={{ fontFamily: PP, background: '#FBFAF7', color: '#1A1A1A', minHeight: '100vh' }}>
+        <NavBar activePath="/community" />
+        <MembersArea locale={(locale === 'de' ? 'de' : 'en') as Locale} />
+      </div>
+    )
+  }
 
   const pairs = isDE ? [
     ['Leistung', 'Präsenz'],
