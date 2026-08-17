@@ -70,6 +70,9 @@ type Copy = {
   listNote: string
   openLabel: string
   open: string
+  invitedLabel: string
+  invitedTitle: string
+  invitedBody: string
 }
 
 /* Jeder Satz hier ist entweder eine Beschreibung dessen, was gebaut wird, oder
@@ -102,6 +105,9 @@ const COPY: Record<Locale, Copy> = {
     listNote: 'du landest auf derselben liste wie die warteliste — von dort kommt auch der monatliche brief. abmelden geht in jeder mail mit einem klick.',
     openLabel: 'was wir noch nicht sagen können',
     open: 'wann es losgeht, auf welchen geräten, wie viele menschen dabei sind und was es dafür gibt — das steht noch nicht fest. wir schreiben hier nichts hin, was wir noch nicht halten können. sobald es losgeht, meldet sich alicia bei dir.',
+    invitedLabel: 'du wurdest eingeladen',
+    invitedTitle: 'jemand möchte diesen space mit dir teilen.',
+    invitedBody: 'ehrlich gesagt: die app ist noch in geschlossener beta, du kannst sie also gerade nicht einfach herunterladen — auch nicht mit dem code, den du bekommen hast. heb ihn auf, er bleibt gültig. trag hier deine adresse ein: wir sehen dann, dass jemand auf dich wartet, und ihr kommt gemeinsam rein, sobald es losgeht.',
   },
   en: {
     eyebrow: 'the beta',
@@ -128,6 +134,9 @@ const COPY: Record<Locale, Copy> = {
     listNote: 'you land on the same list as the waitlist — the monthly letter comes from there too. every mail carries a one-click unsubscribe.',
     openLabel: 'what we cannot tell you yet',
     open: 'when it starts, on which devices, how many people are in and what you get for it — none of that is decided. we do not write down what we cannot keep. the moment it starts, alicia gets in touch.',
+    invitedLabel: 'you were invited',
+    invitedTitle: 'someone wants to share their space with you.',
+    invitedBody: 'honestly: the app is still in closed beta, so you cannot simply download it right now — not even with the code you were given. keep it, it stays valid. leave your address here: we will see that someone is waiting for you, and you two get in together the moment it starts.',
   },
 }
 
@@ -148,12 +157,21 @@ export default function BetaPage() {
      ehrlich zurueck (`mailed`) — „schau in dein postfach" wird nur behauptet,
      wenn wirklich etwas verschickt wurde. */
   const [mailed, setMailed] = useState(false)
+  /* Kommt jemand über die Einladung des Partners (?invited=1 aus der
+     Einladungsnachricht der App)? Diese Menschen sind die wertvollsten
+     Beta-Tester überhaupt: sie kommen zu zweit, und genau Paare misst der
+     North Star. Sie bekommen deshalb eine eigene Ansprache und eine eigene
+     Quelle in der Liste — statt derselben Seite, die einem Fremden erklärt,
+     dass noch nichts feststeht, während ihr Mensch auf sie wartet. */
+  const [invited, setInvited] = useState(false)
 
   useEffect(() => {
     /* ?lang=de gewinnt (damit man aus einer Mail sprachgenau verlinken kann),
        sonst entscheidet die Browsersprache. Nur beim ersten Rendern — eine
        spaetere Klick-Auswahl wird nicht ueberschrieben. */
-    const param = new URLSearchParams(window.location.search).get('lang')
+    const search = new URLSearchParams(window.location.search)
+    setInvited(search.get('invited') === '1')
+    const param = search.get('lang')
     if (param === 'de' || param === 'en') { setLocale(param); return }
     if (navigator.language?.toLowerCase().startsWith('de')) setLocale('de')
   }, [])
@@ -171,7 +189,9 @@ export default function BetaPage() {
       const res = await fetch('/api/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, source: 'beta', locale }),
+        /* Eigene Quelle, damit in der Liste sichtbar ist, wer von einem
+           wartenden Partner kommt — diese Paare zuerst einladen. */
+        body: JSON.stringify({ email, source: invited ? 'beta-invited' : 'beta', locale }),
       })
       const data = await res.json()
       if (data.duplicate) finalStatus = 'duplicate'
@@ -250,6 +270,38 @@ export default function BetaPage() {
         >
           {t.lead}
         </p>
+
+        {/* Wer über die Einladung des Partners kommt, bekommt zuerst die
+            Antwort auf seine Frage — nicht die Seite für Neugierige. Ohne das
+            liest jemand mit einem Code in der Hand „steht noch nicht fest",
+            während sein Mensch wartet. */}
+        {invited && (
+          <div
+            style={{
+              background: CREAM,
+              border: `1px solid ${CREAM_EDGE}`,
+              padding: 'clamp(1.5rem, 4vw, 2rem)',
+              marginBottom: 'clamp(3rem, 8vw, 4rem)',
+              maxWidth: 560,
+            }}
+          >
+            <p style={{ ...labelStyle, color: TERRACOTTA, marginBottom: '0.9rem' }}>{t.invitedLabel}</p>
+            <p
+              style={{
+                fontSize: '1.15rem',
+                fontWeight: 300,
+                letterSpacing: '-0.01em',
+                lineHeight: 1.4,
+                marginBottom: '0.9rem',
+              }}
+            >
+              {t.invitedTitle}
+            </p>
+            <p style={{ fontSize: '0.95rem', fontWeight: 300, lineHeight: 1.8, color: BODY }}>
+              {t.invitedBody}
+            </p>
+          </div>
+        )}
 
         {/* Warum */}
         <p style={{ ...labelStyle, opacity: 0.4, marginBottom: '1.5rem' }}>{t.reasonsLabel}</p>
