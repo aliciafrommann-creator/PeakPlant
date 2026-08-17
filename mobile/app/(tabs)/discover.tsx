@@ -368,7 +368,7 @@ export default function DiscoverScreen() {
         </View>
 
         <View style={styles.titleBlock}>
-          <Text style={styles.generatorLabel}>{t('LASST EUCH ÜBERRASCHEN · DATE GENERATOR', 'LASST EUCH ÜBERRASCHEN · DATE GENERATOR')}</Text>
+          <Text style={styles.generatorLabel}>{t('SURPRISE YOURSELVES · DATE GENERATOR', 'LASST EUCH ÜBERRASCHEN · DATE GENERATOR')}</Text>
           <Text style={styles.title}>{t('what could you do\ntogether?', 'was könntet\nihr zusammen tun?')}</Text>
           <Text style={styles.subtitle}>
             {t(
