@@ -260,3 +260,31 @@ Nach 0020 anwenden. Zwei Tabellen, beide additiv:
 > Versand-Weg (Edge Function auf `memories`-INSERT bzw. nach `redeem_invite`)
 > gebaut ist. Diese Migration legt nur den Boden — sie schadet nicht, wenn der
 > Rest noch fehlt.
+
+### Push scharf schalten (wenn die App auf echten Telefonen ist)
+
+Die Mechanik liegt vollständig im Repo und tut nichts, solange diese drei
+Schritte nicht gemacht sind. Reihenfolge:
+
+1. **Migration `0021`** anwenden (Tabellen `push_tokens`, `push_deliveries`).
+2. **App-Build mit Push:** `cd mobile && npx expo install expo-notifications`,
+   dann `eas build`. Expo fragt beim Build, ob es die Push-Schlüssel anlegen
+   darf → ja. Es gibt **nichts zu kopieren**. Ab diesem Build wählt
+   `lib/notifications/index.ts` automatisch den echten Provider.
+3. **Versand deployen und verdrahten:**
+   ```
+   supabase functions deploy push-notify
+   supabase secrets set PUSH_WEBHOOK_SECRET=<langes-zufälliges-secret>
+   ```
+   Dann im Dashboard unter **Database → Webhooks** zwei Hooks anlegen, beide
+   auf die Funktions-URL, beide mit dem Header `x-webhook-secret`:
+   - `memories` · INSERT → „ein neuer Moment"
+   - `space_members` · INSERT → „ihr seid zu zweit"
+
+**Was dabei garantiert ist** (und in `mobile/lib/notifications/policy.ts` sowie
+in der Funktion doppelt geprüft wird): höchstens eine Nachricht pro Space und
+Tag, nichts zwischen 22 und 8 Uhr, nie Inhalt im Sperrbildschirm, und wer
+etwas ausgelöst hat, bekommt darüber selbst keine Nachricht.
+
+**Bekannte Grenze:** In der Nachtruhe wird verworfen, nicht nachgeholt (eine
+Edge Function kann nicht warten). Steht im Backlog, nicht im Code versteckt.

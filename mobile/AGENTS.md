@@ -112,6 +112,18 @@ notifications, automatic social sharing, generic AI chat surfaces.
   on peak-plant.com (app.json already declares the domains).
 - `expo-secure-store` (session hardening, B1) is documented in
   `lib/supabase/client.ts` — install + wire before store submission.
+- **Push (P2.1)** — die Frequenzregel ist eine getroffene Produktentscheidung
+  (Alicia, 17.08.2026) und steht als geprüfte Logik in
+  `lib/notifications/policy.ts`: höchstens **eine** Nachricht pro Space und
+  Tag (kategorieübergreifend), **nichts zwischen 22 und 8 Uhr** (verschoben,
+  nicht verworfen), **nur zwei Anlässe** (Partner beigetreten / neuer Moment),
+  **nie Inhalt im Sperrbildschirm**. Wer eine weitere Push-Stelle baut, ruft
+  `decideDelivery()` auf — eine zweite, halbe Regel woanders bedeutet zwei
+  Wahrheiten, und eine davon schickt irgendwann nachts.
+  `lib/notifications/index.ts` wählt den Provider selbst: mit nativem
+  `expo-notifications` der echte, sonst der No-op — kein Schalter, den jemand
+  vergessen kann. Die Push-Schlüssel entstehen beim ersten `eas build`
+  (Expo fragt, ob es sie anlegen darf); Tabellen: Migration `0021`.
 
 ## Running
 
