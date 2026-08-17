@@ -119,25 +119,52 @@ Support-System, verifizierte Identität (Ausweis + Selfie/Video).
 Premium als Mitgliedschaft: Zugang zu Events, erweiterte Werteanalyse, private
 Community-Räume, Early Access, Coaching, Support.
 
-### Drei Kollisionen mit bereits Entschiedenem
+### Entschiedene Richtung (Alicia, 17.08.2026)
 
-Das ist der eigentliche Wert dieses Eintrags — nicht als Veto, sondern damit die
-Entscheidung bewusst fällt, wenn es so weit ist:
+Alicia hat den Rahmen aus „Kennenlernen ohne Swipen" bestätigt. Damit ist das
+**keine Option mehr, sondern die Leitplanke** für alles, was hier später
+entsteht:
 
-1. **„Kompatibilitäts-Scoring".** MANIFESTO §1 und §3 verbieten Beziehungs- und
+- **Die kleinste Einheit ist ein Abend, kein Mensch.** Kein Profil-Raster, kein
+  Durchblättern von Personen. Man zeigt sich, indem man kommt.
+- **Sicherheit in vier Schichten**, jede für sich tragfähig: keine
+  durchblätterbaren Profile und Verifizierung vorab · echter Ort mit anwesender
+  Gastgeberin, Adresse erst nach Zusage, **keine Standortfreigabe, nie** ·
+  Kontakt erst bei beidseitigem Ja, Melden mit menschlicher Prüfung und ohne
+  Begründungspflicht · dauerhaft keine Likes, keine Bewertungen von Menschen,
+  **harte Trennwand zwischen Kennenlernen und Tagebuch**.
+- **Die KI ordnet Angebote, sie beurteilt keine Menschen.** Ein Satz, der die
+  Grenze vollständig beschreibt.
+- **Premium rechtfertigt sich über Knappheit und einen echten Abend**, nicht
+  über freigeschaltete Funktionen. Der Kern (Karten, Momente, Tagebuch) bleibt
+  vollständig kostenlos.
+- **Reihenfolge:** jetzt nichts davon · dann zwei bis drei Abende manuell
+  veranstalten, ohne Code · erst bei Wiederkehr ohne Einzeleinladung in die App
+  · Kennenlernen zwischen Teilnehmenden zuallerletzt.
+
+Offen bleiben Details, die erst mit echten Abenden entscheidbar sind:
+Gruppengröße, Preis, Verifizierungs-Dienstleister, Umgang mit Absagen.
+
+### Drei Kollisionen — durch die Richtungsentscheidung aufgelöst
+
+Diese drei Punkte aus der Roadmap-Grafik stehen im Widerspruch zur bestätigten
+Richtung. Sie bleiben hier stehen, damit niemand sie später versehentlich aus
+der alten Grafik wieder aufgreift:
+
+1. **„Kompatibilitäts-Scoring" — gestrichen.** MANIFESTO §1 und §3 verbieten Beziehungs- und
    Kompatibilitätswerte ausdrücklich („Deine Beziehung ist nichts zum
    Optimieren"), und das Audit führt sie unter *Explicitly Not Building*. Dazu
    kommt: Werte, Orientierung und Beziehungsangaben sind besonders geschützte
    Daten — eine KI, die daraus Rangfolgen von **Menschen** bildet, ist rechtlich
    ein anderes Produkt als eine, die **Abende** vorschlägt. Der gangbare Weg ist
    der zweite: die KI ordnet Angebote, sie beurteilt keine Menschen.
-2. **„KI-gestützte Verhaltensanalyse" als Sicherheits-Frühwarnsystem.** Der
+2. **„KI-gestützte Verhaltensanalyse" als Frühwarnsystem — nicht als erste Schicht.** Der
    Gedanke ist gut gemeint und der Effekt heikel: Es ist eine Überwachung der
    eigenen Mitglieder. Sicherheit trägt hier zuerst über Struktur (verifizierte
    Identität, anwesende Gastgeberin, Kontakt erst bei beidseitigem Ja, Melden
    mit menschlicher Prüfung), nicht über Mustererkennung. Falls doch, dann mit
    Transparenzpflicht nach AI Act und menschlicher Entscheidung am Ende.
-3. **„Beziehungs- und Kommunikations-Coach".** Das Audit hält fest: die KI ist
+3. **„Beziehungs- und Kommunikations-Coach" — gestrichen.** Das Audit hält fest: die KI ist
    Kuratorin, nie Therapeutin, und Tagebuchinhalte gehen nie in Prompts. Ein
    Coach, der die Beziehung deutet, überschreitet beides. Vorbereitungsfragen
    vor einem Abend sind die Version davon, die trägt.
