@@ -16,7 +16,7 @@ const SKIP = [
   // /bestellen itself has no page — only /bestellen/success exists. The bare
   // path is caught below and sent to /shop rather than into a 404.
   '/bestellen',
-  '/letters', '/beta', '/login', '/members',
+  '/letters', '/beta', '/login',
   '/opengraph-image',
 ]
 
@@ -35,6 +35,20 @@ function isSkipped(pathname: string): boolean {
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
+
+  // /members war die zweite Adresse der Community (P2.2): /community warb um
+  // Menschen, /members bediente sie. Jetzt ist /community beides. Alte Links
+  // aus Mails und Lesezeichen landen hier — direkt in der passenden Sprache,
+  // damit es bei einem Sprung bleibt.
+  //
+  // Bewusst hier und nicht als redirect() in einer Seite: Next hat die
+  // statisch vorgerenderte Variante zu einem 307 OHNE Location-Header
+  // wegoptimiert. Im Browser wäre der Lesezeichen-Link damit tot.
+  if (pathname === '/members' || pathname.startsWith('/members/')) {
+    const url = req.nextUrl.clone()
+    url.pathname = `/${preferredLocale(req)}/community`
+    return NextResponse.redirect(url)
+  }
 
   // /bestellen has no page of its own; someone shortening the success URL or
   // guessing the address should land in the shop, not on a 404.

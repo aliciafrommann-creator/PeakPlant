@@ -9,7 +9,7 @@
  * Passwort ueber „passwort vergessen"; der Hinweis steht auf der Seite.
  *
  * Vier Modi:
- *   signin  E-Mail + Passwort → signInWithPassword → /members
+ *   signin  E-Mail + Passwort → signInWithPassword → /community
  *   signup  E-Mail + Passwort → signUp. Verlangt das Projekt eine
  *           Bestaetigung, folgt der confirm-Schritt (Code aus der Mail,
  *           verifyOtp type 'signup') — die Supabase-Vorlage zeigt laut
@@ -19,7 +19,7 @@
  *           Auth → URL Configuration → Redirect URLs stehen, sonst kommt der
  *           Link aus der Mail nicht hierher zurueck.
  *   update  Ankunft aus der Reset-Mail (Session aus dem URL-Hash):
- *           neues Passwort → updateUser → /members.
+ *           neues Passwort → updateUser → /community.
  *
  * Ehrlichkeit (MANIFESTO §1): ohne NEXT_PUBLIC_SUPABASE-Variablen zeigt die
  * Seite eine sichtbare "nicht konfiguriert"-Karte statt eines Formulars, das
@@ -259,7 +259,7 @@ export default function LoginPage() {
       } else {
         ok = true
         if (next === 'members') {
-          window.location.assign('/members')
+          window.location.assign('/community')
           return
         }
         if (next) setMode(next)
@@ -562,7 +562,7 @@ export default function LoginPage() {
 
         <p style={{ marginTop: 'clamp(2.5rem, 7vw, 3.5rem)' }}>
           {/* padding statt der 10px aus .pp-quiet-link: 44px Tap-Hoehe. */}
-          <Link href="/members" className="pp-quiet-link" style={{ fontFamily: PP, padding: '15px 0' }}>
+          <Link href="/community" className="pp-quiet-link" style={{ fontFamily: PP, padding: '15px 0' }}>
             {locale === 'de' ? 'ZUM MITGLIEDERBEREICH →' : 'TO THE MEMBERS AREA →'}
           </Link>
         </p>

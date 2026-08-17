@@ -1,7 +1,12 @@
 'use client'
 /**
- * /members — der Mitgliederbereich hinter dem Passwort-Login (/login:
- * E-Mail + selbst gewähltes Passwort, Entscheidung Alicia 13.08.).
+ * Der Mitgliederbereich hinter dem Passwort-Login (/login: E-Mail + selbst
+ * gewähltes Passwort, Entscheidung Alicia 13.08.).
+ *
+ * Lebte bis P2.2 unter /members, einer zweiten Community-Adresse neben
+ * /community. Zwei Seiten für dieselbe Sache heißt: eine davon ist immer die
+ * veraltete. Jetzt ist es EINE Komponente, die /community im eingeloggten
+ * Zustand rendert; /members leitet dorthin weiter.
  *
  * Session-Pruefung im Client (supabase.auth.getSession): die Session lebt im
  * localStorage des Browsers, ein Server-Render kann sie nicht sehen. Ohne
@@ -21,10 +26,8 @@
  */
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { NavBar } from '../../components/NavBar'
-import { SiteFooter } from '../../components/SiteFooter'
-import type { Locale } from '../../lib/translations'
-import { getSupabaseBrowser, isSupabaseConfigured } from '../../lib/supabaseBrowser'
+import type { Locale } from '../lib/translations'
+import { getSupabaseBrowser, isSupabaseConfigured } from '../lib/supabaseBrowser'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -122,8 +125,8 @@ const cardStyle = {
   padding: 'clamp(1.5rem, 6vw, 2.5rem)',
 } as const
 
-export default function MembersPage() {
-  const [locale, setLocale] = useState<Locale>('en')
+export function MembersArea({ locale: initialLocale }: { locale: Locale }) {
+  const [locale, setLocale] = useState<Locale>(initialLocale)
   /* 'checking' als eigener Zustand: waehrend getSession laeuft, darf die Seite
      weder "nicht angemeldet" behaupten noch Mitglieder-Inhalte zeigen. */
   const [session, setSession] = useState<'checking' | 'none' | 'active'>('checking')
@@ -203,9 +206,6 @@ export default function MembersPage() {
   }
 
   return (
-    <div style={{ fontFamily: PP, background: PAPER, color: INK, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <NavBar activePath="/members" />
-
       <main
         lang={locale}
         style={{
@@ -343,8 +343,5 @@ export default function MembersPage() {
           </>
         )}
       </main>
-
-      <SiteFooter locale={locale} />
-    </div>
   )
 }
