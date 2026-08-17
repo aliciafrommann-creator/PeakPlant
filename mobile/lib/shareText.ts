@@ -1,4 +1,5 @@
 import type { Memory, MomentCard, SavedDate } from './types';
+import { GET_THE_APP_URL } from './links';
 
 /**
  * Build the text a user shares when they choose to send a moment to another app.
@@ -28,7 +29,12 @@ export function composeInviteText(code: string, spaceName?: string): string {
   return [
     opener,
     `Your invite code: ${trimmedCode}`,
-    'Open the app, choose "join with code", and enter it. 🌻',
+    // Two fixes, both about the person receiving this: they usually do not
+    // have the app yet, so the message now carries the way to get it — and
+    // the step names the button that actually exists ("I have a code"), not
+    // one that never did ("join with code").
+    `Get the app: ${GET_THE_APP_URL}`,
+    'Then tap "I have a code" and enter it. 🌻',
   ].join('\n\n');
 }
 

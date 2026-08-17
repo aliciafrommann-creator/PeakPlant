@@ -14,6 +14,20 @@
 /** Public web origin. Card/idea paths resolve here and open the app if present. */
 export const APP_BASE_URL = 'https://peak-plant.com';
 
+/**
+ * Where a partner who does NOT have the app yet is sent.
+ *
+ * The invite message used to say "open the app and enter the code" — to
+ * someone who has no app and no way to get one from that message. Four spaces
+ * were created in production and not one of them ever got a second member;
+ * this dead end is the most likely reason.
+ *
+ * `/beta` is the honest destination while the app is in closed beta: it is a
+ * real page that explains the state and takes a request. When the app is in
+ * the stores, this constant becomes the store link — one place to change.
+ */
+export const GET_THE_APP_URL = `${APP_BASE_URL}/beta`;
+
 /** Link to a physical card's prompt. Matches the QR `/c/<id>` form (qr.ts). */
 export function cardLink(cardId: string): string {
   return `${APP_BASE_URL}/c/${encodeURIComponent(cardId)}`;
