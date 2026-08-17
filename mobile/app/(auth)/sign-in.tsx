@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   inner: { flex: 1, paddingHorizontal: Spacing.screen, paddingVertical: Spacing.xl, justifyContent: 'space-between' },
   top: { paddingTop: Spacing.md },
   center: { flex: 1, justifyContent: 'center', gap: Spacing.md },
-  title: { ...Typography.editorial, fontSize: 34, lineHeight: 40 },
+  title: { ...Typography.editorial },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
   input: {
     fontSize: 18,
@@ -197,5 +197,5 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   buttonDisabled: { opacity: 0.4 },
-  buttonText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },
+  buttonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
 });

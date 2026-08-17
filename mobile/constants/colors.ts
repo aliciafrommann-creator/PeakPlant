@@ -20,13 +20,35 @@ export const Colors = {
   surface: '#FFFFFF',
 
   // --- Text ---
-  text: '#1E1C1A',
-  textMuted: '#5A554E',
-  textSubtle: '#857F76',
-  textFaint: '#A29C92',
+  //
+  // Die Werte sind gegen den Papierton #F3F1EC gerechnet (WCAG-Kontrast, nicht
+  // geschätzt). AA verlangt 4,5:1 für kleinen Text und 3:1 für großen.
+  // Vorher fielen zwei Stufen durch — auf dem Gerät bei Tageslicht war das
+  // sichtbar, und die App setzt 67 % ihrer Schrift bei 13 pt und darunter:
+  //   textSubtle #857F76 = 3,51:1   → 25 Stellen kombinierten das mit ≤ 11 pt
+  //   textFaint  #A29C92 = 2,41:1   → 29 Stellen ebenso
+  // Das ist ein eigener Fehler, unabhängig von „alles zu groß" (MANIFESTO §1:
+  // eine App, deren Text man nicht lesen kann, hält ihr Versprechen nicht).
+  text: '#1E1C1A', //      15,05:1 — Fließtext, Titel
+  textMuted: '#5A554E', //  6,54:1 — sekundärer Fließtext
+  textSubtle: '#726D65', // 4,55:1 — kleine Etiketten, Meta. Besteht AA.
+  /**
+   * Die leiseste Stufe: 3,03:1. Besteht AA NUR für großen Text (ab 24 pt bzw.
+   * 18,66 pt fett) und für Nicht-Text — Trennlinien, deaktivierte Symbole,
+   * Dekoration. Für kleine Schrift gehört `textSubtle` her.
+   */
+  textFaint: '#908A81',
 
   // --- Primary accent (legacy `accent` retuned: gold → sun-faded chili) ---
+  /** Flächen, Ränder, Symbole. Als FÜLLUNG richtig, als kleine Schrift nicht. */
   accent: '#CF4B2C',
+  /**
+   * Derselbe Chili, nur so weit abgedunkelt, dass er als kleine Schrift auf
+   * dem Papierton AA besteht: 4,51:1 statt 3,96:1. Optisch kaum zu
+   * unterscheiden — für Etiketten in Akzentfarbe (z. B. 9–11 pt) die richtige
+   * Wahl. `accent` bleibt die Füllfarbe.
+   */
+  accentInk: '#C04528',
   accentLight: '#F0CDBF',
 
   // --- Lines ---

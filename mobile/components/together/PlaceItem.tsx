@@ -41,10 +41,10 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
   },
   partner: {
-    fontSize: 7,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2,
-    color: Colors.accent,
+    letterSpacing: 1.2,
+    color: Colors.accentInk,
     borderWidth: 1,
     borderColor: Colors.accent,
     paddingHorizontal: 4,
@@ -53,19 +53,19 @@ const styles = StyleSheet.create({
   area: {
     fontSize: 11,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     letterSpacing: 0.5,
   },
   perk: {
     fontSize: 12,
     fontWeight: '300',
-    color: Colors.accent,
+    color: Colors.accentInk,
     marginTop: 2,
   },
   hint: {
     fontSize: 11,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     marginTop: 2,
   },
 });

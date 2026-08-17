@@ -322,14 +322,14 @@ const styles = StyleSheet.create({
   keepButtonText: {
     fontSize: 11,
     fontWeight: '600',
-    letterSpacing: 2.4,
+    letterSpacing: 1.2,
     color: Colors.white,
   },
   errorBlock: { gap: 6, marginTop: Spacing.md },
   errorRetry: {
     fontSize: 11,
     fontWeight: '600',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Accents.chili,
   },
   container: {
@@ -346,22 +346,22 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
   },
   backText: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '400',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.textMuted,
   },
   headerTitle: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '600',
-    letterSpacing: 2.5,
+    letterSpacing: 1.2,
     color: Colors.text,
   },
   saveText: {
     fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 2,
-    color: Colors.accent,
+    letterSpacing: 1.2,
+    color: Colors.accentInk,
   },
   saveDisabled: {
     opacity: 0.3,
@@ -376,9 +376,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   prompt: {
-    ...Typography.editorial,
-    fontSize: 24,
-    lineHeight: 30,
+    ...Typography.title,
   },
   photoArea: {
     backgroundColor: Colors.backgroundCream,
@@ -411,7 +409,7 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   photoChangeText: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '600',
     letterSpacing: 1.5,
     color: Colors.white,
@@ -432,7 +430,7 @@ const styles = StyleSheet.create({
   photoText: {
     fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.text,
   },
   photoHint: {
@@ -445,10 +443,10 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   noteLabel: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 3,
-    color: Colors.textFaint,
+    letterSpacing: 1.2,
+    color: Colors.textSubtle,
   },
   noteInput: {
     fontSize: 15,
@@ -461,7 +459,7 @@ const styles = StyleSheet.create({
   privateNote: {
     fontSize: 11,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     letterSpacing: 0.5,
     fontStyle: 'italic',
   },

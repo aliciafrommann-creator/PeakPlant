@@ -370,15 +370,13 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   label: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
-    letterSpacing: 3,
+    letterSpacing: 1.2,
     color: Colors.textSubtle,
   },
   title: {
     ...Typography.editorial,
-    fontSize: 34,
-    lineHeight: 40,
   },
   subtitle: {
     fontSize: 14,
@@ -394,10 +392,10 @@ const styles = StyleSheet.create({
     borderRadius: Radii.lg,
   },
   codeLabel: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
-    letterSpacing: 3,
-    color: Colors.accent,
+    letterSpacing: 1.2,
+    color: Colors.accentInk,
   },
   code: {
     fontSize: 36,
@@ -435,10 +433,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.border,
   },
   dividerText: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '400',
-    letterSpacing: 2,
-    color: Colors.textFaint,
+    letterSpacing: 1.2,
+    color: Colors.textSubtle,
   },
   shareButton: {
     height: 52,
@@ -451,7 +449,7 @@ const styles = StyleSheet.create({
   shareText: {
     fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 3,
+    letterSpacing: 1.2,
     color: Colors.text,
   },
   disabled: { opacity: 0.4 },
@@ -475,7 +473,7 @@ const styles = StyleSheet.create({
   continueText: {
     fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2.5,
+    letterSpacing: 1.2,
     color: Colors.white,
   },
   backText: {
@@ -489,7 +487,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '300',
     letterSpacing: 0.5,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textAlign: 'center',
   },
 });

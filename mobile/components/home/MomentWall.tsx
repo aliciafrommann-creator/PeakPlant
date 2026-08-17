@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     letterSpacing: 0.8,
-    color: Colors.accent,
+    color: Colors.accentInk,
   },
   date: {
     flex: 1,

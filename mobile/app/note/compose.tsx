@@ -116,9 +116,9 @@ const styles = StyleSheet.create({
     color: Colors.text,
   },
   title: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '700',
-    letterSpacing: 3,
+    letterSpacing: 1.2,
     color: Colors.textSubtle,
   },
   titleSpacer: { width: 32 },
@@ -135,16 +135,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   input: {
-    ...Typography.editorial,
-    fontSize: 22,
-    lineHeight: 32,
+    ...Typography.title,
     color: Colors.text,
     flex: 1,
     textAlignVertical: 'top',
   },
   counter: {
     fontSize: 11,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textAlign: 'right',
     marginTop: Spacing.sm,
     paddingBottom: Spacing.md,
@@ -173,7 +171,7 @@ const styles = StyleSheet.create({
   ctaText: {
     fontSize: 11,
     fontWeight: '600',
-    letterSpacing: 2.5,
+    letterSpacing: 1.2,
     color: Colors.white,
   },
 });

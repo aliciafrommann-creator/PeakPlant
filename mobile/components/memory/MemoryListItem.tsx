@@ -58,10 +58,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardNum: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
-    letterSpacing: 2,
-    color: Colors.accent,
+    letterSpacing: 1.2,
+    color: Colors.accentInk,
     marginBottom: 4,
   },
   note: {
@@ -72,10 +72,10 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   date: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '400',
     letterSpacing: 1,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
 });

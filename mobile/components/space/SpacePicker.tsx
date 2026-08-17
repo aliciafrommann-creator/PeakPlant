@@ -212,10 +212,10 @@ const styles = StyleSheet.create({
     maxHeight: '80%',
   },
   title: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 2.5,
-    color: Colors.textFaint,
+    letterSpacing: 1.2,
+    color: Colors.textSubtle,
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.xs,
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   rowType: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
     letterSpacing: 1,
     color: Colors.textSubtle,

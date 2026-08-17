@@ -502,9 +502,7 @@ const styles = StyleSheet.create({
   headerText: { flex: 1 },
   nameRow: { flexDirection: 'row', alignItems: 'center' },
   spaceName: {
-    ...Typography.editorial,
-    fontSize: 22,
-    lineHeight: 27,
+    ...Typography.title,
     color: Colors.text,
     flexShrink: 1,
   },
@@ -542,7 +540,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 2,
     borderLeftColor: Colors.accent,
   },
-  partnerHeart: { fontSize: 14, color: Colors.accent, marginTop: 2 },
+  partnerHeart: { fontSize: 14, color: Colors.accentInk, marginTop: 2 },
   partnerText: {
     ...Typography.editorial,
     flex: 1,
@@ -557,7 +555,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.lg,
     gap: Spacing.xs,
   },
-  leadTitle: { ...Typography.editorial, fontSize: 24, lineHeight: 30, color: Colors.text },
+  leadTitle: { ...Typography.title, color: Colors.text },
   leadHint: { fontSize: 14, fontWeight: '400', lineHeight: 21, color: Colors.textMuted },
 
   // Ruhige Links

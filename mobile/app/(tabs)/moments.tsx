@@ -215,8 +215,8 @@ const styles = StyleSheet.create({
   },
   kickerRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   kickerDot: { width: 6, height: 6, borderRadius: 3 },
-  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
-  title: { ...Typography.editorial, fontSize: 30, lineHeight: 36 },
+  kicker: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
+  title: { ...Typography.editorial },
   subtitle: {
     fontSize: 13,
     fontWeight: '300',
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   monthLabel: {
     fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.textSubtle,
     textTransform: 'uppercase',
     paddingHorizontal: Spacing.screen,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   footer: {
     fontSize: 12,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textAlign: 'center',
     paddingTop: Spacing.lg,
     paddingHorizontal: Spacing.screen,

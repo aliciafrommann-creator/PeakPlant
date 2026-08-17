@@ -22,7 +22,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
 import { Colors, Sections } from '../../constants/colors';
-import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Spacing, Radii, Shadows, Layout } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -298,8 +298,8 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
     gap: Spacing.sm,
   },
-  back: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
-  title: { ...Typography.editorial, fontSize: 30, lineHeight: 36 },
+  back: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
+  title: { ...Typography.editorial },
   subtitle: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
   center: {
     flex: 1,
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   emptyHint: {
     fontSize: 13,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.md,
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  ctaText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  ctaText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   scroll: { padding: Spacing.screen, gap: Spacing.md, paddingBottom: Spacing.xxxl },
   card: {
     backgroundColor: Colors.backgroundCream,
@@ -337,10 +337,10 @@ const styles = StyleSheet.create({
     borderLeftColor: RITUALS,
     ...Shadows.subtle,
   },
-  cardCadence: { fontSize: 8, fontWeight: '500', letterSpacing: 1.5, color: RITUALS },
-  cardTitle: { ...Typography.editorial, fontSize: 21, lineHeight: 27 },
+  cardCadence: { fontSize: 11, fontWeight: '500', letterSpacing: 1.5, color: RITUALS },
+  cardTitle: { ...Typography.subtitle, },
   cardNote: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19, fontStyle: 'italic' },
-  cardRevisited: { fontSize: 11, fontWeight: '300', color: Colors.textFaint },
+  cardRevisited: { fontSize: 11, fontWeight: '300', color: Colors.textSubtle },
   actions: {
     flexDirection: 'row',
     gap: Spacing.sm,
@@ -350,18 +350,18 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   actionPrimary: {
-    height: 40,
+    height: Layout.tapMin,
     flex: 1,
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  actionPrimaryText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.white },
-  actionGhost: { height: 40, paddingHorizontal: Spacing.md, justifyContent: 'center', alignItems: 'center' },
-  actionGhostText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textFaint },
+  actionPrimaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
+  actionGhost: { height: Layout.tapMin, paddingHorizontal: Spacing.md, justifyContent: 'center', alignItems: 'center' },
+  actionGhostText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
   addRow: { paddingVertical: Spacing.md, alignItems: 'center' },
-  addText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  addText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.45)' },
   sheet: {
     backgroundColor: Colors.background,
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
     textAlignVertical: 'top',
   },
-  cadenceLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint, marginTop: Spacing.sm },
+  cadenceLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle, marginTop: Spacing.sm },
   cadenceRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   cadenceChip: {
     paddingHorizontal: Spacing.md,
@@ -413,8 +413,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  sheetCancelText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
+  sheetCancelText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
   sheetConfirm: { height: 44, flex: 1, backgroundColor: Colors.text, justifyContent: 'center', alignItems: 'center', borderRadius: Radii.pill },
   sheetConfirmDisabled: { opacity: 0.35 },
-  sheetConfirmText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
+  sheetConfirmText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
 });

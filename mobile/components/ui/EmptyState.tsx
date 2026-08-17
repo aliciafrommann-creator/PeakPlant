@@ -99,9 +99,9 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   ctaText: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '600',
-    letterSpacing: 2.5,
+    letterSpacing: 1.2,
     color: Colors.white,
   },
   secondary: {

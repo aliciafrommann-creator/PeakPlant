@@ -28,10 +28,10 @@ const styles = StyleSheet.create({
     letterSpacing: 4,
   },
   label: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '300',
-    color: Colors.textFaint,
-    letterSpacing: 4,
+    color: Colors.textSubtle,
+    letterSpacing: 1.2,
     textTransform: 'uppercase',
   },
 });

@@ -104,10 +104,54 @@ mich schon hier, kann ich dies und das machen, DAS IST MEIN SPACE."*
    Zahl kann nur steigen. Alicias Formel: **freischalten ja, verlieren nein.**
    Der Feature-Schlüssel heißt aus Kompatibilitätsgründen weiter `streaks`.
 
-Offen und bewusst NICHT mitgemacht (eigene Runden, damit sie einzeln beurteilbar
-bleiben): der Größen-/Dichte-Durchgang, die Kontrast-Korrektur (zwei Grautöne
-erreichen auf dem Papierton nur 2,4 bzw. 3,5:1), die neun toten Zeilen im
-Sammlung-Reiter, und der fehlende Kamera-Aufnahmeweg in `memory/create`.
+### Entscheidung 022 — Schriftleiter, Dichte, Kontrast (Alicia, 17.08.2026)
+
+Alicias zweiter Befund: *„vlt ist auch alles etwas riesig im Vergleich zu
+Strava."* Sie hatte recht, aber nicht so, wie es aussah.
+
+1. **`constants/typography.ts` steuerte nichts.** Von neun Stufen hatten sechs
+   **null** Verwendungen; `components/ui/Text.tsx`, ihr einziger Abnehmer, war
+   selbst nirgends eingebunden (gelöscht). Und **alle 40** Stellen, die eine
+   Stufe einbanden, überschrieben die Größe unmittelbar daneben wieder — man
+   hätte jede Zahl ändern können, ohne dass sich ein Pixel bewegt. Daher kam
+   das Auseinanderdriften: es gab keine Leiter, an der sich ein neuer
+   Bildschirm festhalten konnte. Jetzt: **eine** Leiter, jede Stufe benutzt,
+   `display · editorial · title · subtitle · cardTitle · body · callout ·
+   caption · micro · label · mono`. **Ein `...Typography.x` mit einem
+   `fontSize` daneben macht die Datei wieder zu Dekoration.**
+2. **Die Verteilung war zweigipflig, nicht zu groß.** 67 % der Schrift lag bei
+   ≤ 13 pt, 14 % ab 19 pt, fast nichts dazwischen: riesige Titel setzten den
+   gefühlten Maßstab, winzige Etiketten saßen am unteren Ende einer sehr hohen
+   Leiter. Korrektur deshalb als **Stauchung von beiden Seiten** — 15
+   Bildschirmtitel von 28–40 auf 26 (durch Löschen ihrer Überschreibungen),
+   und die Etiketten **hoch**: die kleinste Schrift der App war 7 pt, jetzt
+   11 pt. Instagram und Strava setzen ihre kleinste bei 11–12 pt. Ergebnis:
+   ab 19 pt von 14 % auf 8 %.
+3. **Sperrung.** 157 Stellen standen bei ≥ 2 und sind jetzt bei 1.2. Das war
+   die Ursache für aneinander klebende Knopftexte und abgeschnittene Etiketten.
+4. **Abstände**, der größte Einzelposten: `lg` 24→20, `screen` 24→20, `xl`
+   32→28, `xxl` 48→40, `xxxl` 64→48, neue Sprosse `ms: 12`. Der Rahmen um
+   jeden Abschnitt kostete rund 68 pt, bevor Inhalt kam.
+5. **Kontrast — ein eigener Fehler, kein Geschmack.** Gegen den Papierton
+   gerechnet: `textSubtle` #857F76 = **3,51:1**, `textFaint` #A29C92 =
+   **2,41:1**, beide unter den 4,5:1, die AA für kleinen Text verlangt, und
+   **80 Stellen** kombinierten die leiseste Stufe mit ≤ 13 pt. Jetzt
+   `textSubtle` #726D65 (4,55:1) und `textFaint` #908A81 (3,03:1, ausdrücklich
+   nur für Großes und Nicht-Text). Neu `accentInk` #C04528 (4,51:1) für
+   Akzent-Schrift; `accent` bleibt die Füllfarbe.
+6. **Trefferflächen.** Neu `Layout.tapMin/control/cta`. Sechs Bedienelemente
+   lagen bei 32–40 pt und stehen jetzt bei 44.
+
+Eine bewusste Ausnahme: `app/(auth)/welcome.tsx` bleibt bei 52 pt. Ein
+Bildschirm, ein Satz — dort ist „riesig" die Aussage. Der Kommentar dort sagt
+es; wer eine zweite solche Ausnahme braucht, hat vermutlich keine.
+
+Offen und bewusst NICHT mitgemacht: die neun toten Zeilen im Sammlung-Reiter,
+der fehlende Kamera-Aufnahmeweg in `memory/create`, und der Einladungs-Link
+(die Einladung trägt einen Code zum Abtippen statt eines Links — und die
+Zielseite sagt der eingeladenen Person, dass sie die App gar nicht bekommen
+kann; das ist die eigentliche Blockade für „zweites Mitglied", und sie ist
+keine Design-Frage).
 
 ## Design system (current — editorial warm-stone, NOT the old scaffold)
 

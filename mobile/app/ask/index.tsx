@@ -243,8 +243,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  back: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted, width: 60 },
-  headerTitle: { fontSize: 10, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
+  back: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted, width: 60 },
+  headerTitle: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   messages: { padding: Spacing.screen, gap: Spacing.lg, paddingBottom: Spacing.xl },
   userBubble: {
     alignSelf: 'flex-end',
@@ -283,13 +283,13 @@ const styles = StyleSheet.create({
   recConcept: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 18 },
   recMeta: { flexDirection: 'row', gap: 6, alignItems: 'center' },
   recMetaText: { fontSize: 11, fontWeight: '400', color: Colors.textMuted },
-  recMetaDot: { fontSize: 11, color: Colors.textFaint },
+  recMetaDot: { fontSize: 11, color: Colors.textSubtle },
   recWhy: { fontSize: 11, fontWeight: '300', color: Colors.textSubtle, lineHeight: 17 },
   sourceLabel: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '400',
     letterSpacing: 1,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     marginTop: -Spacing.xs,
   },
   inputRow: {

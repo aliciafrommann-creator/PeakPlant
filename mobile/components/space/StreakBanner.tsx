@@ -76,10 +76,10 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   label: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2.5,
-    color: Colors.accent,
+    letterSpacing: 1.2,
+    color: Colors.accentInk,
   },
   count: {
     fontSize: 22,

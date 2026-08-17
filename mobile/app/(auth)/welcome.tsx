@@ -69,6 +69,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: Spacing.xxl,
   },
+  /**
+   * Die einzige Stelle, die bewusst NEBEN der Schriftleiter steht (52 pt statt
+   * 32). Ein Bildschirm, ein Satz, sonst nichts — hier ist „riesig" die
+   * Aussage und nicht das Problem. Alicias Befund („alles etwas riesig") galt
+   * Bildschirmen mit neun Blöcken, die um Aufmerksamkeit konkurrierten; dieser
+   * hat einen. Wer eine zweite solche Ausnahme braucht, hat vermutlich keine.
+   */
   hero: {
     fontSize: 52,
     fontWeight: '200',
@@ -106,14 +113,14 @@ const styles = StyleSheet.create({
   beginText: {
     fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 3,
+    letterSpacing: 1.2,
     color: Colors.white,
   },
   hint: {
     fontSize: 11,
     fontWeight: '300',
     letterSpacing: 1,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
 });

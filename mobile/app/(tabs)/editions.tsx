@@ -9,7 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
-import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Spacing, Radii, Shadows, Layout } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { SEED_EDITIONS, DECK_SIZE_RANGE } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
@@ -149,8 +149,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-end',
   },
-  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
-  title: { ...Typography.editorial, fontSize: 28, lineHeight: 34 },
+  kicker: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
+  title: { ...Typography.editorial },
   lead: {
     fontSize: 14,
     fontWeight: '300',
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
   scanButton: {
-    height: 36,
+    height: Layout.tapMin,
     paddingHorizontal: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.text,
@@ -167,9 +167,9 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   scanButtonText: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.text,
   },
   card: {
@@ -187,11 +187,11 @@ const styles = StyleSheet.create({
   cardUpcoming: { opacity: 0.55 },
   symbol: { fontSize: 28 },
   cardBody: { flex: 1, gap: 3 },
-  editionLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
+  editionLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
   name: { fontSize: 20, fontWeight: '300', color: Colors.text, letterSpacing: -0.3 },
   desc: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
   meta: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
     letterSpacing: 1.5,
     textTransform: 'uppercase',
@@ -199,17 +199,17 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   metaSoon: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
     letterSpacing: 1.5,
     textTransform: 'uppercase',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     marginTop: 4,
   },
   privateBadge: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '400',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     textTransform: 'uppercase',
     color: Colors.textSubtle,
     marginTop: 2,

@@ -87,10 +87,10 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   cardLabel: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '600',
-    letterSpacing: 2.5,
-    color: Colors.accent,
+    letterSpacing: 1.2,
+    color: Colors.accentInk,
     marginBottom: Spacing.sm,
   },
   prompt: {
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   date: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
     letterSpacing: 1.5,
     color: Colors.textSubtle,

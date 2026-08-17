@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  close: { fontSize: 10, fontWeight: '400', letterSpacing: 2, color: Colors.textMuted },
-  headerTitle: { fontSize: 10, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
+  close: { fontSize: 12, fontWeight: '400', letterSpacing: 1.2, color: Colors.textMuted },
+  headerTitle: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   content: { padding: Spacing.screen, gap: Spacing.lg, paddingBottom: Spacing.xxxl },
   lead: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
   row: {
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     borderRadius: Radii.md,
     padding: Spacing.lg,
   },
-  dangerLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.danger },
+  dangerLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.danger },
   dangerRow: {
     paddingVertical: Spacing.md,
     borderTopWidth: 1,
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   footer: {
     fontSize: 11,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     fontStyle: 'italic',
     marginTop: Spacing.lg,
   },

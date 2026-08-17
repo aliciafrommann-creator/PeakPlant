@@ -24,9 +24,12 @@ export default function TabsLayout() {
           paddingBottom: 8 + insets.bottom,
         },
         tabBarActiveTintColor: Colors.text,
-        tabBarInactiveTintColor: Colors.textFaint,
+        // Nicht textFaint: die leiseste Stufe besteht AA nur für großen Text,
+        // und ein Reiter-Label ist 12 pt. Ein Reiter, den man nicht lesen kann,
+        // ist kein zurückhaltender Reiter, sondern ein fehlender.
+        tabBarInactiveTintColor: Colors.textSubtle,
         tabBarLabelStyle: {
-          fontSize: 10,
+          fontSize: 12,
           fontWeight: '500',
           // Bei fünf Reitern passte „GESCHICHTE" nicht in ein Fünftel der
           // Breite. Mit drei Reitern ist Platz — die Sperrung bleibt trotzdem

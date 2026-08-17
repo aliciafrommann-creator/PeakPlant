@@ -197,17 +197,15 @@ const styles = StyleSheet.create({
     gap: Spacing.xl,
   },
   kicker: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
-    letterSpacing: 3,
-    color: Colors.accent,
+    letterSpacing: 1.2,
+    color: Colors.accentInk,
     marginBottom: -Spacing.sm,
   },
   heading: {
     ...Typography.editorial,
-    fontSize: 34,
     letterSpacing: -0.5,
-    lineHeight: 40,
   },
   sub: {
     fontSize: 15,
@@ -220,7 +218,7 @@ const styles = StyleSheet.create({
   featureMark: {
     fontSize: 18,
     fontWeight: '300',
-    color: Colors.accent,
+    color: Colors.accentInk,
     lineHeight: 22,
     width: 20,
   },
@@ -236,7 +234,7 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   ctaDisabled: { opacity: 0.5 },
-  ctaText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },
+  ctaText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
   priceNote: {
     fontSize: 12,
     fontWeight: '400',
@@ -247,7 +245,7 @@ const styles = StyleSheet.create({
   legal: {
     fontSize: 11,
     fontWeight: '400',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     lineHeight: 16,
     textAlign: 'center',
   },

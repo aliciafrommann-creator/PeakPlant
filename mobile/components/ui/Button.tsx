@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2.5,
+    letterSpacing: 1.2,
   },
   primaryText: {
     color: Colors.white,
