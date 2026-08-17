@@ -175,6 +175,12 @@ export default function MomentsScreen() {
               )}
               ctaLabel={t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
               onCta={() => router.push('/(tabs)/scan')}
+              // Ohne physisches Deck war „Karte scannen" hier eine Sackgasse:
+              // die einzige angebotene Handlung war die einzig unmögliche.
+              // Das Tagebuch braucht kein Deck — die Karte ist der schönere
+              // Weg hinein, nicht der einzige (MANIFESTO §5).
+              secondaryLabel={t('no deck yet? keep a moment anyway', 'noch kein Deck? trotzdem einen Moment festhalten')}
+              onSecondary={() => router.push('/memory/create')}
             />
           )
         }

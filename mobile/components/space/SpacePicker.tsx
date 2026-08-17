@@ -119,6 +119,7 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                 return (
                   <View key={space.id} style={styles.row}>
                     <PressableScale
+                      containerStyle={styles.rowMainSlot}
                       style={styles.rowMain}
                       scaleTo={0.98}
                       onPress={() => onSelect(space.id)}
@@ -230,6 +231,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingRight: Spacing.md,
   },
+  /** Breitenanteil gehört ans äußere Pressable, nicht an die skalierende Fläche. */
+  rowMainSlot: { flex: 1 },
   rowMain: {
     flex: 1,
     flexDirection: 'row',

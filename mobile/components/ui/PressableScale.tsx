@@ -14,7 +14,16 @@ interface PressableScaleProps {
   children: React.ReactNode;
   onPress?: (e: GestureResponderEvent) => void;
   onLongPress?: (e: GestureResponderEvent) => void;
+  /** Style of the animated inner surface — the thing that visibly scales. */
   style?: StyleProp<ViewStyle>;
+  /**
+   * Style of the OUTER `Pressable`. Needed whenever the parent lays this out —
+   * `flex: 1` in a row, a fixed width, `alignSelf`. Such rules must reach the
+   * outer element: the inner view scales, so a parent that measured *it* would
+   * reflow on every press. Without this the outer element has no style at all
+   * and silently shrinks to its content width.
+   */
+  containerStyle?: StyleProp<ViewStyle>;
   /** How far the element shrinks while pressed. */
   scaleTo?: number;
   /** Fire a light selection haptic on press. Default true. */
@@ -35,6 +44,7 @@ export function PressableScale({
   onPress,
   onLongPress,
   style,
+  containerStyle,
   scaleTo = 0.97,
   haptic = true,
   disabled,
@@ -68,6 +78,7 @@ export function PressableScale({
 
   return (
     <Pressable
+      style={containerStyle}
       onPressIn={() => animate(true)}
       onPressOut={() => animate(false)}
       onPress={(e) => {

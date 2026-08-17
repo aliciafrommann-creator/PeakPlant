@@ -28,7 +28,11 @@ export default function TabsLayout() {
         tabBarLabelStyle: {
           fontSize: 9,
           fontWeight: '500',
-          letterSpacing: 1.5,
+          // Fünf Reiter teilen sich die Breite; das längste deutsche Label
+          // („GESCHICHTE", 10 Zeichen) passt bei 1.5 Sperrung nicht mehr in
+          // ein Fünftel und wurde auf dem Gerät abgeschnitten. Die Sperrung
+          // ist Stil, ein lesbares Label ist Funktion — Funktion gewinnt.
+          letterSpacing: 0.6,
           textTransform: 'uppercase',
         },
       }}

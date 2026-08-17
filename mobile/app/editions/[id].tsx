@@ -127,15 +127,20 @@ export default function EditionScreen() {
               onCta={refresh}
             />
           ) : (
-            <View style={styles.empty}>
-              <Text style={styles.emptyText}>{t('no moments yet.', 'noch keine Momente.')}</Text>
-              <Text style={styles.emptyHint}>
-                {t(
-                  'complete a card, then scan its QR code to add it to your diary.',
-                  'Schließe eine Karte ab, dann scanne ihren QR-Code, um sie eurem Tagebuch hinzuzufügen.',
-                )}
-              </Text>
-            </View>
+            // Vorher stand hier nur Text: eine Anleitung für etwas, das ohne
+            // physisches Deck niemand tun kann, und kein Weg weiter. Jetzt
+            // dieselbe Erklärung, aber mit einem Ausgang (MANIFESTO §5).
+            <EmptyState
+              title={t('no moments yet.', 'noch keine Momente.')}
+              hint={t(
+                'complete a card, then scan its QR code to add it to your diary.',
+                'Schließt eine Karte ab, dann scannt ihren QR-Code, um sie eurem Tagebuch hinzuzufügen.',
+              )}
+              ctaLabel={t('SCAN A CARD', 'KARTE SCANNEN')}
+              onCta={() => router.push('/(tabs)/scan')}
+              secondaryLabel={t('no deck yet? keep a moment anyway', 'noch kein Deck? trotzdem einen Moment festhalten')}
+              onSecondary={() => router.push('/memory/create')}
+            />
           )
         }
         ListFooterComponent={
@@ -209,17 +214,4 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xl,
   },
   memoryWrapper: { paddingHorizontal: Spacing.screen },
-  empty: {
-    paddingHorizontal: Spacing.screen,
-    paddingTop: Spacing.xl,
-    gap: Spacing.sm,
-  },
-  emptyText: { fontSize: 18, fontWeight: '200', color: Colors.textMuted },
-  emptyHint: {
-    fontSize: 13,
-    fontWeight: '300',
-    color: Colors.textFaint,
-    lineHeight: 20,
-    letterSpacing: 0.2,
-  },
 });

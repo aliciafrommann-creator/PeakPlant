@@ -530,7 +530,14 @@ export default function SavedDatesScreen() {
                 {planBusy ? (
                   <ActivityIndicator color={Colors.white} size="small" />
                 ) : (
-                  <Text style={styles.sheetConfirmText}>{t('SET DATE', 'DATUM SETZEN')}</Text>
+                  // Ein grauer Knopf ohne Grund ist eine Sackgasse: auf dem
+                  // Gerät war nicht erkennbar, dass ein Tag fehlt. Der Knopf
+                  // sagt es jetzt selbst, statt es den Menschen raten zu lassen.
+                  <Text style={styles.sheetConfirmText}>
+                    {planText.trim()
+                      ? t('SET DATE', 'DATUM SETZEN')
+                      : t('PICK A DAY FIRST', 'ERST EINEN TAG WÄHLEN')}
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>

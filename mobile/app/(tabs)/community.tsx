@@ -771,7 +771,7 @@ export default function PlacesScreen() {
         {mappablePlaces(displayPlaces).length === 0 ? (
           // No pins yet → an honest invitation instead of an empty map of
           // nowhere (the curated prompts carry no coordinates) (A3-8).
-          <View style={[styles.mapFrame, styles.mapEmpty]}>
+          <View style={styles.mapEmptyFrame}>
             <Text style={styles.mapEmptyMark}>🗺️</Text>
             <Text style={styles.mapEmptyText}>
               {t(
@@ -1041,6 +1041,10 @@ export default function PlacesScreen() {
           </View>
         </View>
 
+        {/* Nur zeigen, wenn darunter wirklich etwas steht. Eine Überschrift über
+            dem Nichts ist kein Leerzustand, sondern ein Fehler, der wie einer
+            aussieht (MANIFESTO §5). */}
+        {(linkedMoments.length > 0 || selectedLivePlace) ? (
         <View style={styles.ideas}>
           <Text style={styles.sectionLabel}>{t('IDEAS FOR THIS PLACE', 'IDEEN FÜR DIESEN ORT')}</Text>
           {linkedMoments.map((moment) => (
@@ -1078,6 +1082,7 @@ export default function PlacesScreen() {
             </TouchableOpacity>
           ) : null}
         </View>
+        ) : null}
 
         <Text style={styles.communityNote}>
           {t(
@@ -1286,12 +1291,23 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   resetCounterText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
-  mapEmpty: {
+  /* Der Leerzustand erbte bis 17.08. die feste Kartenhöhe (310) und die
+     einzige reinweiße Fläche des Systems — 310 Punkte Weiß mit einem kleinen
+     Emoji darin. Auf dem Gerät las sich das als leerer Container über der
+     Tab-Leiste, nicht als Einladung. Jetzt so hoch wie sein Inhalt, in der
+     warmen Kartenfarbe des Screens. Bewusst OHNE eigenen Knopf: „FIND NEAR
+     ME" steht bereits im Panel darüber, und zwei laute Primäraktionen auf
+     einem Screen verbietet MANIFESTO §5. */
+  mapEmptyFrame: {
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
+    marginHorizontal: Spacing.screen,
+    paddingVertical: Spacing.xl,
     paddingHorizontal: Spacing.lg,
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.backgroundCream,
+    borderRadius: Radii.lg,
+    ...Shadows.subtle,
   },
   mapEmptyMark: { fontSize: 28 },
   mapEmptyText: {

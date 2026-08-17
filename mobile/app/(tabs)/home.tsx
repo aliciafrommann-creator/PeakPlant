@@ -383,6 +383,7 @@ export default function HomeScreen() {
 
                 <View style={styles.quickGrid}>
                   <PressableScale
+                    containerStyle={styles.flexSlot}
                     style={[styles.quickCard, styles.quickCardDark]}
                     onPress={() => void onHubChallenge()}
                     accessibilityLabel={
@@ -426,6 +427,7 @@ export default function HomeScreen() {
 
                   <View style={styles.quickColumn}>
                     <PressableScale
+                      containerStyle={styles.flexSlot}
                       style={styles.quickMini}
                       onPress={() => router.push('/ask')}
                       accessibilityLabel={t('Ask PeakPlant', 'PeakPlant fragen')}
@@ -434,6 +436,7 @@ export default function HomeScreen() {
                       <Text style={styles.quickMiniBody}>{t('get a fitted idea', 'passende Idee holen')}</Text>
                     </PressableScale>
                     <PressableScale
+                      containerStyle={styles.flexSlot}
                       style={styles.quickMini}
                       onPress={() => router.push('/discover/saved')}
                       accessibilityLabel={t('Open saved plans', 'Gemerkte Pläne öffnen')}
@@ -750,6 +753,7 @@ export default function HomeScreen() {
       {recentMemories.length > 0 && (
         <View style={styles.addBar}>
           <PressableScale
+            containerStyle={styles.addBtnSlot}
             style={[styles.addBtn, styles.addBtnFill]}
             onPress={() => router.push('/(tabs)/scan')}
             accessibilityLabel={t('Scan a card', 'Karte scannen')}
@@ -757,6 +761,7 @@ export default function HomeScreen() {
             <Text style={styles.addBtnTextFill}>{t('SCAN CARD', 'KARTE SCANNEN')}</Text>
           </PressableScale>
           <PressableScale
+            containerStyle={styles.addBtnSlot}
             style={styles.addBtn}
             onPress={() => router.push('/memory/create')}
             accessibilityLabel={t('Add a moment to your diary', 'Einen Moment ins Tagebuch legen')}
@@ -1159,6 +1164,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: Spacing.sm,
   },
+  /** Layoutanteil für ein `PressableScale` — gehört ans äußere Element. */
+  flexSlot: { flex: 1 },
   quickCard: {
     flex: 1,
     borderRadius: Radii.md,
@@ -1246,8 +1253,11 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.border,
     backgroundColor: Colors.background,
   },
+  // Die halbe Breite gehört an das ÄUSSERE Pressable (containerStyle), nicht an
+  // die innere Fläche: die innere skaliert beim Druck, und ein Elternteil, das
+  // sie misst, würde bei jedem Tippen neu umbrechen.
+  addBtnSlot: { flex: 1 },
   addBtn: {
-    flex: 1,
     height: 54,
     justifyContent: 'center',
     alignItems: 'center',
