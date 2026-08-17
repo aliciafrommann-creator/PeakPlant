@@ -146,12 +146,56 @@ Eine bewusste Ausnahme: `app/(auth)/welcome.tsx` bleibt bei 52 pt. Ein
 Bildschirm, ein Satz — dort ist „riesig" die Aussage. Der Kommentar dort sagt
 es; wer eine zweite solche Ausnahme braucht, hat vermutlich keine.
 
-Offen und bewusst NICHT mitgemacht: die neun toten Zeilen im Sammlung-Reiter,
-der fehlende Kamera-Aufnahmeweg in `memory/create`, und der Einladungs-Link
-(die Einladung trägt einen Code zum Abtippen statt eines Links — und die
-Zielseite sagt der eingeladenen Person, dass sie die App gar nicht bekommen
-kann; das ist die eigentliche Blockade für „zweites Mitglied", und sie ist
-keine Design-Frage).
+### Entscheidung 023 — Die Einladung trägt einen Link (17.08.2026)
+
+Harte Lage aus der Produktionsdatenbank: **vier Spaces, kein einziger mit einer
+zweiten Person.** Der Beitritts-Backend ist in Ordnung (`redeem_invite`,
+SECURITY DEFINER, Zeilensperre, Paar-Obergrenze zwei, Code-Rotation —
+Migration 0018). Das Problem lag vollständig davor:
+
+- Die Nachricht trug nur `PEAK-XXXXXX`. Abtippen, korrekt, in ein Feld **neun
+  Bildschirme hinter der Anmeldung**.
+- Es gab keinen `inviteLink`, keinen Beitritts-Deep-Link, kein `/j/` in den
+  Intent-Filtern und keine Landeseite.
+
+Jetzt eine durchgehende Kette, jedes Glied im Code:
+
+1. `lib/links.ts` → `inviteLink(code)` = `${APP_BASE_URL}/j/PEAK-XXXXXX`.
+2. `lib/qr.ts` → `parseJoinLink()` liest den Code aus Link, Deep-Link oder
+   nacktem Code. **Bewusst streng:** nur unter `/j/`, nur das DB-Muster. Ein
+   Beitritt lässt einen fremden Menschen in ein privates Tagebuch — das letzte
+   Segment irgendeiner URL darf das nicht auslösen (MANIFESTO §2). Sieben
+   Tests halten das fest.
+3. `lib/pendingDestination.ts` → `setPendingJoinCode` / `peek` / `consume`.
+   Der Code muss die Anmeldung überleben: Wer eingeladen wird, hat die App
+   noch nicht.
+4. `app/index.tsx` fängt den Kaltstart-Link ab. **Dabei ein bestehender
+   Wettlauf repariert:** Link-Auswertung und Routen-Entscheidung lagen in zwei
+   getrennten asynchronen Effekten ohne Reihenfolge — ein Kartenlink konnte
+   auf dem Startbildschirm landen, weil `resumeHome()` vor `setPendingCard`
+   lief. Ein Wettlauf, der nur manchmal verliert, sieht aus wie Zufall.
+5. `app/(auth)/invite.tsx` startet direkt beim Beitreten, Feld ausgefüllt.
+   Gelesen wird beim Rendern (`peek`), verbraucht im Effekt — ein Verbrauch im
+   Render liefe unter StrictMode zweimal und verschluckte den Code.
+6. `app.json` → `/j/` in den Android-Intent-Filtern (iOS deckt
+   `applinks:peak-plant.com` bereits ab).
+7. Website: `app/j/[code]/` — `noindex`, Code **nicht** im Titel und nicht in
+   der OG-Vorschau (er stünde sonst in jeder Chat-Vorschau), `/j` in der
+   Middleware-SKIP-Liste (eine Weiterleitung nach `/de/j/...` zerbräche den
+   Universal Link). Ein kaputter Code ergibt eine ehrliche Erklärung, keinen
+   404. Live gegengeprüft: 200, keine Weiterleitung, Code gerendert, noindex
+   gesetzt, Titel ohne Code.
+   Der Code wandert **nicht** an die Warteliste — die Quelle `invite-link`
+   sagt schon, dass jemand wartet (MANIFESTO §2).
+
+**Was das NICHT löst und was nur Alicia kann:** Die Landeseite sagt weiterhin
+ehrlich, dass die App in geschlossener Beta ist. Solange die eingeladene Person
+sie nicht installieren kann, bewegt keine dieser Änderungen die Zahl. Der
+fehlende Schritt ist ein Installations-Link (TestFlight bzw. Play-Internal-
+Testing) — `GET_THE_APP_URL` ist die eine Stelle, an der er einzutragen ist.
+
+Offen und bewusst NICHT mitgemacht: die neun toten Zeilen im Sammlung-Reiter
+und der fehlende Kamera-Aufnahmeweg in `memory/create`.
 
 ## Design system (current — editorial warm-stone, NOT the old scaffold)
 

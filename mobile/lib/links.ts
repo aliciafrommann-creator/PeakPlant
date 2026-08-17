@@ -15,18 +15,37 @@
 export const APP_BASE_URL = 'https://peak-plant.com';
 
 /**
- * Where a partner who does NOT have the app yet is sent.
+ * Wo jemand landet, der die App noch NICHT hat.
  *
- * The invite message used to say "open the app and enter the code" — to
- * someone who has no app and no way to get one from that message. Four spaces
- * were created in production and not one of them ever got a second member;
- * this dead end is the most likely reason.
- *
- * `/beta` is the honest destination while the app is in closed beta: it is a
- * real page that explains the state and takes a request. When the app is in
- * the stores, this constant becomes the store link — one place to change.
+ * Seit die Einladung über `inviteLink()` läuft, ist das nicht mehr der Weg in
+ * der Einladungsnachricht — die Landeseite `/j/<code>` fängt diesen Fall
+ * selbst ab und BEHÄLT dabei den Code. Diese Konstante bleibt als die eine
+ * Stelle, an der „wo bekommt man die App" steht: Sobald die App in den Stores
+ * ist, wird hier der Store-Link eingetragen, und alle Wege dorthin stimmen
+ * wieder.
  */
 export const GET_THE_APP_URL = `${APP_BASE_URL}/beta?invited=1`;
+
+/**
+ * Link to join a space — the one link an invited person needs.
+ *
+ * Vorher trug die Einladung nur den Code `PEAK-XXXXXX`. Die eingeladene Person
+ * musste ihn aus einer Chat-Nachricht abtippen, korrekt, in ein Feld, das sie
+ * erst finden musste — neun Bildschirme hinter der Anmeldung. Ein Code ist
+ * etwas zum Vorlesen; ein Link ist etwas zum Antippen.
+ *
+ * ACHTUNG ZUR PRIVATSPHÄRE: Ein Einladungscode ist ein Schlüssel, kein
+ * Katalog-Eintrag — anders als Karten- und Ideen-Links (siehe oben). Er gehört
+ * deshalb NICHT in öffentliche Beiträge, Seitentitel oder Analytics. Er wandert
+ * genau einen Weg: von der einladenden Person direkt zu dem einen Menschen,
+ * den sie meint. Der Code trägt keinen Space-Namen, keine Mitglieder und
+ * nichts aus dem Tagebuch; er lässt eine Person in EINEN Space, und die
+ * Paar-Obergrenze von zwei plus Code-Rotation steht serverseitig
+ * (Migration 0018).
+ */
+export function inviteLink(code: string): string {
+  return `${APP_BASE_URL}/j/${encodeURIComponent(code.trim().toUpperCase())}`;
+}
 
 /** Link to a physical card's prompt. Matches the QR `/c/<id>` form (qr.ts). */
 export function cardLink(cardId: string): string {

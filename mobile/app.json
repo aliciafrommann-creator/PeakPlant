@@ -22,7 +22,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.peakplant.app",
       "buildNumber": "1",
-      "associatedDomains": ["applinks:peak-plant.com"],
+      "associatedDomains": [
+        "applinks:peak-plant.com"
+      ],
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -39,12 +41,36 @@
           "action": "VIEW",
           "autoVerify": true,
           "data": [
-            { "scheme": "https", "host": "peak-plant.com", "pathPrefix": "/c/" },
-            { "scheme": "https", "host": "peak-plant.com", "pathPrefix": "/i/" },
-            { "scheme": "https", "host": "peak-plant.com", "pathPrefix": "/t/" },
-            { "scheme": "https", "host": "peak-plant.com", "pathPrefix": "/places/" }
+            {
+              "scheme": "https",
+              "host": "peak-plant.com",
+              "pathPrefix": "/c/"
+            },
+            {
+              "scheme": "https",
+              "host": "peak-plant.com",
+              "pathPrefix": "/i/"
+            },
+            {
+              "scheme": "https",
+              "host": "peak-plant.com",
+              "pathPrefix": "/t/"
+            },
+            {
+              "scheme": "https",
+              "host": "peak-plant.com",
+              "pathPrefix": "/places/"
+            },
+            {
+              "scheme": "https",
+              "host": "peak-plant.com",
+              "pathPrefix": "/j/"
+            }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },

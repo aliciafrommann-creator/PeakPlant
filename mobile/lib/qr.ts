@@ -23,6 +23,8 @@
  *       - https://peak-plant.com/t/PP1.card-12.20271231.a3f9c2
  */
 
+import { INVITE_CODE_PATTERN, normalizeInviteCode } from './invite';
+
 const CARD_ID = /^card-\d{1,4}$/;
 const TOKEN_VERSION = 'PP1';
 const EXPIRY = /^\d{8}$/; // YYYYMMDD
@@ -48,6 +50,42 @@ export function parseCardQr(raw: string | null | undefined): string | null {
   if (last && CARD_ID.test(last)) return last;
 
   return null;
+}
+
+/**
+ * Pull an invite code out of a join link, or null if it isn't one.
+ *
+ * Accepted forms — alle drei, weil ein Mensch alle drei weitergeben kann:
+ *   - https://peak-plant.com/j/PEAK-AB23CD   (der geteilte Link)
+ *   - peakplant://j/PEAK-AB23CD              (der Deep-Link)
+ *   - PEAK-AB23CD                            (der nackte Code, abgetippt)
+ *
+ * Die Prüfung ist bewusst STRENG (dasselbe Muster wie die Datenbank, siehe
+ * lib/invite.ts): ein Link, der irgendetwas anderes enthält, ist keiner. Sonst
+ * würde jede beliebige URL mit einem letzten Pfadsegment als Beitritts-Versuch
+ * gelesen — und ein Beitritt ist der eine Vorgang, der einen fremden Menschen
+ * in ein privates Tagebuch lässt (MANIFESTO §2).
+ */
+export function parseJoinLink(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const text = raw.trim();
+  if (!text) return null;
+
+  const withoutQuery = text.split(/[?#]/)[0];
+  const segments = withoutQuery.split('/').filter(Boolean);
+
+  // Der nackte Code (kein Pfad).
+  if (segments.length <= 1) {
+    const bare = normalizeInviteCode(text);
+    return INVITE_CODE_PATTERN.test(bare) ? bare : null;
+  }
+
+  // Als Route: nur unter /j/ — nicht das letzte Segment irgendeiner URL.
+  const marker = segments.lastIndexOf('j');
+  if (marker === -1 || marker !== segments.length - 2) return null;
+
+  const code = normalizeInviteCode(decodeURIComponent(segments[segments.length - 1]));
+  return INVITE_CODE_PATTERN.test(code) ? code : null;
 }
 
 /** A decoded single-use activation token (structure only — not yet verified). */

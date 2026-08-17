@@ -3,6 +3,7 @@ import {
   parseCardQr,
   parseActivationToken,
   parseScan,
+  parseJoinLink,
   resolveScan,
 } from './qr';
 
@@ -138,5 +139,45 @@ describe('resolveScan', () => {
       status: 'unknown_card',
       cardId: 'card-77',
     });
+  });
+});
+
+describe('parseJoinLink', () => {
+  it('liest den Code aus dem geteilten Link', () => {
+    expect(parseJoinLink('https://peak-plant.com/j/PEAK-AB23CD')).toBe('PEAK-AB23CD');
+  });
+
+  it('liest den Code aus dem Deep-Link', () => {
+    expect(parseJoinLink('peakplant://j/PEAK-AB23CD')).toBe('PEAK-AB23CD');
+  });
+
+  it('nimmt den nackten Code, auch klein geschrieben und mit Leerzeichen', () => {
+    expect(parseJoinLink('  peak-ab23cd ')).toBe('PEAK-AB23CD');
+  });
+
+  it('ignoriert Query und Fragment', () => {
+    expect(parseJoinLink('https://peak-plant.com/j/PEAK-AB23CD?from=chat#x')).toBe('PEAK-AB23CD');
+  });
+
+  // Der wichtigste Test: ein Beitritt lässt einen fremden Menschen in ein
+  // privates Tagebuch. Nur /j/ zählt, nicht das letzte Segment irgendeiner URL.
+  it('liest KEINEN Code aus einer beliebigen URL', () => {
+    expect(parseJoinLink('https://example.com/PEAK-AB23CD')).toBeNull();
+    expect(parseJoinLink('https://peak-plant.com/c/PEAK-AB23CD')).toBeNull();
+    expect(parseJoinLink('https://peak-plant.com/j/PEAK-AB23CD/extra')).toBeNull();
+  });
+
+  it('lehnt alles ab, was nicht dem Datenbank-Muster entspricht', () => {
+    expect(parseJoinLink('https://peak-plant.com/j/PEAK-AB23C')).toBeNull();  // zu kurz
+    expect(parseJoinLink('https://peak-plant.com/j/PEAK-AB23C0')).toBeNull(); // 0 nicht im Alphabet
+    expect(parseJoinLink('https://peak-plant.com/j/HALLO')).toBeNull();
+    expect(parseJoinLink('card-04')).toBeNull();
+    expect(parseJoinLink('')).toBeNull();
+    expect(parseJoinLink(null)).toBeNull();
+  });
+
+  it('kollidiert nicht mit Karten-Links', () => {
+    expect(parseJoinLink('https://peak-plant.com/c/card-04')).toBeNull();
+    expect(parseCardQr('https://peak-plant.com/j/PEAK-AB23CD')).toBeNull();
   });
 });

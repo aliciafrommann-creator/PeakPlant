@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -24,6 +24,7 @@ import { getActiveUser } from '../../lib/session';
 import { composeInviteText } from '../../lib/shareText';
 import { isValidInviteCode } from '../../lib/invite';
 import { classifyJoinError } from '../../lib/joinErrors';
+import { peekPendingJoinCode, consumePendingJoinCode } from '../../lib/pendingDestination';
 import type { Space } from '../../lib/types';
 
 const FIRST_SPACE = SEED_SPACES[0];
@@ -41,13 +42,34 @@ export default function InviteScreen() {
   const setActiveSpace = useAppStore((s) => s.setActiveSpace);
   const { t } = useLanguage();
 
+  /**
+   * Ein angetippter Einladungslink (`/j/PEAK-XXXXXX`) hat den Code bis hierher
+   * durchgetragen — über die Anmeldung hinweg, die dazwischen liegt. Dann
+   * beginnt dieser Bildschirm direkt beim Beitreten, mit ausgefülltem Feld:
+   * Wer eingeladen wurde, soll nicht erst zwischen „Space starten" und
+   * „Ich habe einen Code" wählen müssen, und schon gar nicht abtippen.
+   */
+  // Nur LESEN beim Rendern (rein). Verbraucht wird der Code im Effekt unten —
+  // ein Verbrauch im Render würde unter StrictMode zweimal laufen und den Code
+  // beim zweiten Durchgang verschlucken.
+  const invited = peekPendingJoinCode();
+
   // Local-first mode has a seeded space already; backend users start by choosing.
-  const [phase, setPhase] = useState<Phase>(isSupabaseConfigured ? 'choice' : 'created');
+  const [phase, setPhase] = useState<Phase>(
+    invited ? 'join' : isSupabaseConfigured ? 'choice' : 'created',
+  );
   const [space, setSpace] = useState<Space | null>(isSupabaseConfigured ? null : FIRST_SPACE);
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(invited ?? '');
   const [creating, setCreating] = useState(false);
   const [joining, setJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Der eingelöste Code ist jetzt im Zustand — aus dem Zwischenspeicher raus,
+  // damit ein späterer Besuch dieses Bildschirms nicht erneut im Beitreten
+  // startet.
+  useEffect(() => {
+    consumePendingJoinCode();
+  }, []);
 
   const requireUser = useCallback(async () => {
     const user = await getActiveUser();

@@ -6,8 +6,8 @@ import { useAppStore } from '../lib/store';
 import { isSupabaseConfigured } from '../lib/supabase/client';
 import { getActiveUser } from '../lib/session';
 import { spaceRepository } from '../lib/repositories';
-import { parseCardQr } from '../lib/qr';
-import { setPendingCard, consumePendingCard } from '../lib/pendingDestination';
+import { parseCardQr, parseJoinLink } from '../lib/qr';
+import { setPendingCard, consumePendingCard, setPendingJoinCode } from '../lib/pendingDestination';
 import { Colors } from '../constants/colors';
 
 function Spinner() {
@@ -32,29 +32,55 @@ export default function Index() {
   const onboarded = useAppStore((s) => s.onboarded);
   const [route, setRoute] = useState<string | null>(null);
 
-  // Capture a cold-start deep link (peakplant://card/... or https .../c/...) so
-  // its destination survives the trip through sign-in / onboarding.
+  /**
+   * Kaltstart-Deep-Link auffangen, BEVOR über das Ziel entschieden wird.
+   *
+   * Das lag vorher in einem eigenen Effekt neben der Routen-Entscheidung —
+   * beide asynchron, ohne Reihenfolge. Wer die App über einen Kartenlink
+   * öffnete und schon eingeloggt war, konnte auf dem Startbildschirm landen,
+   * weil `resumeHome()` lief, bevor `setPendingCard` überhaupt gesetzt hatte.
+   * Ein Wettlauf, der nur manchmal verliert, ist schlimmer als einer, der
+   * immer verliert: er sieht aus wie Zufall. Jetzt eine Reihenfolge.
+   */
   useEffect(() => {
-    let active = true;
-    void Linking.getInitialURL()
-      .then((url) => {
-        if (!active || !url) return;
-        const cardId = parseCardQr(url);
-        if (cardId) setPendingCard(cardId);
-      })
-      .catch(() => { /* no initial url / unsupported — nothing to resume */ });
-    return () => { active = false; };
-  }, []);
-
-  // Backend mode: decide based on real session + whether the user has any space.
-  useEffect(() => {
-    if (!isSupabaseConfigured) return;
     let active = true;
     (async () => {
+      // 1. Link lesen (best effort — ohne Link geht es normal weiter).
+      let url: string | null = null;
+      try {
+        url = await Linking.getInitialURL();
+      } catch {
+        /* kein Initial-Link / nicht unterstützt */
+      }
+      if (!active) return;
+
+      let joinCode: string | null = null;
+      if (url) {
+        const cardId = parseCardQr(url);
+        if (cardId) setPendingCard(cardId);
+        joinCode = parseJoinLink(url);
+        if (joinCode) setPendingJoinCode(joinCode);
+      }
+
+      // 2. Lokaler Modus entscheidet ohne Server.
+      if (!isSupabaseConfigured) {
+        if (active) setRoute(joinCode ? '/(auth)/invite' : onboarded ? resumeHome() : '/(auth)/welcome');
+        return;
+      }
+
+      // 3. Backend-Modus: echte Sitzung plus vorhandene Spaces.
       try {
         const user = await getActiveUser();
+        if (!active) return;
         if (!user) {
-          if (active) setRoute('/(auth)/sign-in');
+          setRoute('/(auth)/sign-in');
+          return;
+        }
+        // Wer über einen Einladungslink kommt, will beitreten — auch mit
+        // eigenem Space. Sonst landet der eingeladene Mensch in seinem eigenen
+        // leeren Tagebuch, und genau das soll die Einladung ja verhindern.
+        if (joinCode) {
+          setRoute('/(auth)/invite');
           return;
         }
         const spaces = await spaceRepository.getAllForUser(user.id);
@@ -68,15 +94,8 @@ export default function Index() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [onboarded]);
 
-  if (!hydrated) return <Spinner />;
-
-  // Local-first mode (no Supabase keys): unchanged behavior.
-  if (!isSupabaseConfigured) {
-    return <Redirect href={onboarded ? resumeHome() : '/(auth)/welcome'} />;
-  }
-
-  if (!route) return <Spinner />;
+  if (!hydrated || !route) return <Spinner />;
   return <Redirect href={route} />;
 }

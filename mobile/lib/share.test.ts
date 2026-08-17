@@ -5,7 +5,7 @@ import {
   composeIdeaShareText,
   composeDatePlanShareText,
 } from './shareText';
-import { cardLink, ideaLink, placeLink, APP_BASE_URL, GET_THE_APP_URL } from './links';
+import { cardLink, ideaLink, placeLink, inviteLink, APP_BASE_URL } from './links';
 import type { Memory, MomentCard, SavedDate } from './types';
 
 const memory: Memory = {
@@ -73,24 +73,44 @@ describe('composeInviteText', () => {
   });
 
   it('trims surrounding whitespace from the code', () => {
+    // Ein kopierter Code schleppt oft Leerzeichen mit. Beide Stellen müssen
+    // trimmen: der Link (sonst entsteht %20 in der URL) und der Klartext.
     const text = composeInviteText('  PEAK-ABC123  ');
-    expect(text).toContain('Your invite code: PEAK-ABC123\n');
+    expect(text).toContain(`${APP_BASE_URL}/j/PEAK-ABC123`);
+    expect(text).not.toContain('%20');
+    expect(text).toContain('(or enter the code by hand: PEAK-ABC123)');
   });
 
-  it('names the button that actually exists in the app', () => {
-    // It used to say "join with code" — a label no screen ever had. The
-    // welcome screen's button reads "I HAVE A CODE".
+  it('leads with a tappable link that carries the code', () => {
+    // Der ganze Sinn einer Einladung ist, jemanden zu erreichen, der noch
+    // nicht hier ist. Vorher trug die Nachricht nur den Code: die eingeladene
+    // Person musste ihn abtippen, korrekt, in ein Feld neun Bildschirme hinter
+    // der Anmeldung. Vier Spaces in Produktion, kein einziger mit einer
+    // zweiten Person.
     const text = composeInviteText('PEAK-ABC123');
-    expect(text.toLowerCase()).toContain('i have a code');
-    expect(text.toLowerCase()).not.toContain('join with code');
+    expect(text).toContain(inviteLink('PEAK-ABC123'));
+    expect(text).toContain(`${APP_BASE_URL}/j/PEAK-ABC123`);
   });
 
-  it('carries a way to GET the app — the recipient usually does not have it', () => {
-    // The whole point of an invite is reaching someone who is not here yet.
-    // Without this link the message is a dead end: a code for an app they
-    // cannot install from anywhere in the message.
+  it('keeps the bare code as a fallback for reading aloud', () => {
+    // Links zerbrechen in manchen Chats, und manche Menschen geben den Code
+    // am Telefon durch. Der Code bleibt — als Rückfallebene, nicht als Weg.
     const text = composeInviteText('PEAK-ABC123');
-    expect(text).toContain(GET_THE_APP_URL);
+    expect(text).toContain('PEAK-ABC123');
+  });
+
+  it('does not send anyone hunting for a button', () => {
+    // Die alte Anleitung nannte einen Knopf auf einem Bildschirm, auf dem er
+    // nicht steht. Jetzt gibt es keine Anleitung mehr, weil es keinen Schritt
+    // mehr gibt: der Link tut es.
+    const text = composeInviteText('PEAK-ABC123').toLowerCase();
+    expect(text).not.toContain('join with code');
+    expect(text).not.toContain('welcome screen');
+  });
+
+  it('says what the thing is, without overpromising', () => {
+    const text = composeInviteText('PEAK-ABC123').toLowerCase();
+    expect(text).toContain('nothing in it is public');
   });
 });
 
