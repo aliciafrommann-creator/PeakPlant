@@ -172,6 +172,69 @@ der alten Grafik wieder aufgreift:
 Ausführliche Begründung inklusive Sicherheitsschichten und Premium-Logik:
 Artefakt „Kennenlernen ohne Swipen" (17.08.2026).
 
+### Ergänzungen vom 17.08. (Alicia)
+
+**Gruppengröße IST die Sicherheitsfunktion.** Alicias Einsicht, und sie trägt
+weiter als jedes Feature: Ein Abend mit zwölf Menschen hat kein „wer wird das
+sein?". Das Risiko des Treffens unter vier Augen mit einer fremden Person
+entsteht gar nicht, weil es dieses Treffen nicht gibt. Damit ist die
+Gruppengröße keine Komfort-, sondern eine Sicherheitsentscheidung — und sie
+gehört nach oben in jede Format-Überlegung, nicht in die Feinplanung.
+
+**Zielgruppen der Abende:** Paare · Solo · Menschen, die sich freundschaftlich
+kennenlernen wollen. Nicht als getrennte Produkte, sondern als verschiedene
+Abende auf derselben Struktur.
+
+**Notfall- und Standortfunktion — die Grenze präzisiert.** Die frühere Fassung
+(„keine Standortfreigabe, nie") war zu grob. Es sind zwei verschiedene Dinge:
+
+- **Für andere Mitglieder: bleibt ein Nein.** Sobald Menschen auf der Plattform
+  sehen, wo andere sind, existiert ein Stalking-Kanal. Kein Feature rechtfertigt
+  das.
+- **An einen selbst gewählten Menschen: vertretbar** — und genau das, was sich
+  Frauen ohnehin gegenseitig schicken. Empfängerin ist **wer auch immer die
+  Person wählt**: Freundin, Schwester, Mitbewohnerin, Partner. Ausdrücklich
+  nicht auf „den Partner" verengen — wer allein zu einem Abend geht, hat oft
+  gar keinen, und die Freundin ist ohnehin die realistischere Adresse. Sie
+  muss PeakPlant nicht benutzen.
+
+Entwurfsgrundsatz dafür, falls es je gebaut wird:
+**PeakPlant speichert keinen Standort.** Eine Datenbank mit den Aufenthaltsorten
+von Frauen an Veranstaltungsabenden wäre das attraktivste Angriffsziel, das
+dieses Produkt haben kann. Stattdessen an das übergeben, was auf dem Telefon
+existiert (Live-Standort von iOS/Android, Notruf): zeitlich begrenzt, selbst
+gewählte Empfängerin, läuft von allein aus, nichts Passives, nichts
+Dauerhaftes. Dazu ein einfaches „ich bin gut angekommen" nach dem Abend.
+
+**Solo-Editionen** passen in dieses Bild (Konten sind ohnehin einzeln).
+Technischer Hinweis, damit er nicht überrascht: `spaces.type` erlaubt heute per
+Check-Constraint nur `couple` und `friends` (Migration 0001). Solo braucht also
+eine additive Migration — machbar, aber eine bewusste Entscheidung. Alicias
+eigene Formulierung bleibt der Maßstab: Solo heißt nicht einsam, sondern sich
+selbst finden und mutig sein.
+
+### Editionen 03–05: die Themen stehen (17.08.)
+
+Damit sich nichts doppelt, bekommt jede Edition **eine Frage, die nur sie
+stellt** — die bestehenden 40 Karten aus 01 und 02 wurden dafür durchgesehen:
+
+| Edition | Pflanze | Die eine Frage |
+|---|---|---|
+| 01 Grow Together | Sonnenblume | Wie wachsen wir? (Zukunft, Entwicklung) |
+| 02 Soft & Wild | offen | Wie nah dürfen wir uns sein? (Körper, Begehren) |
+| 03 Love Languages | Ringelblume (Vorschlag) | Wie zeige ich Liebe — und kommt sie so an? |
+| 04 Opening Souls | Nachtkerze (öffnet sich erst in der Dämmerung) | Was habe ich dir nie erzählt? (Herkunft, Scham) |
+| 05 On Adventure | Löwenzahn (wächst in jeder Ritze, Samen reisen) | Wer sind wir außerhalb unseres Alltags? |
+
+**Die kritische Abgrenzung:** Edition 01 schaut nach vorn (wer werden wir),
+Opening Souls nach hinten (was hat mich geformt). Ohne diese Trennung schreibt
+man zwangsläufig die Fragen aus 01 noch einmal — dort steht bereits „Wo fühlst
+du dich von mir manchmal ungesehen?" und „Wer wirst du gerade langsam?".
+
+Aufbau je Edition wie gehabt: 5 Dates · 5 Small Acts · 10 Questions.
+Ein vollständiger Prompt-Entwurf für Edition 03 liegt im Chat vom 17.08. und
+wartet auf Alicias Urteil zur Tonhöhe.
+
 ### Der billigste nächste Test (wenn es so weit ist)
 
 Zwei bis drei Abende **manuell** veranstalten — Einladung per Mail, Anmeldung
