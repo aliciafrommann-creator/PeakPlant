@@ -1,6 +1,7 @@
 import { Edition, Memory, MomentCard, Space, SpaceMember, User } from './types';
 import { EDITION_01_CARDS } from './content/edition01';
 import { EDITION_02_CARDS } from './content/edition02';
+import { EDITION_03_CARDS } from './content/edition03';
 
 export const SEED_USER: User = {
   id: 'user-01',
@@ -41,7 +42,7 @@ export const SEED_MEMBERS: SpaceMember[] = [
  * single QR format covers the whole catalog. Edition 01 is cards 01–20,
  * Edition 02 is cards 21–40; each card's `number` is its position in its deck.
  */
-export const SEED_CARDS: MomentCard[] = [...EDITION_01_CARDS, ...EDITION_02_CARDS];
+export const SEED_CARDS: MomentCard[] = [...EDITION_01_CARDS, ...EDITION_02_CARDS, ...EDITION_03_CARDS];
 
 /** Which cards each space has already preserved a moment for (spaceId → cardIds). */
 export const SEED_ACTIVATIONS: Record<string, string[]> = {
@@ -105,14 +106,19 @@ export const SEED_EDITIONS: Edition[] = [
     id: 'edition-03',
     order: 3,
     name: 'Love Languages',
-    subtitle: 'Edition 03 — Letters',
-    description: 'discover how each of you gives and receives love.',
-    symbol: '💬',
-    color: '#E8A0A0',
+    subtitle: 'Edition 03 — Marigold',
+    description: 'how each of you gives love — and whether it arrives that way.',
+    symbol: '🌼',
+    color: '#E8A33C',
     ink: 'dark',
-    status: 'upcoming',
-    cardCount: 0,
-    cards: [],
+    status: 'available',
+    cardCount: EDITION_03_CARDS.length,
+    cards: EDITION_03_CARDS,
+    groupLabels: {
+      date: 'Love Language Date',
+      act: 'Small Act',
+      question: 'Translation Question',
+    },
   },
   {
     id: 'edition-04',

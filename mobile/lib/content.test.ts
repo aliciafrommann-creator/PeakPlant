@@ -2,6 +2,57 @@ import { describe, it, expect } from 'vitest';
 import { SEED_CARDS, SEED_EDITIONS, DECK_SIZE_RANGE } from './seed';
 import { EDITION_01_CARDS } from './content/edition01';
 import { EDITION_02_CARDS } from './content/edition02';
+import { EDITION_03_CARDS } from './content/edition03';
+
+/**
+ * Alicias Bedingung für die neuen Editionen (17.08.): „es darf sich nichts
+ * doppeln". Als Vorsatz hält das nur bis Edition 05 — als Test hält es für
+ * immer. Beim Schreiben von 04 und 05 schlägt hier an, was schon existiert.
+ */
+describe('keine Doppelungen zwischen Editionen', () => {
+  const norm = (s: string) =>
+    s.toLowerCase().replace(/[^a-z0-9äöüß ]/g, '').replace(/\s+/g, ' ').trim();
+
+  it('kein Prompt kommt zweimal vor', () => {
+    const seen = new Map<string, string>();
+    const dupes: string[] = [];
+    for (const c of SEED_CARDS) {
+      const key = norm(c.prompt);
+      const first = seen.get(key);
+      if (first) dupes.push(`${first} + ${c.id}: "${c.prompt}"`);
+      else seen.set(key, c.id);
+    }
+    expect(dupes).toEqual([]);
+  });
+
+  it('jede Edition behält den Aufbau 5 Dates, 5 Acts, 10 Questions', () => {
+    for (const e of SEED_EDITIONS.filter((e) => e.status === 'available')) {
+      const by = (g: string) => e.cards.filter((c) => c.group === g).length;
+      expect({ edition: e.id, date: by('date'), act: by('act'), question: by('question') })
+        .toEqual({ edition: e.id, date: 5, act: 5, question: 10 });
+    }
+  });
+
+  it('jede Karte gehört zu ihrer eigenen Edition und trägt einen echten Prompt', () => {
+    for (const [id, cards] of Object.entries({
+      'edition-01': EDITION_01_CARDS,
+      'edition-02': EDITION_02_CARDS,
+      'edition-03': EDITION_03_CARDS,
+    })) {
+      for (const c of cards) {
+        expect(c.edition).toBe(id);
+        expect(c.prompt.trim().length).toBeGreaterThan(10);
+      }
+    }
+  });
+
+  it('Edition 03 stellt ihre eigene Frage — die Übersetzung zwischen zwei Menschen', () => {
+    // Die Kernkarte der Edition. Verschwindet sie, ist die Edition austauschbar
+    // geworden und doppelt sich mit 01 (Wachstum) oder 02 (Nähe).
+    const core = EDITION_03_CARDS.find((c) => c.id === 'card-53');
+    expect(core?.prompt).toMatch(/almost missed you/i);
+  });
+});
 
 describe('card catalog', () => {
   it('has globally unique card ids in the card-NN format', () => {
