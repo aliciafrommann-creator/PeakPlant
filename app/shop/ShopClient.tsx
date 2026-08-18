@@ -490,7 +490,7 @@ export function ShopClient({ offers }: { offers: Record<ProductKey, ProductOffer
       <footer className="pp-dark-footer" style={{ padding: '48px 40px', backgroundColor: '#1A1A1A', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 24, borderTop: '1px solid rgba(255,255,255,0.07)', fontFamily: PP }}>
         <span style={{ color: '#ffffff', fontSize: 11, letterSpacing: '0.35em', fontFamily: PP, opacity: 0.55 }}>PEAKPLANT</span>
         <div style={{ display: 'flex', gap: '4px 24px', flexWrap: 'wrap', alignItems: 'center' }}>
-          {[['impressum', '/impressum'], ['datenschutz', '/datenschutz'], ['agb', '/agb'], ['widerruf', '/agb#widerruf']].map(([label, href]) => (
+          {[['impressum', '/impressum'], ['datenschutz', '/datenschutz'], ['agb', '/agb'], ['right of withdrawal', '/agb#widerruf']].map(([label, href]) => (
             <Link key={href} href={href} className="pp-dark-link is-legal">{label}</Link>
           ))}
           <p style={{ fontSize: 10, letterSpacing: '0.3em', color: '#ffffff', opacity: 0.25, fontFamily: PP }}>© 2026 PEAKPLANT</p>

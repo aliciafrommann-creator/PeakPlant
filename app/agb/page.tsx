@@ -1,6 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../components/NavBar'
+import { WIDERRUF_DE, WIDERRUF_EN, type WiderrufTexte } from '../../lib/widerruf'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -85,8 +86,9 @@ const sections = [
     heading: '§ 10 Widerrufsrecht',
     paragraphs: [
       '(1) Verbrauchern steht das nachfolgend beschriebene gesetzliche Widerrufsrecht zu. Die vollständige Widerrufsbelehrung und das Muster-Widerrufsformular finden sich unter Abschnitt III dieser Seite.',
-      '(2) Das Widerrufsrecht besteht nicht bei Verträgen, die mit einem Unternehmer im Sinne des § 14 BGB geschlossen werden.',
+      '(2) Das Widerrufsrecht steht nur Verbrauchern zu. Käufer, die Unternehmer im Sinne des § 14 BGB sind, haben kein Widerrufsrecht.',
       '(3) Ein Widerruf kann formlos erklärt werden — per E-Mail an hello@peak-plant.com oder postalisch an die in Abschnitt III genannte Anschrift. Die Verwendung des Muster-Widerrufsformulars ist möglich, aber nicht vorgeschrieben.',
+      '(4) Über das gesetzliche Widerrufsrecht hinaus gewährt der Verkäufer bei Vorbestellungen ein vertragliches Rücktrittsrecht: Bis zum Versand der Ware kann der Käufer jederzeit ohne Angabe von Gründen zurücktreten und erhält den vollen Kaufpreis erstattet. Dieses Recht besteht zusätzlich zum gesetzlichen Widerrufsrecht und lässt es unberührt.',
     ],
   },
   {
@@ -106,11 +108,11 @@ const customerInfo = [
   },
   {
     heading: '2. Informationen zum Vertragsschluss',
-    text: 'Die technischen Schritte zum Vertragsschluss sowie der Vertragstext werden nach Bestellabschluss per E-Mail mitgeteilt. Der Vertragstext wird vom Verkäufer gespeichert.',
+    text: 'Nach Bestellabschluss erhält der Käufer eine Bestätigung per E-Mail. Sie enthält die Bestelldaten sowie die vollständige Widerrufsbelehrung und das Muster-Widerrufsformular. Die Bestelldaten werden vom Verkäufer gespeichert; die jeweils geltende Fassung dieser AGB steht auf dieser Seite.',
   },
   {
     heading: '3. Vertragssprache',
-    text: 'Die für den Vertragsschluss zur Verfügung stehenden Sprachen sind Deutsch und Englisch.',
+    text: 'Vertragssprache ist Deutsch. Die englischen Fassungen der Vertragsunterlagen sind Übersetzungen zur besseren Verständlichkeit; maßgeblich ist der deutsche Wortlaut.',
   },
   {
     heading: '4. Wesentliche Eigenschaften der Waren',
@@ -122,7 +124,7 @@ const customerInfo = [
   },
   {
     heading: '6. Lieferbedingungen',
-    text: 'Die Lieferung erfolgt weltweit. Versandkosten und voraussichtliche Lieferzeiten sind in der Produktbeschreibung angegeben.',
+    text: 'Geliefert wird nach Deutschland, Österreich, in die Schweiz, nach Luxemburg, Belgien und in die Niederlande. Versandkosten und voraussichtliche Lieferzeiten sind in der Produktbeschreibung angegeben.',
   },
   {
     heading: '7. Widerrufsrecht',
@@ -135,63 +137,46 @@ const customerInfo = [
 ]
 
 /**
- * Widerrufsbelehrung — gesetzliches Muster.
+ * Ein Belehrungsblock, deutsch oder englisch.
  *
- * ACHTUNG, BEVOR HIER JEMAND ETWAS ÄNDERT: Der Text unten folgt dem amtlichen
- * Muster aus Anlage 1 zu Art. 246a § 1 Abs. 2 Satz 2 EGBGB. Wer das Muster
- * unverändert benutzt, ist gesetzlich abgesichert („Gesetzlichkeitsfiktion");
- * wer daran formuliert, verliert diesen Schutz. Umformulieren also nur mit
- * anwaltlicher Prüfung.
- *
- * ZWEI ENTSCHEIDUNGEN, DIE ALICIA BESTÄTIGEN MUSS (18.08.2026):
- *  1. Rücksendekosten. Hier steht die übliche Fassung „Sie tragen die
- *     unmittelbaren Kosten der Rücksendung". Das ist zulässig, WEIL es hier
- *     steht — ohne diese Information trägt der Verkäufer die Kosten. Wenn du
- *     die Rücksendung übernehmen willst, wird aus dem Satz „Wir tragen die
- *     Kosten der Rücksendung."
- *  2. Geltungsbereich. Diese Belehrung deckt den WEBSHOP (physische Decks).
- *     PeakPlant Plus wird über App Store und Google Play verkauft; dort ist
- *     Apple bzw. Google der Vertragspartner, und deren Widerrufsregeln gelten.
- *     Wenn digitale Inhalte je direkt über peak-plant.com verkauft werden,
- *     braucht es einen zusätzlichen Absatz zum vorzeitigen Erlöschen.
- *
- * NICHT GEPRÜFT: Dieser Text ist von Claude aus dem amtlichen Muster
- * zusammengesetzt, nicht von einer Juristin geprüft. Vor dem ersten echten
- * Verkauf gehört er einmal an eine Fachperson (MANIFESTO §1 — was nicht
- * geprüft ist, wird nicht als geprüft ausgegeben).
+ * OHNE Einblend-Animation, und das ist Absicht: Die umgebende Seite blendet
+ * über framer-motion ein (`opacity: 0` im Ausgangszustand). Ohne JavaScript
+ * bliebe eine Pflichtinformation damit unsichtbar — im HTML vorhanden, aber
+ * durchsichtig. Dieser Block bringt seine eigene Deckkraft mit.
  */
-const widerrufsbelehrung = {
-  heading: 'Widerrufsbelehrung',
-  intro: 'Verbraucher haben ein vierzehntägiges Widerrufsrecht.',
-  blocks: [
-    {
-      title: 'Widerrufsrecht',
-      text: 'Sie haben das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen. Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag, an dem Sie oder ein von Ihnen benannter Dritter, der nicht der Beförderer ist, die letzte Ware in Besitz genommen haben bzw. hat.\n\nUm Ihr Widerrufsrecht auszuüben, müssen Sie uns (Alicia Frommann, PeakPlant, Otto-Löffler-Weg 10, 73207 Plochingen, Deutschland, Telefon: 01639076331, E-Mail: hello@peak-plant.com) mittels einer eindeutigen Erklärung (z. B. ein mit der Post versandter Brief oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das beigefügte Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist.\n\nZur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.',
-    },
-    {
-      title: 'Folgen des Widerrufs',
-      text: 'Wenn Sie diesen Vertrag widerrufen, haben wir Ihnen alle Zahlungen, die wir von Ihnen erhalten haben, einschließlich der Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich daraus ergeben, dass Sie eine andere Art der Lieferung als die von uns angebotene, günstigste Standardlieferung gewählt haben), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen, an dem die Mitteilung über Ihren Widerruf dieses Vertrags bei uns eingegangen ist. Für diese Rückzahlung verwenden wir dasselbe Zahlungsmittel, das Sie bei der ursprünglichen Transaktion eingesetzt haben, es sei denn, mit Ihnen wurde ausdrücklich etwas anderes vereinbart; in keinem Fall werden Ihnen wegen dieser Rückzahlung Entgelte berechnet.\n\nWir können die Rückzahlung verweigern, bis wir die Waren wieder zurückerhalten haben oder bis Sie den Nachweis erbracht haben, dass Sie die Waren zurückgesandt haben, je nachdem, welches der frühere Zeitpunkt ist.\n\nSie haben die Waren unverzüglich und in jedem Fall spätestens binnen vierzehn Tagen ab dem Tag, an dem Sie uns über den Widerruf dieses Vertrags unterrichten, an uns zurückzusenden oder zu übergeben. Die Frist ist gewahrt, wenn Sie die Waren vor Ablauf der Frist von vierzehn Tagen absenden.\n\nSie tragen die unmittelbaren Kosten der Rücksendung der Waren.\n\nSie müssen für einen etwaigen Wertverlust der Waren nur aufkommen, wenn dieser Wertverlust auf einen zur Prüfung der Beschaffenheit, Eigenschaften und Funktionsweise der Waren nicht notwendigen Umgang mit ihnen zurückzuführen ist.',
-    },
-  ],
-  formTitle: 'Muster-Widerrufsformular',
-  formIntro: 'Wenn Sie den Vertrag widerrufen wollen, dann füllen Sie bitte dieses Formular aus und senden Sie es zurück. Es ist nicht vorgeschrieben — eine formlose E-Mail genügt ebenso.',
-  form: [
-    'An: Alicia Frommann · PeakPlant · Otto-Löffler-Weg 10 · 73207 Plochingen · Deutschland · E-Mail: hello@peak-plant.com',
-    '',
-    'Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über den Kauf der folgenden Waren (*):',
-    '',
-    'Bestellt am (*) / erhalten am (*):',
-    '',
-    'Name des/der Verbraucher(s):',
-    '',
-    'Anschrift des/der Verbraucher(s):',
-    '',
-    'Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf Papier):',
-    '',
-    'Datum:',
-    '',
-    '(*) Unzutreffendes streichen.',
-  ],
+function Belehrung({ texte }: { texte: WiderrufTexte }) {
+  return (
+    <div style={{ opacity: 1 }}>
+      <p style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '2rem', fontFamily: PP }}>{texte.intro}</p>
+
+      {texte.blocks.map(({ title, paragraphs }) => (
+        <div key={title} style={{ marginBottom: '2rem' }}>
+          <p style={{ fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.04em', marginBottom: '0.75rem', color: '#1A1A1A', fontFamily: PP }}>{title}</p>
+          {paragraphs.map((absatz, i) => (
+            <p key={i} style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '0.75rem', fontFamily: PP }}>{absatz}</p>
+          ))}
+        </div>
+      ))}
+
+      <div style={{ border: '1px solid #ebebeb', padding: '1.5rem', marginTop: '1rem' }}>
+        <p style={{ fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.04em', marginBottom: '0.75rem', color: '#1A1A1A', fontFamily: PP }}>{texte.formTitle}</p>
+        <p style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '1.25rem', fontFamily: PP }}>{texte.formIntro}</p>
+        {texte.formLines.map((zeile, i) =>
+          zeile ? (
+            <p key={i} style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '0.35rem', fontFamily: PP }}>{zeile}</p>
+          ) : (
+            // Leerraum als Abstand, nicht als leerer Absatz: ein Absatz mit
+            // durchsichtigem Geviertstrich ist für Screenreader nur Rauschen.
+            <div key={i} style={{ height: '1.2rem' }} aria-hidden="true" />
+          ),
+        )}
+      </div>
+
+      {texte.bindingNote && (
+        <p style={{ fontSize: '0.8rem', lineHeight: 1.8, color: '#888', fontWeight: 300, marginTop: '1.5rem', fontFamily: PP }}>{texte.bindingNote}</p>
+      )}
+    </div>
+  )
 }
 
 export default function AGBPage() {
@@ -233,27 +218,16 @@ export default function AGBPage() {
 
           {/* Abschnitt III — die Widerrufsbelehrung.
               Eigener, deutlich abgesetzter Block: Sie ist keine Fußnote,
-              sondern die Pflichtinformation, ohne die die Widerrufsfrist gar
-              nicht zu laufen beginnt. */}
+              sondern die Pflichtinformation, ohne die die Widerrufsfrist nicht
+              zu laufen beginnt. Auf der Seite ALLEIN reicht sie dafür nicht —
+              eine Webseite ist kein dauerhafter Datenträger (EuGH C-49/11).
+              Deshalb geht derselbe Text aus `lib/widerruf.ts` auch in die
+              Bestellbestätigung. */}
           <div id="widerruf" style={{ borderTop: '2px solid #ebebeb', paddingTop: '2rem', marginTop: '1rem', scrollMarginTop: '6rem' }}>
-            <p style={{ fontSize: '0.85rem', fontWeight: 500, marginBottom: '0.5rem', color: '#1A1A1A', fontFamily: PP }}>III. {widerrufsbelehrung.heading}</p>
-            <p style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '2rem', fontFamily: PP }}>{widerrufsbelehrung.intro}</p>
-
-            {widerrufsbelehrung.blocks.map(({ title, text }) => (
-              <div key={title} style={{ marginBottom: '2rem' }}>
-                <p style={{ fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.04em', marginBottom: '0.75rem', color: '#1A1A1A', fontFamily: PP }}>{title}</p>
-                {text.split('\n\n').map((absatz, i) => (
-                  <p key={i} style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '0.75rem', fontFamily: PP }}>{absatz}</p>
-                ))}
-              </div>
-            ))}
-
-            <div style={{ border: '1px solid #ebebeb', padding: '1.5rem', marginTop: '1rem' }}>
-              <p style={{ fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.04em', marginBottom: '0.75rem', color: '#1A1A1A', fontFamily: PP }}>{widerrufsbelehrung.formTitle}</p>
-              <p style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '1.25rem', fontFamily: PP }}>{widerrufsbelehrung.formIntro}</p>
-              {widerrufsbelehrung.form.map((zeile, i) => (
-                <p key={i} style={{ fontSize: '0.9rem', lineHeight: 1.8, color: zeile ? '#555' : 'transparent', fontWeight: 300, marginBottom: '0.35rem', fontFamily: PP, minHeight: '1.2rem' }}>{zeile || '\u00A0'}</p>
-              ))}
+            <p style={{ fontSize: '0.85rem', fontWeight: 500, marginBottom: '2rem', color: '#1A1A1A', fontFamily: PP }}>III. {WIDERRUF_DE.heading}</p>
+            <Belehrung texte={WIDERRUF_DE} />
+            <div style={{ borderTop: '1px solid #ebebeb', marginTop: '3rem', paddingTop: '2rem' }}>
+              <Belehrung texte={WIDERRUF_EN} />
             </div>
           </div>
         </motion.div>
