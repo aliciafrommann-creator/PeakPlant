@@ -261,3 +261,43 @@ npx tsc --noEmit # types
 npx eslint app components lib --ext .ts,.tsx
 npx vitest run   # unit tests
 ```
+
+### Entscheidung 024 — Decks bleiben physisch, der Scan bringt mehr Inhalt (Alicia, 18.08.2026)
+
+Ausgangsbefund beim Prüfen des Scan-Wegs: Alle 60 Kartentexte liegen im
+App-Bundle (`lib/content/edition0{1,2,3}.ts`), und `app/card/[id].tsx` hat
+**keinerlei Sperre** — `unlocked` ist nur ein Flag für die Feier-Animation,
+`activate()` ist reine Sammel-Buchführung. Die Karten waren trotzdem
+praktisch unerreichbar: es gab keinen Bildschirm, der sie zeigt. Nur QR-Scan,
+ein `/c/`-Deep-Link und ein fest verdrahteter Demo-Knopf führten hinein.
+
+**Alicias Entscheidung:** Die App ist ohne Deck vollwertig (Ideen, Orte,
+Challenges, Notizen, Tagebuch). Editionen werden **physisch gekauft und
+gescannt** — und der Mehrwert des Kaufs ist, dass die App dadurch **mehr
+Inhalt** bekommt. Später darf „MAAAL" eine Edition auch digital sein.
+
+Das trägt, weil eine Karte substanziell ist: `content.sections[]` mit
+Anleitung („mach einen Moment daraus"), Gesprächsfragen und „haltet es fest".
+Die gedruckte Karte trägt den Einzeiler, die App die geführte Erfahrung.
+
+Gebaut:
+- Der Sammlung-Reiter sagt jetzt, was stimmt: alles geht ohne Deck, die
+  Edition ist die gedruckte Fassung. Vorher las er sich wie eine
+  verschlossene Tür für alle, die bis Oktober kein Deck haben.
+- `app/editions/[id].tsx` zeigt **das Deck**: geöffnete Karten sind wieder
+  antippbar (vorher war eine gescannte Karte für immer verschwunden — die
+  geführte Erfahrung war nach einmal Lesen weg), versiegelte zeigen als
+  Umriss, was die gedruckte Ausgabe hinzufügt.
+
+**Ehrlichkeitsgrenze (MANIFESTO §1), verbindlich:** `sealed` ist eine
+Produktgrenze, keine Verschlüsselung. Die Texte liegen im Bundle; wer es
+auspackt, sieht sie. Die Oberfläche sagt deshalb nie „geschützt" oder
+„verschlüsselt" und zeigt bewusst **kein Schloss-Symbol** — nur, was stimmt:
+die gedruckte Karte öffnet sie. Wer hier je „sicher" hinschreibt, macht aus
+einer ehrlichen Produktgrenze eine Behauptung, die der Code nicht hält.
+
+Offen: „Peaks sammeln" als Bindung (Alicias Idee vom 18.08.). Heute zählt die
+App bereits drei Dinge — festgehaltene Momente, gesammelte Wochen, gemeinsame
+Challenges — sie heißen nur nicht so. Wenn daraus ein Sammelstück wird, gilt
+dieselbe Regel wie beim Streak: es darf nur steigen. „Locked in" als
+Verlustangst wäre MANIFESTO §3; „etwas von euch wächst hier" ist erlaubt.

@@ -163,10 +163,21 @@ export default function EditionsScreen() {
                 </Text>
               </TouchableOpacity>
             )}
+            {/* ENTSCHEIDUNG (Alicia, 18.08.2026): Die App ist ohne Deck
+                vollwertig — Ideen, Orte, Challenges, Notizen und das Tagebuch
+                brauchen keine Karte. Die Decks sind die physische Ausgabe, man
+                kauft und scannt sie.
+
+                Vorher las sich dieser Absatz, als sei die Karte der Eingang
+                („öffnet eine, scannt dann die fertige Karte"): für alle ohne
+                Deck — und das sind bis Oktober alle — klang der einzige Reiter
+                mit ihrem Namen wie eine verschlossene Tür. Jetzt steht da, was
+                stimmt: das Deck ist das Schöne obendrauf, nicht die Eintritts-
+                karte (MANIFESTO §1). */}
             <Text style={styles.lead}>
               {t(
-                'each edition is a deck of moments to collect together. open one, then scan the card you finished to preserve it.',
-                'jede Edition ist ein Stapel Momente, die ihr gemeinsam sammelt. Öffnet eine, scannt dann die fertige Karte, um sie zu bewahren.',
+                'everything in PeakPlant works without a deck — ideas, places, challenges, your diary. an edition is the printed version: real cards on seed paper, to pull together and scan.',
+                'alles in PeakPlant geht ohne Deck — Ideen, Orte, Challenges, euer Tagebuch. Eine Edition ist die gedruckte Fassung: echte Karten auf Saatpapier, zum gemeinsamen Ziehen und Scannen.',
               )}
             </Text>
           </View>
