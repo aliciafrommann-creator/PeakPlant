@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Colors, Accents, Sections } from '../../constants/colors';
+import { Colors, Accents, AccentInks, Sections } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
@@ -419,7 +419,9 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     letterSpacing: 1.2,
-    color: Accents.chili,
+    // Ein Fehlertext, den man nicht liest, ist kein Fehlertext: Accents.chili
+    // sind auf Papier 3,96:1. AccentInks.chili sind 4,99:1.
+    color: AccentInks.chili,
   },
   container: {
     flex: 1,
@@ -515,7 +517,9 @@ const styles = StyleSheet.create({
   photoHint: {
     fontSize: 11,
     fontWeight: '400',
-    color: Colors.textSubtle,
+    // Dieser Hinweis steht im leeren Fotofeld auf `Accents.cream` (#EFE6D4),
+    // nicht auf Papier — textSubtle kämen dort nur auf 4,14:1.
+    color: Colors.textMuted,
     letterSpacing: 0.3,
   },
   noteSection: {

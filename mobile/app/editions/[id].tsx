@@ -284,14 +284,16 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   symbol: { fontSize: 36, marginBottom: Spacing.sm },
-  editionLabel: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
-  title: { ...Typography.editorial, color: Colors.white },
+  // ACHTUNG, für alle Stile in diesem Kopf: Die Schriftfarbe wird beim
+  // Rendern gesetzt (`fg`, gerechnet aus der Editionsfarbe). Hier steht
+  // deshalb KEINE Farbe — ein statischer Wert, der nie zum Tragen kommt,
+  // täuscht beim Lesen eine Entscheidung vor und liest sich beim Prüfen wie
+  // ein Fehler. Genau das ist beim ersten Durchgang passiert.
+  editionLabel: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2 },
+  title: { ...Typography.editorial },
   description: {
     fontSize: 14,
     fontWeight: '300',
-    // Die Farbe wird beim Rendern gesetzt (der Kopf liegt auf der
-    // Editionsfarbe, hell oder dunkel). Hier stand ein Wert, der nie zum
-    // Tragen kommt — das täuscht beim Lesen eine Entscheidung vor.
     lineHeight: 20,
     marginBottom: Spacing.sm,
   },
@@ -300,31 +302,30 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '400',
     letterSpacing: 1.5,
-    color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
   privateNote: {
     fontSize: 11,
     fontWeight: '300',
-    color: Colors.textSubtle,
     letterSpacing: 0.3,
     fontStyle: 'italic',
     marginTop: 4,
   },
+  // Füllung und Beschriftung kommen ebenfalls beim Rendern (`btnBg`/`btnText`)
+  // — die Werte hier waren tot und widersprachen sich sogar (Colors.accent mit
+  // backgroundDark-Schrift wären 3,80:1).
   scanButton: {
     height: 52,
-    backgroundColor: Colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.md,
     borderRadius: Radii.pill,
   },
-  scanButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.backgroundDark },
+  scanButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2 },
   diaryLabel: {
     fontSize: 11,
     fontWeight: '500',
     letterSpacing: 1.2,
-    color: Colors.textSubtle,
     marginTop: Spacing.xl,
   },
   memoryWrapper: { paddingHorizontal: Spacing.screen },

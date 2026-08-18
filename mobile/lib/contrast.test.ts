@@ -58,9 +58,10 @@ describe('bestInk', () => {
   });
 
   it('schlägt eine von Hand gesetzte Tinte, wo diese falsch liegt', () => {
-    // Edition 08 (#E8633A) trägt im Katalog ink='light' — gerechnet ist dunkel
-    // klar besser (5,2 statt 3,1). Genau solche stillen Fehlgriffe soll
-    // bestInk verhindern, sobald die Edition erscheint.
+    // Edition 08 (#E8633A) TRUG im Seed ink='light'; gerechnet ist dunkel klar
+    // besser (5,20 statt 3,13). Die Handangabe ist seit dem 18.08.2026
+    // korrigiert — dieser Test hält die Rechnung fest, die das gefunden hat.
+    // (Dass Seed und Rechnung übereinstimmen, prüft lib/editionInk.test.ts.)
     expect(bestInk('#E8633A', '#1A1A1A', '#FAF7F0')).toBe('#1A1A1A');
   });
 });

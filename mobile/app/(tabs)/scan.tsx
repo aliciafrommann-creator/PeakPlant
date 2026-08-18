@@ -243,7 +243,9 @@ const styles = StyleSheet.create({
   cameraText: {
     fontSize: 13,
     fontWeight: '300',
-    color: Colors.textSubtle,
+    // Dunkler Grund (`cameraArea` = backgroundDark): textSubtle wären hier
+    // 3,31:1. kontrast-ok: onDark auf backgroundDark = 8,07:1.
+    color: Colors.onDark,
     textAlign: 'center',
     lineHeight: 20,
     letterSpacing: 0.3,
@@ -258,7 +260,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  permissionButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
+  // Ohne Kameraerlaubnis wird die CameraView NICHT gerendert — der Grund ist
+  // dann flaches #1E1C1A, und `Colors.text` ist genau dieselbe Farbe. Die
+  // Beschriftung war unsichtbar (1,00:1); sichtbar war nur der Rand des Knopfs.
+  // kontrast-ok: onDarkStrong auf backgroundDark = 15,88:1.
+  permissionButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.onDarkStrong },
   bottom: { paddingHorizontal: Spacing.screen, paddingVertical: Spacing.xl, gap: Spacing.lg },
   divider: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   dividerLine: { flex: 1, height: 1, backgroundColor: Colors.border },

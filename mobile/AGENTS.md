@@ -267,6 +267,46 @@ npx eslint app components lib --ext .ts,.tsx
 npx vitest run   # unit tests
 ```
 
+### Entscheidung 025 — Kontrast wird gerechnet, und die Frage lautet „worauf?" (18.08.2026)
+
+Der erste Durchgang suchte nach einem FARBNAMEN (`textFaint`, dann
+`placeholderTextColor`). Er fand neun Verdachtsfälle, davon drei echte Fehler,
+und übersah die schwereren, weil die anders hießen. Ein Gegenlese-Durchgang
+fand danach 15 weitere Stellen — alle in Style-Blöcken, also im behaupteten
+Umfang:
+
+- `permissionButtonText` im Scanner: `Colors.text` auf `backgroundDark` =
+  **1,00:1**. Ohne Kameraerlaubnis wird die Kameraansicht nicht gerendert, der
+  Grund ist dann flaches #1E1C1A — die Beschriftung „KAMERA ERLAUBEN" war
+  unsichtbar. Sichtbar war nur der Rand des Knopfs.
+- Elf Stellen mit `Accents.*` / `Sections.*` als 11–13-pt-Schrift, zwischen
+  2,38:1 (Anrede in `note/compose`) und 4,28:1.
+- Zwei Texte im dunklen Einladungs-Kasten, einer davon über einen Stil, der
+  sich zwei verschiedene Untergründe teilte.
+- Vier Bedienelemente mit weißer kleiner Schrift auf `accent`: 4,47:1.
+
+Daraus, verbindlich:
+
+1. **Zwei Paletten.** `Accents`/`Sections` füllen, `AccentInks`/`SectionInks`
+   schreiben (neu, ≥ 4,50:1 auf jedem hellen Grund der App). Für dunkle
+   Flächen `Colors.onDark` / `onDarkStrong`.
+2. **Gerechnet, nicht geschätzt.** `lib/contrast.ts` — inklusive `composite()`
+   für Deckkraft und `bestInk()` für Flächen, deren Farbe erst zur Laufzeit
+   feststeht (Editions-Kopf, Kartenfläche: `lib/editionInk.ts`).
+3. **Ein Wächter, der nicht nach Namen sucht.** `lib/palette.test.ts` prüft
+   jede Schriftfarbe unter 24 pt gegen BEIDE Gründe der App. Was auf Papier
+   und auf Dunkel durchfällt, ist überall falsch — dafür braucht ein Test den
+   Untergrund nicht zu kennen. Was er NICHT kann, steht im Kopf der Datei:
+   ob eine helle Schrift auf der richtigen Fläche sitzt, bleibt Menschenarbeit
+   (Skill `klarheit`). Ausnahmen brauchen `// kontrast-ok: <Grund>` und werden
+   mitgezählt.
+4. Ein statischer Farbwert in einem Stil, dessen Farbe beim Rendern gesetzt
+   wird, gehört gelöscht.
+
+Seed-Korrektur nebenbei: Edition 08 stand auf `ink: 'light'`, obwohl Dunkel
+dort 5,20:1 statt 3,13:1 erreicht; Edition 09 hatte eine Farbe, auf der KEINE
+der beiden Tinten reicht (4,28 / 3,80) und ist eine Nuance dunkler.
+
 ### Entscheidung 024 — Decks bleiben physisch, der Scan bringt mehr Inhalt (Alicia, 18.08.2026)
 
 Ausgangsbefund beim Prüfen des Scan-Wegs: Alle 60 Kartentexte liegen im

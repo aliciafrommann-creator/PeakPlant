@@ -64,7 +64,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   gold: {
-    backgroundColor: Colors.accent,
+    // accentInk statt accent: die Beschriftung ist weiß und klein (4,47 → 5,09).
+    backgroundColor: Colors.accentInk,
   },
   text: {
     fontSize: 11,

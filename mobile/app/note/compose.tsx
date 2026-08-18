@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BackButton } from '../../components/ui/BackButton';
-import { Colors, Accents } from '../../constants/colors';
+import { Colors, AccentInks } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -250,7 +250,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
     letterSpacing: 1,
-    color: Accents.apricot,
+    // Auf `backgroundCream` war Accents.apricot 2,38:1 — der schlechteste
+    // Textwert der App, ausgerechnet an der Anrede. Jetzt 4,54:1.
+    color: AccentInks.apricot,
     marginBottom: Spacing.lg,
   },
   input: {
@@ -267,7 +269,8 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.md,
   },
   counterWarn: {
-    color: Accents.chili,
+    // 4,01:1 auf backgroundCream → 4,55:1.
+    color: AccentInks.chili,
   },
   footer: {
     paddingHorizontal: Spacing.screen,

@@ -576,7 +576,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     backgroundColor: Colors.surface,
   },
-  chipOn: { backgroundColor: Colors.accent, borderColor: Colors.accent },
+  // Weiße 12-pt-Schrift auf der Füllung — accentInk statt accent (4,47 → 5,09).
+  chipOn: { backgroundColor: Colors.accentInk, borderColor: Colors.accentInk },
   chipText: { fontSize: 12, fontWeight: '500', color: Colors.text },
   chipTextOn: { color: Colors.white },
   card: {

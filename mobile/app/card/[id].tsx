@@ -93,8 +93,9 @@ export default function CardDetailScreen() {
   // Die Kartenfläche trägt die Editionsfarbe. Die Tinte wird dazu gerechnet
   // (lib/editionInk.ts) und in voller Stärke gesetzt: die frühere Abstufung
   // über Deckkraft (0,7 und 0,6 auf 11 pt) fiel auf fast jeder Editionsfarbe
-  // unter die 4,5:1 für kleine Schrift. Unterschied machen hier Gewicht und
-  // Sperrung, nicht Transparenz.
+  // unter die 4,5:1 für kleine Schrift. Unterschieden werden die beiden
+  // Etiketten jetzt über das Schriftgewicht (600 gegen 400) — der einzige
+  // Hebel, der hier keine Lesbarkeit kostet.
   const ink = editionInk(edition.color);
 
   // A quiet note that adapts to the kind of card (and intimate editions).
@@ -364,7 +365,8 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: Colors.accent,
+    // Weiße 11-pt-Schrift darauf — accent wären 4,47:1 (siehe accentInk).
+    backgroundColor: Colors.accentInk,
     paddingVertical: 10,
     alignItems: 'center',
     zIndex: 100,

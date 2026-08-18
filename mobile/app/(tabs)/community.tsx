@@ -1363,7 +1363,7 @@ const styles = StyleSheet.create({
   placeChipActive: { backgroundColor: Colors.text, borderColor: Colors.text },
   placeChipText: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
   addPlaceChip: { borderStyle: 'dashed', borderColor: Colors.accent, backgroundColor: 'transparent' },
-  addPlaceChipText: { fontSize: 12, fontWeight: '500', color: Colors.accent },
+  addPlaceChipText: { fontSize: 12, fontWeight: '500', color: Colors.accentInk },
   addPlaceSubmit: {
     height: 48,
     borderRadius: Radii.pill,

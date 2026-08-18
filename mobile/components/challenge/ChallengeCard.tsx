@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Colors, Sections } from '../../constants/colors';
+import { Colors, SectionInks } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { ProgressBar } from './ProgressBar';
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   badge: { fontSize: 18 },
-  duration: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Sections.grow },
+  duration: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: SectionInks.grow },
   title: { ...Typography.editorial, fontSize: 20, lineHeight: 26 },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 20 },
   progress: { marginTop: Spacing.sm },

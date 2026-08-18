@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Accents } from '../../constants/colors';
+import { Colors, Accents, AccentInks } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { PressableScale } from '../ui/PressableScale';
@@ -81,7 +81,9 @@ const styles = StyleSheet.create({
   },
   noPhotoMark: {
     fontSize: 40,
-    color: Accents.apricot,
+    // Ein rein dekoratives Zeichen auf `Accents.cream` — als Nicht-Text
+    // genügen 3:1, apricot lag bei 2,14:1 und verfehlte auch das.
+    color: AccentInks.apricot,
   },
   body: {
     padding: Spacing.lg,

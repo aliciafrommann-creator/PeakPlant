@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
      * — auf #E4DFD7 sind das nur 3,87:1 und damit weiterhin zu wenig für die
      * 4,5, die der Kommentar selbst verlangte.
      *
-     * `textMuted` liefert auf diesem Grund 5,53:1. Und „große Schrift"
+     * `textMuted` liefert auf diesem Grund 5,57:1. Und „große Schrift"
      * (3:1 genügt) beginnt erst bei 24 pt normal — 18 pt zählt als klein.
      */
     color: Colors.textMuted,

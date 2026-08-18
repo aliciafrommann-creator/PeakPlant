@@ -115,9 +115,33 @@ existierenden Nutzerzustand.
   einbindet. Wer eine Größe braucht, die es nicht gibt, ergänzt die Leiter.
 - Die kleinste Schrift ist **11 pt**. Instagram und Strava setzen ihre
   kleinste bei 11–12; alles darunter ist unter dem Mindestmaß.
-- Die blassesten Farben (`textFaint`, `textSubtle`) nie mit ≤ 12 pt
-  kombinieren — das ist ein Kontrastfehler, keine Geschmacksfrage.
 - Tapp-Ziele mindestens 44 pt.
+
+**Kontrast — nach dem UNTERGRUND fragen, nie nach dem Farbnamen.** Der erste
+Durchgang am 18.08.2026 suchte nach `textFaint` und fand echte Fehler; die
+schlimmeren trugen andere Namen. Deshalb, in dieser Reihenfolge:
+
+1. Worauf liegt dieser Text? Papier (#F3F1EC), warm, creme, weiß, `border`,
+   `Accents.cream` — oder dunkel (#1E1C1A), oder eine Editionsfarbe?
+2. Unter 24 pt gelten 4,5:1. „Groß" beginnt bei 24 pt normal bzw. 18,66 fett,
+   **nicht bei 18**.
+3. Rechnen, nicht schätzen: `lib/contrast.ts` (`contrastRatio`, `composite`
+   für Deckkraft, `bestInk` für Flächen, deren Farbe erst zur Laufzeit
+   feststeht).
+4. Fläche und Schrift sind zwei Paletten: `Accents`/`Sections` füllen,
+   `AccentInks`/`SectionInks` schreiben. `accent` füllt, `accentInk`
+   schreibt — und füllt dort, wo kleine weiße Schrift darauf liegt.
+5. Auf dunklem Grund: `onDark` (8,07:1) bzw. `onDarkStrong` (15,88:1).
+   `textSubtle` ist dort 3,31:1.
+6. Deckkraft ist kein Grauton: `rgba(26,26,26,0.62)` auf einer Editionsfarbe
+   ist eine andere Farbe und fiel auf elf von zwölf Editionen durch.
+7. Ein statischer Farbwert in einem Stil, dessen Farbe beim Rendern gesetzt
+   wird, gehört gelöscht — er täuscht eine Entscheidung vor.
+
+*Funde:* eine Knopfbeschriftung in `Colors.text` auf dunklem Grund — **1,00:1,
+schlicht unsichtbar**; `Accents.apricot` als 13-pt-Anrede auf Creme (2,38:1);
+elf Akzent-/Sektionsfarben als 11–13-pt-Schrift; ein Stil, der auf zwei
+verschiedenen Untergründen benutzt wurde.
 
 *Befund:* Sechs von neun Schrift-Stufen wurden nirgends benutzt, und alle 40
 Stellen, die eine einbanden, überschrieben sie direkt daneben. Die Datei
@@ -142,8 +166,11 @@ und nach dem Onboarding fragte die App nie wieder.
 
 ## Was mechanisch geprüft wird (und was nicht)
 
-Ein Teil dieser Regeln steht als Wächtertest in `lib/klarheit.test.ts` und
-scheitert in der CI. Was ein Test **nicht** kann, ist die eigentliche Frage von
+Ein Teil dieser Regeln steht als Wächtertest und scheitert in der CI:
+`lib/klarheit.test.ts` (Schriftgröße, Überschriften, Zustände),
+`lib/palette.test.ts` (jede Schriftfarbe unter 24 pt muss auf mindestens einem
+der beiden Gründe bestehen; Ausnahmen brauchen `// kontrast-ok: <Grund>`),
+`lib/editionInk.test.ts` (die zwölf Editionsfarben). Was ein Test **nicht** kann, ist die eigentliche Frage von
 K1, K2 und K6 beantworten — ob ein Bildschirm ein Hauptobjekt hat und ob ein
 Reiter berechtigt ist. Das bleibt Urteil, und dafür ist dieses Dokument da.
 
