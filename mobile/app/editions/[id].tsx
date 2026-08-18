@@ -286,7 +286,9 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     fontWeight: '300',
-    color: Colors.textFaint,
+    // Die Farbe wird beim Rendern durch `fgMuted` ersetzt (der Kopf liegt auf
+    // der Editionsfarbe, hell oder dunkel). Hier stand ein Wert, der nie zum
+    // Tragen kommt — das täuscht beim Lesen eine Entscheidung vor.
     lineHeight: 20,
     marginBottom: Spacing.sm,
   },
@@ -382,7 +384,10 @@ const styles = StyleSheet.create({
   chipNumSealed: {
     fontSize: 13,
     fontWeight: '400',
-    color: Colors.textFaint,
+    // textFaint erreicht auf dem Papierton nur 3,03:1 — bei 13 pt zu wenig
+    // (AA verlangt 4,5). textSubtle liegt bei 4,55:1 und sieht fast gleich
+    // zurückgenommen aus.
+    color: Colors.textSubtle,
     fontVariant: ['tabular-nums'],
   },
 });

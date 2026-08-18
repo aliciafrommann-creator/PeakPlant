@@ -33,9 +33,23 @@ export const Colors = {
   textMuted: '#5A554E', //  6,54:1 — sekundärer Fließtext
   textSubtle: '#726D65', // 4,55:1 — kleine Etiketten, Meta. Besteht AA.
   /**
-   * Die leiseste Stufe: 3,03:1. Besteht AA NUR für großen Text (ab 24 pt bzw.
-   * 18,66 pt fett) und für Nicht-Text — Trennlinien, deaktivierte Symbole,
-   * Dekoration. Für kleine Schrift gehört `textSubtle` her.
+   * Die leiseste Stufe: **3,03:1 auf dem Papierton**. Damit besteht sie AA
+   * genau in vier Fällen — und sonst nie:
+   *
+   *   1. Großer Text: ab 24 pt normal oder 18,66 pt fett (dort genügen 3:1).
+   *   2. Nicht-Text: Trennlinien, Rahmen, Dekoration.
+   *   3. Deaktivierte Bedienelemente (WCAG 1.4.3 nimmt inaktive Elemente aus).
+   *   4. **Auf dunklem Grund** — gegen `Colors.text` (#1E1C1A) sind es 4,97:1,
+   *      also besteht sie dort auch für kleine Schrift. Das betrifft die
+   *      ausgewählten Karten in Sprache, Onboarding und Space-Anlegen.
+   *
+   * Für kleine Schrift auf hellem Grund gehört `textSubtle` her (4,55:1).
+   *
+   * Diese Liste ist nicht theoretisch: bei der Durchsicht am 18.08.2026 waren
+   * neun Stellen betroffen, sechs davon fielen unter 1–4 und waren richtig.
+   * Genau drei waren echte Fehler (chipNumSealed 13 pt, bulletDot 15 pt,
+   * failedMark 18 pt — alle auf Papier) und wurden korrigiert. Wer hier prüft,
+   * prüft den UNTERGRUND und die GRÖSSE mit, nicht nur den Farbnamen.
    */
   textFaint: '#908A81',
 

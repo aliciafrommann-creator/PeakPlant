@@ -59,7 +59,9 @@ const styles = StyleSheet.create({
   },
   failedMark: {
     fontSize: 18,
-    color: Colors.textFaint,
+    // „Große Schrift" (3:1 genügt) beginnt bei 24 pt normal bzw. 18,66 pt fett.
+    // 18 pt normal zählt noch als kleine Schrift und braucht 4,5:1.
+    color: Colors.textSubtle,
   },
   // The quiet fill visible until the photo fades in — never a white hole.
   holder: { backgroundColor: Colors.border, overflow: 'hidden' },

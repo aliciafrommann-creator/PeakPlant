@@ -312,7 +312,8 @@ const styles = StyleSheet.create({
   },
   bulletDot: {
     fontSize: 15,
-    color: Colors.textFaint,
+    // 15 pt auf dem Papierton: textFaint sind 3,03:1, nötig 4,5.
+    color: Colors.textSubtle,
     lineHeight: 22,
   },
   bulletText: {
