@@ -28,6 +28,95 @@ credentials), tracked as O-001/O-002 in the Decision Register.
 > policy + `space-avatars` bucket with 4 member policies). Security advisors
 > reported no new findings from these migrations.
 
+### `0022_shares_audiences_follows.sql` + `0023_share_cards.sql` — **ANGEWANDT** (18.08.2026)
+
+Der Unterbau für geteilte Aktivitäten, Feed und später Abende. **Additiv,
+idempotent, rührt keine bestehende Tabelle an** — und verändert das Verhalten
+der App nicht: solange keine Oberfläche schreibt, bleibt alles leer, und die
+App läuft auch ohne diese Migration unverändert weiter.
+
+Drei neue Tabellen und eine Ansicht:
+
+| Objekt | Wofür | Die Zusage, die darin steckt |
+|---|---|---|
+| `audiences` | Der Anker: ein Ort oder ein Thema | `kind` kennt **kein** `'person'` |
+| `shares` | Die widerrufliche Freigabe, zeigt auf einen Moment | `memories` wird nicht angefasst; kein UPDATE-Pfad |
+| `public_shares` (View) | Was andere lesen | Weder `space_id` noch `created_by` noch `memory_id` — nicht gefiltert, **nicht vorhanden** |
+| `follows` | Wem ich folge | Keine Spalte für einen gefolgten Menschen |
+
+**Die Form, um die es geht:** Ein Moment wird nie geteilt. Eine Spalte
+`visibility` auf `memories` wäre die naheliegende und falsche Lösung — ein
+fehlerhafter UPDATE macht damit ein Tagebuch öffentlich, dasselbe Bild kann
+nicht an zwei Publika hängen, und Zurücknehmen wird Rückbau statt Löschen.
+Stattdessen zeigt eine eigene Zeile auf den Moment; sie zu löschen entfernt das
+Sichtbare und lässt den Moment unberührt.
+
+**Warum vorerst nur Ort und Thema, kein Kreis:** Ein Publikum füllt sich nur,
+wenn sein Anker existiert, bevor jemand etwas hineinlegt. Ort und Thema tun das
+(Strava-Segmente, Letterboxd hängt alles an *dem Film*). Ein Kreis existiert
+erst mit dem sozialen Graph — bei heute zwei Konten und keinem Paar wäre er per
+Konstruktion leer. Der CHECK auf `kind` lässt sich später erweitern.
+
+**Der Feed ist keine Tabelle**, sondern die Abfrage „`public_shares`, deren
+`audience_id` ich folge". Nicht materialisiert, damit ein Widerruf sofort und
+überall wirkt und nichts nachzuräumen ist.
+
+#### Warum es 0023 gibt
+
+0022 löste die Datenschutzgrenze mit einer Ansicht `public_shares`, die bewusst
+an der Zeilen-Sicherheit vorbeiliest (SECURITY DEFINER) und nur die
+unbedenklichen Spalten herausgibt. Der Security-Advisor meldete das nach dem
+Anwenden zu Recht als **ERROR**: eine Definer-Ansicht ist eine Umgehung, und
+eine Umgehung muss man jedes Mal neu prüfen. Eine Zusage, die an einer Ausnahme
+hängt, ist schwächer als eine, die keine braucht.
+
+0023 ersetzt sie durch **zwei Tabellen statt einer Tabelle mit einer Ausnahme**:
+
+- `shares` bleibt privat (space_id, created_by, memory_id) — nur Mitglieder
+  sehen und widerrufen.
+- `share_cards` ist die öffentliche Projektion und trägt nur Titel, Bildpfad,
+  Publikum und Zeit. Für Angemeldete lesbar mit einer **ganz normalen Policy**,
+  ohne Umgehung.
+
+Geschrieben wird `share_cards` ausschließlich von einem Trigger auf `shares`.
+Es gibt **keine** INSERT-, UPDATE- oder DELETE-Policy: niemand kann eine
+öffentliche Karte erfinden, nachträglich verändern oder eine fremde löschen.
+Der Widerruf kaskadiert über den Fremdschlüssel. Die Trigger-Funktion ist für
+`anon` und `authenticated` nicht aufrufbar.
+
+#### Gegengeprüft nach dem Anwenden
+
+- `share_cards` hat genau: `id, share_id, audience_id, title, photo_path, created_at`
+- Policies: nur `share_cards: readable by signed-in (SELECT)` — sonst keine
+- `shares`: SELECT/INSERT/DELETE member-scoped, **kein** UPDATE-Pfad
+- `follows`: `user_id, audience_id, created_at` — keine Spalte für einen Menschen
+- `audiences.kind` CHECK: nur `place`, `theme` — kein `person`
+- `public_shares` entfernt, Trigger `share_cards_insert` aktiv
+- `get_advisors(security)`: der von 0022 erzeugte ERROR ist weg. Verbleibende
+  Meldungen sind **vorbestehend** (`api_rate_limits`/`orders`/`push_deliveries`
+  ohne Policy = serverseitige Tabellen mit Absicht; die vier
+  SECURITY-DEFINER-Funktions-Warnungen; Leaked-Password-Schutz braucht Pro).
+
+### Themen-Publika der Challenges — angelegt (18.08.2026)
+
+Damit „mit der Wochen-Challenge teilen" nicht ins Leere läuft, stehen in
+`audiences` dreizehn Zeilen, eine je Challenge:
+
+```sql
+select kind, anchor, title from public.audiences order by anchor;
+-- theme · challenge:ch-1 … challenge:wk-8
+```
+
+Angelegt wurden **alle**, nicht nur die laufende: der Pool hängt vom Space-Typ
+ab, und die Rotation soll nächste Woche keine Lücke reißen. Die Zeilen tragen
+nur Kürzel und Titel — keine personenbezogenen Daten. Wer eine Challenge
+umbenennt, zieht den Titel hier nach; wer eine hinzufügt, legt den Anker
+`challenge:<id>` mit an, sonst sagt die App bei ihr ehrlich „noch nicht offen
+zum Teilen".
+
+Löschen ist gefahrlos: die Freigaben daran verschwinden mit (`on delete
+cascade`), die Momente bleiben unberührt.
+
 ## Applying 0012 (manual)
 
 Run from the repo root once, against the linked project:

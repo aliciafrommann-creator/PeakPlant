@@ -1,5 +1,8 @@
 import { storage } from '../storage';
 import type {
+  Audience,
+  AudienceKind,
+  Share,
   Memory,
   MomentCard,
   Space,
@@ -21,6 +24,7 @@ import {
   SEED_ACTIVATIONS,
 } from '../seed';
 import type {
+  IShareRepository,
   IMemoryRepository,
   ICardRepository,
   ISpaceRepository,
@@ -435,5 +439,48 @@ export const localNoteRepository: INoteRepository = {
     const stored = await storage.get<PartnerNote[]>(NOTES_KEY);
     const all = stored ?? [];
     await storage.set(NOTES_KEY, all.filter((n) => n.id !== id));
+  },
+};
+
+
+/* ---------------------------------------------------------------------------
+ * Freigaben — lokaler Rueckfall
+ *
+ * Im lokalen Modus gibt es keine anderen Menschen, also auch niemanden, der
+ * eine Freigabe sehen koennte. Sie wird trotzdem gespeichert, damit der
+ * Bildschirm dieselbe Schleife durchlaeuft (anlegen, anzeigen, widerrufen) und
+ * beim Wechsel auf Supabase nichts anders funktioniert.
+ * -------------------------------------------------------------------------*/
+
+const SHARES_KEY = 'peakplant.shares.v1';
+
+export const localShareRepository: IShareRepository = {
+  async audienceFor(kind: AudienceKind, anchor: string): Promise<Audience | null> {
+    // Lokal gibt es keine Publikums-Tabelle: der Anker IST das Publikum.
+    return { id: `${kind}:${anchor}`, kind, anchor, title: anchor };
+  },
+
+  async forMemory(memoryId: string): Promise<Share[]> {
+    const all = (await storage.get<Share[]>(SHARES_KEY)) ?? [];
+    return all.filter((entry) => entry.memoryId === memoryId);
+  },
+
+  async create(input): Promise<Share> {
+    const all = (await storage.get<Share[]>(SHARES_KEY)) ?? [];
+    const share: Share = {
+      id: generateId('share'),
+      memoryId: input.memoryId,
+      audienceId: input.audienceId,
+      title: input.title,
+      photoPath: input.photoPath,
+      createdAt: new Date().toISOString(),
+    };
+    await storage.set(SHARES_KEY, [share, ...all]);
+    return share;
+  },
+
+  async remove(id: string): Promise<void> {
+    const all = (await storage.get<Share[]>(SHARES_KEY)) ?? [];
+    await storage.set(SHARES_KEY, all.filter((entry) => entry.id !== id));
   },
 };

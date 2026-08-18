@@ -8,6 +8,9 @@ import { supabase } from '../supabase/client';
 import { deleteMemoryPhoto, uploadMemoryPhoto, signedPhotoUrl } from '../supabase/storage';
 import { SEED_CARDS } from '../seed';
 import type {
+  Audience,
+  AudienceKind,
+  Share,
   Memory,
   MomentCard,
   Space,
@@ -18,6 +21,7 @@ import type {
   PartnerNote,
 } from '../types';
 import type {
+  IShareRepository,
   IMemoryRepository,
   ICardRepository,
   ISpaceRepository,
@@ -509,5 +513,81 @@ export const supabasePublicPlaceFeedbackRepository: IPublicPlaceFeedbackReposito
       .single();
     if (error) throw error;
     return mapPublicPlaceFeedback(data);
+  },
+};
+
+
+/* ---------------------------------------------------------------------------
+ * Freigaben und Publika (Migrationen 0022/0023)
+ * -------------------------------------------------------------------------*/
+
+function mapAudience(row: Record<string, unknown>): Audience {
+  return {
+    id: row.id as string,
+    kind: row.kind as AudienceKind,
+    anchor: row.anchor as string,
+    title: row.title as string,
+  };
+}
+
+function mapShare(row: Record<string, unknown>): Share {
+  return {
+    id: row.id as string,
+    memoryId: row.memory_id as string,
+    audienceId: row.audience_id as string,
+    title: row.title as string,
+    photoPath: (row.photo_path as string | null) ?? undefined,
+    createdAt: row.created_at as string,
+  };
+}
+
+export const supabaseShareRepository: IShareRepository = {
+  async audienceFor(kind: AudienceKind, anchor: string): Promise<Audience | null> {
+    const { data, error } = await db()
+      .from('audiences')
+      .select('*')
+      .eq('kind', kind)
+      .eq('anchor', anchor)
+      .maybeSingle();
+    if (error) throw error;
+    return data ? mapAudience(data) : null;
+  },
+
+  async forMemory(memoryId: string): Promise<Share[]> {
+    const { data, error } = await db()
+      .from('shares')
+      .select('*')
+      .eq('memory_id', memoryId)
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data ?? []).map(mapShare);
+  },
+
+  async create(input): Promise<Share> {
+    const { data: user } = await db().auth.getUser();
+    const { data, error } = await db()
+      .from('shares')
+      .insert({
+        memory_id: input.memoryId,
+        audience_id: input.audienceId,
+        space_id: input.spaceId,
+        // Die Policy verlangt created_by = auth.uid(); der Server prueft es
+        // noch einmal, damit ein Client hier nichts anderes eintragen kann.
+        created_by: user.user?.id ?? null,
+        title: input.title,
+        photo_path: input.photoPath ?? null,
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    // Die oeffentliche Karte entsteht serverseitig per Trigger — die App
+    // schreibt sie NICHT und koennte es auch nicht (keine Schreib-Policy).
+    return mapShare(data);
+  },
+
+  async remove(id: string): Promise<void> {
+    // Loescht die Freigabe; share_cards kaskadiert. Der Moment bleibt.
+    const { error } = await db().from('shares').delete().eq('id', id);
+    if (error) throw error;
   },
 };

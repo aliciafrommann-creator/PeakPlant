@@ -284,3 +284,31 @@ export interface PublicPlaceFeedback {
   tip?: string;
   createdAt: string;
 }
+
+/**
+ * Ein Publikum — der Anker, an dem eine Freigabe hängt.
+ * Bewusst kein `person`: Folgen zeigt nie auf einen Menschen
+ * (Migration 0022, MANIFESTO §3).
+ */
+export type AudienceKind = 'place' | 'theme';
+
+export interface Audience {
+  id: string;
+  kind: AudienceKind;
+  /** Der natuerliche Schluessel: eine Orts-Id oder `challenge:<id>`. */
+  anchor: string;
+  title: string;
+}
+
+/**
+ * Eine Freigabe, aus Sicht des Space, dem sie gehört. Sie zeigt auf einen
+ * Moment und lässt sich widerrufen, ohne den Moment anzufassen.
+ */
+export interface Share {
+  id: string;
+  memoryId: string;
+  audienceId: string;
+  title: string;
+  photoPath?: string;
+  createdAt: string;
+}

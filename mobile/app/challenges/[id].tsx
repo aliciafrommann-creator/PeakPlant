@@ -24,7 +24,7 @@ import { confirmSuccess, acknowledgeSelection } from '../../lib/haptics';
 export default function ChallengeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { activeSpace } = useSpaces();
-  const { memories } = useMemories(activeSpace?.id);
+  const { memories, error: memoriesError } = useMemories(activeSpace?.id);
   const { enrollmentFor, join, leave } = useChallenges(activeSpace?.id);
   const { t, l } = useLanguage();
 
@@ -77,7 +77,19 @@ export default function ChallengeDetailScreen() {
         <Text style={styles.title}>{l(challenge.title)}</Text>
         <Text style={styles.subtitle}>{l(challenge.subtitle)}</Text>
 
-        {enrollment && progress && (
+        {/* Bei einem Ladefehler der Momente stünde hier ein Balken auf null —
+            und das hieße „ihr habt noch nichts gemacht", obwohl wir es bloß
+            nicht wissen (Regel K5). Dann zeigen wir keinen Balken. */}
+        {enrollment && memoriesError && (
+          <Text style={styles.subtitle}>
+            {t(
+              'we could not read your progress — nothing of yours is lost.',
+              'wir konnten euren Stand nicht lesen — nichts von euch ist weg.',
+            )}
+          </Text>
+        )}
+
+        {enrollment && progress && !memoriesError && (
           <View style={styles.progressCard}>
             <ProgressBar count={progress.count} goal={progress.goal} complete={progress.complete} />
             {progress.complete && (

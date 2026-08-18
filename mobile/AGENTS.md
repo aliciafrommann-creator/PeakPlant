@@ -16,10 +16,15 @@ building; it reflects the **current** codebase, not the initial scaffold.
    must be green. Use the `verify-peakplant` skill. State honestly what could
    NOT be verified (the GUI can't run headless — see the `run-peakplant-mobile`
    skill). CI (`.github/workflows/ci.yml`) runs the same checks on every PR.
-3. **Use the routines:** `.claude/skills/` holds `verify-peakplant` (pre-push
-   gate), `safe-supabase-migration` (any schema/RLS/bucket change),
-   `feel-audit` (before polishing/redesigning any screen), and
+3. **Use the routines:** `.claude/skills/` holds `klarheit` (**vor jeder neuen
+   oder geänderten Oberfläche** — die strukturellen Regeln aus dem Vergleich
+   mit Instagram/Strava/BeReal, 18.08.2026), `feel-audit` (Handlungs-Hierarchie
+   und Haptik, NACH `klarheit`), `verify-peakplant` (pre-push gate),
+   `safe-supabase-migration` (any schema/RLS/bucket change), and
    `run-peakplant-mobile` (headless driver for the discovery/AI logic).
+   Der mechanisierbare Teil von `klarheit` steht als Wächter in
+   `lib/klarheit.test.ts` und scheitert in der CI — was dort NICHT steht, ist
+   im Skill als Urteilsfrage begründet, nicht vergessen worden.
 4. **Small, clean commits** with a clear message; don't change what you don't
    need to.
 5. Commit footers include:

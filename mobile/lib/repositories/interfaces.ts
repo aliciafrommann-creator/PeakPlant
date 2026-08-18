@@ -1,4 +1,7 @@
 import type {
+  Audience,
+  AudienceKind,
+  Share,
   Memory,
   MomentCard,
   Space,
@@ -98,6 +101,32 @@ export interface IPublicPlaceFeedbackRepository {
 export interface INoteRepository {
   getAll(spaceId: string): Promise<PartnerNote[]>;
   create(item: Omit<PartnerNote, 'id' | 'createdAt'>): Promise<PartnerNote>;
+  remove(id: string): Promise<void>;
+}
+
+/**
+ * Freigaben und Publika (Migrationen 0022/0023).
+ *
+ * `forMemory` und `remove` arbeiten auf `shares` — der privaten Seite, die nur
+ * Mitglieder des Space sehen. Was ANDERE lesen, ist `share_cards`, und das
+ * liest diese Schnittstelle bewusst NICHT: solange es keinen Feed gibt, gibt
+ * es keinen Grund, fremde Freigaben zu holen. Wer ihn baut, ergaenzt hier eine
+ * eigene Methode — und stolpert dabei ueber diesen Kommentar.
+ */
+export interface IShareRepository {
+  /** Das Publikum zu einem Anker, oder null wenn es (noch) keines gibt. */
+  audienceFor(kind: AudienceKind, anchor: string): Promise<Audience | null>;
+  /** Die eigenen Freigaben zu einem Moment. */
+  forMemory(memoryId: string): Promise<Share[]>;
+  /** Legt eine Freigabe an. Der Titel ist bereits geprueft (lib/sharing.ts). */
+  create(input: {
+    memoryId: string;
+    audienceId: string;
+    spaceId: string;
+    title: string;
+    photoPath?: string;
+  }): Promise<Share>;
+  /** Widerruft. Der Moment bleibt unberuehrt. */
   remove(id: string): Promise<void>;
 }
 

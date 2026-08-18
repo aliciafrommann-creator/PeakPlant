@@ -13,6 +13,7 @@ import {
   localPublicPlaceFeedbackRepository,
   localRitualRepository,
   localNoteRepository,
+  localShareRepository,
 } from './local';
 import {
   supabaseMemoryRepository,
@@ -21,6 +22,7 @@ import {
   supabaseSavedDateRepository,
   supabasePublicPlaceFeedbackRepository,
   supabaseNoteRepository,
+  supabaseShareRepository,
 } from './supabase';
 
 export const memoryRepository = isSupabaseConfigured ? supabaseMemoryRepository : localMemoryRepository;
@@ -48,3 +50,12 @@ export const ritualRepository = localRitualRepository;
 // otherwise. The hook degrades to empty on read error, so the home tab stays
 // intact even before the migration is applied.
 export const noteRepository = isSupabaseConfigured ? supabaseNoteRepository : localNoteRepository;
+
+/**
+ * Freigaben (Migrationen 0022/0023). Ohne Supabase bleibt alles auf dem Gerät —
+ * die Schleife funktioniert, es sieht sie nur niemand. Das ist ehrlicher als
+ * die Handlung auszublenden: der Bildschirm verhält sich in beiden Modi gleich.
+ */
+export const shareRepository = isSupabaseConfigured
+  ? supabaseShareRepository
+  : localShareRepository;
