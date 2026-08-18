@@ -23,6 +23,7 @@ import { SpacePicker } from '../../components/space/SpacePicker';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { FloatingActionButton } from '../../components/ui/FloatingActionButton';
 import { MomentWall } from '../../components/home/MomentWall';
+import { PeakRow } from '../../components/home/PeakRow';
 import { Ionicons } from '@expo/vector-icons';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { SEED_CARDS } from '../../lib/seed';
@@ -438,14 +439,27 @@ export default function HomeScreen() {
           )}
         </View>
 
+        {/* Die Peaks: ein Zeichen je festgehaltenem Moment, in eurer eigenen
+            Farbe. Die Regel und ihre Grenze stehen in lib/peaks.ts. */}
+        {activeSpace && (
+          <PeakRow
+            momentsKept={memories.length}
+            emoji={activeSpace.collectibleEmoji ?? (activeSpace.type === 'friends' ? '🌻' : '🌶️')}
+            label={
+              memories.length === 1
+                ? t('1 peak collected', '1 Peak gesammelt')
+                : t(`${memories.length} peaks collected`, `${memories.length} Peaks gesammelt`)
+            }
+          />
+        )}
+
         {/* Tatsachen, kein Fortschritt (MANIFESTO §3). Nichts hier kann
             kleiner werden, und nichts sagt, wie viel noch „fehlt". */}
         {memories.length > 0 && (
           <Text style={styles.facts}>
             {[
-              memories.length === 1
-                ? t('1 moment kept', '1 Moment festgehalten')
-                : t(`${memories.length} moments kept`, `${memories.length} Momente festgehalten`),
+              // „Momente festgehalten" steht jetzt als Peaks-Reihe darüber —
+              // zweimal dieselbe Zahl auf einem Bildschirm wäre Lärm.
               sharedWeeks.count === 1
                 ? t('1 week collected', '1 Woche gesammelt')
                 : t(`${sharedWeeks.count} weeks collected`, `${sharedWeeks.count} Wochen gesammelt`),
