@@ -28,7 +28,7 @@ credentials), tracked as O-001/O-002 in the Decision Register.
 > policy + `space-avatars` bucket with 4 member policies). Security advisors
 > reported no new findings from these migrations.
 
-### `0022_shares_audiences_follows.sql` — NOCH NICHT ANGEWANDT
+### `0022_shares_audiences_follows.sql` + `0023_share_cards.sql` — **ANGEWANDT** (18.08.2026)
 
 Der Unterbau für geteilte Aktivitäten, Feed und später Abende. **Additiv,
 idempotent, rührt keine bestehende Tabelle an** — und verändert das Verhalten
@@ -61,9 +61,41 @@ Konstruktion leer. Der CHECK auf `kind` lässt sich später erweitern.
 `audience_id` ich folge". Nicht materialisiert, damit ein Widerruf sofort und
 überall wirkt und nichts nachzuräumen ist.
 
-Anwenden erst nach ausdrücklicher Freigabe. Danach: Spalten und Policies
-gegenprüfen und `get_advisors(type: security)` laufen lassen — die Ansicht
-`public_shares` ist der Punkt, an dem ein Advisor-Hinweis relevant wäre.
+#### Warum es 0023 gibt
+
+0022 löste die Datenschutzgrenze mit einer Ansicht `public_shares`, die bewusst
+an der Zeilen-Sicherheit vorbeiliest (SECURITY DEFINER) und nur die
+unbedenklichen Spalten herausgibt. Der Security-Advisor meldete das nach dem
+Anwenden zu Recht als **ERROR**: eine Definer-Ansicht ist eine Umgehung, und
+eine Umgehung muss man jedes Mal neu prüfen. Eine Zusage, die an einer Ausnahme
+hängt, ist schwächer als eine, die keine braucht.
+
+0023 ersetzt sie durch **zwei Tabellen statt einer Tabelle mit einer Ausnahme**:
+
+- `shares` bleibt privat (space_id, created_by, memory_id) — nur Mitglieder
+  sehen und widerrufen.
+- `share_cards` ist die öffentliche Projektion und trägt nur Titel, Bildpfad,
+  Publikum und Zeit. Für Angemeldete lesbar mit einer **ganz normalen Policy**,
+  ohne Umgehung.
+
+Geschrieben wird `share_cards` ausschließlich von einem Trigger auf `shares`.
+Es gibt **keine** INSERT-, UPDATE- oder DELETE-Policy: niemand kann eine
+öffentliche Karte erfinden, nachträglich verändern oder eine fremde löschen.
+Der Widerruf kaskadiert über den Fremdschlüssel. Die Trigger-Funktion ist für
+`anon` und `authenticated` nicht aufrufbar.
+
+#### Gegengeprüft nach dem Anwenden
+
+- `share_cards` hat genau: `id, share_id, audience_id, title, photo_path, created_at`
+- Policies: nur `share_cards: readable by signed-in (SELECT)` — sonst keine
+- `shares`: SELECT/INSERT/DELETE member-scoped, **kein** UPDATE-Pfad
+- `follows`: `user_id, audience_id, created_at` — keine Spalte für einen Menschen
+- `audiences.kind` CHECK: nur `place`, `theme` — kein `person`
+- `public_shares` entfernt, Trigger `share_cards_insert` aktiv
+- `get_advisors(security)`: der von 0022 erzeugte ERROR ist weg. Verbleibende
+  Meldungen sind **vorbestehend** (`api_rate_limits`/`orders`/`push_deliveries`
+  ohne Policy = serverseitige Tabellen mit Absicht; die vier
+  SECURITY-DEFINER-Funktions-Warnungen; Leaked-Password-Schutz braucht Pro).
 
 ## Applying 0012 (manual)
 
