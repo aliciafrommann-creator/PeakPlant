@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { widerrufEmailHtml } from '../../../../lib/widerruf'
 import Stripe from 'stripe'
-import { sendMail } from '../../../../lib/email'
+import { sendMail, escapeHtml } from '../../../../lib/email'
 import { PRODUCT_COPY, type ProductKey } from '../../../../lib/products'
 
 export const runtime = 'nodejs'
@@ -95,6 +95,27 @@ export async function POST(req: NextRequest) {
     const accessLink = `${SITE}/edition-01`
     const edition    = editionLabel(product)
 
+    /**
+     * Alles, was aus der Bestellung kommt, escapt — Name und Adresse gibt der
+     * KÄUFER ein. Ein Name aus vier Zeichen (`<!--`) kommentierte bis zum
+     * 18.08.2026 alles Nachfolgende weg, inklusive der Widerrufsbelehrung;
+     * ein `<a href>` im Namensfeld landete in der Admin-Mail. Wer hier eine
+     * Zeile ergänzt, führt den Wert durch `escapeHtml` (`lib/email.ts`).
+     */
+    const e = {
+      edition: escapeHtml(edition),
+      email: escapeHtml(email),
+      amount: escapeHtml(amount),
+      currency: escapeHtml(currency),
+      accessLink: escapeHtml(accessLink),
+      name: escapeHtml(shipping?.name ?? ''),
+      line1: escapeHtml(shipping?.address?.line1 ?? ''),
+      line2: escapeHtml(shipping?.address?.line2 ?? ''),
+      postal: escapeHtml(shipping?.address?.postal_code ?? ''),
+      city: escapeHtml(shipping?.address?.city ?? ''),
+      country: escapeHtml(shipping?.address?.country ?? ''),
+    }
+
     if (!email) {
       // No address on the session — the customer confirmation cannot go out at
       // all. Logged as its own case so it is not mistaken for a send failure.
@@ -116,7 +137,7 @@ export async function POST(req: NextRequest) {
 
   <p style="font-size:15px;line-height:1.8;color:#555;font-weight:300;margin-bottom:32px">
     thank you — we're glad you're here.<br>
-    <strong style="color:#1A1A1A;font-weight:400">${edition}</strong> ships october 2026.
+    <strong style="color:#1A1A1A;font-weight:400">${e.edition}</strong> ships october 2026.
     we collect preorders through the year so we can produce to the highest
     sustainability standard — and you're <strong style="color:#1A1A1A;font-weight:400">fully refundable anytime</strong> until it ships.
   </p>
@@ -124,9 +145,9 @@ export async function POST(req: NextRequest) {
   <div style="border:1px solid #e8e8e8;padding:24px;margin-bottom:32px">
     <p style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.4;margin-bottom:16px">order summary</p>
     <table style="width:100%;font-size:14px;font-weight:300">
-      <tr><td style="padding:6px 0;opacity:0.5">product</td><td style="text-align:right">${edition}</td></tr>
-      <tr><td style="padding:6px 0;opacity:0.5">amount</td><td style="text-align:right">${amount} ${currency}</td></tr>
-      ${shipping?.name ? `<tr><td style="padding:6px 0;opacity:0.5;vertical-align:top">ships to</td><td style="text-align:right">${shipping.name}<br>${shipping.address?.line1 ?? ''}<br>${shipping.address?.postal_code ?? ''} ${shipping.address?.city ?? ''}</td></tr>` : ''}
+      <tr><td style="padding:6px 0;opacity:0.5">product</td><td style="text-align:right">${e.edition}</td></tr>
+      <tr><td style="padding:6px 0;opacity:0.5">amount</td><td style="text-align:right">${e.amount} ${e.currency}</td></tr>
+      ${e.name ? `<tr><td style="padding:6px 0;opacity:0.5;vertical-align:top">ships to</td><td style="text-align:right">${e.name}<br>${e.line1}<br>${e.postal} ${e.city}</td></tr>` : ''}
     </table>
   </div>
 
@@ -145,7 +166,7 @@ export async function POST(req: NextRequest) {
       while you wait, the digital world of edition 01 is already open — a letter from alicia,
       a question for the two of you, and a playlist. it grows until the box ships.
     </p>
-    <a href="${accessLink}" style="display:inline-block;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;padding:14px 28px;background:#1A1A1A;color:#fff;text-decoration:none">
+    <a href="${e.accessLink}" style="display:inline-block;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;padding:14px 28px;background:#1A1A1A;color:#fff;text-decoration:none">
       enter the digital world →
     </a>
   </div>
@@ -168,11 +189,11 @@ export async function POST(req: NextRequest) {
   <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;opacity:0.4;margin-bottom:24px">∧ peakplant — neue bestellung</p>
 
   <table style="width:100%;font-size:14px;font-weight:300;border-collapse:collapse">
-    <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5;width:140px">produkt</td><td style="padding:10px 0">${edition}</td></tr>
-    <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5">betrag</td><td style="padding:10px 0;color:#16a34a;font-weight:500">${amount} ${currency}</td></tr>
-    <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5">kunde</td><td style="padding:10px 0">${email}</td></tr>
-    ${shipping?.name ? `
-    <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5;vertical-align:top">lieferadresse</td><td style="padding:10px 0;line-height:1.7">${shipping.name}<br>${shipping.address?.line1 ?? ''}${shipping.address?.line2 ? '<br>' + shipping.address.line2 : ''}<br>${shipping.address?.postal_code ?? ''} ${shipping.address?.city ?? ''}<br>${shipping.address?.country ?? ''}</td></tr>
+    <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5;width:140px">produkt</td><td style="padding:10px 0">${e.edition}</td></tr>
+    <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5">betrag</td><td style="padding:10px 0;color:#16a34a;font-weight:500">${e.amount} ${e.currency}</td></tr>
+    <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5">kunde</td><td style="padding:10px 0">${e.email}</td></tr>
+    ${e.name ? `
+    <tr style="border-bottom:1px solid #f0f0f0"><td style="padding:10px 0;opacity:0.5;vertical-align:top">lieferadresse</td><td style="padding:10px 0;line-height:1.7">${e.name}<br>${e.line1}${e.line2 ? '<br>' + e.line2 : ''}<br>${e.postal} ${e.city}<br>${e.country}</td></tr>
     ` : ''}
     <tr><td style="padding:10px 0;opacity:0.5">zeitpunkt</td><td style="padding:10px 0">${new Date().toLocaleString('de-AT', { timeZone: 'Europe/Vienna' })}</td></tr>
   </table>

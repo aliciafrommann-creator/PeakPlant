@@ -18,7 +18,7 @@ const sections = [
     heading: '§ 2 Zustandekommen des Vertrages',
     paragraphs: [
       '(1) Die Darstellung der Produkte im Online-Shop stellt kein rechtlich bindendes Angebot dar, sondern eine Einladung zur Abgabe eines Angebots (invitatio ad offerendum).',
-      '(2) Durch Klicken des Buttons „Kaufen“ bzw. „Jetzt kaufen“ gibt der Käufer ein verbindliches Angebot zum Kauf der im Warenkorb befindlichen Waren ab.',
+      '(2) Durch Klicken des Bestellbuttons („preorder now“ bzw. „jetzt vorbestellen“) und Abschluss des anschließenden Bezahlvorgangs gibt der Käufer ein verbindliches Angebot zum Kauf der ausgewählten Waren ab.',
       '(3) Der Verkäufer bestätigt den Eingang der Bestellung unverzüglich per E-Mail. Diese Eingangsbestätigung stellt noch keine Annahme des Angebots dar. Ein Kaufvertrag kommt erst zustande, wenn der Verkäufer die Bestellung durch eine gesonderte E-Mail ausdrücklich annimmt oder die Ware versendet.',
     ],
   },
@@ -139,14 +139,17 @@ const customerInfo = [
 /**
  * Ein Belehrungsblock, deutsch oder englisch.
  *
- * OHNE Einblend-Animation, und das ist Absicht: Die umgebende Seite blendet
- * über framer-motion ein (`opacity: 0` im Ausgangszustand). Ohne JavaScript
- * bliebe eine Pflichtinformation damit unsichtbar — im HTML vorhanden, aber
- * durchsichtig. Dieser Block bringt seine eigene Deckkraft mit.
+ * Die Sichtbarkeit ohne JavaScript liegt NICHT hier, sondern in
+ * `app/template.tsx` (`noscript`-Stil). Ein erster Anlauf hatte hier ein
+ * `opacity: 1` gesetzt und im Kommentar behauptet, der Block bringe „seine
+ * eigene Deckkraft mit" — das ist falsch: Die Deckkraft eines Vorfahren ist
+ * von einem Kind nicht zurückzuholen, und dieser Block sitzt in zwei solchen
+ * Vorfahren. Die Zeile hatte keine Wirkung, der Kommentar schickte die
+ * nächste Sitzung auf eine falsche Fährte (MANIFESTO §1).
  */
 function Belehrung({ texte }: { texte: WiderrufTexte }) {
   return (
-    <div style={{ opacity: 1 }}>
+    <div>
       <p style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '2rem', fontFamily: PP }}>{texte.intro}</p>
 
       {texte.blocks.map(({ title, paragraphs }) => (

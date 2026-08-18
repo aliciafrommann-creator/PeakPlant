@@ -11,14 +11,29 @@ import { motion } from 'framer-motion'
  * Widerrufsbelehrung und das Impressum ist es eine Pflichtinformation, die
  * niemand lesen kann (gefunden beim Gegenlesen, 18.08.2026).
  *
- * Die Regel greift nur ohne JavaScript und nur auf exakt `opacity:0;` —
- * `opacity:0.5;` bleibt unangetastet.
+ * ZWEI FALLEN, in die der erste Anlauf beide getreten ist:
+ *
+ *   1. `&lt;style&gt;{'…'}&lt;/style&gt;` — React escapt die Anführungszeichen im
+ *      Textinhalt, und `&lt;style&gt;` ist ein Raw-Text-Element: `&amp;quot;` wird darin
+ *      NICHT zurückverwandelt. Der Selektor war ungültig, die Regel wurde
+ *      verworfen, und ohne JavaScript blieb die GANZE Seite unsichtbar.
+ *      Deshalb `dangerouslySetInnerHTML` — hier ausnahmsweise das richtige
+ *      Werkzeug, weil der Inhalt eine Konstante ist.
+ *   2. `[style*="opacity:0;"]` verlangt das Semikolon. React schreibt hinter
+ *      der letzten Deklaration keins. Auf `/shop` fielen dadurch vier
+ *      Produktkarten durch — samt Kaufknopf und dem Satz über die Erstattung.
+ *      Deshalb zusätzlich `[style$="opacity:0"]`.
+ *
+ * Geprüft wird das im GEBAUTEN HTML, nicht im Quelltext. Genau dort ist der
+ * erste Anlauf gescheitert.
  */
+const NOSCRIPT_SICHTBAR =
+  '[style*="opacity:0;"],[style$="opacity:0"]{opacity:1!important;transform:none!important}';
 export default function Template({ children }: { children: React.ReactNode }) {
   return (
     <>
       <noscript>
-        <style>{'[style*="opacity:0;"]{opacity:1!important;transform:none!important}'}</style>
+        <style dangerouslySetInnerHTML={{ __html: NOSCRIPT_SICHTBAR }} />
       </noscript>
       <motion.div
         initial={{ opacity: 0, y: 16 }}
