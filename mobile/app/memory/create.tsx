@@ -170,11 +170,19 @@ export default function CreateMemoryScreen() {
   const handleSave = async () => {
     if (!note.trim() && !photoUri) return;
     if (!activeSpace) {
-      setError(
+      // Vorher nur dieser Satz, ohne Weg dorthin — eine Anweisung ohne Tür.
+      // Entdecken und die Ideen-Bibliothek bieten in derselben Lage längst
+      // „Space starten" an; hier fehlte es als einziger Stelle (§5).
+      Alert.alert(
+        t('no space yet', 'noch kein Space'),
         t(
-          'no space yet — set one up first, then keep this moment.',
-          'noch kein Space — richtet zuerst einen ein, dann haltet ihr diesen Moment fest.',
+          'a moment needs a space to live in. it takes a moment to set one up.',
+          'ein Moment braucht einen Space, in dem er lebt. Das Einrichten dauert einen Augenblick.',
         ),
+        [
+          { text: t('not now', 'jetzt nicht'), style: 'cancel' },
+          { text: t('start a space', 'Space starten'), onPress: () => router.push('/space/new') },
+        ],
       );
       return;
     }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { memoryRepository, cardRepository } from '../repositories';
 import type { Memory } from '../types';
@@ -28,11 +28,15 @@ export function useMemories(spaceId?: string) {
     }
   }, [spaceId]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  // Keep the list in sync after edits/deletes made on the detail screen.
+  /**
+   * NUR beim Fokus laden — `useFocusEffect` feuert auch beim Einhängen, ein
+   * zusätzliches `useEffect` verdoppelte also jeden Abruf. Und weil der
+   * Startbildschirm diesen Hook zweimal hält (direkt und über
+   * `useWeeklyChallenge`), liefen bei jedem Öffnen von Home VIER gleichzeitige
+   * Abrufe. Jeder davon signiert die Foto-URLs einzeln über das Netz — bei
+   * dreißig Fotos also rund hundertzwanzig Anfragen pro Tab-Tipp, für
+   * dasselbe Ergebnis. Batterie, Datenvolumen und Kontingent.
+   */
   useFocusEffect(
     useCallback(() => {
       void load();
