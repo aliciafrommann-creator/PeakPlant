@@ -102,7 +102,7 @@ export default function ComposeNoteScreen() {
             value={text}
             onChangeText={(v) => setText(v.slice(0, MAX_CHARS))}
             placeholder={t('write something beautiful...', 'schreib etwas Schönes...')}
-            placeholderTextColor={Colors.textFaint}
+            placeholderTextColor={Colors.textSubtle}
             multiline
             autoFocus
             textAlignVertical="top"

@@ -131,7 +131,7 @@ export default function NewSpaceScreen() {
               placeholder={type === 'couple'
                 ? t('e.g. you & them', 'z.B. ihr & er/sie')
                 : t('e.g. the saturday people', 'z.B. die Samstagsmenschen')}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               value={name}
               onChangeText={setName}
               maxLength={40}
@@ -160,7 +160,7 @@ export default function NewSpaceScreen() {
             <TextInput
               style={styles.input}
               placeholder="PEAK-0000"
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               value={code}
               onChangeText={setCode}
               autoCapitalize="characters"

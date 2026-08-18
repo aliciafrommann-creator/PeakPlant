@@ -1137,7 +1137,7 @@ export default function PlacesScreen() {
               maxLength={280}
               multiline
               placeholder={t('tiny practical tip…', 'kleiner praktischer Tipp…')}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
             />
             <View style={styles.sheetActions}>
               <TouchableOpacity
@@ -1192,7 +1192,7 @@ export default function PlacesScreen() {
               value={newPlaceName}
               onChangeText={setNewPlaceName}
               placeholder={t('name of the place', 'Name des Orts')}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               maxLength={60}
               autoFocus
             />
@@ -1201,7 +1201,7 @@ export default function PlacesScreen() {
               value={newPlaceArea}
               onChangeText={setNewPlaceArea}
               placeholder={t('where is it? (optional)', 'wo ist er? (optional)')}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               maxLength={80}
             />
             <TouchableOpacity

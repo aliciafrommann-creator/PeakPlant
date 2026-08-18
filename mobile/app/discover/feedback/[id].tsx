@@ -194,7 +194,7 @@ export default function FeedbackScreen() {
             <TextInput
               style={styles.tipInput}
               placeholder={t('your practical takeaway...', 'dein praktisches Fazit...')}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               multiline
               maxLength={MAX_TIP}
               value={tip}

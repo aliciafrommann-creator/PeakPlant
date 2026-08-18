@@ -239,7 +239,7 @@ export default function MemoryDetailScreen() {
                 autoFocus
                 textAlignVertical="top"
                 placeholder={t('what do you want to remember about this moment?', 'was möchtest du von diesem Moment festhalten?')}
-                placeholderTextColor={Colors.textFaint}
+                placeholderTextColor={Colors.textSubtle}
               />
             ) : (
               memory.note.length > 0 ? <Text style={styles.note}>{memory.note}</Text> : null

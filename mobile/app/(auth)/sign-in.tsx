@@ -93,7 +93,7 @@ export default function SignInScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="you@email.com"
-                placeholderTextColor={Colors.textFaint}
+                placeholderTextColor={Colors.textSubtle}
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
@@ -114,7 +114,7 @@ export default function SignInScreen() {
               <TextInput
                 style={[styles.input, styles.codeInput]}
                 placeholder="12345678"
-                placeholderTextColor={Colors.textFaint}
+                placeholderTextColor={Colors.textSubtle}
                 value={code}
                 onChangeText={(value) => setCode(value.replace(/\D/g, ''))}
                 keyboardType="number-pad"

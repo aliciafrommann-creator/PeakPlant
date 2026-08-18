@@ -346,7 +346,7 @@ export default function CreateMemoryScreen() {
             <TextInput
               style={styles.noteInput}
               placeholder={notePlaceholder}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               multiline
               value={note}
               onChangeText={setNote}
@@ -445,16 +445,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: 1.2,
     color: Colors.text,
-  },
-  saveText: {
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-    color: Colors.accentInk,
-  },
-  saveDisabled: {
-    opacity: 0.3,
-    color: Colors.textFaint,
   },
   content: {
     padding: Spacing.screen,

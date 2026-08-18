@@ -231,7 +231,7 @@ export default function RitualsScreen() {
             <TextInput
               style={styles.sheetInput}
               placeholder={t('e.g. Sunday morning walk', 'z.B. Sonntagmorgen-Spaziergang')}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               value={title}
               onChangeText={setTitle}
               autoFocus
@@ -240,7 +240,7 @@ export default function RitualsScreen() {
             <TextInput
               style={styles.sheetNote}
               placeholder={t('why it matters to you (optional)', 'warum es euch wichtig ist (optional)')}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               value={note}
               onChangeText={setNote}
               multiline

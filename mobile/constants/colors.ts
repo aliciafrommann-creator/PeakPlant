@@ -45,11 +45,23 @@ export const Colors = {
    *
    * Für kleine Schrift auf hellem Grund gehört `textSubtle` her (4,55:1).
    *
-   * Diese Liste ist nicht theoretisch: bei der Durchsicht am 18.08.2026 waren
-   * neun Stellen betroffen, sechs davon fielen unter 1–4 und waren richtig.
-   * Genau drei waren echte Fehler (chipNumSealed 13 pt, bulletDot 15 pt,
-   * failedMark 18 pt — alle auf Papier) und wurden korrigiert. Wer hier prüft,
-   * prüft den UNTERGRUND und die GRÖSSE mit, nicht nur den Farbnamen.
+   * Diese Liste ist nicht theoretisch. Durchsicht am 18.08.2026, und der
+   * Umfang gehört ehrlich dazu: geprüft wurden die **neun Stellen in
+   * Style-Blöcken**, die `textFaint` mit kleiner Schrift verbanden. Sechs
+   * fielen unter 1–4 und waren richtig. Drei waren echte Fehler und sind
+   * korrigiert: `chipNumSealed` 13 pt und `bulletDot` 15 pt auf dem Papierton,
+   * `failedMark` 18 pt auf `Colors.border` (#E4DFD7 — NICHT Papier; dort
+   * reichte auch `textSubtle` mit 3,87:1 nicht, es steht jetzt `textMuted`).
+   *
+   * Nachgereicht am selben Tag: 18 `placeholderTextColor`, davon 16 zu leise —
+   * alle auf `textSubtle`. Und zwei Flächen, die auf zwölf verschiedenen
+   * Untergründen liegen (Editions-Kopf, Kartenfläche): dort wird die Tinte
+   * jetzt gerechnet statt gesetzt, siehe `lib/editionInk.ts`.
+   *
+   * Was weiterhin NICHT flächendeckend geprüft ist: Farben, die erst zur
+   * Laufzeit entstehen, und Werte außerhalb von Style-Blöcken. Wer hier prüft,
+   * prüft den UNTERGRUND und die GRÖSSE mit, nicht nur den Farbnamen —
+   * `lib/contrast.ts` rechnet beides aus.
    */
   textFaint: '#908A81',
 

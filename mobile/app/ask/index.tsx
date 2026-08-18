@@ -210,7 +210,7 @@ export default function AskScreen() {
           <TextInput
             style={styles.input}
             placeholder={t('what are you in the mood for?', 'Worauf hast du Lust?')}
-            placeholderTextColor={Colors.textFaint}
+            placeholderTextColor={Colors.textSubtle}
             value={input}
             onChangeText={setInput}
             returnKeyType="send"

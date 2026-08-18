@@ -200,7 +200,7 @@ export default function InviteScreen() {
               <TextInput
                 style={styles.joinInput}
                 placeholder="PEAK-AB23CD"
-                placeholderTextColor={Colors.textFaint}
+                placeholderTextColor={Colors.textSubtle}
                 value={code}
                 onChangeText={(v) => { setCode(v.toUpperCase()); if (error) setError(null); }}
                 autoCapitalize="characters"

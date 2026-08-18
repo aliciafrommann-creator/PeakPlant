@@ -267,7 +267,7 @@ export default function BrowseIdeasScreen() {
               <TextInput
                 style={styles.search}
                 placeholder={t('search ideas (english)…', 'Ideen suchen (englisch)…')}
-                placeholderTextColor={Colors.textFaint}
+                placeholderTextColor={Colors.textSubtle}
                 value={query}
                 onChangeText={setQuery}
                 autoCorrect={false}

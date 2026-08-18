@@ -59,9 +59,17 @@ const styles = StyleSheet.create({
   },
   failedMark: {
     fontSize: 18,
-    // „Große Schrift" (3:1 genügt) beginnt bei 24 pt normal bzw. 18,66 pt fett.
-    // 18 pt normal zählt noch als kleine Schrift und braucht 4,5:1.
-    color: Colors.textSubtle,
+    /**
+     * ACHTUNG, DER GRUND IST NICHT DAS PAPIER: Dieses Zeichen sitzt in
+     * `holder`, und der ist `Colors.border` (#E4DFD7). Ein erster Anlauf hat
+     * hier auf `textSubtle` gewechselt und dabei gegen den Papierton gerechnet
+     * — auf #E4DFD7 sind das nur 3,87:1 und damit weiterhin zu wenig für die
+     * 4,5, die der Kommentar selbst verlangte.
+     *
+     * `textMuted` liefert auf diesem Grund 5,53:1. Und „große Schrift"
+     * (3:1 genügt) beginnt erst bei 24 pt normal — 18 pt zählt als klein.
+     */
+    color: Colors.textMuted,
   },
   // The quiet fill visible until the photo fades in — never a white hole.
   holder: { backgroundColor: Colors.border, overflow: 'hidden' },
