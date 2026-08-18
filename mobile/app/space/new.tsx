@@ -20,6 +20,46 @@ import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { SpaceType } from '../../lib/types';
 
+/**
+ * Die drei Arten von Space, in Worten.
+ *
+ * `solo` ist seit dem 18.08.2026 dabei und steht bewusst ZUERST: In der
+ * Produktionsdatenbank hatte kein einziger Space eine zweite Person. Wer allein
+ * anfängt, sollte nicht erst ein Paar behaupten müssen, um die App zu benutzen
+ * — und der Hinweis sagt gleich dazu, dass sich daran später nichts verbaut
+ * (MANIFESTO §3: einladen, nie drängen).
+ */
+const TYPE_LABEL: Record<
+  SpaceType,
+  {
+    titleEn: string; titleDe: string;
+    hintEn: string; hintDe: string;
+    a11yEn: string; a11yDe: string;
+    placeholderEn: string; placeholderDe: string;
+  }
+> = {
+  solo: {
+    titleEn: 'just me', titleDe: 'nur ich',
+    hintEn: 'you can open it up later', hintDe: 'kann später geöffnet werden',
+    a11yEn: 'Just me', a11yDe: 'Nur ich',
+    placeholderEn: 'e.g. my year', placeholderDe: 'z.B. mein Jahr',
+  },
+  couple: {
+    titleEn: 'a couple', titleDe: 'ein Paar',
+    // anrede-ok: Diese Auswahl BESCHREIBT zwei Menschen — hier ist die
+    // Zwei-Personen-Anrede die Aussage, nicht der Fehler.
+    hintEn: 'just the two of you', hintDe: 'nur ihr zwei',
+    a11yEn: 'A couple', a11yDe: 'Ein Paar',
+    placeholderEn: 'e.g. you & them', placeholderDe: 'z.B. ihr & er/sie',
+  },
+  friends: {
+    titleEn: 'friends', titleDe: 'Freunde',
+    hintEn: 'a small group', hintDe: 'eine kleine Gruppe',
+    a11yEn: 'Friends', a11yDe: 'Freunde',
+    placeholderEn: 'e.g. the saturday people', placeholderDe: 'z.B. die Samstagsmenschen',
+  },
+};
+
 export default function NewSpaceScreen() {
   const setActiveSpace = useAppStore((s) => s.setActiveSpace);
   const { t } = useLanguage();
@@ -98,8 +138,9 @@ export default function NewSpaceScreen() {
           <View style={styles.section}>
             <Text style={styles.label}>{t('WHAT KIND OF SPACE?', 'WELCHE ART VON SPACE?')}</Text>
             <View style={styles.typeRow}>
-              {(['couple', 'friends'] as SpaceType[]).map((spaceType) => {
+              {(['solo', 'couple', 'friends'] as SpaceType[]).map((spaceType) => {
                 const active = type === spaceType;
+                const label = TYPE_LABEL[spaceType];
                 return (
                   <TouchableOpacity
                     key={spaceType}
@@ -108,15 +149,13 @@ export default function NewSpaceScreen() {
                     activeOpacity={0.85}
                     accessibilityRole="button"
                     accessibilityState={{ selected: active }}
-                    accessibilityLabel={spaceType === 'couple' ? t('A couple', 'Ein Paar') : t('Friends', 'Freunde')}
+                    accessibilityLabel={t(label.a11yEn, label.a11yDe)}
                   >
                     <Text style={[styles.typeText, active && styles.typeTextActive]}>
-                      {spaceType === 'couple' ? t('a couple', 'ein Paar') : t('friends', 'Freunde')}
+                      {t(label.titleEn, label.titleDe)}
                     </Text>
                     <Text style={[styles.typeHint, active && styles.typeHintActive]}>
-                      {spaceType === 'couple'
-                        ? t('just the two of you', 'nur ihr zwei')
-                        : t('a small group', 'eine kleine Gruppe')}
+                      {t(label.hintEn, label.hintDe)}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -128,9 +167,7 @@ export default function NewSpaceScreen() {
             <Text style={styles.label}>{t('NAME', 'NAME')}</Text>
             <TextInput
               style={styles.input}
-              placeholder={type === 'couple'
-                ? t('e.g. you & them', 'z.B. ihr & er/sie')
-                : t('e.g. the saturday people', 'z.B. die Samstagsmenschen')}
+              placeholder={t(TYPE_LABEL[type].placeholderEn, TYPE_LABEL[type].placeholderDe)}
               placeholderTextColor={Colors.textSubtle}
               value={name}
               onChangeText={setName}

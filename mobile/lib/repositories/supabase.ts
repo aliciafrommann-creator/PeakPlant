@@ -247,6 +247,15 @@ export const supabaseSpaceRepository: ISpaceRepository = {
     return mapSpace(data);
   },
 
+  async openSpace(spaceId: string, type: 'couple' | 'friends'): Promise<Space> {
+    // Über die RPC, nicht per direktem UPDATE: Migration 0024 nimmt
+    // `authenticated` das Schreibrecht auf `spaces.type` weg, damit die Regeln
+    // (nur Besitzer, nur aus solo heraus) nicht am Client hängen.
+    const { data, error } = await db().rpc('open_space', { p_space_id: spaceId, p_type: type });
+    if (error) throw error;
+    return mapSpace(data);
+  },
+
   async update(
     spaceId: string,
     updates: Partial<Pick<Space, 'name' | 'emoji' | 'avatarPath' | 'collectibleEmoji'>>,

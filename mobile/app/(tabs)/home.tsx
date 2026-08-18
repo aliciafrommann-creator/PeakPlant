@@ -26,6 +26,7 @@ import { MomentWall } from '../../components/home/MomentWall';
 import { PeakRow } from '../../components/home/PeakRow';
 import { AloneRow } from '../../components/home/AloneRow';
 import { spaceRepository } from '../../lib/repositories';
+import { voice } from '../../lib/voice';
 import { Ionicons } from '@expo/vector-icons';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { SEED_CARDS } from '../../lib/seed';
@@ -79,6 +80,9 @@ export default function HomeScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
   const { t, l, language } = useLanguage();
+  // Die Anrede richtet sich nach der Art des Space: „euer" oder „dein"
+  // (lib/voice.ts). Ein Raum für eine Person darf keine zweite behaupten.
+  const v = voice(activeSpace?.type);
   const { latestFromPartner } = useNotes(activeSpace?.id);
   const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
     useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
@@ -295,7 +299,7 @@ export default function HomeScreen() {
           <View style={styles.headerText}>
             <View style={styles.nameRow}>
               <Text style={styles.spaceName} numberOfLines={1}>
-                {(activeSpace?.name ?? t('your space', 'euer Space')).toLowerCase()}
+                {(activeSpace?.name ?? t(v.spaceFallbackName.en, v.spaceFallbackName.de)).toLowerCase()}
               </Text>
               <Ionicons name="chevron-down" size={16} color={Colors.textMuted} style={styles.chevron} />
             </View>
@@ -341,8 +345,14 @@ export default function HomeScreen() {
         }
       >
         {/* Nur wenn wir es WISSEN und die Zahl wirklich eins ist. Bei
-            unbekannt (Ladefehler) wird nichts behauptet. */}
-        {activeSpace && memberCount === 1 && (
+            unbekannt (Ladefehler) wird nichts behauptet.
+
+            Nicht im Solo-Space: dort ist „gerade seid ihr hier noch zu einem"
+            keine Beobachtung, sondern ein Vorwurf. Diese Person hat sich
+            bewusst für einen Raum für eine entschieden (MANIFESTO §3). Den
+            Weg nach draußen gibt es trotzdem — ruhig, in den
+            Space-Einstellungen. */}
+        {activeSpace && activeSpace.type !== 'solo' && memberCount === 1 && (
           <AloneRow inviteCode={activeSpace.inviteCode} spaceName={activeSpace.name} t={t} />
         )}
 
@@ -409,13 +419,10 @@ export default function HomeScreen() {
         {isEmpty && (
           <View style={styles.lead}>
             <Text style={styles.leadTitle}>
-              {t('this is your space.', 'das ist euer Space.')}
+              {t(v.thisIsYourSpace.en, v.thisIsYourSpace.de)}
             </Text>
             <Text style={styles.leadHint}>
-              {t(
-                'do something together, then keep it here — a photo, a few words. it stays private to the two of you.',
-                'haltet fest, was euch bleiben soll — ein Foto, ein paar Worte. Es bleibt privat in eurem Space.',
-              )}
+              {t(v.keepWhatMatters.en, v.keepWhatMatters.de)}
             </Text>
           </View>
         )}
@@ -470,10 +477,10 @@ export default function HomeScreen() {
               style={styles.quietLink}
               onPress={() => router.push('/(tabs)/story')}
               scaleTo={0.99}
-              accessibilityLabel={t('What grew between you', 'Was zwischen euch gewachsen ist')}
+              accessibilityLabel={t(v.whatGrew.en, v.whatGrew.de)}
             >
               <Text style={styles.quietLinkText}>
-                {t('what grew between you', 'was zwischen euch gewachsen ist')}
+                {t(v.whatGrew.en, v.whatGrew.de)}
               </Text>
               <Text style={styles.quietArrow}>→</Text>
             </PressableScale>

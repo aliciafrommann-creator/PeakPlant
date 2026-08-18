@@ -36,6 +36,7 @@ import type {
   CreateSpaceInput,
 } from './interfaces';
 import { generateInviteCode, normalizeInviteCode } from '../invite';
+import { defaultSpaceName } from './spaceCreation';
 
 const MEMORIES_KEY = 'memories';
 const ACTIVATIONS_KEY = 'cardActivations';
@@ -176,13 +177,25 @@ export const localSpaceRepository: ISpaceRepository = {
     );
   },
 
+  async openSpace(spaceId: string, type: 'couple' | 'friends'): Promise<Space> {
+    const spaces = await loadSpaces();
+    const found = spaces.find((s) => s.id === spaceId);
+    if (!found) throw new Error('space not found');
+    // Dieselbe Regel wie in der Datenbank (Migration 0024): nur aus solo
+    // heraus. Zwei Wahrheiten an zwei Orten wären eine zu viel.
+    if (found.type !== 'solo') throw new Error('space is already shared');
+    const updated: Space = { ...found, type };
+    await storage.set(SPACES_KEY, spaces.map((s) => (s.id === spaceId ? updated : s)));
+    return updated;
+  },
+
   async create({ type, name, ownerUserId, ownerName }: CreateSpaceInput): Promise<Space> {
     const spaces = await loadSpaces();
     const members = await loadMembers();
     const space: Space = {
       id: generateId('space'),
       type,
-      name: name.trim() || (type === 'couple' ? 'Our space' : 'Friends'),
+      name: name.trim() || defaultSpaceName(type),
       inviteCode: generateInviteCode(),
       createdAt: now(),
     };

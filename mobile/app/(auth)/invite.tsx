@@ -129,6 +129,12 @@ export default function InviteScreen() {
             'In diesem Space sind schon zwei Menschen. Bitte deinen Partner um einen frischen Code — sobald das erste Paar vollständig ist, entsteht ein neuer.',
           ));
           break;
+        case 'space_solo':
+          setError(t(
+            'this space is for one person. whoever sent the code can open it up — then the same code works.',
+            'Dieser Space ist für eine Person. Wer dir den Code geschickt hat, kann ihn öffnen — danach funktioniert derselbe Code.',
+          ));
+          break;
         case 'too_many_attempts':
           setError(t(
             'that was a lot of tries in a short time. take a breath and try again in an hour.',

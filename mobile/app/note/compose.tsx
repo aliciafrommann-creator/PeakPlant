@@ -17,6 +17,7 @@ import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { voice } from '../../lib/voice';
 import { useNotes } from '../../lib/hooks/useNotes';
 import { confirmSuccess } from '../../lib/haptics';
 import { relativeDay } from '../../lib/relativeTime';
@@ -26,6 +27,7 @@ const MAX_CHARS = 280;
 
 export default function ComposeNoteScreen() {
   const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const { t, language } = useLanguage();
   const { notes, loading, error: notesError, userId, sendNote, deleteNote } = useNotes(activeSpace?.id);
   const [text, setText] = useState('');
@@ -36,7 +38,7 @@ export default function ComposeNoteScreen() {
     (id: string) => {
       Alert.alert(
         t('delete this note?', 'diese Notiz löschen?'),
-        t('it is gone for everyone in your space.', 'sie ist dann für alle in eurem Space weg.'),
+        t(v.noteDeleteWarning.en, v.noteDeleteWarning.de),
         [
           { text: t('cancel', 'Abbrechen'), style: 'cancel' },
           {
@@ -54,7 +56,7 @@ export default function ComposeNoteScreen() {
         ],
       );
     },
-    [deleteNote, t],
+    [deleteNote, t, v.noteDeleteWarning.en, v.noteDeleteWarning.de],
   );
 
   const remaining = MAX_CHARS - text.length;
@@ -95,7 +97,11 @@ export default function ComposeNoteScreen() {
       >
         <View style={styles.composer}>
           <Text style={styles.addressee}>
-            {(activeSpace?.name ?? t('partner', 'partner')).toLowerCase()} ♥
+            {/* Das Herz gehört zu einer zweiten Person. Im Solo-Space steht
+                dort eine Notiz an sich selbst — ohne Empfänger, ohne Herz. */}
+            {activeSpace?.type === 'solo'
+              ? t(v.noteAddresseeFallback.en, v.noteAddresseeFallback.de)
+              : `${(activeSpace?.name ?? t(v.noteAddresseeFallback.en, v.noteAddresseeFallback.de)).toLowerCase()} ♥`}
           </Text>
           <TextInput
             style={styles.input}
@@ -129,11 +135,11 @@ export default function ComposeNoteScreen() {
               {notesError
                 ? t(
                     'we could not load your notes just now — nothing is lost.',
-                    'wir konnten eure Notizen gerade nicht laden — nichts davon ist weg.',
+                    'wir konnten die Notizen gerade nicht laden — nichts davon ist weg.',
                   )
                 : t(
-                    'nothing written yet. what you write stays here, for the two of you.',
-                    'noch nichts geschrieben. Was du schreibst, bleibt hier — in eurem Space.',
+                    v.noteStaysHere.en,
+                    v.noteStaysHere.de,
                   )}
             </Text>
           )}

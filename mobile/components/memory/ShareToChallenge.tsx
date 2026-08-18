@@ -5,6 +5,8 @@ import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { PressableScale } from '../ui/PressableScale';
 import { shareRepository } from '../../lib/repositories';
+import { useSpaces } from '../../lib/hooks/useSpaces';
+import { voice } from '../../lib/voice';
 import { checkShare, titleFor, challengeAnchor, SHARE_TITLE_MAX } from '../../lib/sharing';
 import { confirmSuccess } from '../../lib/haptics';
 import type { Share } from '../../lib/types';
@@ -46,6 +48,10 @@ export function ShareToChallenge({
   cardTitle,
   t,
 }: ShareToChallengeProps) {
+  // Die Anrede der Grenze richtet sich nach der Art des Space: in einem
+  // Solo-Space gibt es keine „Namen" im Plural (lib/voice.ts).
+  const { spaces } = useSpaces();
+  const vo = voice(spaces.find((s) => s.id === spaceId)?.type);
   const [shares, setShares] = useState<Share[]>([]);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -207,10 +213,7 @@ export function ShareToChallenge({
 
       {/* Die Grenze steht da, wo die Entscheidung fällt — nicht im Impressum. */}
       <Text style={styles.boundary}>
-        {t(
-          'only this line goes out. your note, your photo, your names and your space stay here.',
-          'nur diese Zeile geht raus. Eure Notiz, euer Foto, eure Namen und euer Space bleiben hier.',
-        )}
+        {t(vo.sharingBoundary.en, vo.sharingBoundary.de)}
       </Text>
 
       <TextInput

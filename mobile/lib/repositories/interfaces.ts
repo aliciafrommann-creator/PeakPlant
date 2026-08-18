@@ -50,6 +50,14 @@ export interface ISpaceRepository {
   /** Mock join-by-code: links the user into the matching space (or a new one). */
   joinByCode(code: string, userId: string, userName: string): Promise<Space>;
   /**
+   * Macht aus einem Solo-Space einen geteilten (Migration 0024, `open_space`).
+   *
+   * Bewusst nur in diese Richtung: zurück würde eine bereits beigetretene
+   * Person aus einem gemeinsamen Tagebuch aussperren. Es geht dabei nichts
+   * verloren — es ist derselbe Space, dieselben Momente, derselbe Code.
+   */
+  openSpace(spaceId: string, type: Exclude<SpaceType, 'solo'>): Promise<Space>;
+  /**
    * Update a space's shared identity. Both members can update (RLS: migration
    * 0012). `emoji`/`avatarPath` are persisted server-side when configured.
    */

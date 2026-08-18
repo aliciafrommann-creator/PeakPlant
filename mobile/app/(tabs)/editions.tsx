@@ -16,11 +16,13 @@ import { cardRepository } from '../../lib/repositories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useBiometric } from '../../lib/hooks/useBiometric';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { voice } from '../../lib/voice';
 import { ShopLink } from '../../components/edition/ShopLink';
 import type { Edition } from '../../lib/types';
 
 export default function EditionsScreen() {
   const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const { authenticate } = useBiometric();
   const { t } = useLanguage();
   const [progress, setProgress] = useState<Record<string, number>>({});
@@ -123,7 +125,7 @@ export default function EditionsScreen() {
                 : t(`${done} of ${item.cardCount} preserved`, `${done} von ${item.cardCount} bewahrt`)}
           </Text>
           {item.sensitive && (
-            <Text style={styles.privateBadge}>{t('private to your space', 'privat — nur für euch')}</Text>
+            <Text style={styles.privateBadge}>{t(v.privateBadge.en, v.privateBadge.de)}</Text>
           )}
         </View>
       </TouchableOpacity>

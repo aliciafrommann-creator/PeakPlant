@@ -100,6 +100,50 @@ export default function EditSpaceScreen() {
     };
   }, [id]);
 
+  /**
+   * Einen Solo-Space öffnen (Migration 0024, `open_space`).
+   *
+   * Bewusst hier und nicht auf dem Startbildschirm: Wer „nur ich" gewählt hat,
+   * soll nicht bei jedem Öffnen der App gefragt werden, ob nicht doch jemand
+   * dazu soll. Der Weg existiert, er ist ruhig, und er kostet nichts — es ist
+   * derselbe Space, dieselben Momente, derselbe Code (MANIFESTO §3).
+   */
+  const confirmOpen = () => {
+    if (!space) return;
+    const öffne = (typ: 'couple' | 'friends') => {
+      void (async () => {
+        setBusy(true);
+        try {
+          await spaceRepository.openSpace(space.id, typ);
+          await refresh();
+          void confirmSuccess();
+          router.back();
+        } catch {
+          setError(
+            t(
+              "couldn't open this space. please try again.",
+              'Der Space ließ sich nicht öffnen. Versuch es gleich nochmal.',
+            ),
+          );
+        } finally {
+          setBusy(false);
+        }
+      })();
+    };
+    Alert.alert(
+      t('open this space up?', 'Diesen Space öffnen?'),
+      t(
+        'everything you kept stays exactly where it is. your invite code starts working, and whoever joins sees this diary. it cannot be turned back — that would lock someone out.',
+        'Alles, was du festgehalten hast, bleibt genau da, wo es ist. Dein Einladungscode fängt an zu funktionieren, und wer beitritt, sieht dieses Tagebuch. Zurück geht es nicht — das würde jemanden aussperren.',
+      ),
+      [
+        { text: t('not now', 'jetzt nicht'), style: 'cancel' },
+        { text: t('for a couple', 'für ein Paar'), onPress: () => öffne('couple') },
+        { text: t('for friends', 'für Freunde'), onPress: () => öffne('friends') },
+      ],
+    );
+  };
+
   const confirmLeave = () => {
     if (!space) return;
     Alert.alert(
@@ -410,6 +454,31 @@ export default function EditSpaceScreen() {
             </Text>
           </View>
 
+          {/* Der eine Weg aus dem Solo-Space heraus. Nur sichtbar, wenn es
+              ihn überhaupt gibt — in einem geteilten Space wäre die Frage
+              schon beantwortet. */}
+          {space.type === 'solo' && (
+            <View style={styles.section}>
+              <Text style={styles.label}>{t('JUST YOU, FOR NOW', 'BIS HIER NUR DU')}</Text>
+              <Text style={styles.memberHint}>
+                {t(
+                  'this space is for one person. if you ever want someone in it, you can open it up — nothing you kept is lost.',
+                  'Dieser Space ist für eine Person. Wenn du irgendwann jemanden darin haben willst, kannst du ihn öffnen — nichts von dem, was du festgehalten hast, geht dabei verloren.',
+                )}
+              </Text>
+              <TouchableOpacity
+                style={styles.openBtn}
+                onPress={confirmOpen}
+                disabled={busy}
+                activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel={t('Open this space up', 'Diesen Space öffnen')}
+              >
+                <Text style={styles.openText}>{t('OPEN THIS SPACE UP', 'DIESEN SPACE ÖFFNEN')}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* Quiet exit — leaving takes away access, it deletes nothing shared. */}
           <TouchableOpacity
             style={styles.leaveBtn}
@@ -442,6 +511,17 @@ const styles = StyleSheet.create({
   memberName: { fontSize: 14, fontWeight: '400', color: Colors.text },
   memberMeta: { fontSize: 11, fontWeight: '300', color: Colors.textSubtle },
   memberHint: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18, marginTop: 8 },
+  openBtn: {
+    minHeight: 44,
+    alignSelf: 'flex-start',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.md,
+    borderRadius: Radii.pill,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginTop: Spacing.xs,
+  },
+  openText: { fontSize: 11, fontWeight: '600', letterSpacing: 1.4, color: Colors.text },
   leaveBtn: { alignItems: 'center', paddingVertical: 18, marginTop: 4 },
   leaveText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: '#B04A38' },
   header: {

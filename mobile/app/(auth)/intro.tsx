@@ -27,7 +27,7 @@ type Slide = { mark: string; title: [string, string]; body: [string, string] };
 const SLIDES: Slide[] = [
   {
     mark: '✦',
-    title: ['a space for\nthe two of you', 'ein Ort für\neuch zwei'],
+    title: ['a space that\nis yours', 'ein Ort, der\ndir gehört'],
     body: [
       'PeakPlant is a private little place to collect the real moments you make together — not a feed, not a follower count.',
       'PeakPlant ist ein privater kleiner Ort, um die echten Momente zu sammeln, die ihr zusammen erlebt — kein Feed, keine Follower.',
@@ -37,8 +37,8 @@ const SLIDES: Slide[] = [
     mark: '♥',
     title: ['better\nshared', 'gemeinsam\nschöner'],
     body: [
-      'one space, two people. ideas to do together and moments kept just between you. invite your person and it comes alive.',
-      'ein Space, zwei Menschen. Ideen für gemeinsam und Momente nur für euch. Lade deinen Menschen ein, dann wird es lebendig.',
+      'a space is yours alone or shared with the people in it. ideas to do and moments kept — private either way.',
+      'ein Space gehört dir allein oder den Menschen darin. Ideen zum Erleben und Momente zum Behalten — privat in beiden Fällen.',
     ],
   },
   {
