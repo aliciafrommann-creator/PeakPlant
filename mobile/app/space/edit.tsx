@@ -401,7 +401,10 @@ export default function EditSpaceScreen() {
             )}
             <Text style={styles.memberHint}>
               {t(
-                'everyone here can see your shared diary. the invite code above lets people in — share it only with people you trust.',
+                // „the invite code above" zeigte auf etwas, das auf diesem
+                // Bildschirm gar nicht steht (hier gibt es Name, Emoji,
+                // Sammelstück und Mitglieder — keinen Code).
+                'everyone here can see your shared diary. your invite code lets people in — share it only with people you trust.',
                 'alle hier sehen euer gemeinsames Tagebuch. Der Einladungscode lässt Menschen herein — teil ihn nur mit Menschen, denen du vertraust.',
               )}
             </Text>
@@ -437,10 +440,10 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
   },
   memberName: { fontSize: 14, fontWeight: '400', color: Colors.text },
-  memberMeta: { fontSize: 11, fontWeight: '300', color: Colors.textFaint },
+  memberMeta: { fontSize: 11, fontWeight: '300', color: Colors.textSubtle },
   memberHint: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18, marginTop: 8 },
   leaveBtn: { alignItems: 'center', paddingVertical: 18, marginTop: 4 },
-  leaveText: { fontSize: 11, fontWeight: '500', letterSpacing: 2, color: '#B04A38' },
+  leaveText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: '#B04A38' },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -450,8 +453,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  close: { fontSize: 10, fontWeight: '400', letterSpacing: 2, color: Colors.textMuted },
-  headerTitle: { fontSize: 10, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
+  close: { fontSize: 12, fontWeight: '400', letterSpacing: 1.2, color: Colors.textMuted },
+  headerTitle: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   content: { padding: Spacing.screen, gap: Spacing.xl, paddingBottom: Spacing.xxxl },
   avatarWrap: { alignItems: 'center', gap: Spacing.sm, paddingVertical: Spacing.md },
   avatar: {
@@ -467,11 +470,11 @@ const styles = StyleSheet.create({
   avatarImage: { width: 80, height: 80, borderRadius: Radii.pill },
   avatarEmoji: { fontSize: 36 },
   avatarActions: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  avatarAction: { fontSize: 12, fontWeight: '500', color: Colors.accent, letterSpacing: 0.3 },
+  avatarAction: { fontSize: 12, fontWeight: '500', color: Colors.accentInk, letterSpacing: 0.3 },
   avatarActionMuted: { fontSize: 12, fontWeight: '400', color: Colors.textSubtle, letterSpacing: 0.3 },
-  avatarActionDot: { fontSize: 12, color: Colors.textFaint },
+  avatarActionDot: { fontSize: 12, color: Colors.textSubtle },
   section: { gap: Spacing.sm },
-  label: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
+  label: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
   input: {
     fontFamily: Typography.editorial.fontFamily,
     fontWeight: '500' as const,
@@ -504,7 +507,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   emojiText: { fontSize: 24 },
-  collectibleHint: { fontSize: 11, fontWeight: '300', color: Colors.textFaint, lineHeight: 16 },
+  collectibleHint: { fontSize: 11, fontWeight: '300', color: Colors.textSubtle, lineHeight: 16 },
   error: { fontSize: 13, fontWeight: '400', color: Colors.danger, lineHeight: 19 },
   primary: {
     height: 56,
@@ -515,7 +518,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   primaryDisabled: { opacity: Opacity.disabled },
-  primaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 2.5, color: Colors.white },
+  primaryText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
   notFound: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: Spacing.md },
   notFoundText: { fontSize: 16, fontWeight: '200', color: Colors.textMuted },
   backLink: { fontSize: 12, fontWeight: '300', color: Colors.textSubtle, letterSpacing: 0.5 },

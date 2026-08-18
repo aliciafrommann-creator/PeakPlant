@@ -17,6 +17,12 @@ const SKIP = [
   // path is caught below and sent to /shop rather than into a 404.
   '/bestellen',
   '/letters', '/beta', '/login',
+  // /j/<code> ist die Landeseite eines Einladungslinks. Sie MUSS auf
+  // Wurzelebene bleiben: die Universal-Link-Registrierung in app.json steht
+  // auf dem Präfix /j/, und eine Weiterleitung nach /de/j/... würde den Link
+  // zerbrechen, bevor die App ihn je zu sehen bekommt. Die Seite wählt ihre
+  // Sprache selbst.
+  '/j',
   '/opengraph-image',
 ]
 

@@ -133,15 +133,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   kicker: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
-    letterSpacing: 3,
-    color: Colors.textFaint,
+    letterSpacing: 1.2,
+    color: Colors.textSubtle,
   },
   title: {
     ...Typography.editorial,
-    fontSize: 32,
-    lineHeight: 38,
   },
   content: {
     paddingBottom: Spacing.xxxl,
@@ -163,22 +161,20 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   spaceKicker: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2.5,
-    color: Colors.textFaint,
+    letterSpacing: 1.2,
+    color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
   spaceSwitch: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
     letterSpacing: 0.5,
     color: Colors.textMuted,
   },
   spaceName: {
-    ...Typography.editorial,
-    fontSize: 24,
-    lineHeight: 30,
+    ...Typography.title,
   },
   spaceType: {
     fontSize: 11,

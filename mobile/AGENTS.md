@@ -63,11 +63,139 @@ building; it reflects the **current** codebase, not the initial scaffold.
 
 ## Navigation (expo-router)
 
-Tabs: `home` (Together), `discover`, `editions`, `community` (Places), `profile`
-(Me). Hidden routes: `scan`, `moments`, `grow`, `us`. Modals: `space/new`,
-`space/edit`, `customize`, `note/compose`, `plus`. Auth flow: `welcome` →
-`language` → `intro` (60–90s explainer) → `sign-in` (email OTP) → `onboarding` →
-`invite`.
+Tabs: **`home` (Together) · `discover` (Entdecken) · `editions` (Sammlung)** —
+three, since 17.08.2026. Hidden but fully navigable: `moments`, `story`,
+`community` (Places), `profile` (Me), `scan`, `grow`, `us`. Modals:
+`space/new`, `space/edit`, `customize`, `note/compose`, `plus`. Auth flow:
+`welcome` → `language` → `intro` (60–90s explainer) → `sign-in` (email OTP) →
+`onboarding` → `invite`.
+
+Ways into the hidden screens (each has exactly one door — don't add a second):
+`moments` → the "all N moments, by month" link at the foot of the wall ·
+`story` → "what grew between you", same place · `community` → the 🗺️ toggle on
+Discover · `profile` → the person icon in the Home header · `scan` → the "scan
+a card" link on Home.
+
+### Entscheidung 021 — Startbildschirm, Reiter, Sammel-Wochen (Alicia, 17.08.2026)
+
+Nach Alicias erstem Test auf einem echten Gerät: *„das Modell funktioniert,
+aber die UX nicht"* — und, als Maßstab, *„das ist die landing page, das hooked
+mich schon hier, kann ich dies und das machen, DAS IST MEIN SPACE."*
+
+1. **Home ist die Momente-Wand.** Vorher ein Hub: Vorschlagskarte, die Frage
+   „was wollt ihr zusammen machen?", drei weitere Antwortwege, Statistiken,
+   Filmstreifen, Editionen, Notizen — **dreizehn** Abschnitts-Überschriften in
+   Großbuchstaben, und die festgehaltenen Momente erst an dritter Stelle,
+   begrenzt auf drei. Strava, Instagram und BeReal zeigen strukturell EIN
+   Objekt, groß, wiederholt, mit der Haupthandlung außerhalb der Liste und
+   ohne eine einzige Abschnitts-Überschrift auf dem Startbildschirm.
+   Die vier Regeln, die den Bildschirm offen halten, stehen im Kopfkommentar
+   von `app/(tabs)/home.tsx` — wer hier baut, liest sie zuerst.
+2. **Fünf Reiter → drei.** `moments` und `story` lasen beide `useMemories`:
+   zwei Reiter über denselben Daten. Für den einzigen real existierenden
+   Nutzerzustand (eine Person, null Momente, kein Deck) waren **drei von fünf**
+   Reitern leer. Nichts wurde gelöscht, nur umgehängt; beide Seiten haben
+   seither einen `BackButton`, weil sie ohne Reiter-Leiste sonst Sackgassen
+   wären.
+3. **Kein Streak mehr.** `lib/streaks.ts` zählte aufeinanderfolgende Wochen und
+   warnte über `atRisk`, wenn die laufende Woche noch leer war — etwas, das man
+   verlieren kann, und damit ein Verstoß gegen MANIFESTO §3. Jetzt zählt
+   `computeSharedWeeks()` verschiedene Wochen mit mindestens einem Moment; die
+   Zahl kann nur steigen. Alicias Formel: **freischalten ja, verlieren nein.**
+   Der Feature-Schlüssel heißt aus Kompatibilitätsgründen weiter `streaks`.
+
+### Entscheidung 022 — Schriftleiter, Dichte, Kontrast (Alicia, 17.08.2026)
+
+Alicias zweiter Befund: *„vlt ist auch alles etwas riesig im Vergleich zu
+Strava."* Sie hatte recht, aber nicht so, wie es aussah.
+
+1. **`constants/typography.ts` steuerte nichts.** Von neun Stufen hatten sechs
+   **null** Verwendungen; `components/ui/Text.tsx`, ihr einziger Abnehmer, war
+   selbst nirgends eingebunden (gelöscht). Und **alle 40** Stellen, die eine
+   Stufe einbanden, überschrieben die Größe unmittelbar daneben wieder — man
+   hätte jede Zahl ändern können, ohne dass sich ein Pixel bewegt. Daher kam
+   das Auseinanderdriften: es gab keine Leiter, an der sich ein neuer
+   Bildschirm festhalten konnte. Jetzt: **eine** Leiter, jede Stufe benutzt,
+   `display · editorial · title · subtitle · cardTitle · body · callout ·
+   caption · micro · label · mono`. **Ein `...Typography.x` mit einem
+   `fontSize` daneben macht die Datei wieder zu Dekoration.**
+2. **Die Verteilung war zweigipflig, nicht zu groß.** 67 % der Schrift lag bei
+   ≤ 13 pt, 14 % ab 19 pt, fast nichts dazwischen: riesige Titel setzten den
+   gefühlten Maßstab, winzige Etiketten saßen am unteren Ende einer sehr hohen
+   Leiter. Korrektur deshalb als **Stauchung von beiden Seiten** — 15
+   Bildschirmtitel von 28–40 auf 26 (durch Löschen ihrer Überschreibungen),
+   und die Etiketten **hoch**: die kleinste Schrift der App war 7 pt, jetzt
+   11 pt. Instagram und Strava setzen ihre kleinste bei 11–12 pt. Ergebnis:
+   ab 19 pt von 14 % auf 8 %.
+3. **Sperrung.** 157 Stellen standen bei ≥ 2 und sind jetzt bei 1.2. Das war
+   die Ursache für aneinander klebende Knopftexte und abgeschnittene Etiketten.
+4. **Abstände**, der größte Einzelposten: `lg` 24→20, `screen` 24→20, `xl`
+   32→28, `xxl` 48→40, `xxxl` 64→48, neue Sprosse `ms: 12`. Der Rahmen um
+   jeden Abschnitt kostete rund 68 pt, bevor Inhalt kam.
+5. **Kontrast — ein eigener Fehler, kein Geschmack.** Gegen den Papierton
+   gerechnet: `textSubtle` #857F76 = **3,51:1**, `textFaint` #A29C92 =
+   **2,41:1**, beide unter den 4,5:1, die AA für kleinen Text verlangt, und
+   **80 Stellen** kombinierten die leiseste Stufe mit ≤ 13 pt. Jetzt
+   `textSubtle` #726D65 (4,55:1) und `textFaint` #908A81 (3,03:1, ausdrücklich
+   nur für Großes und Nicht-Text). Neu `accentInk` #C04528 (4,51:1) für
+   Akzent-Schrift; `accent` bleibt die Füllfarbe.
+6. **Trefferflächen.** Neu `Layout.tapMin/control/cta`. Sechs Bedienelemente
+   lagen bei 32–40 pt und stehen jetzt bei 44.
+
+Eine bewusste Ausnahme: `app/(auth)/welcome.tsx` bleibt bei 52 pt. Ein
+Bildschirm, ein Satz — dort ist „riesig" die Aussage. Der Kommentar dort sagt
+es; wer eine zweite solche Ausnahme braucht, hat vermutlich keine.
+
+### Entscheidung 023 — Die Einladung trägt einen Link (17.08.2026)
+
+Harte Lage aus der Produktionsdatenbank: **vier Spaces, kein einziger mit einer
+zweiten Person.** Der Beitritts-Backend ist in Ordnung (`redeem_invite`,
+SECURITY DEFINER, Zeilensperre, Paar-Obergrenze zwei, Code-Rotation —
+Migration 0018). Das Problem lag vollständig davor:
+
+- Die Nachricht trug nur `PEAK-XXXXXX`. Abtippen, korrekt, in ein Feld **neun
+  Bildschirme hinter der Anmeldung**.
+- Es gab keinen `inviteLink`, keinen Beitritts-Deep-Link, kein `/j/` in den
+  Intent-Filtern und keine Landeseite.
+
+Jetzt eine durchgehende Kette, jedes Glied im Code:
+
+1. `lib/links.ts` → `inviteLink(code)` = `${APP_BASE_URL}/j/PEAK-XXXXXX`.
+2. `lib/qr.ts` → `parseJoinLink()` liest den Code aus Link, Deep-Link oder
+   nacktem Code. **Bewusst streng:** nur unter `/j/`, nur das DB-Muster. Ein
+   Beitritt lässt einen fremden Menschen in ein privates Tagebuch — das letzte
+   Segment irgendeiner URL darf das nicht auslösen (MANIFESTO §2). Sieben
+   Tests halten das fest.
+3. `lib/pendingDestination.ts` → `setPendingJoinCode` / `peek` / `consume`.
+   Der Code muss die Anmeldung überleben: Wer eingeladen wird, hat die App
+   noch nicht.
+4. `app/index.tsx` fängt den Kaltstart-Link ab. **Dabei ein bestehender
+   Wettlauf repariert:** Link-Auswertung und Routen-Entscheidung lagen in zwei
+   getrennten asynchronen Effekten ohne Reihenfolge — ein Kartenlink konnte
+   auf dem Startbildschirm landen, weil `resumeHome()` vor `setPendingCard`
+   lief. Ein Wettlauf, der nur manchmal verliert, sieht aus wie Zufall.
+5. `app/(auth)/invite.tsx` startet direkt beim Beitreten, Feld ausgefüllt.
+   Gelesen wird beim Rendern (`peek`), verbraucht im Effekt — ein Verbrauch im
+   Render liefe unter StrictMode zweimal und verschluckte den Code.
+6. `app.json` → `/j/` in den Android-Intent-Filtern (iOS deckt
+   `applinks:peak-plant.com` bereits ab).
+7. Website: `app/j/[code]/` — `noindex`, Code **nicht** im Titel und nicht in
+   der OG-Vorschau (er stünde sonst in jeder Chat-Vorschau), `/j` in der
+   Middleware-SKIP-Liste (eine Weiterleitung nach `/de/j/...` zerbräche den
+   Universal Link). Ein kaputter Code ergibt eine ehrliche Erklärung, keinen
+   404. Live gegengeprüft: 200, keine Weiterleitung, Code gerendert, noindex
+   gesetzt, Titel ohne Code.
+   Der Code wandert **nicht** an die Warteliste — die Quelle `invite-link`
+   sagt schon, dass jemand wartet (MANIFESTO §2).
+
+**Was das NICHT löst und was nur Alicia kann:** Die Landeseite sagt weiterhin
+ehrlich, dass die App in geschlossener Beta ist. Solange die eingeladene Person
+sie nicht installieren kann, bewegt keine dieser Änderungen die Zahl. Der
+fehlende Schritt ist ein Installations-Link (TestFlight bzw. Play-Internal-
+Testing) — `GET_THE_APP_URL` ist die eine Stelle, an der er einzutragen ist.
+
+Offen und bewusst NICHT mitgemacht: die neun toten Zeilen im Sammlung-Reiter
+und der fehlende Kamera-Aufnahmeweg in `memory/create`.
 
 ## Design system (current — editorial warm-stone, NOT the old scaffold)
 
@@ -133,3 +261,43 @@ npx tsc --noEmit # types
 npx eslint app components lib --ext .ts,.tsx
 npx vitest run   # unit tests
 ```
+
+### Entscheidung 024 — Decks bleiben physisch, der Scan bringt mehr Inhalt (Alicia, 18.08.2026)
+
+Ausgangsbefund beim Prüfen des Scan-Wegs: Alle 60 Kartentexte liegen im
+App-Bundle (`lib/content/edition0{1,2,3}.ts`), und `app/card/[id].tsx` hat
+**keinerlei Sperre** — `unlocked` ist nur ein Flag für die Feier-Animation,
+`activate()` ist reine Sammel-Buchführung. Die Karten waren trotzdem
+praktisch unerreichbar: es gab keinen Bildschirm, der sie zeigt. Nur QR-Scan,
+ein `/c/`-Deep-Link und ein fest verdrahteter Demo-Knopf führten hinein.
+
+**Alicias Entscheidung:** Die App ist ohne Deck vollwertig (Ideen, Orte,
+Challenges, Notizen, Tagebuch). Editionen werden **physisch gekauft und
+gescannt** — und der Mehrwert des Kaufs ist, dass die App dadurch **mehr
+Inhalt** bekommt. Später darf „MAAAL" eine Edition auch digital sein.
+
+Das trägt, weil eine Karte substanziell ist: `content.sections[]` mit
+Anleitung („mach einen Moment daraus"), Gesprächsfragen und „haltet es fest".
+Die gedruckte Karte trägt den Einzeiler, die App die geführte Erfahrung.
+
+Gebaut:
+- Der Sammlung-Reiter sagt jetzt, was stimmt: alles geht ohne Deck, die
+  Edition ist die gedruckte Fassung. Vorher las er sich wie eine
+  verschlossene Tür für alle, die bis Oktober kein Deck haben.
+- `app/editions/[id].tsx` zeigt **das Deck**: geöffnete Karten sind wieder
+  antippbar (vorher war eine gescannte Karte für immer verschwunden — die
+  geführte Erfahrung war nach einmal Lesen weg), versiegelte zeigen als
+  Umriss, was die gedruckte Ausgabe hinzufügt.
+
+**Ehrlichkeitsgrenze (MANIFESTO §1), verbindlich:** `sealed` ist eine
+Produktgrenze, keine Verschlüsselung. Die Texte liegen im Bundle; wer es
+auspackt, sieht sie. Die Oberfläche sagt deshalb nie „geschützt" oder
+„verschlüsselt" und zeigt bewusst **kein Schloss-Symbol** — nur, was stimmt:
+die gedruckte Karte öffnet sie. Wer hier je „sicher" hinschreibt, macht aus
+einer ehrlichen Produktgrenze eine Behauptung, die der Code nicht hält.
+
+Offen: „Peaks sammeln" als Bindung (Alicias Idee vom 18.08.). Heute zählt die
+App bereits drei Dinge — festgehaltene Momente, gesammelte Wochen, gemeinsame
+Challenges — sie heißen nur nicht so. Wenn daraus ein Sammelstück wird, gilt
+dieselbe Regel wie beim Streak: es darf nur steigen. „Locked in" als
+Verlustangst wäre MANIFESTO §3; „etwas von euch wächst hier" ist erlaubt.

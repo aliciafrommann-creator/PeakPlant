@@ -20,6 +20,7 @@ import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import { MemoryFeedSkeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { BackButton } from '../../components/ui/BackButton';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { shareMemory } from '../../lib/share';
@@ -131,6 +132,10 @@ export default function MomentsScreen() {
         }
         ListHeaderComponent={
           <View style={styles.header}>
+            {/* Diese Seite war ein Reiter und ist jetzt das Archiv hinter der
+                Momente-Wand auf dem Startbildschirm. Ohne Reiter-Leiste
+                braucht sie einen Weg zurück (Entscheidung Alicia, 17.08.2026). */}
+            <BackButton />
             <View style={styles.kickerRow}>
               <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
               <Text style={styles.kicker}>{t('YOUR MOMENTS', 'EURE MOMENTE')}</Text>
@@ -175,6 +180,12 @@ export default function MomentsScreen() {
               )}
               ctaLabel={t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
               onCta={() => router.push('/(tabs)/scan')}
+              // Ohne physisches Deck war „Karte scannen" hier eine Sackgasse:
+              // die einzige angebotene Handlung war die einzig unmögliche.
+              // Das Tagebuch braucht kein Deck — die Karte ist der schönere
+              // Weg hinein, nicht der einzige (MANIFESTO §5).
+              secondaryLabel={t('no deck yet? keep a moment anyway', 'noch kein Deck? trotzdem einen Moment festhalten')}
+              onSecondary={() => router.push('/memory/create')}
             />
           )
         }
@@ -204,8 +215,8 @@ const styles = StyleSheet.create({
   },
   kickerRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   kickerDot: { width: 6, height: 6, borderRadius: 3 },
-  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
-  title: { ...Typography.editorial, fontSize: 30, lineHeight: 36 },
+  kicker: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
+  title: { ...Typography.editorial },
   subtitle: {
     fontSize: 13,
     fontWeight: '300',
@@ -215,7 +226,7 @@ const styles = StyleSheet.create({
   monthLabel: {
     fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.textSubtle,
     textTransform: 'uppercase',
     paddingHorizontal: Spacing.screen,
@@ -226,7 +237,7 @@ const styles = StyleSheet.create({
   footer: {
     fontSize: 12,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textAlign: 'center',
     paddingTop: Spacing.lg,
     paddingHorizontal: Spacing.screen,

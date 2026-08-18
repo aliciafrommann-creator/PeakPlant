@@ -1,5 +1,5 @@
 import type { Memory, MomentCard, SavedDate } from './types';
-import { GET_THE_APP_URL } from './links';
+import { inviteLink } from './links';
 
 /**
  * Build the text a user shares when they choose to send a moment to another app.
@@ -28,13 +28,15 @@ export function composeInviteText(code: string, spaceName?: string): string {
     : "Join me on PeakPlant — let's start our shared diary.";
   return [
     opener,
-    `Your invite code: ${trimmedCode}`,
-    // Two fixes, both about the person receiving this: they usually do not
-    // have the app yet, so the message now carries the way to get it — and
-    // the step names the button that actually exists ("I have a code"), not
-    // one that never did ("join with code").
-    `Get the app: ${GET_THE_APP_URL}`,
-    'Then tap "I have a code" and enter it. 🌻',
+    // Der Link führt, nicht der Code. Er trägt den Code in sich: antippen
+    // genügt, das Feld ist danach ausgefüllt. Wer die App noch nicht hat,
+    // landet auf derselben Seite und behält den Code trotzdem.
+    inviteLink(trimmedCode),
+    // Der Code steht weiterhin darunter — zum Vorlesen, wenn der Link im
+    // Chat zerbricht oder jemand ihn am Telefon durchgibt. Er ist die
+    // Rückfallebene, nicht mehr der Weg.
+    `(or enter the code by hand: ${trimmedCode})`,
+    'a shared diary for two. nothing in it is public. 🌻',
   ].join('\n\n');
 }
 

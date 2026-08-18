@@ -23,7 +23,7 @@ import { IdeaCardSkeleton } from '../../components/ui/Skeleton';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useAppStore } from '../../lib/store';
-import { computeWeeklyStreak } from '../../lib/streaks';
+import { computeSharedWeeks } from '../../lib/streaks';
 import { discovery } from '../../lib/ai';
 import type { DateConstraints, DateRecommendation } from '../../lib/ai';
 import { momentById, type TimeOfDay, type Weather } from '../../lib/together';
@@ -107,6 +107,14 @@ export default function DiscoverScreen() {
   const [excludeIds, setExcludeIds] = useState<string[]>([]);
   const [recs, setRecs] = useState<DateRecommendation[]>([]);
   const [loading, setLoading] = useState(true);
+  /**
+   * Ein Ladefehler darf NICHT wie „nichts passt" aussehen. Vorher setzte der
+   * catch-Zweig einfach `recs` auf leer — der Mensch las dann „lockert einen
+   * Filter", obwohl gar nichts geladen worden war, und lockerte Filter, die
+   * nicht das Problem waren. Dieselbe Regel gilt im Tagebuch schon
+   * (moments.tsx) und ist die Fortsetzung von MANIFESTO §1 nach innen.
+   */
+  const [failed, setFailed] = useState(false);
   const [saved, setSaved] = useState<SavedDate[]>([]);
   const [savedMomentIds, setSavedMomentIds] = useState<Set<string>>(new Set());
   const [liveWeather, setLiveWeather] = useState<Weather | undefined>(undefined);
@@ -119,7 +127,7 @@ export default function DiscoverScreen() {
     setSavedMomentIds(new Set(saved.map((s) => s.momentId)));
   }, [saved]);
 
-  const streak = computeWeeklyStreak(memories.map((m) => m.createdAt));
+  const sharedWeeks = computeSharedWeeks(memories.map((m) => m.createdAt));
   const timeOfDay = useMemo(currentTimeOfDay, []);
   const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
     useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
@@ -177,10 +185,12 @@ export default function DiscoverScreen() {
     }
     let alive = true;
     setLoading(true);
+    setFailed(false);
     discovery
       .recommend(constraints)
       .then((r) => {
         if (!alive) return;
+        setFailed(false);
         // Exhausted the pool via "show another"? Reset and start over.
         if (r.length === 0 && excludeIds.length > 0) {
           setExcludeIds([]);
@@ -192,6 +202,7 @@ export default function DiscoverScreen() {
       .catch(() => {
         if (alive) {
           setRecs([]);
+          setFailed(true);
           setLoading(false);
         }
       });
@@ -322,9 +333,8 @@ export default function DiscoverScreen() {
         {streaksEnabled && activeSpace && (
           <StreakBanner
             spaceType={activeSpace.type}
-            count={streak.count}
-            atRisk={streak.atRisk}
-            active={streak.active}
+            count={sharedWeeks.count}
+            active={sharedWeeks.active}
           />
         )}
 
@@ -476,6 +486,38 @@ export default function DiscoverScreen() {
               </View>
             )}
           </>
+        ) : failed ? (
+          /* Kaputt ist nicht dasselbe wie leer: hier hilft Wiederholen, kein
+             gelockerter Filter. */
+          <View style={styles.empty}>
+            <Text style={styles.emptyText}>
+              {t('we could not fetch an idea.', 'wir konnten gerade keine Idee holen.')}
+            </Text>
+            <Text style={styles.emptyHint}>
+              {t(
+                'that was the connection, not your filters — your saved ideas are safe.',
+                'das war die Verbindung, nicht eure Filter — eure gemerkten Ideen sind sicher.',
+              )}
+            </Text>
+            <View style={styles.emptyActions}>
+              <TouchableOpacity
+                style={[styles.actionBtn, styles.emptyActionGrow]}
+                onPress={showAnother}
+                accessibilityRole="button"
+                accessibilityLabel={t('Try again', 'Nochmal versuchen')}
+              >
+                <Text style={styles.actionText}>{t('TRY AGAIN', 'NOCHMAL VERSUCHEN')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.actionBtnGhost, styles.emptyActionGrow]}
+                onPress={() => router.push('/discover/saved')}
+                accessibilityRole="button"
+                accessibilityLabel={t('Open saved ideas', 'Gemerkte Ideen öffnen')}
+              >
+                <Text style={styles.actionTextGhost}>{t('SAVED IDEAS', 'GEMERKTE IDEEN')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         ) : (
           <View style={styles.empty}>
             <Text style={styles.emptyText}>{t('nothing fits all of that right now.', 'nichts passt gerade auf alles.')}</Text>
@@ -725,14 +767,14 @@ const styles = StyleSheet.create({
   spaceName: {
     fontSize: 11,
     fontWeight: '400',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.textMuted,
     textTransform: 'uppercase',
     flexShrink: 1,
   },
-  settings: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textSubtle },
+  settings: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
   titleBlock: { paddingHorizontal: Spacing.screen, paddingTop: Spacing.xl, gap: Spacing.sm },
-  title: { ...Typography.editorial, fontSize: 34, lineHeight: 38 },
+  title: { ...Typography.editorial },
   subtitle: { fontSize: 14, fontWeight: '400', color: Colors.textSubtle, lineHeight: 21 },
   askInline: {
     minHeight: 44,
@@ -744,9 +786,9 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   askInlineText: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.text,
     textAlign: 'center',
   },
@@ -773,7 +815,7 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 12,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     letterSpacing: 0.5,
     textAlign: 'center',
   },
@@ -802,15 +844,15 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 4,
     backgroundColor: DISCOVER,
   },
-  cardTitle: { ...Typography.editorial, fontSize: 24, lineHeight: 29 },
+  cardTitle: { ...Typography.title, },
   cardConcept: { fontSize: 14, fontWeight: '400', color: Colors.textMuted, lineHeight: 21 },
   facts: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
   fact: { gap: 2 },
   factLabel: {
-    fontSize: 8,
+    fontSize: 11,
     fontWeight: '500',
     letterSpacing: 1.5,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
   factValue: { fontSize: 12, fontWeight: '400', color: Colors.text },
@@ -820,20 +862,20 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.border,
     paddingTop: Spacing.md,
   },
-  whyLabel: { fontSize: 8, fontWeight: '500', letterSpacing: 2, color: Colors.textSubtle },
+  whyLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
   whyText: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
-  notUsed: { fontSize: 10, fontWeight: '300', color: Colors.textFaint, fontStyle: 'italic', marginTop: 2 },
+  notUsed: { fontSize: 12, fontWeight: '300', color: Colors.textSubtle, fontStyle: 'italic', marginTop: 2 },
   provenance: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '400',
     letterSpacing: 0.5,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cta: { fontSize: 10, fontWeight: '600', letterSpacing: 2, color: Colors.accent },
-  save: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
-  savedDone: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.accent },
+  cta: { fontSize: 12, fontWeight: '600', letterSpacing: 1.2, color: Colors.accent },
+  save: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
+  savedDone: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.accent },
   actionRow: { flexDirection: 'row', gap: Spacing.sm, paddingHorizontal: Spacing.screen, marginTop: Spacing.md },
   actionBtn: {
     height: 44,
@@ -844,14 +886,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  actionText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  actionText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   actionBtnGhost: { height: 44, paddingHorizontal: Spacing.lg, justifyContent: 'center', alignItems: 'center' },
-  actionTextGhost: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textFaint },
+  actionTextGhost: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
   altBlock: { paddingHorizontal: Spacing.screen, marginTop: Spacing.xl, gap: Spacing.sm },
-  altLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 3, color: Colors.textFaint },
+  altLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
   empty: { alignItems: 'center', gap: Spacing.sm, paddingVertical: Spacing.xxl, paddingHorizontal: Spacing.screen },
   emptyText: { fontSize: 18, fontWeight: '200', color: Colors.textMuted },
-  emptyHint: { fontSize: 13, fontWeight: '300', color: Colors.textFaint, marginBottom: Spacing.md, textAlign: 'center', lineHeight: 19 },
+  emptyHint: { fontSize: 13, fontWeight: '300', color: Colors.textSubtle, marginBottom: Spacing.md, textAlign: 'center', lineHeight: 19 },
   emptyActions: { flexDirection: 'row', gap: Spacing.sm, alignSelf: 'stretch' },
   emptyActionGrow: { flex: 1, paddingHorizontal: Spacing.sm },
   links: {
@@ -862,10 +904,10 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   linksLabel: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '600',
-    letterSpacing: 2.5,
-    color: Colors.textFaint,
+    letterSpacing: 1.2,
+    color: Colors.textSubtle,
     textTransform: 'uppercase',
     paddingHorizontal: Spacing.screen,
   },
@@ -918,7 +960,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.text,
   },
   toggleChipText: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
     letterSpacing: 1.5,
     color: Colors.textMuted,
@@ -929,10 +971,10 @@ const styles = StyleSheet.create({
 
   // Date generator label
   generatorLabel: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2.5,
-    color: Colors.accent,
+    letterSpacing: 1.2,
+    color: Colors.accentInk,
     textTransform: 'uppercase',
   },
 
@@ -951,17 +993,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   challengeSectionLabel: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2.5,
-    color: Colors.textFaint,
+    letterSpacing: 1.2,
+    color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
   chillyCounter: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
     letterSpacing: 1,
-    color: Colors.accent,
+    color: Colors.accentInk,
   },
   challengeCard: {
     backgroundColor: Colors.backgroundCream,
@@ -975,7 +1017,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '400',
     letterSpacing: 0.5,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     fontStyle: 'italic',
   },
   challengeTitle: {
@@ -1028,9 +1070,9 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   challengeAcceptText: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.text,
   },
 });

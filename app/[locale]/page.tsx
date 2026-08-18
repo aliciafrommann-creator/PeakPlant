@@ -437,16 +437,20 @@ function EditionSystem({ locale, isMobile }: { locale: string; isMobile: boolean
             </motion.div>
           ))}
         </div>
-        <motion.p initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.3 }}
-          style={{ fontSize: '0.95rem', color: '#ffffff', opacity: 0.45, lineHeight: 1.75, fontWeight: 300, maxWidth: 480, fontFamily: PP, whiteSpace: 'pre-line' }}>
-          {isDE
-            ? 'jede edition ist eine pflanze. edition 01 ist die sonnenblume — ihre samen stecken im saatpapier deines decks.\nedition 02 und 03 sind schon gedacht: neue pflanze, neue karten, neue digitale welt — und die decks sind so gestaltet, dass sie zusammenpassen. später gibt es die drei auch als triple bundle.\nwer früh dabei ist, redet mit: auf instagram und in der community entstehen die nächsten editionen.\nfür 2027 geplant: friends editions für freundeskreise, family editions — und solo editions. solo heißt nicht allein sein: es ist die edition dafür, dich selbst zu finden und mutig zu sein. dazu eine winter edition für paare.'
-            : 'every edition is a plant. edition 01 is the sunflower — its seeds are pressed into the seed paper in your deck.\neditions 02 and 03 are already taking shape: a new plant, new cards, a new digital world — and the decks are designed to belong together. later, the three will also come as a triple bundle.\njoin early and you help shape them: the next editions grow on instagram and in the community.\nplanned for 2027: friends editions for your circle, family editions — and solo editions. solo does not mean being lonely: it is the edition for finding yourself and being brave. plus a winter edition for couples.'}
-        </motion.p>
-        {/* Die zwei Wege, frueh dabei zu sein — direkt unter dem Satz, der sie
-            verspricht. Ein Versprechen ohne Tuer dorthin waere nur Deko. */}
+        {/* Der Editions-Absatz stand hier bis zum 18.08.2026 (Entscheidung
+            Alicia): eine Pflanzen-Erzaehlung plus Roadmap bis 2027 — triple
+            bundle, friends/family/solo editions, winter edition. Raus, weil
+            eine Seite, die vor allem ankuendigt, das Heute kleiner macht: die
+            drei Karten darueber sagen bereits, was es gibt und was kommt.
+            Der Text lebt im BACKLOG weiter, samt Datums-Vorsicht.
+
+            Die zwei Links bleiben: sie waren die Tuer zu dem Versprechen
+            "wer frueh dabei ist, redet mit" — und sind zugleich der einzige
+            Weg zu Instagram und zur Community auf der ganzen Seite. Ein
+            geloeschter Absatz ist eine Textentscheidung, eine geloeschte
+            einzige Tuer waere eine Navigationsentscheidung. */}
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, delay: 0.4 }}
-          style={{ display: 'flex', gap: '4px 28px', flexWrap: 'wrap', marginTop: '1.75rem' }}>
+          style={{ display: 'flex', gap: '4px 28px', flexWrap: 'wrap' }}>
           <a href="https://www.instagram.com/peak.plant" target="_blank" rel="noopener noreferrer" className="pp-dark-link" style={{ fontFamily: PP }}>
             INSTAGRAM →
           </a>

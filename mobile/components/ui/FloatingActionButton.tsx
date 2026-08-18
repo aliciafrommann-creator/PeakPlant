@@ -34,12 +34,16 @@ export function FloatingActionButton({
       onPress={onPress}
       scaleTo={0.92}
       accessibilityLabel={accessibilityLabel}
+      // Die Positionierung gehört ans ÄUSSERE Element. Vorher lag
+      // `position: absolute` auf der inneren, skalierenden Fläche — die hat
+      // sich dann relativ zu einem äußeren Kasten der Größe null ausgerichtet
+      // und landete irgendwo. Dass es niemandem auffiel, lag nur daran, dass
+      // dieser Knopf bisher nirgends benutzt wurde.
+      containerStyle={[styles.fab, style]}
       style={[
-        styles.fab,
         label ? styles.extended : styles.round,
         { backgroundColor: color },
         Shadows.float,
-        style,
       ]}
     >
       <View style={styles.inner}>
@@ -55,18 +59,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: Spacing.lg,
     bottom: Spacing.lg,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   round: {
     width: 60,
     height: 60,
     borderRadius: Radii.pill,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   extended: {
     height: 56,
     paddingHorizontal: Spacing.lg,
     borderRadius: Radii.pill,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   inner: {
     flexDirection: 'row',

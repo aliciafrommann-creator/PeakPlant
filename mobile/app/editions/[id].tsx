@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -18,11 +18,13 @@ import { useSpaces } from '../../lib/hooks/useSpaces';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { getEdition, SEED_EDITION, SEED_CARDS } from '../../lib/seed';
+import { cardRepository } from '../../lib/repositories';
+import { PressableScale } from '../../components/ui/PressableScale';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { ShopLink } from '../../components/edition/ShopLink';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import { EmptyState } from '../../components/ui/EmptyState';
-import type { Memory } from '../../lib/types';
+import type { Memory, MomentCard } from '../../lib/types';
 
 export default function EditionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -32,6 +34,43 @@ export default function EditionScreen() {
   const { t } = useLanguage();
 
   const edition = getEdition(id ?? '') ?? SEED_EDITION;
+
+  /**
+   * Die Karten des Decks — bis zum 18.08.2026 zeigte diese Seite nur die
+   * bereits bewahrten Momente. Zwei Löcher auf einmal:
+   *
+   *   1. Wer eine Karte gescannt hatte, kam nie wieder an sie heran. Die
+   *      geführte Erfahrung (Anleitung, Fragen, „haltet es fest") war nach
+   *      einmal Lesen verschwunden.
+   *   2. Wer noch kein Deck hat, sah nicht, was eine Edition der App
+   *      hinzufügt — und das ist genau der Mehrwert des Kaufs
+   *      (Entscheidung Alicia, 18.08.2026).
+   *
+   * Ehrlich zur Versiegelung (MANIFESTO §1): `sealed` ist eine Produktgrenze,
+   * keine Verschlüsselung. Die Texte liegen im App-Bundle; wer es auspackt,
+   * sieht sie. Die Oberfläche behauptet deshalb nirgends „geschützt" oder
+   * „verschlüsselt", sondern nur, was stimmt: die gedruckte Karte öffnet sie.
+   */
+  const [cards, setCards] = useState<MomentCard[]>([]);
+  const [cardsFailed, setCardsFailed] = useState(false);
+
+  const loadCards = useCallback(() => {
+    if (!activeSpace?.id) {
+      setCards([]);
+      return () => {};
+    }
+    let alive = true;
+    setCardsFailed(false);
+    cardRepository
+      .getAll(edition.id, activeSpace.id)
+      .then((c) => { if (alive) setCards(c); })
+      .catch(() => { if (alive) { setCards([]); setCardsFailed(true); } });
+    return () => { alive = false; };
+  }, [activeSpace?.id, edition.id]);
+
+  useEffect(() => loadCards(), [loadCards]);
+
+  const openedCount = cards.filter((c) => c.status === 'activated').length;
 
   const editionCardIds = new Set(
     SEED_CARDS.filter((c) => c.edition === edition.id).map((c) => c.id)
@@ -85,7 +124,8 @@ export default function EditionScreen() {
           />
         }
         ListHeaderComponent={
-          <View style={[styles.header, { backgroundColor: edition.color }]}>
+          <>
+            <View style={[styles.header, { backgroundColor: edition.color }]}>
             <Text style={styles.symbol}>{edition.symbol}</Text>
             <Text style={[styles.editionLabel, { color: fg }]}>{edition.subtitle.toUpperCase()}</Text>
             <Text style={[styles.title, { color: fg }]}>{edition.name.toLowerCase()}</Text>
@@ -113,7 +153,68 @@ export default function EditionScreen() {
             {editionMemories.length > 0 && (
               <Text style={[styles.diaryLabel, { color: fgFaint }]}>{t('YOUR DIARY', 'EUER TAGEBUCH')}</Text>
             )}
-          </View>
+            </View>
+
+            {/* Das Deck. Aufgeschlagene Karten sind wieder lesbar, versiegelte
+                zeigen, was die gedruckte Ausgabe der App hinzufügt. */}
+            {cards.length > 0 && (
+              <View style={styles.deck}>
+                <Text style={styles.deckLabel}>{t('THE DECK', 'DAS DECK')}</Text>
+                <Text style={styles.deckHint}>
+                  {openedCount > 0
+                    ? t(
+                        `${openedCount} of ${cards.length} cards opened. tap one to read it again.`,
+                        `${openedCount} von ${cards.length} Karten geöffnet. Tippt eine an, um sie noch einmal zu lesen.`,
+                      )
+                    : t(
+                        'each card brings a guided evening into the app — something to do, questions to ask, and what to keep. the printed card opens it.',
+                        'jede Karte bringt einen geführten Abend in die App — etwas zum Tun, Fragen zum Sprechen und was ihr festhaltet. Die gedruckte Karte öffnet sie.',
+                      )}
+                </Text>
+
+                {cardsFailed && (
+                  <TouchableOpacity onPress={loadCards} accessibilityRole="button">
+                    <Text style={styles.deckRetry}>
+                      {t('could not load the deck — tap to try again.', 'das Deck konnte nicht geladen werden — tippen zum erneut Versuchen.')}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
+                <View style={styles.deckGrid}>
+                  {cards.map((c) => {
+                    const opened = c.status === 'activated';
+                    return opened ? (
+                      <PressableScale
+                        key={c.id}
+                        containerStyle={styles.chipSlot}
+                        style={[styles.chip, styles.chipOpen]}
+                        scaleTo={0.96}
+                        onPress={() => router.push(`/card/${c.id}`)}
+                        accessibilityLabel={t(
+                          `Card ${c.number}, opened — read it again`,
+                          `Karte ${c.number}, geöffnet — noch einmal lesen`,
+                        )}
+                      >
+                        <Text style={styles.chipNumOpen}>{String(c.number).padStart(2, '0')}</Text>
+                      </PressableScale>
+                    ) : (
+                      <View
+                        key={c.id}
+                        style={[styles.chip, styles.chipSealed]}
+                        accessible
+                        accessibilityLabel={t(
+                          `Card ${c.number}, sealed — the printed card opens it`,
+                          `Karte ${c.number}, versiegelt — die gedruckte Karte öffnet sie`,
+                        )}
+                      >
+                        <Text style={styles.chipNumSealed}>{String(c.number).padStart(2, '0')}</Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            )}
+          </>
         }
         ListEmptyComponent={
           loading ? null : error ? (
@@ -127,15 +228,20 @@ export default function EditionScreen() {
               onCta={refresh}
             />
           ) : (
-            <View style={styles.empty}>
-              <Text style={styles.emptyText}>{t('no moments yet.', 'noch keine Momente.')}</Text>
-              <Text style={styles.emptyHint}>
-                {t(
-                  'complete a card, then scan its QR code to add it to your diary.',
-                  'Schließe eine Karte ab, dann scanne ihren QR-Code, um sie eurem Tagebuch hinzuzufügen.',
-                )}
-              </Text>
-            </View>
+            // Vorher stand hier nur Text: eine Anleitung für etwas, das ohne
+            // physisches Deck niemand tun kann, und kein Weg weiter. Jetzt
+            // dieselbe Erklärung, aber mit einem Ausgang (MANIFESTO §5).
+            <EmptyState
+              title={t('no moments yet.', 'noch keine Momente.')}
+              hint={t(
+                'complete a card, then scan its QR code to add it to your diary.',
+                'Schließt eine Karte ab, dann scannt ihren QR-Code, um sie eurem Tagebuch hinzuzufügen.',
+              )}
+              ctaLabel={t('SCAN A CARD', 'KARTE SCANNEN')}
+              onCta={() => router.push('/(tabs)/scan')}
+              secondaryLabel={t('no deck yet? keep a moment anyway', 'noch kein Deck? trotzdem einen Moment festhalten')}
+              onSecondary={() => router.push('/memory/create')}
+            />
           )
         }
         ListFooterComponent={
@@ -157,7 +263,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  back: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
+  back: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
   list: { paddingBottom: Spacing.xl },
   header: {
     backgroundColor: Colors.backgroundDark,
@@ -167,8 +273,8 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   symbol: { fontSize: 36, marginBottom: Spacing.sm },
-  editionLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.textSubtle },
-  title: { ...Typography.editorial, fontSize: 36, lineHeight: 40, color: Colors.white },
+  editionLabel: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
+  title: { ...Typography.editorial, color: Colors.white },
   description: {
     fontSize: 14,
     fontWeight: '300',
@@ -187,7 +293,7 @@ const styles = StyleSheet.create({
   privateNote: {
     fontSize: 11,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     letterSpacing: 0.3,
     fontStyle: 'italic',
     marginTop: 4,
@@ -200,26 +306,75 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     borderRadius: Radii.pill,
   },
-  scanButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.backgroundDark },
+  scanButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.backgroundDark },
   diaryLabel: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 3,
-    color: Colors.textFaint,
+    letterSpacing: 1.2,
+    color: Colors.textSubtle,
     marginTop: Spacing.xl,
   },
   memoryWrapper: { paddingHorizontal: Spacing.screen },
-  empty: {
+  deck: {
     paddingHorizontal: Spacing.screen,
-    paddingTop: Spacing.xl,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.md,
     gap: Spacing.sm,
   },
-  emptyText: { fontSize: 18, fontWeight: '200', color: Colors.textMuted },
-  emptyHint: {
+  deckLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+    color: Colors.textMuted,
+  },
+  deckHint: {
     fontSize: 13,
-    fontWeight: '300',
+    fontWeight: '400',
+    lineHeight: 19,
+    color: Colors.textMuted,
+  },
+  deckRetry: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: Colors.accentInk,
+    paddingVertical: Spacing.xs,
+  },
+  deckGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.sm,
+    marginTop: Spacing.xs,
+  },
+  chipSlot: {},
+  chip: {
+    width: 46,
+    height: 46,
+    borderRadius: Radii.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  /** Geöffnet: volle Farbe, antippbar — die Karte ist wieder lesbar. */
+  chipOpen: {
+    backgroundColor: Colors.text,
+  },
+  chipNumOpen: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: Colors.white,
+    fontVariant: ['tabular-nums'],
+  },
+  /** Versiegelt: nur Umriss. Kein Schloss-Symbol — es ist keine Sicherheits-
+      sperre, sondern eine Karte, die noch niemand gezogen hat. */
+  chipSealed: {
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: 'transparent',
+  },
+  chipNumSealed: {
+    fontSize: 13,
+    fontWeight: '400',
     color: Colors.textFaint,
-    lineHeight: 20,
-    letterSpacing: 0.2,
+    fontVariant: ['tabular-nums'],
   },
 });

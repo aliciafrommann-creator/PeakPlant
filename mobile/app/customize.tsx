@@ -110,8 +110,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  close: { fontSize: 10, fontWeight: '400', letterSpacing: 2, color: Colors.textMuted },
-  headerTitle: { fontSize: 10, fontWeight: '500', letterSpacing: 2.5, color: Colors.text },
+  close: { fontSize: 12, fontWeight: '400', letterSpacing: 1.2, color: Colors.textMuted },
+  headerTitle: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   content: { padding: Spacing.screen, gap: Spacing.lg, paddingBottom: Spacing.xxxl },
   lead: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
   row: {
@@ -126,9 +126,9 @@ const styles = StyleSheet.create({
   rowTitleLine: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   rowLabel: { fontSize: 16, fontWeight: '400', color: Colors.text, letterSpacing: 0.1 },
   soon: {
-    fontSize: 8,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.textSubtle,
     borderWidth: 1,
     borderColor: Colors.accent,
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   footer: {
     fontSize: 11,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     lineHeight: 17,
     fontStyle: 'italic',
     marginTop: Spacing.md,

@@ -771,7 +771,7 @@ export default function PlacesScreen() {
         {mappablePlaces(displayPlaces).length === 0 ? (
           // No pins yet → an honest invitation instead of an empty map of
           // nowhere (the curated prompts carry no coordinates) (A3-8).
-          <View style={[styles.mapFrame, styles.mapEmpty]}>
+          <View style={styles.mapEmptyFrame}>
             <Text style={styles.mapEmptyMark}>🗺️</Text>
             <Text style={styles.mapEmptyText}>
               {t(
@@ -1041,6 +1041,10 @@ export default function PlacesScreen() {
           </View>
         </View>
 
+        {/* Nur zeigen, wenn darunter wirklich etwas steht. Eine Überschrift über
+            dem Nichts ist kein Leerzustand, sondern ein Fehler, der wie einer
+            aussieht (MANIFESTO §5). */}
+        {(linkedMoments.length > 0 || selectedLivePlace) ? (
         <View style={styles.ideas}>
           <Text style={styles.sectionLabel}>{t('IDEAS FOR THIS PLACE', 'IDEEN FÜR DIESEN ORT')}</Text>
           {linkedMoments.map((moment) => (
@@ -1078,6 +1082,7 @@ export default function PlacesScreen() {
             </TouchableOpacity>
           ) : null}
         </View>
+        ) : null}
 
         <Text style={styles.communityNote}>
           {t(
@@ -1226,8 +1231,8 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.lg,
     gap: Spacing.sm,
   },
-  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: PLACES },
-  title: { ...Typography.editorial, fontSize: 32, lineHeight: 38 },
+  kicker: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: PLACES },
+  title: { ...Typography.editorial },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
   livePanel: {
     marginHorizontal: Spacing.screen,
@@ -1239,7 +1244,7 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   liveCopy: { gap: Spacing.xs },
-  liveKicker: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: PLACES },
+  liveKicker: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: PLACES },
   liveText: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18 },
   liveButton: {
     minHeight: 48,
@@ -1249,7 +1254,7 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   liveButtonDisabled: { opacity: 0.7 },
-  liveButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
+  liveButtonText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
   askMapButton: {
     minHeight: 44,
     justifyContent: 'center',
@@ -1260,9 +1265,9 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   askMapButtonText: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.text,
     textAlign: 'center',
   },
@@ -1274,8 +1279,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.border,
   },
-  pilotCityText: { fontSize: 10, fontWeight: '500', letterSpacing: 1.5, color: Colors.textMuted },
-  liveStatus: { fontSize: 10, fontWeight: '400', color: Colors.textSubtle, lineHeight: 15 },
+  pilotCityText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.5, color: Colors.textMuted },
+  liveStatus: { fontSize: 12, fontWeight: '400', color: Colors.textSubtle, lineHeight: 15 },
   liveStatusError: { color: Colors.textMuted },
   resetCounterButton: {
     minHeight: 44,
@@ -1285,13 +1290,24 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     borderRadius: Radii.pill,
   },
-  resetCounterText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
-  mapEmpty: {
+  resetCounterText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
+  /* Der Leerzustand erbte bis 17.08. die feste Kartenhöhe (310) und die
+     einzige reinweiße Fläche des Systems — 310 Punkte Weiß mit einem kleinen
+     Emoji darin. Auf dem Gerät las sich das als leerer Container über der
+     Tab-Leiste, nicht als Einladung. Jetzt so hoch wie sein Inhalt, in der
+     warmen Kartenfarbe des Screens. Bewusst OHNE eigenen Knopf: „FIND NEAR
+     ME" steht bereits im Panel darüber, und zwei laute Primäraktionen auf
+     einem Screen verbietet MANIFESTO §5. */
+  mapEmptyFrame: {
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
+    marginHorizontal: Spacing.screen,
+    paddingVertical: Spacing.xl,
     paddingHorizontal: Spacing.lg,
-    backgroundColor: Colors.surface,
+    backgroundColor: Colors.backgroundCream,
+    borderRadius: Radii.lg,
+    ...Shadows.subtle,
   },
   mapEmptyMark: { fontSize: 28 },
   mapEmptyText: {
@@ -1327,7 +1343,7 @@ const styles = StyleSheet.create({
   attribution: {
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.xs,
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '400',
     color: Colors.textSubtle,
   },
@@ -1357,7 +1373,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   addPlaceSubmitDisabled: { opacity: 0.4 },
-  addPlaceSubmitText: { fontSize: 11, fontWeight: '600', letterSpacing: 2, color: Colors.white },
+  addPlaceSubmitText: { fontSize: 11, fontWeight: '600', letterSpacing: 1.2, color: Colors.white },
   placeChipTextActive: { color: Colors.white },
   placeCard: {
     marginHorizontal: Spacing.screen,
@@ -1374,12 +1390,12 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   placeTitleBlock: { flex: 1, gap: 2 },
-  placeName: { ...Typography.editorial, fontSize: 23, lineHeight: 28 },
+  placeName: { ...Typography.title, },
   placeArea: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
   partner: {
-    fontSize: 8,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.text,
     borderWidth: 1,
     borderColor: Colors.accent,
@@ -1387,15 +1403,15 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   liveBadge: {
-    fontSize: 8,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.white,
     backgroundColor: Colors.text,
     paddingHorizontal: Spacing.xs,
     paddingVertical: 4,
   },
-  placeMeta: { fontSize: 10, fontWeight: '400', color: Colors.textSubtle },
+  placeMeta: { fontSize: 12, fontWeight: '400', color: Colors.textSubtle },
   perk: { fontSize: 13, fontWeight: '400', color: Colors.text, lineHeight: 19 },
   aiWhy: {
     borderTopWidth: 1,
@@ -1409,11 +1425,11 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.md,
     gap: Spacing.xs,
   },
-  feedbackLabel: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textSubtle },
-  stars: { fontSize: 20, color: Colors.accent, letterSpacing: 2 },
+  feedbackLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
+  stars: { fontSize: 20, color: Colors.accentInk, letterSpacing: 2 },
   feedbackMeta: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
   feedbackTip: { fontSize: 13, fontWeight: '300', color: Colors.text, lineHeight: 19 },
-  privateNote: { fontSize: 10, fontWeight: '400', color: Colors.textSubtle, lineHeight: 15 },
+  privateNote: { fontSize: 12, fontWeight: '400', color: Colors.textSubtle, lineHeight: 15 },
   emptyFeedback: { fontSize: 12, fontWeight: '400', color: Colors.textMuted, lineHeight: 18 },
   loopStatus: {
     marginTop: Spacing.sm,
@@ -1426,7 +1442,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   loopStatusDone: { backgroundColor: Colors.text, borderColor: Colors.text },
-  loopStatusText: { fontSize: 10, fontWeight: '600', letterSpacing: 1, color: Colors.textMuted },
+  loopStatusText: { fontSize: 12, fontWeight: '600', letterSpacing: 1, color: Colors.textMuted },
   loopStatusTextDone: { color: Colors.white },
   placeActions: { paddingTop: Spacing.sm, gap: Spacing.sm },
   primaryButton: {
@@ -1436,7 +1452,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  primaryButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
+  primaryButtonText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
   secondaryButton: {
     minHeight: 48,
     borderWidth: 1,
@@ -1445,13 +1461,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  secondaryButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  secondaryButtonText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   tertiaryButton: {
     minHeight: 44,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  tertiaryButtonText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
+  tertiaryButtonText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
   ideas: {
     marginTop: Spacing.xl,
     borderTopWidth: 1,
@@ -1460,9 +1476,9 @@ const styles = StyleSheet.create({
   sectionLabel: {
     paddingHorizontal: Spacing.screen,
     paddingVertical: Spacing.md,
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2.5,
+    letterSpacing: 1.2,
     color: Colors.textSubtle,
   },
   ideaRow: {
@@ -1499,7 +1515,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xxxl,
     gap: Spacing.md,
   },
-  sheetKicker: { fontSize: 9, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
+  sheetKicker: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
   sheetTitle: { fontSize: 24, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
   sheetNote: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18 },
   sheetStars: { flexDirection: 'row', gap: Spacing.md },
@@ -1524,7 +1540,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  sheetCancelText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
+  sheetCancelText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
   sheetConfirm: {
     height: 44,
     flex: 1,
@@ -1534,5 +1550,5 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   sheetConfirmDisabled: { opacity: Opacity.disabled },
-  sheetConfirmText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
+  sheetConfirmText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
 });

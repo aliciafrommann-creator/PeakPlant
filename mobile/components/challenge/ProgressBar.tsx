@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.accent,
   },
   label: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '400',
     letterSpacing: 1,
     color: Colors.textMuted,

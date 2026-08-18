@@ -44,10 +44,10 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   category: {
-    fontSize: 8,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2.5,
-    color: Colors.accent,
+    letterSpacing: 1.2,
+    color: Colors.accentInk,
   },
   title: {
     fontSize: 19,
@@ -74,10 +74,10 @@ const styles = StyleSheet.create({
     color: Colors.textSubtle,
   },
   partner: {
-    fontSize: 7,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2,
-    color: Colors.accent,
+    letterSpacing: 1.2,
+    color: Colors.accentInk,
     borderWidth: 1,
     borderColor: Colors.accent,
     paddingHorizontal: 4,

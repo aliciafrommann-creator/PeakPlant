@@ -17,7 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BackButton } from '../../components/ui/BackButton';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { Colors } from '../../constants/colors';
-import { Spacing, Radii, Shadows } from '../../constants/spacing';
+import { Spacing, Radii, Shadows, Layout } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -522,10 +522,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
   },
-  headerLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 3, color: Colors.text },
+  headerLabel: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   listContent: { paddingBottom: Spacing.xxxl },
   headerBlock: { paddingHorizontal: Spacing.screen, paddingTop: Spacing.lg, gap: Spacing.md },
-  bigTitle: { ...Typography.editorial, fontSize: 30, lineHeight: 34 },
+  bigTitle: { ...Typography.editorial },
   lead: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
   searchRow: {
     flexDirection: 'row',
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     paddingHorizontal: Spacing.md,
-    height: 36,
+    height: Layout.tapMin,
     borderRadius: Radii.pill,
     borderWidth: 1,
     borderColor: Colors.border,
@@ -554,8 +554,8 @@ const styles = StyleSheet.create({
   filterToggleActive: { backgroundColor: Colors.text, borderColor: Colors.text },
   filterToggleText: { fontSize: 12, fontWeight: '500', color: Colors.text, letterSpacing: 0.2 },
   filterToggleTextActive: { color: Colors.white },
-  clearText: { fontSize: 11, fontWeight: '500', color: Colors.accent, letterSpacing: 0.3 },
-  resultCount: { fontSize: 11, fontWeight: '400', color: Colors.textFaint, letterSpacing: 0.3 },
+  clearText: { fontSize: 11, fontWeight: '500', color: Colors.accentInk, letterSpacing: 0.3 },
+  resultCount: { fontSize: 11, fontWeight: '400', color: Colors.textSubtle, letterSpacing: 0.3 },
   filterPanel: {
     gap: Spacing.md,
     paddingVertical: Spacing.md,
@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   group: { gap: Spacing.sm },
-  groupLabel: { fontSize: 9, fontWeight: '600', letterSpacing: 2, color: Colors.textFaint },
+  groupLabel: { fontSize: 11, fontWeight: '600', letterSpacing: 1.2, color: Colors.textSubtle },
   groupChips: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   chip: {
     paddingHorizontal: Spacing.md,
@@ -591,11 +591,11 @@ const styles = StyleSheet.create({
   cardTop: { flexDirection: 'row', gap: Spacing.md },
   cardEmoji: { fontSize: 22, marginTop: 2 },
   cardBody: { flex: 1, gap: 4 },
-  cardTitle: { ...Typography.editorial, fontSize: 18, lineHeight: 23 },
+  cardTitle: { ...Typography.cardTitle, },
   cardIdea: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
   metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
   meta: { fontSize: 11, fontWeight: '500', color: Colors.textSubtle, letterSpacing: 0.2 },
-  metaDot: { fontSize: 11, color: Colors.textFaint },
+  metaDot: { fontSize: 11, color: Colors.textSubtle },
   actions: {
     flexDirection: 'row',
     gap: Spacing.sm,
@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
     borderTopColor: Colors.border,
     paddingTop: Spacing.sm,
   },
-  action: { flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5, height: 32 },
+  action: { flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5, height: Layout.tapMin },
   actionDone: { opacity: 1 },
   actionText: { fontSize: 11, fontWeight: '500', color: Colors.textMuted, letterSpacing: 0.3 },
   actionTextDone: { color: Colors.accent },
@@ -618,5 +618,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  emptyBtnText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  emptyBtnText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
 });

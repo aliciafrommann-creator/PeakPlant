@@ -16,7 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
-import { Spacing, Radii, Opacity } from '../../constants/spacing';
+import { Spacing, Radii, Opacity, Layout } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { savedDateRepository } from '../../lib/repositories';
@@ -530,7 +530,14 @@ export default function SavedDatesScreen() {
                 {planBusy ? (
                   <ActivityIndicator color={Colors.white} size="small" />
                 ) : (
-                  <Text style={styles.sheetConfirmText}>{t('SET DATE', 'DATUM SETZEN')}</Text>
+                  // Ein grauer Knopf ohne Grund ist eine Sackgasse: auf dem
+                  // Gerät war nicht erkennbar, dass ein Tag fehlt. Der Knopf
+                  // sagt es jetzt selbst, statt es den Menschen raten zu lassen.
+                  <Text style={styles.sheetConfirmText}>
+                    {planText.trim()
+                      ? t('SET DATE', 'DATUM SETZEN')
+                      : t('PICK A DAY FIRST', 'ERST EINEN TAG WÄHLEN')}
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -551,8 +558,8 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
     gap: Spacing.sm,
   },
-  back: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
-  title: { ...Typography.editorial, fontSize: 26, lineHeight: 32 },
+  back: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
+  title: { ...Typography.editorial },
   center: {
     flex: 1,
     alignItems: 'center',
@@ -564,7 +571,7 @@ const styles = StyleSheet.create({
   emptyHint: {
     fontSize: 13,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.md,
@@ -578,12 +585,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  ctaText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  ctaText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   scroll: { padding: Spacing.screen, gap: Spacing.md, paddingBottom: Spacing.xxxl },
   hint: {
     fontSize: 12,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     lineHeight: 18,
     marginBottom: Spacing.sm,
   },
@@ -598,18 +605,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   badge: {
-    fontSize: 8,
+    fontSize: 11,
     fontWeight: '500',
     letterSpacing: 1.5,
     color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
-  savedAt: { fontSize: 10, fontWeight: '300', color: Colors.textFaint },
+  savedAt: { fontSize: 12, fontWeight: '300', color: Colors.textSubtle },
   cardTitle: { fontSize: 20, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
   cardConcept: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
   meta: { flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap' },
   metaItem: { fontSize: 12, fontWeight: '400', color: Colors.textMuted },
-  metaDot: { fontSize: 12, color: Colors.textFaint },
+  metaDot: { fontSize: 12, color: Colors.textSubtle },
   plannedFor: { color: Colors.text, fontWeight: '500' },
   notes: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, fontStyle: 'italic', lineHeight: 17 },
   actions: {
@@ -620,14 +627,14 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   actionDone: {
-    height: 40,
+    height: Layout.tapMin,
     width: '100%',
     backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  actionDoneText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.white },
+  actionDoneText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
   actionPlan: {
     minHeight: 44,
     paddingHorizontal: Spacing.md,
@@ -637,14 +644,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  actionPlanText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  actionPlanText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   actionDismiss: {
     minHeight: 44,
     paddingHorizontal: Spacing.md,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  actionDismissText: { fontSize: 9, fontWeight: '500', letterSpacing: 2, color: Colors.textFaint },
+  actionDismissText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
   tertiaryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.xs },
   // Modal / sheet
   modalBackdrop: {
@@ -670,7 +677,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
   },
   quickDateSelected: { backgroundColor: Colors.text, borderColor: Colors.text },
-  quickDateText: { fontSize: 9, fontWeight: '500', letterSpacing: 1.5, color: Colors.textMuted },
+  quickDateText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.5, color: Colors.textMuted },
   quickDateTextSelected: { color: Colors.white },
   sheetInput: {
     fontSize: 18,
@@ -704,7 +711,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  sheetCancelText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.textMuted },
+  sheetCancelText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
   sheetConfirm: {
     height: 44,
     flex: 1,
@@ -714,5 +721,5 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   sheetConfirmDisabled: { opacity: Opacity.disabled },
-  sheetConfirmText: { fontSize: 10, fontWeight: '500', letterSpacing: 2, color: Colors.white },
+  sheetConfirmText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
 });

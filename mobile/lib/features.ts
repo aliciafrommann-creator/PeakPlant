@@ -21,13 +21,16 @@ export interface FeatureMeta {
 
 export const FEATURES: FeatureMeta[] = [
   {
+    // Der Schlüssel heißt aus Kompatibilitätsgründen weiter 'streaks' (er liegt
+    // so in den Einstellungen der bestehenden Nutzer). Eine Serie ist es seit
+    // dem 17.08.2026 nicht mehr — siehe lib/streaks.ts.
     key: 'streaks',
-    label: 'shared rhythm',
-    labelDe: 'gemeinsamer Rhythmus',
+    label: 'weeks together',
+    labelDe: 'gemeinsame Wochen',
     description:
-      'collect the weeks you share moments in — a gentle nudge to do more together. never a must.',
+      'counts the weeks that hold a moment you kept. it only ever goes up — a skipped week costs nothing.',
     descriptionDe:
-      'sammelt die Wochen, in denen ihr Momente teilt - ein sanfter Anstoß, mehr gemeinsam zu tun. Nie ein Muss.',
+      'zählt die Wochen, in denen ihr etwas festgehalten habt. Die Zahl kann nur steigen — eine ausgelassene Woche kostet nichts.',
     status: 'live',
     defaultEnabled: true,
   },

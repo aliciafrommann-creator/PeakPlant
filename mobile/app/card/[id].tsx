@@ -217,16 +217,16 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.border,
   },
   backText: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '400',
     letterSpacing: 1.5,
     color: Colors.textMuted,
     width: 60,
   },
   headerLabel: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2.5,
+    letterSpacing: 1.2,
     color: Colors.text,
     textAlign: 'center',
     flex: 1,
@@ -249,14 +249,14 @@ const styles = StyleSheet.create({
     borderRadius: Radii.lg - 2,
   },
   cardEdition: {
-    fontSize: 8,
+    fontSize: 11,
     fontWeight: '600',
-    letterSpacing: 2.5,
+    letterSpacing: 1.2,
   },
   cardKindLabel: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '400',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
   },
   cardTitle: {
     fontSize: 26,
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   quietNote: {
     fontSize: 12,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     lineHeight: 18,
     letterSpacing: 0.2,
     fontStyle: 'italic',
@@ -284,9 +284,9 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   sectionLabel: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 3,
+    letterSpacing: 1.2,
     color: Colors.textSubtle,
   },
   sectionText: {
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   preserveText: {
     fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 3,
+    letterSpacing: 1.2,
     color: Colors.white,
   },
   privacyNote: {
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   noPressure: {
     fontSize: 11,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textAlign: 'center',
     letterSpacing: 0.5,
     fontStyle: 'italic',
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
   unlockedBannerText: {
     fontSize: 11,
     fontWeight: '600',
-    letterSpacing: 3,
+    letterSpacing: 1.2,
     color: Colors.white,
   },
   notFound: {

@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   mark: { fontSize: 32 },
-  title: { ...Typography.editorial, fontSize: 40, lineHeight: 46 },
+  title: { ...Typography.editorial },
   body: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 24, maxWidth: 360 },
   bottom: { paddingHorizontal: Spacing.screen, paddingBottom: Spacing.xl, paddingTop: Spacing.md },
   cta: {
@@ -172,5 +172,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  ctaText: { fontSize: 11, fontWeight: '500', letterSpacing: 3, color: Colors.white },
+  ctaText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
 });

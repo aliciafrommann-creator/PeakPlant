@@ -36,8 +36,13 @@ export default function WelcomeScreen() {
           >
             <Text style={styles.beginText}>BEGIN</Text>
           </TouchableOpacity>
+          {/* Stand vorher: „no account needed to explore". Im echten Betrieb
+              ist das Konto zwei Schritte vorher entstanden (app/index.tsx:57
+              schickt ohne Sitzung zuerst auf sign-in) — dieser Bildschirm
+              kommt erst danach. Ein Satz, den der Code nicht hält, ist genau
+              das, was MANIFESTO §1 verbietet. */}
           <Text style={styles.hint}>
-            no account needed to explore
+            nothing here is public — this space is yours
           </Text>
         </View>
       </View>
@@ -64,6 +69,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: Spacing.xxl,
   },
+  /**
+   * Die einzige Stelle, die bewusst NEBEN der Schriftleiter steht (52 pt statt
+   * 32). Ein Bildschirm, ein Satz, sonst nichts — hier ist „riesig" die
+   * Aussage und nicht das Problem. Alicias Befund („alles etwas riesig") galt
+   * Bildschirmen mit neun Blöcken, die um Aufmerksamkeit konkurrierten; dieser
+   * hat einen. Wer eine zweite solche Ausnahme braucht, hat vermutlich keine.
+   */
   hero: {
     fontSize: 52,
     fontWeight: '200',
@@ -101,14 +113,14 @@ const styles = StyleSheet.create({
   beginText: {
     fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 3,
+    letterSpacing: 1.2,
     color: Colors.white,
   },
   hint: {
     fontSize: 11,
     fontWeight: '300',
     letterSpacing: 1,
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
 });

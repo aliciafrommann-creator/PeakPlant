@@ -172,9 +172,156 @@ der alten Grafik wieder aufgreift:
 Ausführliche Begründung inklusive Sicherheitsschichten und Premium-Logik:
 Artefakt „Kennenlernen ohne Swipen" (17.08.2026).
 
+### Ergänzungen vom 17.08. (Alicia)
+
+**Gruppengröße IST die Sicherheitsfunktion.** Alicias Einsicht, und sie trägt
+weiter als jedes Feature: Ein Abend mit zwölf Menschen hat kein „wer wird das
+sein?". Das Risiko des Treffens unter vier Augen mit einer fremden Person
+entsteht gar nicht, weil es dieses Treffen nicht gibt. Damit ist die
+Gruppengröße keine Komfort-, sondern eine Sicherheitsentscheidung — und sie
+gehört nach oben in jede Format-Überlegung, nicht in die Feinplanung.
+
+**Zielgruppen der Abende:** Paare · Solo · Menschen, die sich freundschaftlich
+kennenlernen wollen. Nicht als getrennte Produkte, sondern als verschiedene
+Abende auf derselben Struktur.
+
+**Notfall- und Standortfunktion — die Grenze präzisiert.** Die frühere Fassung
+(„keine Standortfreigabe, nie") war zu grob. Es sind zwei verschiedene Dinge:
+
+- **Für andere Mitglieder: bleibt ein Nein.** Sobald Menschen auf der Plattform
+  sehen, wo andere sind, existiert ein Stalking-Kanal. Kein Feature rechtfertigt
+  das.
+- **An einen selbst gewählten Menschen: vertretbar** — und genau das, was sich
+  Frauen ohnehin gegenseitig schicken. Empfängerin ist **wer auch immer die
+  Person wählt**: Freundin, Schwester, Mitbewohnerin, Partner. Ausdrücklich
+  nicht auf „den Partner" verengen — wer allein zu einem Abend geht, hat oft
+  gar keinen, und die Freundin ist ohnehin die realistischere Adresse. Sie
+  muss PeakPlant nicht benutzen.
+
+Entwurfsgrundsatz dafür, falls es je gebaut wird:
+**PeakPlant speichert keinen Standort.** Eine Datenbank mit den Aufenthaltsorten
+von Frauen an Veranstaltungsabenden wäre das attraktivste Angriffsziel, das
+dieses Produkt haben kann. Stattdessen an das übergeben, was auf dem Telefon
+existiert (Live-Standort von iOS/Android, Notruf): zeitlich begrenzt, selbst
+gewählte Empfängerin, läuft von allein aus, nichts Passives, nichts
+Dauerhaftes. Dazu ein einfaches „ich bin gut angekommen" nach dem Abend.
+
+**Solo ist kein Sonderfall, sondern ein Dauerzustand** (Entscheidung Alicia,
+17.08.): Ein Mensch allein soll PeakPlant benutzen können — nicht nur als
+Wartezimmer, bis jemand beitritt. Das weicht bewusst von der Audit-Empfehlung
+ab („Solo nicht jetzt, Marke heißt grow *together*") und ist Alicias Ruf.
+Teilweise ist es ohnehin schon wahr: Die App funktioniert vor dem Beitritt des
+Partners vollständig allein. Was fehlt, ist, dass sie das auch *sagt*, statt es
+als unfertigen Zustand zu behandeln.
+
+**Solo-Editionen** passen in dieses Bild (Konten sind ohnehin einzeln).
+Technischer Hinweis, damit er nicht überrascht: `spaces.type` erlaubt heute per
+Check-Constraint nur `couple` und `friends` (Migration 0001). Solo braucht also
+eine additive Migration — machbar, aber eine bewusste Entscheidung. Alicias
+eigene Formulierung bleibt der Maßstab: Solo heißt nicht einsam, sondern sich
+selbst finden und mutig sein.
+
+### Editionen 03–05: die Themen stehen (17.08.)
+
+Damit sich nichts doppelt, bekommt jede Edition **eine Frage, die nur sie
+stellt** — die bestehenden 40 Karten aus 01 und 02 wurden dafür durchgesehen:
+
+| Edition | Pflanze | Die eine Frage |
+|---|---|---|
+| 01 Grow Together | Sonnenblume | Wie wachsen wir? (Zukunft, Entwicklung) |
+| 02 Soft & Wild | offen | Wie nah dürfen wir uns sein? (Körper, Begehren) |
+| 03 Love Languages | Ringelblume (Vorschlag) | Wie zeige ich Liebe — und kommt sie so an? |
+| 04 Opening Souls | Nachtkerze (öffnet sich erst in der Dämmerung) | Was habe ich dir nie erzählt? (Herkunft, Scham) |
+| 05 On Adventure | Löwenzahn (wächst in jeder Ritze, Samen reisen) | Wer sind wir außerhalb unseres Alltags? |
+
+**Die kritische Abgrenzung:** Edition 01 schaut nach vorn (wer werden wir),
+Opening Souls nach hinten (was hat mich geformt). Ohne diese Trennung schreibt
+man zwangsläufig die Fragen aus 01 noch einmal — dort steht bereits „Wo fühlst
+du dich von mir manchmal ungesehen?" und „Wer wirst du gerade langsam?".
+
+Aufbau je Edition wie gehabt: 5 Dates · 5 Small Acts · 10 Questions.
+Ein vollständiger Prompt-Entwurf für Edition 03 liegt im Chat vom 17.08. und
+wartet auf Alicias Urteil zur Tonhöhe.
+
 ### Der billigste nächste Test (wenn es so weit ist)
 
 Zwei bis drei Abende **manuell** veranstalten — Einladung per Mail, Anmeldung
 per Formular, Alicia als Gastgeberin. Kein Code. Beantwortet mehr als ein
 Quartal Entwicklung, und erst wenn Menschen wiederkommen, ohne einzeln
 eingeladen zu werden, lohnt sich eine Zeile dafür.
+
+---
+
+## Feed, Folgen und Sichtbarkeit (Alicia, 18.08.2026) — geparkt, „hat auch Zeit"
+
+Alicias Wortlaut, damit er nicht durch meine Zusammenfassung verloren geht:
+
+> „aber es fehlt noch superviel bei peakplant in solo und freunde nh? und wenn
+> man einen ort teilen will an dem man war und wenn man seine community
+> aktivität öffentlich teilen will - es soll schon auch nen feed geben und das
+> man sich folgen kann solo, als freundesgruppen oder couples"
+>
+> „und immer einstellen kann wer alles das bild der aktivität sehen kann - mit
+> einer frage auch im feed teilen, im feed teilen mit: ... :)) aber das hat auch
+> Zeit"
+
+### Was davon schon existiert
+
+**Einen Ort teilen ist gebaut.** Die Orte-Fläche kann heute schon anonym
+teilen: Spot plus Sterne plus Tipp, nie Space, nie Notiz, nie Identität
+(`app/(tabs)/community.tsx`, „SHARE ONLY THE SPOT" / „ADD ANONYMOUS RATING").
+Was fehlt, ist nicht die Funktion, sondern dass irgendjemand sie je benutzt hat
+— null Momente, null zweite Mitglieder.
+
+### Was ohne Reibung baubar ist
+
+- **Solo und Freunde ernst nehmen.** Alicias eigene Entscheidung vom 17.08.:
+  „Solo ist kein Sonderfall, sondern ein Dauerzustand." Die App kann das
+  technisch schon; sie sagt es nur nicht. Kostet Copy und Leerzustände, kein
+  neues Datenmodell. Solo-Editionen brauchen eine additive Migration
+  (`spaces.type` kennt heute nur `couple` und `friends`).
+- **Pro Aktivität einstellen, wer das Bild sieht.** Das ist keine Kollision,
+  das ist MANIFESTO §2 als Funktion: „Öffentlich wird ausschließlich, was ein
+  Mensch aktiv teilt." Alicias „im Feed teilen mit: …" ist genau die aktive,
+  informierte, pro-Stück-Entscheidung, die das Prinzip verlangt. Wichtig:
+  Standard ist immer privat, und die Frage kommt beim Teilen, nicht beim
+  Anlegen — sonst wird aus einer Einladung ein Formular.
+- **Ein Feed aus AKTIVITÄTEN.** Orte, Ideen, Abende — Dinge, die man tun kann.
+  Verträgt sich mit allem und ist vermutlich das, was den Sog erzeugt, den
+  Alicia meint.
+
+### Die eine echte Kollision: Folgen
+
+**Menschen folgen** kollidiert frontal mit zwei Dingen — und beide sind
+Alicias eigene:
+
+1. MANIFESTO §3 verbietet „öffentliche Profile / Follower / Likes" wörtlich.
+2. Ihre eigene Entscheidung vom 17.08.: **„Die kleinste Einheit ist ein Abend,
+   kein Mensch"** — kein durchblätterbares Profilraster, man zeigt sich, indem
+   man auftaucht. Begründet hat sie das mit Sicherheit für Frauen: kein
+   Browsing-Raster heißt auch keine Stalking-Fläche.
+
+Ein Follower-Graph baut genau das Raster wieder auf, das sie bewusst
+weggelassen hat. Er ist außerdem der Punkt, an dem aus „bemerken, was zwischen
+euch wächst" ein Publikum wird, vor dem man auftritt.
+
+**Der Vorschlag, der beides bekommt:** Man folgt keiner Person, sondern einem
+**Ort, einer Stadt, einem Thema oder einer Gruppe** — und sieht dort, was
+Menschen aktiv geteilt haben. Der Feed ist voll, der Sog entsteht, es gibt
+etwas zu entdecken, aber es gibt kein Profil zum Durchblättern und keine
+Zahl neben einem Namen. Wer eine Gruppe teilt, teilt als Gruppe („zwei
+Menschen waren hier"), nicht als Person.
+
+**Nicht entschieden.** Das ist eine Verfassungsfrage, keine Feature-Frage:
+Wenn Alicia Personen-Folgen will, ändert sich MANIFESTO §3, und das gehört
+bewusst getan und aufgeschrieben, nicht nebenbei. Ihr eigener Satz „aber das
+hat auch Zeit" ist hier die richtige Antwort — es steht, bis die Kernschleife
+mindestens einmal durchgelaufen ist.
+
+### Was vorher wahr sein muss
+
+Alles hier hängt an derselben Bedingung wie die Phasen 2–5: **die Schleife
+muss erst einmal geschlossen sein.** Ein Feed ohne Inhalt ist ein leerer Raum,
+und Inhalt entsteht aus Momenten, die es noch nicht gibt (Stand 18.08.: null
+Momente, null Spaces mit zweiter Person). Ein Feed, den man vorher baut,
+zeigt beim Start genau das, was die App gerade zeigen kann: nichts.

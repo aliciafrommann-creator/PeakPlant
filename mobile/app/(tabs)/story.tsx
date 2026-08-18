@@ -19,6 +19,7 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
+import { BackButton } from '../../components/ui/BackButton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { savedDateRepository, cardRepository } from '../../lib/repositories';
@@ -108,6 +109,10 @@ export default function StoryScreen() {
       <SafeAreaView style={styles.container}>
         {obscured && <PrivacyScreen />}
         <View style={styles.header}>
+          {/* Diese Seite war ein Reiter und wird jetzt vom Fuß der
+              Momente-Wand geoeffnet — ohne Reiter-Leiste braucht sie einen
+              Weg zurück (Entscheidung Alicia, 17.08.2026). */}
+          <BackButton />
           <View style={styles.kickerRow}>
             <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
             <Text style={styles.kicker}>{t('OUR STORY', 'EURE GESCHICHTE')}</Text>
@@ -137,6 +142,7 @@ export default function StoryScreen() {
         }
       >
         <View style={styles.header}>
+          <BackButton />
           <View style={styles.kickerRow}>
             <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
             <Text style={styles.kicker}>{t('OUR STORY', 'EURE GESCHICHTE')}</Text>
@@ -218,8 +224,8 @@ const styles = StyleSheet.create({
   },
   kickerRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   kickerDot: { width: 6, height: 6, borderRadius: 3 },
-  kicker: { fontSize: 10, fontWeight: '500', letterSpacing: 2.5, color: Colors.textSubtle },
-  title: { ...Typography.editorial, fontSize: 30, lineHeight: 36 },
+  kicker: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
+  title: { ...Typography.editorial },
   statGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -228,11 +234,11 @@ const styles = StyleSheet.create({
     gap: Spacing.lg,
   },
   statCell: { minWidth: 74 },
-  statNum: { ...Typography.display, fontSize: 40, lineHeight: 46 },
+  statNum: { ...Typography.display },
   statLabel: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: '500',
-    letterSpacing: 2,
+    letterSpacing: 1.2,
     color: Colors.textSubtle,
     marginTop: 2,
   },
@@ -242,9 +248,9 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   sectionLabel: {
-    fontSize: 10,
+    fontSize: 12,
     fontWeight: '500',
-    letterSpacing: 2.5,
+    letterSpacing: 1.2,
     color: Colors.textSubtle,
     marginBottom: Spacing.xs,
   },
@@ -267,7 +273,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   placeName: { flex: 1, fontSize: 14, fontWeight: '300', color: Colors.text },
-  placeTimes: { fontSize: 12, fontWeight: '400', color: Colors.textFaint },
+  placeTimes: { fontSize: 12, fontWeight: '400', color: Colors.textSubtle },
   momentsLink: {
     marginHorizontal: Spacing.screen,
     marginTop: Spacing.xl,
@@ -278,11 +284,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  momentsLinkText: { fontSize: 11, fontWeight: '500', letterSpacing: 2, color: Colors.text },
+  momentsLinkText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   footer: {
     fontSize: 12,
     fontWeight: '300',
-    color: Colors.textFaint,
+    color: Colors.textSubtle,
     lineHeight: 18,
     textAlign: 'center',
     paddingHorizontal: Spacing.screen,
