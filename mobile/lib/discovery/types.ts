@@ -68,5 +68,10 @@ export interface DateRecommendation {
   /** True for the "or instead…" second pick. */
   isAlternative?: boolean;
   /** ISO date the underlying curated data was last verified. */
-  freshnessAt: string;
+  /**
+   * Wann der zugehörige Ort zuletzt geprüft wurde — `undefined`, wenn es
+   * nichts zu belegen gibt. Bewusst optional: ein Vorgabewert an dieser
+   * Stelle wäre eine Heuristik, die als Messung angezeigt wird (§1).
+   */
+  freshnessAt?: string;
 }

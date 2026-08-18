@@ -51,13 +51,28 @@ export default function SavedDatesScreen() {
   const [planText, setPlanText] = useState('');
   const [planNotes, setPlanNotes] = useState('');
   const [planBusy, setPlanBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const load = useCallback(async () => {
-    if (!activeSpace) return;
+    // Ohne Space blieb `loading` für immer true — der Bildschirm zeigte dann
+    // endlos das Skelett. Home verlinkt direkt hierher, also traf das jeden
+    // frischen Start.
+    if (!activeSpace) {
+      setDates([]);
+      setFailed(false);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
+    setFailed(false);
     try {
       const all = await savedDateRepository.getAll(activeSpace.id);
       setDates(all.filter((d) => d.status !== 'dismissed'));
+    } catch {
+      // Vorher stand hier try/finally OHNE catch: die Ablehnung verschwand in
+      // `void load()`, `dates` blieb leer — und der Mensch las „noch nichts
+      // gespeichert", während seine Merkliste auf dem Server lag.
+      setFailed(true);
     } finally {
       setLoading(false);
     }
@@ -299,12 +314,21 @@ export default function SavedDatesScreen() {
         <IdeaListSkeleton count={3} />
       ) : dates.length === 0 ? (
         <View style={styles.center}>
-          <Text style={styles.emptyText}>{t('nothing saved yet.', 'noch nichts gespeichert.')}</Text>
+          <Text style={styles.emptyText}>
+            {failed
+              ? t('we could not load your saved ideas.', 'wir konnten eure gemerkten Ideen nicht laden.')
+              : t('nothing saved yet.', 'noch nichts gespeichert.')}
+          </Text>
           <Text style={styles.emptyHint}>
-            {t(
+            {failed
+              ? t(
+                  'that was the connection — nothing of yours is lost. pull down to try again.',
+                  'das war die Verbindung — nichts von euch ist weg. Zum erneut Laden nach unten ziehen.',
+                )
+              : t(
               'tap SAVE on any idea in Discover — your shortlist lives here.',
               'MERKEN antippen bei einer Idee in Entdecken — deine Shortlist erscheint hier.',
-            )}
+                )}
           </Text>
           <TouchableOpacity
             style={styles.cta}

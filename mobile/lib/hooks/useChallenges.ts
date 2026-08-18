@@ -17,9 +17,18 @@ export function useChallenges(spaceId?: string) {
       return;
     }
     setLoading(true);
-    const data = await getEnrollments(spaceId);
-    setEnrollments(data);
-    setLoading(false);
+    try {
+      const data = await getEnrollments(spaceId);
+      setEnrollments(data);
+    } catch {
+      // `getEnrollments` wirft im Supabase-Modus. Ohne dieses catch blieb
+      // `loading` für immer true und die Ablehnung verschwand ungesehen —
+      // offline tat „Woche annehmen" auf dem Startbildschirm schlicht nichts,
+      // ohne Meldung und ohne Haptik.
+      setEnrollments([]);
+    } finally {
+      setLoading(false);
+    }
   }, [spaceId]);
 
   useEffect(() => {

@@ -305,7 +305,7 @@ export default function DiscoverScreen() {
               accessibilityLabel={t('Switch, add or share a space', 'Space wechseln, hinzufügen oder teilen')}
             >
               <Text style={styles.spaceName} numberOfLines={1}>
-                {(activeSpace?.name ?? 'your space').toLowerCase()}
+                {(activeSpace?.name ?? t('your space', 'euer Space')).toLowerCase()}
               </Text>
               <Ionicons name="chevron-down" size={15} color={Colors.textMuted} />
             </TouchableOpacity>
@@ -720,7 +720,10 @@ function RecommendationCard({
         </View>
       )}
 
-      <Text style={styles.provenance}>{curatedLabel} · {checkedLabel} {rec.freshnessAt}</Text>
+      <Text style={styles.provenance}>
+        {curatedLabel}
+        {rec.freshnessAt ? ` · ${checkedLabel} ${rec.freshnessAt}` : ''}
+      </Text>
       <View style={styles.cardFooter}>
         <Text style={styles.cta}>{seeLabel}</Text>
         {onSave && !compact && (

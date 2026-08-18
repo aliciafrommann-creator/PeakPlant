@@ -309,37 +309,52 @@ export default function TogetherDetailScreen() {
           )}
         </PressableScale>
 
-        {savedDate?.status !== 'completed' && (
-          <PressableScale
-            style={styles.secondaryCta}
-            onPress={() => void handleDone()}
-            disabled={busy}
-            accessibilityLabel={t('We already did this', 'Wir haben das schon gemacht')}
-          >
-            <Text style={styles.secondaryCtaText}>{t('WE ALREADY DID THIS', 'WIR HABEN DAS SCHON GEMACHT')}</Text>
-          </PressableScale>
-        )}
+        {/* EINE laute Handlung, zwei ruhige daneben (MANIFESTO §5).
+            Vorher standen hier drei Knöpfe übereinander: eine gefüllte Pille,
+            eine umrandete Pille und ein Textlink — auf dem Bildschirm, über
+            den jede Idee zu einem festgehaltenen Moment werden muss. Drei
+            gleich aussehende Angebote sind keine Wahl, sondern eine Frage.
 
-        {!savedDate ? (
-          <TouchableOpacity
-            style={styles.tertiaryCta}
-            onPress={() => void handleSave()}
-            disabled={busy}
-            accessibilityRole="button"
-            accessibilityLabel={t('Save for later', 'Für später merken')}
-          >
-            <Text style={styles.tertiaryCtaText}>{t('SAVE FOR LATER', 'FÜR SPÄTER MERKEN')}</Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={styles.tertiaryCta}
-            onPress={() => openSavedDates()}
-            accessibilityRole="button"
-            accessibilityLabel={t('Open saved ideas', 'Gespeicherte Ideen öffnen')}
-          >
-            <Text style={styles.savedState}>{t('SAVED ✓ · VIEW YOUR LIST', 'GEMERKT ✓ · LISTE ANSEHEN')}</Text>
-          </TouchableOpacity>
-        )}
+            „Wir haben das schon gemacht" steht bewusst zuerst: es ist der
+            Weg, der die Schleife schließt (speichern → abschließen →
+            festhalten), und er soll leicht zu finden sein, auch wenn er nicht
+            der laute ist. */}
+        <View style={styles.quietRow}>
+          {savedDate?.status !== 'completed' && (
+            <TouchableOpacity
+              style={styles.quietAction}
+              onPress={() => void handleDone()}
+              disabled={busy}
+              accessibilityRole="button"
+              accessibilityLabel={t('We already did this', 'Wir haben das schon gemacht')}
+            >
+              <Text style={styles.quietActionText}>
+                {t('we already did this', 'haben wir schon gemacht')}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          {!savedDate ? (
+            <TouchableOpacity
+              style={styles.quietAction}
+              onPress={() => void handleSave()}
+              disabled={busy}
+              accessibilityRole="button"
+              accessibilityLabel={t('Save for later', 'Für später merken')}
+            >
+              <Text style={styles.quietActionText}>{t('save for later', 'für später merken')}</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.quietAction}
+              onPress={() => openSavedDates()}
+              accessibilityRole="button"
+              accessibilityLabel={t('Open saved ideas', 'Gespeicherte Ideen öffnen')}
+            >
+              <Text style={styles.quietActionSaved}>{t('saved ✓ · your list', 'gemerkt ✓ · eure Liste')}</Text>
+            </TouchableOpacity>
+          )}
+        </View>
 
         {actionError ? (
           <Text style={styles.actionError} accessibilityLiveRegion="polite">{actionError}</Text>
@@ -436,18 +451,15 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
   },
   ctaText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
-  secondaryCta: {
-    minHeight: 48,
-    borderWidth: 1,
-    borderColor: Colors.text,
+  quietRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: Radii.pill,
+    columnGap: Spacing.lg,
   },
-  secondaryCtaText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
-  tertiaryCta: { minHeight: 44, justifyContent: 'center', alignItems: 'center' },
-  tertiaryCtaText: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
-  savedState: { fontSize: 12, fontWeight: '500', letterSpacing: 1.5, color: Colors.text },
+  quietAction: { minHeight: 44, justifyContent: 'center', alignItems: 'center' },
+  quietActionText: { fontSize: 14, fontWeight: '400', color: Colors.textMuted },
+  quietActionSaved: { fontSize: 14, fontWeight: '500', color: Colors.text },
   actionError: { fontSize: 12, fontWeight: '400', color: Colors.danger, lineHeight: 18, textAlign: 'center' },
   noPressure: {
     fontSize: 11,

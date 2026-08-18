@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Shadows, Layout } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -81,6 +81,11 @@ export default function EditionsScreen() {
   }, [activeSpace?.id]);
 
   useEffect(() => load(), [load]);
+
+  // Nach einem Scan kehrt man hierher zurück — ohne das hier stand die Zeile
+  // „N von 20 bewahrt" bis zum nächsten App-Start auf dem alten Wert, obwohl
+  // die Karte gerade aufgeschlagen wurde.
+  useFocusEffect(useCallback(() => load(), [load]));
 
   const handleEditionPress = useCallback(async (item: Edition) => {
     if (item.status !== 'available') return;

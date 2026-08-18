@@ -44,7 +44,8 @@ export default function AppPrivacyPage() {
             <H3>Konto</H3>
             <P>Zur Anmeldung verarbeiten wir deine <strong>E-Mail-Adresse</strong> und einen Anmelde-Code (Einmal-Passwort). Es gibt kein Passwort. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung).</P>
             <H3>Dein Tagebuch</H3>
-            <P>Die Inhalte, die du bewusst erstellst – <strong>Notizen, optionale Fotos, gespeicherte Momente, Spaces und Mitgliedschaften</strong> – werden gespeichert, damit du und die Mitglieder deines Space sie sehen könnt. Diese Inhalte sind <strong>privat</strong> für die Mitglieder des jeweiligen Space und werden niemals öffentlich gemacht.</P>
+            <P>Die Inhalte, die du bewusst erstellst – <strong>Notizen, optionale Fotos, gespeicherte Momente, Spaces und Mitgliedschaften</strong> – werden gespeichert, damit du und die Mitglieder deines Space sie sehen könnt. Diese Inhalte sind <strong>privat</strong> für die Mitglieder des jeweiligen Space und werden nicht automatisch geteilt.</P>
+            <P>Eine <strong>Ausnahme, die nur du selbst auslöst</strong>: Du kannst einen Ort anonym bewerten. Dabei werden ausschließlich der Ort, deine Sternebewertung und ein optionaler kurzer Tipp öffentlich sichtbar – <strong>niemals</strong> dein Name, dein Konto, dein Space, deine Notizen oder deine Fotos. Ohne dieses aktive Antippen wird nichts von dir öffentlich.</P>
             <H3>Was wir NICHT tun</H3>
             <P>Keine Werbung, kein Tracking durch Dritte, kein Verkauf von Daten, kein öffentlicher Feed. Deine Tagebuch-Inhalte werden nicht für Werbung oder zum Training von KI-Modellen verwendet.</P>
           </Sec>
@@ -57,16 +58,17 @@ export default function AppPrivacyPage() {
           <Sec>
             <H2>4. Auftragsverarbeiter</H2>
             <P><strong>Supabase</strong> (Datenbank, Authentifizierung, Speicher) – gehostet in der EU (Frankfurt, eu-central-1). Die Verarbeitung erfolgt auf Grundlage eines Auftragsverarbeitungsvertrags. Anmelde-E-Mails werden über den E-Mail-Dienst des Anbieters versendet.</P>
+            <P>Weitere Dienste, jeweils nur für den genannten Zweck: <strong>Google Places</strong> – wenn du aktiv „Orte in der Nähe finden“ antippst, werden deine ungefähren Koordinaten einmalig für diese Suche übermittelt. <strong>Anthropic</strong> – für Ideenvorschläge; es werden keine Tagebuchinhalte, Notizen oder Fotos übermittelt. <strong>Expo</strong> – für Push-Nachrichten, sofern du sie erlaubst; übertragen wird nur ein Gerätetoken und ein fester Text ohne Inhalt. <strong>Open-Meteo</strong> – für Wetterkontext, ohne personenbezogene Daten. <strong>Stripe</strong> und <strong>Brevo</strong> bzw. <strong>Resend</strong> betreffen den Shop und den Newsletter auf der Website, nicht die App.</P>
           </Sec>
 
           <Sec>
             <H2>5. Berechtigungen auf dem Gerät</H2>
-            <P><strong>Kamera</strong> (optional) – zum Scannen von Karten und Aufnehmen von Fotos. <strong>Fotomediathek</strong> (optional) – um ein Foto zu einem Moment hinzuzufügen. Beide sind freiwillig; die App funktioniert auch ohne. Es findet keine fortlaufende Standorterfassung statt.</P>
+            <P><strong>Kamera</strong> (optional) – zum Scannen von Karten und Aufnehmen von Fotos. <strong>Fotomediathek</strong> (optional) – um ein Foto zu einem Moment hinzuzufügen. <strong>Standort</strong> (optional) – nur wenn du „Orte in der Nähe finden“ antippst: Der Standort wird einmalig im Vordergrund abgefragt, für diese eine Suche verwendet und von PeakPlant nicht gespeichert. Es findet <strong>keine</strong> fortlaufende Standorterfassung statt und keine im Hintergrund. <strong>Mitteilungen</strong> (optional) – für höchstens eine Nachricht pro Space und Tag, nie zwischen 22 und 8 Uhr, und nie mit Inhalt auf dem Sperrbildschirm. Alle Berechtigungen sind freiwillig; die App funktioniert auch ohne jede einzelne.</P>
           </Sec>
 
           <Sec>
             <H2>6. Speicherdauer &amp; Löschung</H2>
-            <P>Deine Daten bleiben gespeichert, solange dein Konto besteht. Du kannst dein <strong>Konto jederzeit direkt in der App löschen</strong> (Customize → Account &amp; data → Konto löschen). Dabei werden dein Konto, die Spaces, in denen du das einzige Mitglied bist, sowie deine Momente unwiderruflich entfernt. Alternativ: hello@peak-plant.com.</P>
+            <P>Deine Daten bleiben gespeichert, solange dein Konto besteht. Du kannst dein <strong>Konto jederzeit direkt in der App löschen</strong> (Customize → Account &amp; data → Konto löschen). Dabei werden dein Konto und die Spaces, in denen du das einzige Mitglied bist, mit allen darin enthaltenen Inhalten unwiderruflich entfernt. In einem <strong>geteilten Space</strong> bleiben die dort festgehaltenen Momente bei den anderen Mitgliedern erhalten – deine Urheberschaft daran wird gelöst. Möchtest du auch diese Inhalte entfernt haben, schreib uns an hello@peak-plant.com.</P>
           </Sec>
 
           <Sec>

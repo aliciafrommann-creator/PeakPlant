@@ -37,8 +37,16 @@ export default function AccountScreen() {
     Alert.alert(
       t('delete your account?', 'Konto löschen?'),
       t(
-        'this permanently removes your account, your spaces where you are the only member, and your moments. this cannot be undone.',
-        'Dein Konto, deine Spaces (wo du das einzige Mitglied bist) und deine Momente werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden.',
+        // Was die Löschfunktion WIRKLICH tut (Migration 0014): Spaces, in
+        // denen du allein bist, werden mit allem darin gelöscht. In geteilten
+        // Spaces bleiben eure Momente bei der anderen Person — nur deine
+        // Urheberschaft wird entfernt. Vorher stand hier „und deine Momente",
+        // was in einem Paar-Space — also dem Normalfall dieses Produkts —
+        // schlicht falsch war, und zwar in einem DSGVO-Zusammenhang.
+        // Der richtige Ton steht längst in space/edit.tsx: „Nichts Geteiltes
+        // wird gelöscht — die anderen behalten jeden Moment."
+        'this permanently removes your account. spaces where you are alone are deleted with everything in them. in a shared space, what you kept stays with the other person — your name comes off it. this cannot be undone.',
+        'Dein Konto wird dauerhaft gelöscht. Spaces, in denen du allein bist, verschwinden mit allem darin. In einem geteilten Space bleibt bei der anderen Person, was ihr festgehalten habt — nur dein Name wird davon gelöst. Das kann nicht rückgängig gemacht werden.',
       ),
       [
         { text: t('cancel', 'abbrechen'), style: 'cancel' },
@@ -121,8 +129,8 @@ export default function AccountScreen() {
               <Text style={styles.dangerText}>{t('delete account', 'Konto löschen')}</Text>
               <Text style={styles.rowDesc}>
                 {t(
-                  'permanently removes your account and your moments. cannot be undone.',
-                  'Löscht dein Konto und deine Momente dauerhaft. Kann nicht rückgängig gemacht werden.',
+                  'permanently removes your account. shared moments stay with the other person. cannot be undone.',
+                  'Löscht dein Konto dauerhaft. Geteilte Momente bleiben bei der anderen Person. Kann nicht rückgängig gemacht werden.',
                 )}
               </Text>
             </View>

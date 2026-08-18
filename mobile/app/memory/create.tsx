@@ -88,13 +88,29 @@ export default function CreateMemoryScreen() {
   };
 
   const fromLibrary = async () => {
-    applyResult(
-      await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.8,
-        allowsEditing: true,
-      }),
-    );
+    try {
+      applyResult(
+        await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          quality: 0.8,
+          allowsEditing: true,
+        }),
+      );
+    } catch {
+      // Der Kamera-Weg erklärt eine Verweigerung sauber; dieser hier tat es
+      // nicht: das Blatt schloss sich und nichts geschah, ohne ein Wort.
+      Alert.alert(
+        t('no access to your photos', 'kein Zugriff auf deine Fotos'),
+        t(
+          'PeakPlant may not open your library on this phone. You can take a photo instead — or allow photo access in your phone settings.',
+          'PeakPlant darf die Galerie auf diesem Handy nicht öffnen. Du kannst stattdessen ein Foto aufnehmen — oder den Zugriff in den Handy-Einstellungen erlauben.',
+        ),
+        [
+          { text: t('take a photo', 'Foto aufnehmen'), onPress: () => void fromCamera() },
+          { text: t('not now', 'jetzt nicht'), style: 'cancel' },
+        ],
+      );
+    }
   };
 
   /**
@@ -154,11 +170,19 @@ export default function CreateMemoryScreen() {
   const handleSave = async () => {
     if (!note.trim() && !photoUri) return;
     if (!activeSpace) {
-      setError(
+      // Vorher nur dieser Satz, ohne Weg dorthin — eine Anweisung ohne Tür.
+      // Entdecken und die Ideen-Bibliothek bieten in derselben Lage längst
+      // „Space starten" an; hier fehlte es als einziger Stelle (§5).
+      Alert.alert(
+        t('no space yet', 'noch kein Space'),
         t(
-          'no space yet — set one up first, then keep this moment.',
-          'noch kein Space — richtet zuerst einen ein, dann haltet ihr diesen Moment fest.',
+          'a moment needs a space to live in. it takes a moment to set one up.',
+          'ein Moment braucht einen Space, in dem er lebt. Das Einrichten dauert einen Augenblick.',
         ),
+        [
+          { text: t('not now', 'jetzt nicht'), style: 'cancel' },
+          { text: t('start a space', 'Space starten'), onPress: () => router.push('/space/new') },
+        ],
       );
       return;
     }

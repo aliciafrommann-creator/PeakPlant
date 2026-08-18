@@ -31,6 +31,7 @@ export default function MemoryDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [memory, setMemory] = useState<Memory | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const [editing, setEditing] = useState(false);
   const [draftNote, setDraftNote] = useState('');
@@ -47,7 +48,11 @@ export default function MemoryDetailScreen() {
         if (active) setMemory(m);
       })
       .catch(() => {
-        if (active) setMemory(null);
+        // „nicht gefunden" und „konnte nicht geladen werden" sind zwei
+        // verschiedene Dinge. Für eine App, deren Versprechen das Bewahren
+        // ist, ist „Moment nicht gefunden" bei einem Netzaussetzer die
+        // schlimmstmögliche falsche Nachricht.
+        if (active) { setMemory(null); setLoadFailed(true); }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -128,7 +133,19 @@ export default function MemoryDetailScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.notFound}>
-          <Text style={styles.notFoundText}>{t('moment not found.', 'Moment nicht gefunden.')}</Text>
+          <Text style={styles.notFoundText}>
+            {loadFailed
+              ? t('we could not load this moment.', 'wir konnten diesen Moment nicht laden.')
+              : t('moment not found.', 'Moment nicht gefunden.')}
+          </Text>
+          {loadFailed && (
+            <Text style={styles.notFoundHint}>
+              {t(
+                'it is safe — this was the connection. try again in a moment.',
+                'er ist sicher — das war die Verbindung. Versuch es gleich nochmal.',
+              )}
+            </Text>
+          )}
           <TouchableOpacity
             onPress={() => router.back()}
             accessibilityRole="button"
@@ -377,6 +394,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: Spacing.md,
+  },
+  notFoundHint: {
+    ...Typography.micro,
+    color: Colors.textMuted,
+    textAlign: 'center',
+    lineHeight: 18,
   },
   notFoundText: {
     fontSize: 16,
