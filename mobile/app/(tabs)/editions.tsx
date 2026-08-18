@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -24,6 +24,20 @@ export default function EditionsScreen() {
   const { authenticate } = useBiometric();
   const { t } = useLanguage();
   const [progress, setProgress] = useState<Record<string, number>>({});
+
+  /**
+   * Nur die Decks, die es wirklich gibt. Die geplanten standen bis zum
+   * 18.08.2026 als ausgegraute, nicht antippbare Zeilen in derselben Liste:
+   * drei echte und neun tote. Der einzige Reiter, der „eure Sammlung" heißt,
+   * bestand zu drei Vierteln aus Dingen, die niemandem gehören und die man
+   * nicht öffnen kann. Die Information ist nicht verloren — sie steht als
+   * eine ehrliche Zeile unter der Liste (MANIFESTO §5).
+   */
+  const liveEditions = useMemo(
+    () => SEED_EDITIONS.filter((e) => e.status === 'available'),
+    [],
+  );
+  const plannedCount = SEED_EDITIONS.length - liveEditions.length;
 
   useEffect(() => {
     if (!activeSpace?.id) {
@@ -96,7 +110,7 @@ export default function EditionsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={SEED_EDITIONS}
+        data={liveEditions}
         keyExtractor={(e) => e.id}
         renderItem={renderEdition}
         ListHeaderComponent={
@@ -124,7 +138,28 @@ export default function EditionsScreen() {
             </Text>
           </View>
         }
-        ListFooterComponent={<ShopLink variant="inline" />}
+        ListFooterComponent={
+          <>
+            {/* Vorher standen die geplanten Editionen als ausgegraute,
+                nicht antippbare Zeilen in der Liste: drei echte Decks und
+                neun tote. Drei Viertel des Reiters waren ein abgeschalteter
+                Katalog — der einzige Reiter, der „eure Sammlung" heißt, zeigte
+                überwiegend Dinge, die euch nicht gehören und die man nicht
+                öffnen kann. Die Information ist nicht weg, sie ist jetzt eine
+                Zeile statt neun Sackgassen (MANIFESTO §5). */}
+            {plannedCount > 0 && (
+              <Text style={styles.planned}>
+                {plannedCount === 1
+                  ? t('one more edition is in the works.', 'eine weitere Edition ist in Arbeit.')
+                  : t(
+                      `${plannedCount} more editions are in the works.`,
+                      `${plannedCount} weitere Editionen sind in Arbeit.`,
+                    )}
+              </Text>
+            )}
+            <ShopLink variant="inline" />
+          </>
+        }
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
       />
@@ -135,6 +170,12 @@ export default function EditionsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   list: { paddingBottom: Spacing.xl },
+  planned: {
+    ...Typography.micro,
+    marginHorizontal: Spacing.screen,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.xs,
+  },
   header: {
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.lg,

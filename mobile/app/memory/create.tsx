@@ -81,15 +81,74 @@ export default function CreateMemoryScreen() {
     'was möchtest du von diesem Moment festhalten?'
   );
 
-  const pickPhoto = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
-      allowsEditing: true,
-    });
+  const applyResult = (result: ImagePicker.ImagePickerResult) => {
     if (!result.canceled && result.assets.length > 0) {
       setPhotoUri(result.assets[0].uri);
     }
+  };
+
+  const fromLibrary = async () => {
+    applyResult(
+      await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.8,
+        allowsEditing: true,
+      }),
+    );
+  };
+
+  /**
+   * Den Moment aufnehmen, in dem man gerade steckt.
+   *
+   * Bis zum 18.08.2026 konnte diese App genau das nicht: „Moment festhalten"
+   * öffnete ausschließlich die Galerie. Für ein Produkt, dessen ganzer Sinn das
+   * Festhalten ist, war das die auffälligste Lücke — und app.json versprach
+   * dem Betriebssystem schon die ganze Zeit „capture memories", ein Satz, den
+   * der Code nicht hielt (MANIFESTO §1).
+   */
+  const fromCamera = async () => {
+    const perm = await ImagePicker.requestCameraPermissionsAsync();
+    if (!perm.granted) {
+      // Nicht schweigen und nicht so tun, als sei nichts passiert: sagen, was
+      // fehlt, und den Weg anbieten, der ohne Kamera funktioniert.
+      Alert.alert(
+        t('no camera access', 'kein Kamerazugriff'),
+        t(
+          'PeakPlant may not use the camera on this phone. You can still pick a photo from your library — or allow the camera in your phone settings.',
+          'PeakPlant darf die Kamera auf diesem Handy nicht nutzen. Du kannst trotzdem ein Foto aus der Galerie wählen — oder die Kamera in den Handy-Einstellungen erlauben.',
+        ),
+        [
+          { text: t('from library', 'aus der Galerie'), onPress: () => void fromLibrary() },
+          { text: t('not now', 'jetzt nicht'), style: 'cancel' },
+        ],
+      );
+      return;
+    }
+    applyResult(
+      await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.8,
+        allowsEditing: true,
+      }),
+    );
+  };
+
+  /**
+   * EINE sichtbare Fläche, zwei Wege dahinter (MANIFESTO §5). Zwei Knöpfe
+   * nebeneinander wären zwei laute Ziele auf einem Bildschirm, der genau eine
+   * Handlung hat; die Auswahl kommt deshalb erst nach dem Tippen — und die
+   * Kamera steht oben, weil sie der Grund ist, warum jemand hier steht.
+   */
+  const choosePhoto = () => {
+    Alert.alert(
+      photoUri ? t('change the photo', 'Foto ändern') : t('add a photo', 'Foto hinzufügen'),
+      undefined,
+      [
+        { text: t('take a photo', 'Foto aufnehmen'), onPress: () => void fromCamera() },
+        { text: t('from library', 'aus der Galerie'), onPress: () => void fromLibrary() },
+        { text: t('cancel', 'Abbrechen'), style: 'cancel' },
+      ],
+    );
   };
 
   const handleSave = async () => {
@@ -233,7 +292,7 @@ export default function CreateMemoryScreen() {
           <PressableScale
             style={[styles.photoArea, !photoUri && styles.photoAreaEmpty]}
             scaleTo={0.985}
-            onPress={() => void pickPhoto()}
+            onPress={choosePhoto}
             accessibilityLabel={photoUri ? t('Change photo', 'Foto ändern') : t('Add a photo to this moment', 'Foto zu diesem Moment hinzufügen')}
           >
             {photoUri ? (
@@ -250,7 +309,7 @@ export default function CreateMemoryScreen() {
                   <Ionicons name="camera-outline" size={26} color={MOMENT} />
                 </View>
                 <Text style={styles.photoText}>{t('ADD A PHOTO', 'FOTO HINZUFÜGEN')}</Text>
-                <Text style={styles.photoHint}>{t('upload from your library · optional', 'aus der Galerie hochladen · optional')}</Text>
+                <Text style={styles.photoHint}>{t('take one, or pick from your library · optional', 'aufnehmen oder aus der Galerie wählen · optional')}</Text>
               </View>
             )}
           </PressableScale>

@@ -249,3 +249,79 @@ Zwei bis drei Abende **manuell** veranstalten — Einladung per Mail, Anmeldung
 per Formular, Alicia als Gastgeberin. Kein Code. Beantwortet mehr als ein
 Quartal Entwicklung, und erst wenn Menschen wiederkommen, ohne einzeln
 eingeladen zu werden, lohnt sich eine Zeile dafür.
+
+---
+
+## Feed, Folgen und Sichtbarkeit (Alicia, 18.08.2026) — geparkt, „hat auch Zeit"
+
+Alicias Wortlaut, damit er nicht durch meine Zusammenfassung verloren geht:
+
+> „aber es fehlt noch superviel bei peakplant in solo und freunde nh? und wenn
+> man einen ort teilen will an dem man war und wenn man seine community
+> aktivität öffentlich teilen will - es soll schon auch nen feed geben und das
+> man sich folgen kann solo, als freundesgruppen oder couples"
+>
+> „und immer einstellen kann wer alles das bild der aktivität sehen kann - mit
+> einer frage auch im feed teilen, im feed teilen mit: ... :)) aber das hat auch
+> Zeit"
+
+### Was davon schon existiert
+
+**Einen Ort teilen ist gebaut.** Die Orte-Fläche kann heute schon anonym
+teilen: Spot plus Sterne plus Tipp, nie Space, nie Notiz, nie Identität
+(`app/(tabs)/community.tsx`, „SHARE ONLY THE SPOT" / „ADD ANONYMOUS RATING").
+Was fehlt, ist nicht die Funktion, sondern dass irgendjemand sie je benutzt hat
+— null Momente, null zweite Mitglieder.
+
+### Was ohne Reibung baubar ist
+
+- **Solo und Freunde ernst nehmen.** Alicias eigene Entscheidung vom 17.08.:
+  „Solo ist kein Sonderfall, sondern ein Dauerzustand." Die App kann das
+  technisch schon; sie sagt es nur nicht. Kostet Copy und Leerzustände, kein
+  neues Datenmodell. Solo-Editionen brauchen eine additive Migration
+  (`spaces.type` kennt heute nur `couple` und `friends`).
+- **Pro Aktivität einstellen, wer das Bild sieht.** Das ist keine Kollision,
+  das ist MANIFESTO §2 als Funktion: „Öffentlich wird ausschließlich, was ein
+  Mensch aktiv teilt." Alicias „im Feed teilen mit: …" ist genau die aktive,
+  informierte, pro-Stück-Entscheidung, die das Prinzip verlangt. Wichtig:
+  Standard ist immer privat, und die Frage kommt beim Teilen, nicht beim
+  Anlegen — sonst wird aus einer Einladung ein Formular.
+- **Ein Feed aus AKTIVITÄTEN.** Orte, Ideen, Abende — Dinge, die man tun kann.
+  Verträgt sich mit allem und ist vermutlich das, was den Sog erzeugt, den
+  Alicia meint.
+
+### Die eine echte Kollision: Folgen
+
+**Menschen folgen** kollidiert frontal mit zwei Dingen — und beide sind
+Alicias eigene:
+
+1. MANIFESTO §3 verbietet „öffentliche Profile / Follower / Likes" wörtlich.
+2. Ihre eigene Entscheidung vom 17.08.: **„Die kleinste Einheit ist ein Abend,
+   kein Mensch"** — kein durchblätterbares Profilraster, man zeigt sich, indem
+   man auftaucht. Begründet hat sie das mit Sicherheit für Frauen: kein
+   Browsing-Raster heißt auch keine Stalking-Fläche.
+
+Ein Follower-Graph baut genau das Raster wieder auf, das sie bewusst
+weggelassen hat. Er ist außerdem der Punkt, an dem aus „bemerken, was zwischen
+euch wächst" ein Publikum wird, vor dem man auftritt.
+
+**Der Vorschlag, der beides bekommt:** Man folgt keiner Person, sondern einem
+**Ort, einer Stadt, einem Thema oder einer Gruppe** — und sieht dort, was
+Menschen aktiv geteilt haben. Der Feed ist voll, der Sog entsteht, es gibt
+etwas zu entdecken, aber es gibt kein Profil zum Durchblättern und keine
+Zahl neben einem Namen. Wer eine Gruppe teilt, teilt als Gruppe („zwei
+Menschen waren hier"), nicht als Person.
+
+**Nicht entschieden.** Das ist eine Verfassungsfrage, keine Feature-Frage:
+Wenn Alicia Personen-Folgen will, ändert sich MANIFESTO §3, und das gehört
+bewusst getan und aufgeschrieben, nicht nebenbei. Ihr eigener Satz „aber das
+hat auch Zeit" ist hier die richtige Antwort — es steht, bis die Kernschleife
+mindestens einmal durchgelaufen ist.
+
+### Was vorher wahr sein muss
+
+Alles hier hängt an derselben Bedingung wie die Phasen 2–5: **die Schleife
+muss erst einmal geschlossen sein.** Ein Feed ohne Inhalt ist ein leerer Raum,
+und Inhalt entsteht aus Momenten, die es noch nicht gibt (Stand 18.08.: null
+Momente, null Spaces mit zweiter Person). Ein Feed, den man vorher baut,
+zeigt beim Start genau das, was die App gerade zeigen kann: nichts.

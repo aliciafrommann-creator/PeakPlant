@@ -86,7 +86,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow PeakPlant to access your photos to add them to your shared diary."
+          "photosPermission": "Allow PeakPlant to access your photos to add them to your shared diary.",
+          "cameraPermission": "Allow PeakPlant to use your camera so you can capture the moment you are in and keep it in your shared diary."
         }
       ],
       [
