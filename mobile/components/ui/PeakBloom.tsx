@@ -49,10 +49,15 @@ const styles = StyleSheet.create({
   },
   peak: {
     fontWeight: '700',
+    // kontrast-ok: das Markenzeichen ist reine Dekoration und trägt keine
+    // Information — daneben steht immer der Name in lesbarer Schrift. Ehrlich
+    // dazu: 1,74:1 auf Papier. Sähe man es als grafisches Objekt MIT
+    // Bedeutung, müsste es 3:1 erreichen; als Zierde nimmt WCAG es aus.
     color: Accents.sunflower,
     letterSpacing: -2,
   },
   bloom: {
+    // kontrast-ok: dieselbe Zierde wie `peak` — 1,74:1, ohne Information.
     color: Accents.sunflower,
   },
 });

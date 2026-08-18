@@ -137,11 +137,22 @@ schlimmeren trugen andere Namen. Deshalb, in dieser Reihenfolge:
    ist eine andere Farbe und fiel auf elf von zwölf Editionen durch.
 7. Ein statischer Farbwert in einem Stil, dessen Farbe beim Rendern gesetzt
    wird, gehört gelöscht — er täuscht eine Entscheidung vor.
+8. Ein Text über einem Foto oder Kamerabild hat KEINEN bekannten Untergrund.
+   Entweder der Streifen darunter ist deckend, oder sein schlechtester Fall
+   ist gerechnet (Kamera auf eine weiße Wand ist der schlechteste Fall).
+9. Eine lokale Konstante versteckt die Farbe vor jedem Wächter
+   (`const TOGETHER = Sections.together`). Wenn du eine anlegst und sie als
+   Schrift benutzt, brauchst du daneben die Ink-Fassung.
 
 *Funde:* eine Knopfbeschriftung in `Colors.text` auf dunklem Grund — **1,00:1,
-schlicht unsichtbar**; `Accents.apricot` als 13-pt-Anrede auf Creme (2,38:1);
-elf Akzent-/Sektionsfarben als 11–13-pt-Schrift; ein Stil, der auf zwei
-verschiedenen Untergründen benutzt wurde.
+schlicht unsichtbar**; `Sections.together` als 11-pt-Etikett auf Papier
+(**2,35:1**, hinter einer lokalen Konstante versteckt); `Accents.apricot` als
+13-pt-Anrede auf Creme (2,38:1); elf Akzent-/Sektionsfarben als 11–13-pt-
+Schrift; ein Stil, der auf zwei verschiedenen Untergründen benutzt wurde. Und
+die teuerste Lehre: Die erste Korrektur im Scanner schob den
+Unsichtbarkeits-Fehler nur von einem Zustand in den anderen — helle Schrift auf
+dem Live-Kamerabild sind 1,07:1. Ein Bildschirm hat mehrere Zustände; geprüft
+gehören alle.
 
 *Befund:* Sechs von neun Schrift-Stufen wurden nirgends benutzt, und alle 40
 Stellen, die eine einbanden, überschrieben sie direkt daneben. Die Datei
@@ -168,8 +179,9 @@ und nach dem Onboarding fragte die App nie wieder.
 
 Ein Teil dieser Regeln steht als Wächtertest und scheitert in der CI:
 `lib/klarheit.test.ts` (Schriftgröße, Überschriften, Zustände),
-`lib/palette.test.ts` (jede Schriftfarbe unter 24 pt muss auf mindestens einem
-der beiden Gründe bestehen; Ausnahmen brauchen `// kontrast-ok: <Grund>`),
+`lib/palette.test.ts` (Akzente nie als kleine Schrift; jede andere Schriftfarbe
+muss auf dem Papierton bestehen oder eine erklärte Dunkel-Tinte sein; Ausnahmen
+brauchen `// kontrast-ok: <Grund>`),
 `lib/editionInk.test.ts` (die zwölf Editionsfarben). Was ein Test **nicht** kann, ist die eigentliche Frage von
 K1, K2 und K6 beantworten — ob ein Bildschirm ein Hauptobjekt hat und ob ein
 Reiter berechtigt ist. Das bleibt Urteil, und dafür ist dieses Dokument da.

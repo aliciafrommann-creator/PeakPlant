@@ -607,7 +607,8 @@ const styles = StyleSheet.create({
   action: { flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5, height: Layout.tapMin },
   actionDone: { opacity: 1 },
   actionText: { fontSize: 11, fontWeight: '500', color: Colors.textMuted, letterSpacing: 0.3 },
-  actionTextDone: { color: Colors.accent },
+  // Überschreibt `actionText` (11 pt) — `Colors.accent` waren dort 3,96:1.
+  actionTextDone: { color: Colors.accentInk },
   empty: { alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.xxl, paddingHorizontal: Spacing.screen },
   emptyText: { fontSize: 16, fontWeight: '200', color: Colors.textMuted },
   emptyBtn: {

@@ -20,30 +20,53 @@ import { contrastRatio, AA_SMALL_TEXT } from './contrast';
  * Deshalb ist die Frage hier umgedreht: nicht „wo steht dieser Farbname",
  * sondern „welche Farbe steht unter 24 pt".
  *
- * WAS DER TEST KANN UND WAS NICHT — ehrlich, sonst ist er schlimmer als
- * keiner: Ein Quelltext-Test sieht den UNTERGRUND nicht. Er kann deshalb nicht
- * sagen, ob eine helle Schrift auf einer dunklen Fläche sitzt. Was er sagen
- * kann, ist das hier, und das reicht überraschend weit:
+ * ZWEI REGELN, beide ohne Kenntnis des Untergrunds prüfbar:
  *
- *   **Eine Schriftfarbe unter 24 pt muss auf MINDESTENS EINEM der beiden
- *   Gründe der App bestehen — Papier (#F3F1EC) oder dunkel (#1E1C1A).**
+ *   **A — Ein Akzent ist eine Füllung, keine Schrift.** `Accents.*` und
+ *   `Sections.*` dürfen unter 24 pt nicht als `color:` stehen; dafür gibt es
+ *   `AccentInks` / `SectionInks`. Das ist die Regel, die alle elf Funde vom
+ *   18.08.2026 mechanisch fängt — von `Accents.apricot` mit 2,14:1 bis
+ *   `Sections.grow` mit 3,27:1 — und zwar unabhängig davon, ob sie auf Papier,
+ *   Creme oder Warm liegen. Sie greift auch über lokale Konstanten
+ *   (`const TOGETHER = Sections.together`), an denen ein erster Anlauf
+ *   vorbeigesehen hat.
  *
- * Eine Farbe, die auf beiden durchfällt, ist überall falsch; da braucht es
- * keinen Untergrund, um es zu wissen. Genau in diese Klasse fielen alle elf
- * Akzent-Funde (`Accents.apricot` 2,38 / 2,14, `Sections.grow` 3,27,
- * `Accents.chili` 3,96 …). `Colors.white` besteht auf Dunkel und wird
- * durchgelassen — dass es auf der RICHTIGEN Fläche sitzt, prüft weiter ein
- * Mensch (Skill `klarheit`).
+ *   **B — Eine Schriftfarbe aus `Colors` muss zu einem der beiden Gründe
+ *   gehören.** Entweder sie besteht auf dem PAPIERTON (#F3F1EC, der dunkelste
+ *   der hellen Gründe), oder sie ist eine ausdrücklich für dunklen Grund
+ *   gedachte Tinte (`white`, `onDark`, `onDarkStrong`). Eine Farbe, die zu
+ *   keinem von beiden gehört, ist überall falsch.
  *
- * Ausnahmen sind erlaubt und müssen SICHTBAR sein: eine Zeile
- * `// kontrast-ok: <Begründung>` im selben Style-Block. Der Test zählt sie mit
- * — steigt die Zahl deutlich, ist die Regel falsch, nicht der Code.
+ * Warum B die hellen Tinten durchlässt, statt für jede einen Marker zu
+ * verlangen: Sie stehen an 35 Stellen auf gefüllten Bedienelementen. Ein Test
+ * mit 35 Ausnahmen ist ein abgeschalteter Test im Kostüm — und die Frage, ob
+ * die Füllung darunter wirklich dunkel ist, kann er ohnehin nicht beantworten.
+ *
+ * WAS ER NICHT KANN, damit niemand mehr erwartet als da ist:
+ *   · Er weiß nicht, WELCHE Fläche unter einem Text liegt. Weiße Schrift auf
+ *     einer hellen Füllung bleibt Menschenarbeit (Skill `klarheit`) — genau so
+ *     ein Fall war der Scanner über dem Live-Kamerabild.
+ *   · Er sieht keine Inline-Styles, keine `color={…}`-Props im JSX und keine
+ *     Farben aus `constants/typography.ts`.
+ *   · Er kennt Style-Blöcke nur in `StyleSheet.create`-Form mit zwei Leerzeichen
+ *     Einrückung, und keine berechneten oder roh als Hex geschriebenen Farben.
+ *   · Ein Block, der nur eine Farbe überschreibt (`actionTextDone`), hat kein
+ *     eigenes `fontSize` — er wird über den `fontSize`-losen Zweig mitgeprüft.
+ *
+ * Eine frühere Fassung prüfte `max(Papier, Dunkel)` und ließ ausgerechnet die
+ * Akzente durch: `Accents.apricot` besteht auf Dunkel mit 6,40:1 und wäre nie
+ * gemeldet worden, obwohl 2,35:1 auf Papier der schlechteste Textwert der App
+ * war.
+ *
+ * Ausnahmen brauchen `// kontrast-ok: <Begründung>` im Style-Block (oder in den
+ * drei Zeilen darüber) und werden gezählt — steigt die Zahl deutlich, ist die
+ * Regel falsch, nicht der Code. Stand 18.08.2026: 1083 Style-Blöcke, davon 476
+ * mit einer auflösbaren Schriftfarbe geprüft, 7 begründete Ausnahmen.
  */
 
 const WURZEL = path.resolve(__dirname, '..');
 const ORDNER = ['app', 'components'];
 const PAPIER = Colors.background;
-const DUNKEL = Colors.backgroundDark;
 
 /** Jede Farbe, die in einem Style-Block als `color:` vorkommen kann. */
 const PALETTE: Record<string, string> = {
@@ -72,7 +95,10 @@ const rel = (f: string) => path.relative(WURZEL, f);
 interface Block {
   datei: string;
   name: string;
+  /** Nur der Block selbst — hier wird die Farbe gesucht. */
   inhalt: string;
+  /** Block plus die drei Zeilen darüber — hier wird der Marker gesucht. */
+  kontext: string;
 }
 
 /**
@@ -91,7 +117,13 @@ function bloecke(quelle: string, datei: string): Block[] {
       else if (quelle[i] === '}') tiefe--;
       i++;
     }
-    out.push({ datei, name: m[1], inhalt: quelle.slice(m.index, i) });
+    // Die drei Zeilen ÜBER dem Block zählen für den Ausnahme-Marker: bei
+    // einem Einzeiler (`sheetStarOn: { color: … },`) steht die Begründung
+    // zwangsläufig davor. Für die FARBE zählen sie nicht — sonst erbt jeder
+    // Block die Farbe seines Vorgängers.
+    const davor = quelle.slice(0, m.index).split('\n').slice(-4).join('\n');
+    const inhalt = quelle.slice(m.index, i);
+    out.push({ datei, name: m[1], inhalt, kontext: `${davor}\n${inhalt}` });
   }
   return out;
 }
@@ -101,6 +133,7 @@ interface Fund {
   farbe: string;
   groesse: number;
   verhaeltnis: number;
+  grund: string;
 }
 
 const alleBloecke: Block[] = [];
@@ -108,53 +141,119 @@ for (const f of QUELLEN) alleBloecke.push(...bloecke(fs.readFileSync(f, 'utf8'),
 
 const AUSNAHME = /kontrast-ok:/;
 
-function pruefe(): { funde: Fund[]; ausnahmen: number } {
+/**
+ * Lokale Aliase auflösen: `const TOGETHER = Sections.together;`
+ *
+ * Vier echte Fehler standen genau hinter solchen Konstanten und wurden vom
+ * Wächter still übersprungen — ein übersprungener Fund sieht aus wie keiner.
+ */
+function aliase(quelle: string): Record<string, string> {
+  const out: Record<string, string> = {};
+  const re = /^const\s+([A-Za-z0-9_]+)\s*=\s*((?:Colors|Accents|AccentInks|Sections|SectionInks|Status)\.[A-Za-z0-9_]+)/gm;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(quelle))) out[m[1]] = m[2];
+  return out;
+}
+
+const ALIASE = new Map<string, Record<string, string>>();
+for (const f of QUELLEN) ALIASE.set(f, aliase(fs.readFileSync(f, 'utf8')));
+
+/**
+ * Tinten, die ausdrücklich für dunklen Grund gedacht sind (Regel B).
+ * Sie können auf Papier nicht bestehen und sollen es auch nicht.
+ */
+const TINTEN_FUER_DUNKEL = ['Colors.white', 'Colors.onDark', 'Colors.onDarkStrong'];
+
+/** Der Farbausdruck eines Blocks, Alias aufgelöst. */
+function farbeVon(b: Block): string | null {
+  const m = b.inhalt.match(
+    /(?<![A-Za-z])color:\s*((?:Colors|Accents|AccentInks|Sections|SectionInks|Status)\.[A-Za-z0-9_]+|[A-Z][A-Z0-9_]*)/,
+  );
+  if (!m) return null;
+  const roh = m[1];
+  if (roh.includes('.')) return roh;
+  return ALIASE.get(b.datei)?.[roh] ?? null;
+}
+
+/**
+ * Die Schriftgröße eines Blocks. Ein reiner Überschreibungs-Block
+ * (`actionTextDone: { color: … }`) hat keine — dann zählt er trotzdem als
+ * kleine Schrift, denn er überschreibt einen Stil, der eine hat. Lieber einmal
+ * zu oft geprüft als eine ganze Klasse still übersprungen.
+ */
+function groesseVon(b: Block): number {
+  const m = b.inhalt.match(/fontSize:\s*(\d+(?:\.\d+)?)/);
+  return m ? Number(m[1]) : 0;
+}
+
+function pruefe(): { funde: Fund[]; ausnahmen: number; geprueft: number } {
   const funde: Fund[] = [];
   let ausnahmen = 0;
+  let geprueft = 0;
   for (const b of alleBloecke) {
-    const groesse = b.inhalt.match(/fontSize:\s*(\d+(?:\.\d+)?)/);
-    const farbe = b.inhalt.match(/(?<!background)[cC]olor:\s*((?:Colors|Accents|AccentInks|Sections|SectionInks|Status)\.[A-Za-z0-9_]+)/);
-    if (!groesse || !farbe) continue;
-    const pt = Number(groesse[1]);
+    const farbe = farbeVon(b);
+    if (!farbe) continue;
+    const pt = groesseVon(b);
     // WCAG: ab 24 pt normal genügen 3:1. Fett lassen wir bewusst aus — ein
     // `fontWeight` im selben Block heißt nicht, dass der Text auch fett ist.
     if (pt >= 24) continue;
-    const hex = PALETTE[farbe[1]];
+    const hex = PALETTE[farbe];
     if (!hex || !hex.startsWith('#')) continue;
-    const aufPapier = contrastRatio(hex, PAPIER);
-    const aufDunkel = contrastRatio(hex, DUNKEL);
-    const v = Math.max(aufPapier, aufDunkel);
-    if (v >= AA_SMALL_TEXT) continue;
-    if (AUSNAHME.test(b.inhalt)) {
+    geprueft++;
+
+    const istAkzent = farbe.startsWith('Accents.') || farbe.startsWith('Sections.') || farbe.startsWith('Status.');
+    const istDunkelTinte = TINTEN_FUER_DUNKEL.includes(farbe);
+    const v = contrastRatio(hex, PAPIER);
+
+    // Regel A: Akzente füllen, sie schreiben nicht.
+    // Regel B: alles andere muss auf Papier bestehen oder eine Dunkel-Tinte sein.
+    const inOrdnung = istAkzent ? false : istDunkelTinte || v >= AA_SMALL_TEXT;
+    if (inOrdnung) continue;
+
+    if (AUSNAHME.test(b.kontext)) {
       ausnahmen++;
       continue;
     }
-    funde.push({ ort: `${rel(b.datei)} → ${b.name}`, farbe: farbe[1], groesse: pt, verhaeltnis: v });
+    funde.push({
+      ort: `${rel(b.datei)} → ${b.name}`,
+      farbe,
+      groesse: pt,
+      verhaeltnis: v,
+      grund: istAkzent ? 'Akzent als Schrift — nimm die Ink-Fassung' : 'zu leise auf hellem Grund',
+    });
   }
-  return { funde, ausnahmen };
+  return { funde, ausnahmen, geprueft };
 }
 
-describe('K7 — kleine Schrift trägt auf hellem Grund', () => {
-  it('keine Farbe unter 24 pt, die auf BEIDEN Gründen durchfällt', () => {
+describe('K7 — Farbe und Schriftgröße passen zusammen', () => {
+  it('kein Akzent als kleine Schrift, keine zu leise Tinte auf hellem Grund', () => {
     const { funde } = pruefe();
     const zeilen = funde.map(
-      (f) => `${f.ort}: ${f.farbe} bei ${f.groesse}pt = bestenfalls ${f.verhaeltnis.toFixed(2)}:1`,
+      (f) =>
+        `${f.ort}: ${f.farbe} bei ${f.groesse || '?'}pt = ${f.verhaeltnis.toFixed(2)}:1 auf Papier — ${f.grund}`,
     );
-    expect(
-      zeilen,
-      `unter ${AA_SMALL_TEXT}:1 auf Papier UND auf Dunkel:\n  ${zeilen.join('\n  ')}`,
-    ).toEqual([]);
+    expect(zeilen, `\n  ${zeilen.join('\n  ')}`).toEqual([]);
   });
 
   it('die Ausnahmen bleiben eine Handvoll, keine Gewohnheit', () => {
-    // Eine Ausnahme ist ehrlich (dunkle Fläche, Nicht-Text). Dreißig wären ein
-    // abgeschalteter Test im Kostüm — dann stimmt die Regel nicht mehr.
+    // Eine Ausnahme ist ehrlich. Dreißig wären ein abgeschalteter Test im
+    // Kostüm — dann stimmt die Regel nicht mehr, nicht der Code.
     const { ausnahmen } = pruefe();
     expect(ausnahmen).toBeLessThanOrEqual(12);
   });
 
-  it('findet überhaupt Style-Blöcke (sonst prüft der Test nichts)', () => {
-    // Ohne diese Zeile wäre ein kaputter Parser ein grüner Test.
+  it('prüft wirklich etwas — Blöcke gefunden, Farben aufgelöst', () => {
+    // Ohne diese zwei Zahlen wäre ein kaputter Parser ein grüner Test. Der
+    // erste Anlauf übersprang sechs Blöcke still; „übersprungen" sah aus wie
+    // „in Ordnung".
+    const { geprueft } = pruefe();
     expect(alleBloecke.length).toBeGreaterThan(400);
+    expect(geprueft).toBeGreaterThan(400);
+  });
+
+  it('löst lokale Alias-Konstanten auf', () => {
+    // Vier echte Fehler standen hinter `const TOGETHER = Sections.together`.
+    const mitAlias = [...ALIASE.values()].filter((m) => Object.keys(m).length > 0);
+    expect(mitAlias.length).toBeGreaterThan(3);
   });
 });

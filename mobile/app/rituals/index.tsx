@@ -21,7 +21,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
-import { Colors, Sections } from '../../constants/colors';
+import { Colors, Sections, SectionInks } from '../../constants/colors';
 import { Spacing, Radii, Shadows, Layout } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -33,6 +33,8 @@ import type { Ritual, RitualCadence } from '../../lib/types';
 const CADENCES: RitualCadence[] = ['weekly', 'monthly', 'seasonally', 'whenever'];
 
 const RITUALS = Sections.rituals; // sage — quiet, returning, grounded
+// Schrift-Fassung: sage auf `backgroundCream` waren 3,31:1.
+const RITUALS_INK = SectionInks.rituals;
 
 export default function RitualsScreen() {
   const { activeSpace } = useSpaces();
@@ -337,7 +339,7 @@ const styles = StyleSheet.create({
     borderLeftColor: RITUALS,
     ...Shadows.subtle,
   },
-  cardCadence: { fontSize: 11, fontWeight: '500', letterSpacing: 1.5, color: RITUALS },
+  cardCadence: { fontSize: 11, fontWeight: '500', letterSpacing: 1.5, color: RITUALS_INK },
   cardTitle: { ...Typography.subtitle, },
   cardNote: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19, fontStyle: 'italic' },
   cardRevisited: { fontSize: 11, fontWeight: '300', color: Colors.textSubtle },

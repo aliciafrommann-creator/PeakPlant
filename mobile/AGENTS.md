@@ -271,9 +271,9 @@ npx vitest run   # unit tests
 
 Der erste Durchgang suchte nach einem FARBNAMEN (`textFaint`, dann
 `placeholderTextColor`). Er fand neun Verdachtsfälle, davon drei echte Fehler,
-und übersah die schwereren, weil die anders hießen. Ein Gegenlese-Durchgang
-fand danach 15 weitere Stellen — alle in Style-Blöcken, also im behaupteten
-Umfang:
+und übersah die schwereren, weil die anders hießen. Zwei Gegenlese-Durchgänge
+fanden danach 18 weitere Stellen im ersten und 6 im zweiten — alle in
+Style-Blöcken, also im behaupteten Umfang:
 
 - `permissionButtonText` im Scanner: `Colors.text` auf `backgroundDark` =
   **1,00:1**. Ohne Kameraerlaubnis wird die Kameraansicht nicht gerendert, der
@@ -284,24 +284,38 @@ Umfang:
 - Zwei Texte im dunklen Einladungs-Kasten, einer davon über einen Stil, der
   sich zwei verschiedene Untergründe teilte.
 - Vier Bedienelemente mit weißer kleiner Schrift auf `accent`: 4,47:1.
+- Und in der zweiten Runde: vier Etiketten hinter lokalen Konstanten
+  (`TOGETHER` = apricot als 11-pt-Schrift = **2,35:1**, schlechter als alles
+  aus Runde eins), ein Überschreibungs-Block ohne eigenes `fontSize`, und der
+  Scanner — wo die erste Korrektur den Unsichtbarkeitsfehler nur in einen
+  anderen Zustand verschoben hatte.
 
 Daraus, verbindlich:
 
 1. **Zwei Paletten.** `Accents`/`Sections` füllen, `AccentInks`/`SectionInks`
-   schreiben (neu, ≥ 4,50:1 auf jedem hellen Grund der App). Für dunkle
-   Flächen `Colors.onDark` / `onDarkStrong`.
+   schreiben (neu, ≥ 4,50:1 auf Papier, warm, creme, weiß und `Accents.cream`
+   — auf `Colors.border` sind es 4,21–4,33, dort gehört keine kleine Schrift
+   hin). Für dunkle Flächen `Colors.onDark` / `onDarkStrong`.
 2. **Gerechnet, nicht geschätzt.** `lib/contrast.ts` — inklusive `composite()`
    für Deckkraft und `bestInk()` für Flächen, deren Farbe erst zur Laufzeit
    feststeht (Editions-Kopf, Kartenfläche: `lib/editionInk.ts`).
-3. **Ein Wächter, der nicht nach Namen sucht.** `lib/palette.test.ts` prüft
-   jede Schriftfarbe unter 24 pt gegen BEIDE Gründe der App. Was auf Papier
-   und auf Dunkel durchfällt, ist überall falsch — dafür braucht ein Test den
-   Untergrund nicht zu kennen. Was er NICHT kann, steht im Kopf der Datei:
-   ob eine helle Schrift auf der richtigen Fläche sitzt, bleibt Menschenarbeit
-   (Skill `klarheit`). Ausnahmen brauchen `// kontrast-ok: <Grund>` und werden
-   mitgezählt.
+3. **Ein Wächter mit zwei Regeln**, beide ohne Kenntnis des Untergrunds
+   prüfbar (`lib/palette.test.ts`): (A) Ein Akzent ist eine Füllung, keine
+   Schrift — `Accents.*`/`Sections.*` unter 24 pt sind verboten, auch hinter
+   lokalen Konstanten wie `const TOGETHER = Sections.together`. (B) Jede
+   andere Schriftfarbe muss auf dem Papierton bestehen oder eine erklärte
+   Dunkel-Tinte sein. Stand: 1083 Style-Blöcke, 476 mit auflösbarer
+   Schriftfarbe geprüft, 7 begründete Ausnahmen (`// kontrast-ok: <Grund>`).
+   Was er NICHT kann, steht im Kopf der Datei — vor allem: ob eine helle
+   Schrift auf der richtigen Fläche sitzt, bleibt Menschenarbeit.
 4. Ein statischer Farbwert in einem Stil, dessen Farbe beim Rendern gesetzt
    wird, gehört gelöscht.
+5. **Ein Text über einem Foto oder einem Kamerabild bringt seinen Grund
+   selbst mit.** Halbdurchsichtige Streifen sind kein bekannter Untergrund:
+   Der Scanner setzte helle Schrift über das LIVE-Kamerabild (1,07:1 über
+   einer weißen Wand), und der Streifen auf der Momente-Wand ließ ein dunkles
+   Foto mit 8 % durch. Entweder deckend, oder ein Schleier, dessen
+   schlechtester Fall gerechnet ist.
 
 Seed-Korrektur nebenbei: Edition 08 stand auf `ink: 'light'`, obwohl Dunkel
 dort 5,20:1 statt 3,13:1 erreicht; Edition 09 hatte eine Farbe, auf der KEINE

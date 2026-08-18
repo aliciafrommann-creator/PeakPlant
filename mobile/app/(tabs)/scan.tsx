@@ -174,9 +174,11 @@ export default function ScanScreen() {
               </TouchableOpacity>
             </View>
           ) : (
-            <Text style={styles.cameraText}>
-              {t('point at the QR code on your moment card', 'QR-Code auf deiner Momentkarte anvisieren')}
-            </Text>
+            <View style={styles.scrim}>
+              <Text style={styles.cameraText}>
+                {t('point at the QR code on your moment card', 'QR-Code auf deiner Momentkarte anvisieren')}
+              </Text>
+            </View>
           )}
         </View>
       </View>
@@ -243,14 +245,41 @@ const styles = StyleSheet.create({
   cameraText: {
     fontSize: 13,
     fontWeight: '300',
-    // Dunkler Grund (`cameraArea` = backgroundDark): textSubtle wären hier
-    // 3,31:1. kontrast-ok: onDark auf backgroundDark = 8,07:1.
+    // kontrast-ok: steht immer im `scrim` bzw. in der `permissionBox` — im
+    // schlechtesten Fall (Kamera auf Weiß) 5,21:1, auf flachem Dunkel 8,07:1.
     color: Colors.onDark,
     textAlign: 'center',
     lineHeight: 20,
     letterSpacing: 0.3,
   },
-  permissionBox: { alignItems: 'center', gap: Spacing.lg },
+  /**
+   * Der Grund unter diesen Texten ist NICHT immer dunkel.
+   *
+   * Ohne Kameraerlaubnis liegt hier flaches `backgroundDark`. Sobald die
+   * Erlaubnis da ist — also im häufigsten Zustand und im Fehlerfall —, läuft
+   * darunter das LIVE-KAMERABILD. Eine helle Wand, und helle Schrift steht bei
+   * 1,07:1. Ein erster Anlauf hat genau das gebaut: den Unsichtbarkeitsfehler
+   * aus dem einen Zustand in den anderen verschoben.
+   *
+   * Deshalb bringen die Texte ihren Grund selbst mit. Bei 0,86 Deckkraft
+   * ergibt sich im schlechtesten Fall (Kamera auf Weiß) #3E3C3A —
+   * `onDarkStrong` steht dort bei 10,26:1, `onDark` bei 5,21:1. Beides gilt
+   * dann in allen drei Zuständen, ohne Fallunterscheidung.
+   */
+  scrim: {
+    backgroundColor: 'rgba(30,28,26,0.86)',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radii.sm,
+  },
+  permissionBox: {
+    alignItems: 'center',
+    gap: Spacing.lg,
+    backgroundColor: 'rgba(30,28,26,0.86)',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.lg,
+    borderRadius: Radii.md,
+  },
   permissionButton: {
     height: 48,
     paddingHorizontal: Spacing.xl,
@@ -260,10 +289,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  // Ohne Kameraerlaubnis wird die CameraView NICHT gerendert — der Grund ist
-  // dann flaches #1E1C1A, und `Colors.text` ist genau dieselbe Farbe. Die
-  // Beschriftung war unsichtbar (1,00:1); sichtbar war nur der Rand des Knopfs.
-  // kontrast-ok: onDarkStrong auf backgroundDark = 15,88:1.
+  // Hier stand `Colors.text` auf #1E1C1A — dieselbe Farbe, 1,00:1, die
+  // Beschriftung war schlicht unsichtbar. Der Knopf sitzt in der
+  // `permissionBox` und damit auf deren Schleier.
+  // kontrast-ok: onDarkStrong ≥ 10,26:1, auch über hellem Kamerabild.
   permissionButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.onDarkStrong },
   bottom: { paddingHorizontal: Spacing.screen, paddingVertical: Spacing.xl, gap: Spacing.lg },
   divider: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },

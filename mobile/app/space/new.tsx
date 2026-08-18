@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
   typeText: { fontSize: 15, fontWeight: '400', color: Colors.text },
   typeTextActive: { color: Colors.white },
   typeHint: { fontSize: 11, fontWeight: '300', color: Colors.textMuted },
+  // kontrast-ok: nur auf `typeActive`, und das ist `Colors.text` — 4,97:1.
   typeHintActive: { color: Colors.textFaint },
   input: {
     fontSize: 16,

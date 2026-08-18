@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: 1,
     // Auf `backgroundCream` war Accents.apricot 2,38:1 — der schlechteste
-    // Textwert der App, ausgerechnet an der Anrede. Jetzt 4,54:1.
+    // Textwert der App, ausgerechnet an der Anrede. Jetzt 5,04:1.
     color: AccentInks.apricot,
     marginBottom: Spacing.lg,
   },
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.md,
   },
   counterWarn: {
-    // 4,01:1 auf backgroundCream → 4,55:1.
+    // 4,01:1 auf backgroundCream → 5,05:1.
     color: AccentInks.chili,
   },
   footer: {

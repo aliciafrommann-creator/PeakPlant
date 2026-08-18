@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
     color: Colors.textMuted,
   },
   goalDescSelected: {
+    // kontrast-ok: nur auf der ausgewählten, dunklen Karte — 4,97:1.
     color: Colors.textFaint,
   },
   actions: {

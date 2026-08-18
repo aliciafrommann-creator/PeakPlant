@@ -16,7 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { Colors, Sections } from '../../constants/colors';
+import { Colors, Sections, SectionInks } from '../../constants/colors';
 import { Spacing, Radii, Shadows, Opacity } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -48,6 +48,9 @@ import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
 import type { DateFeedback, PublicPlaceFeedback, PublicPlaceSpot, SavedDate } from '../../lib/types';
 
 const PLACES = Sections.community; // raspberry blossom — shared, social, a little playful
+// Schrift-Fassung: blossom lag als Etikett bei 3,61:1 (Papier) bzw. 3,65:1
+// (backgroundCream).
+const PLACES_INK = SectionInks.community;
 
 type MapMessage =
   | { type: 'map-ready' }
@@ -1231,7 +1234,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.lg,
     gap: Spacing.sm,
   },
-  kicker: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: PLACES },
+  kicker: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: PLACES_INK },
   title: { ...Typography.editorial },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
   livePanel: {
@@ -1244,7 +1247,7 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   liveCopy: { gap: Spacing.xs },
-  liveKicker: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: PLACES },
+  liveKicker: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: PLACES_INK },
   liveText: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18 },
   liveButton: {
     minHeight: 48,
@@ -1520,6 +1523,8 @@ const styles = StyleSheet.create({
   sheetNote: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18 },
   sheetStars: { flexDirection: 'row', gap: Spacing.md },
   sheetStar: { fontSize: 34, color: Colors.border },
+  // kontrast-ok: ein gefüllter Stern ist ein grafisches Objekt, kein Text —
+  // dafür verlangt WCAG 1.4.11 drei zu eins, und `accent` steht bei 3,96:1.
   sheetStarOn: { color: Colors.accent },
   sheetInput: {
     fontSize: 15,
