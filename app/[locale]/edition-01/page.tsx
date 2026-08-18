@@ -416,9 +416,17 @@ export default function DigitalWorld01({ params }: { params: { locale: string } 
       <section style={{ padding: '60px 40px 160px', maxWidth: 640, margin: '0 auto', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
         <p style={{ ...label(isDE), marginBottom: 20 }}>{isDE ? 'wenn sich der raum verändert' : 'when the room changes'}</p>
         <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.45)', fontWeight: 300, lineHeight: 1.8, marginBottom: 32 }}>
+          {/* „einmal im monat" war eine Zusage über eine Häufigkeit, die diese
+              Seite nicht gehalten hat: der Briefarchiv-Eintrag ist von Juni,
+              Juli und August kamen nie. Die Frage rotiert wirklich monatlich
+              (per Kalendermonat berechnet), die Playlist sagt ehrlich Bescheid,
+              wenn keine gesetzt ist — nur der Brief hat aufgehört.
+              Jetzt steht da, was stimmt: wir schreiben, wenn es etwas Neues
+              gibt. Eine Zusage, die man einhält, ist mehr wert als eine
+              häufigere, die man bricht (§1). */}
           {isDE
-            ? 'neuer brief, neue frage, neue playlist — einmal im monat. wir schreiben dir, wenn es soweit ist. sonst nichts.'
-            : 'new letter, new question, new playlist — once a month. we write you when it happens. nothing else.'}
+            ? 'die frage wechselt mit dem monat. wenn ein neuer brief oder eine neue playlist dazukommt, schreiben wir dir. sonst nichts.'
+            : 'the question changes with the month. when a new letter or playlist arrives, we write you. nothing else.'}
         </p>
         <StayCloseForm isDE={isDE} />
       </section>
