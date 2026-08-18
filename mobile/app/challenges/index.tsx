@@ -20,7 +20,7 @@ import { challengesForSpaceType, progressFor } from '../../lib/challenges';
 
 export default function ChallengesScreen() {
   const { activeSpace } = useSpaces();
-  const { memories } = useMemories(activeSpace?.id);
+  const { memories, error: memoriesError } = useMemories(activeSpace?.id);
   const { enrollmentFor } = useChallenges(activeSpace?.id);
   const { t } = useLanguage();
 
@@ -39,6 +39,18 @@ export default function ChallengesScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Der Fortschritt wird aus den Momenten abgeleitet. Laden die nicht,
+            stünde bei jeder Challenge „0 von N" — eine Null, die in Wahrheit
+            „wir wissen es nicht" heißt (Regel K5). Dann lieber sagen, was Sache
+            ist, statt eine Zahl zu behaupten. */}
+        {memoriesError && (
+          <Text style={styles.intro}>
+            {t(
+              'we could not read how far you are — your moments are safe. pull down or try again in a moment.',
+              'wir konnten euren Stand nicht lesen — eure Momente sind sicher. Gleich nochmal versuchen.',
+            )}
+          </Text>
+        )}
         <Text style={styles.intro}>
           {t(
             'gentle, finite goals you can take on together. complete one, keep the badge. no scores, no rush.',

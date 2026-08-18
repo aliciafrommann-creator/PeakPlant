@@ -11,7 +11,14 @@ import { useChallenges } from './useChallenges';
 import { useMemories } from './useMemories';
 
 export function useWeeklyChallenge(spaceId?: string, spaceType?: SpaceType) {
-  const { memories } = useMemories(spaceId);
+  /**
+   * `error` wird bewusst mitgelesen: Fortschritt und Sammelzahl werden aus den
+   * Momenten abgeleitet. Schlägt deren Laden fehl, ist `memories` leer — und
+   * „0 von N geschafft" wäre dann eine Scheinzahl (MANIFESTO §1, Regel K5).
+   * Aufrufer sollen unterscheiden können zwischen „noch nichts" und „wir
+   * wissen es gerade nicht".
+   */
+  const { memories, error: memoriesError } = useMemories(spaceId);
   const { enrollments, join, enrollmentFor } = useChallenges(spaceId);
 
   // Recomputed per render with the week key as dep, so a session spanning
@@ -48,5 +55,7 @@ export function useWeeklyChallenge(spaceId?: string, spaceType?: SpaceType) {
     progress,
     accept,
     chillyCount,
+    /** true = die Zahlen oben beruhen auf unvollständigen Daten. */
+    countsUnknown: !!memoriesError,
   };
 }
