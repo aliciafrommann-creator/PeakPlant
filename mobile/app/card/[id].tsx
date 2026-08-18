@@ -97,7 +97,7 @@ export default function CardDetailScreen() {
       )
     : t(
         'Choose what feels right for both of you. You can pause, change or stop at any time.',
-        'Macht, was sich für euch beide richtig anfühlt. Ihr könnt jederzeit pausieren, ändern oder aufhören.'
+        'Macht, was sich für euch richtig anfühlt. Ihr könnt jederzeit pausieren, ändern oder aufhören.'
       );
 
   function renderPreserveCTA(keyPrefix: string) {
@@ -116,7 +116,7 @@ export default function CardDetailScreen() {
           <Text style={styles.privacyNote}>
             {t(
               'This stays private to your space — only you and your partner can see it.',
-              'Das bleibt privat in eurem Space — nur ihr beide könnt es sehen.',
+              'Das bleibt privat in eurem Space.',
             )}
           </Text>
         )}

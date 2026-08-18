@@ -36,7 +36,7 @@ export default function ComposeNoteScreen() {
     (id: string) => {
       Alert.alert(
         t('delete this note?', 'diese Notiz löschen?'),
-        t('it is gone for both of you.', 'sie ist dann für euch beide weg.'),
+        t('it is gone for everyone in your space.', 'sie ist dann für alle in eurem Space weg.'),
         [
           { text: t('cancel', 'Abbrechen'), style: 'cancel' },
           {
@@ -133,7 +133,7 @@ export default function ComposeNoteScreen() {
                   )
                 : t(
                     'nothing written yet. what you write stays here, for the two of you.',
-                    'noch nichts geschrieben. Was du schreibst, bleibt hier — für euch beide.',
+                    'noch nichts geschrieben. Was du schreibst, bleibt hier — in eurem Space.',
                   )}
             </Text>
           )}

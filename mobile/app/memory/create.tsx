@@ -382,8 +382,14 @@ export default function CreateMemoryScreen() {
 
           <Text style={styles.privateNote}>
             {t(
-              'stays private to your space — only the two of you can see it.',
-              'bleibt privat in eurem Space — nur ihr beide könnt es sehen.',
+              // „nur ihr beide" war zweimal falsch: für einen Menschen allein
+              // stimmt es nicht, und es verspricht mehr als der Code hält —
+              // es gibt keine Verschlüsselung, der Server-Schlüssel umgeht RLS
+              // (MANIFESTO §1/§2). „privat in eurem Space" ist wahr, egal wie
+              // viele ihr seid, und ist die Formulierung, die das Manifest
+              // selbst als richtig benennt.
+              'stays private to your space.',
+              'bleibt privat in eurem Space.',
             )}
           </Text>
         </ScrollView>

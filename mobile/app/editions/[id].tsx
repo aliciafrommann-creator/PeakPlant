@@ -135,7 +135,7 @@ export default function EditionScreen() {
               <Text style={[styles.stat, { color: fgMuted }]}>{momentCount}</Text>
               {edition.sensitive && (
                 <Text style={[styles.privateNote, { color: fgFaint }]}>
-                  {t('this diary stays private to you two', 'dieses Tagebuch bleibt privat — nur für euch beide')}
+                  {t('this diary stays private to your space', 'dieses Tagebuch bleibt privat in eurem Space')}
                 </Text>
               )}
             </View>
