@@ -11,7 +11,7 @@ import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Shadows, Layout } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
-import { SEED_EDITIONS, DECK_SIZE_RANGE } from '../../lib/seed';
+import { SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useBiometric } from '../../lib/hooks/useBiometric';
@@ -24,6 +24,8 @@ export default function EditionsScreen() {
   const { authenticate } = useBiometric();
   const { t } = useLanguage();
   const [progress, setProgress] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
+  const [progressFailed, setProgressFailed] = useState(false);
 
   /**
    * Nur die Decks, die es wirklich gibt. Die geplanten standen bis zum
@@ -39,24 +41,46 @@ export default function EditionsScreen() {
   );
   const plannedCount = SEED_EDITIONS.length - liveEditions.length;
 
-  useEffect(() => {
+  /**
+   * Der Fortschritt wurde vorher ohne `catch` geladen: schlug der Aufruf fehl
+   * (offline, RLS, Sitzung abgelaufen), blieb die Zusage stehen, `progress`
+   * blieb leer — und jedes Deck behauptete „0 von 20 bewahrt". Eine Null, die
+   * in Wahrheit „wir wissen es nicht" heißt, ist eine Scheinzahl
+   * (MANIFESTO §1). Jetzt wird der Fehler benannt und ist wiederholbar.
+   */
+  const load = useCallback(() => {
     if (!activeSpace?.id) {
       setProgress({});
-      return;
+      setProgressFailed(false);
+      setLoading(false);
+      return () => {};
     }
     let active = true;
+    setLoading(true);
+    setProgressFailed(false);
     Promise.all(
       SEED_EDITIONS.filter((e) => e.status === 'available').map(async (e) => {
         const cards = await cardRepository.getAll(e.id, activeSpace.id);
         return [e.id, cards.filter((c) => c.status === 'activated').length] as const;
       })
-    ).then((entries) => {
-      if (active) setProgress(Object.fromEntries(entries));
-    });
+    )
+      .then((entries) => {
+        if (!active) return;
+        setProgress(Object.fromEntries(entries));
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        setProgress({});
+        setProgressFailed(true);
+        setLoading(false);
+      });
     return () => {
       active = false;
     };
   }, [activeSpace?.id]);
+
+  useEffect(() => load(), [load]);
 
   const handleEditionPress = useCallback(async (item: Edition) => {
     if (item.status !== 'available') return;
@@ -67,39 +91,33 @@ export default function EditionsScreen() {
     router.push(`/editions/${item.id}`);
   }, [authenticate, t]);
 
+  /** `liveEditions` filtert bereits — hier kommt nur an, was es wirklich gibt. */
   function renderEdition({ item }: { item: Edition }) {
-    const available = item.status === 'available';
     const done = progress[item.id] ?? 0;
     return (
       <TouchableOpacity
-        style={[
-          styles.card,
-          { borderLeftWidth: 3, borderLeftColor: item.color },
-          !available && styles.cardUpcoming,
-        ]}
+        style={[styles.card, { borderLeftWidth: 3, borderLeftColor: item.color }]}
         onPress={() => void handleEditionPress(item)}
-        disabled={!available}
         activeOpacity={0.85}
         accessibilityRole="button"
-        accessibilityState={{ disabled: !available }}
-        accessibilityLabel={`${item.name}, ${available ? t('open edition', 'Edition öffnen') : t('coming soon', 'demnächst')}`}
+        accessibilityLabel={`${item.name}, ${t('open edition', 'Edition öffnen')}`}
       >
         <Text style={styles.symbol}>{item.symbol}</Text>
         <View style={styles.cardBody}>
           <Text style={styles.editionLabel}>{item.subtitle.toUpperCase()}</Text>
           <Text style={styles.name}>{item.name.toLowerCase()}</Text>
           <Text style={styles.desc} numberOfLines={2}>{item.description}</Text>
-          <Text style={available ? styles.meta : styles.metaSoon}>
-            {available
-              ? done > 0 && item.cardCount > 0 && done >= item.cardCount
+          <Text style={styles.meta}>
+            {/* „0 von 20" waere gelogen, solange wir es nicht wissen — beim
+                Laden und nach einem Fehler steht deshalb die Deckgroesse da,
+                nicht eine Null (MANIFESTO §1). */}
+            {loading || progressFailed
+              ? t(`${item.cardCount} cards`, `${item.cardCount} Karten`)
+              : done > 0 && item.cardCount > 0 && done >= item.cardCount
                 ? t('✦ every moment preserved', '✦ jeder Moment bewahrt')
-                : t(`${done} of ${item.cardCount} preserved`, `${done} von ${item.cardCount} bewahrt`)
-              : t(
-                  `${DECK_SIZE_RANGE.min}-${DECK_SIZE_RANGE.max} cards - coming soon`,
-                  `${DECK_SIZE_RANGE.min}-${DECK_SIZE_RANGE.max} Karten - demnächst`,
-                )}
+                : t(`${done} of ${item.cardCount} preserved`, `${done} von ${item.cardCount} bewahrt`)}
           </Text>
-          {item.sensitive && available && (
+          {item.sensitive && (
             <Text style={styles.privateBadge}>{t('private to your space', 'privat — nur für euch')}</Text>
           )}
         </View>
@@ -130,6 +148,21 @@ export default function EditionsScreen() {
                 <Text style={styles.scanButtonText}>{t('SCAN CARD', 'KARTE SCANNEN')}</Text>
               </TouchableOpacity>
             </View>
+            {progressFailed && (
+              <TouchableOpacity
+                style={styles.retry}
+                onPress={load}
+                accessibilityRole="button"
+                accessibilityLabel={t('Try loading your progress again', 'Fortschritt erneut laden')}
+              >
+                <Text style={styles.retryText}>
+                  {t(
+                    "we could not read how far you are. your cards are safe — tap to try again.",
+                    'wir konnten euren Stand nicht lesen. Eure Karten sind sicher — tippen zum erneut Versuchen.',
+                  )}
+                </Text>
+              </TouchableOpacity>
+            )}
             <Text style={styles.lead}>
               {t(
                 'each edition is a deck of moments to collect together. open one, then scan the card you finished to preserve it.',
@@ -170,6 +203,14 @@ export default function EditionsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   list: { paddingBottom: Spacing.xl },
+  retry: {
+    marginTop: Spacing.xs,
+    paddingVertical: Spacing.sm,
+  },
+  retryText: {
+    ...Typography.micro,
+    color: Colors.accentInk,
+  },
   planned: {
     ...Typography.micro,
     marginHorizontal: Spacing.screen,
@@ -225,21 +266,12 @@ const styles = StyleSheet.create({
     borderRadius: Radii.md,
     ...Shadows.subtle,
   },
-  cardUpcoming: { opacity: 0.55 },
   symbol: { fontSize: 28 },
   cardBody: { flex: 1, gap: 3 },
   editionLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
   name: { fontSize: 20, fontWeight: '300', color: Colors.text, letterSpacing: -0.3 },
   desc: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
   meta: {
-    fontSize: 12,
-    fontWeight: '500',
-    letterSpacing: 1.5,
-    textTransform: 'uppercase',
-    color: Colors.textSubtle,
-    marginTop: 4,
-  },
-  metaSoon: {
     fontSize: 12,
     fontWeight: '500',
     letterSpacing: 1.5,

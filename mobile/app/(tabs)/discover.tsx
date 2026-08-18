@@ -107,6 +107,14 @@ export default function DiscoverScreen() {
   const [excludeIds, setExcludeIds] = useState<string[]>([]);
   const [recs, setRecs] = useState<DateRecommendation[]>([]);
   const [loading, setLoading] = useState(true);
+  /**
+   * Ein Ladefehler darf NICHT wie „nichts passt" aussehen. Vorher setzte der
+   * catch-Zweig einfach `recs` auf leer — der Mensch las dann „lockert einen
+   * Filter", obwohl gar nichts geladen worden war, und lockerte Filter, die
+   * nicht das Problem waren. Dieselbe Regel gilt im Tagebuch schon
+   * (moments.tsx) und ist die Fortsetzung von MANIFESTO §1 nach innen.
+   */
+  const [failed, setFailed] = useState(false);
   const [saved, setSaved] = useState<SavedDate[]>([]);
   const [savedMomentIds, setSavedMomentIds] = useState<Set<string>>(new Set());
   const [liveWeather, setLiveWeather] = useState<Weather | undefined>(undefined);
@@ -177,10 +185,12 @@ export default function DiscoverScreen() {
     }
     let alive = true;
     setLoading(true);
+    setFailed(false);
     discovery
       .recommend(constraints)
       .then((r) => {
         if (!alive) return;
+        setFailed(false);
         // Exhausted the pool via "show another"? Reset and start over.
         if (r.length === 0 && excludeIds.length > 0) {
           setExcludeIds([]);
@@ -192,6 +202,7 @@ export default function DiscoverScreen() {
       .catch(() => {
         if (alive) {
           setRecs([]);
+          setFailed(true);
           setLoading(false);
         }
       });
@@ -475,6 +486,38 @@ export default function DiscoverScreen() {
               </View>
             )}
           </>
+        ) : failed ? (
+          /* Kaputt ist nicht dasselbe wie leer: hier hilft Wiederholen, kein
+             gelockerter Filter. */
+          <View style={styles.empty}>
+            <Text style={styles.emptyText}>
+              {t('we could not fetch an idea.', 'wir konnten gerade keine Idee holen.')}
+            </Text>
+            <Text style={styles.emptyHint}>
+              {t(
+                'that was the connection, not your filters — your saved ideas are safe.',
+                'das war die Verbindung, nicht eure Filter — eure gemerkten Ideen sind sicher.',
+              )}
+            </Text>
+            <View style={styles.emptyActions}>
+              <TouchableOpacity
+                style={[styles.actionBtn, styles.emptyActionGrow]}
+                onPress={showAnother}
+                accessibilityRole="button"
+                accessibilityLabel={t('Try again', 'Nochmal versuchen')}
+              >
+                <Text style={styles.actionText}>{t('TRY AGAIN', 'NOCHMAL VERSUCHEN')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.actionBtnGhost, styles.emptyActionGrow]}
+                onPress={() => router.push('/discover/saved')}
+                accessibilityRole="button"
+                accessibilityLabel={t('Open saved ideas', 'Gemerkte Ideen öffnen')}
+              >
+                <Text style={styles.actionTextGhost}>{t('SAVED IDEAS', 'GEMERKTE IDEEN')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         ) : (
           <View style={styles.empty}>
             <Text style={styles.emptyText}>{t('nothing fits all of that right now.', 'nichts passt gerade auf alles.')}</Text>
