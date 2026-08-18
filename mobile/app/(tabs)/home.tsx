@@ -295,7 +295,7 @@ export default function HomeScreen() {
           <View style={styles.headerText}>
             <View style={styles.nameRow}>
               <Text style={styles.spaceName} numberOfLines={1}>
-                {(activeSpace?.name ?? 'your space').toLowerCase()}
+                {(activeSpace?.name ?? t('your space', 'euer Space')).toLowerCase()}
               </Text>
               <Ionicons name="chevron-down" size={16} color={Colors.textMuted} style={styles.chevron} />
             </View>

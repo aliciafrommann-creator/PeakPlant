@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { noteRepository } from '../repositories';
 import { getActiveUser } from '../session';
@@ -14,6 +14,8 @@ export function useNotes(spaceId?: string) {
   const [notes, setNotes] = useState<PartnerNote[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  /** Nur die jüngste Anfrage darf schreiben — siehe useMemories. */
+  const requestId = useRef(0);
   const [userId, setUserId] = useState<string | undefined>();
 
   useEffect(() => {
@@ -27,6 +29,7 @@ export function useNotes(spaceId?: string) {
   }, []);
 
   const load = useCallback(async () => {
+    const mine = ++requestId.current;
     if (!spaceId) {
       setNotes([]);
       setLoading(false);
@@ -35,6 +38,7 @@ export function useNotes(spaceId?: string) {
     setError(false);
     try {
       const data = await noteRepository.getAll(spaceId);
+      if (mine !== requestId.current) return;
       setNotes(data);
     } catch {
       // Leer bleiben, damit der Startbildschirm nie bricht — ABER sagen, dass
@@ -42,6 +46,7 @@ export function useNotes(spaceId?: string) {
       // geschrieben" erschien auch dann, wenn die Notiz der anderen Person
       // nur nicht geladen werden konnte. In einer Paar-App ist das die
       // teuerste Scheinnull von allen (MANIFESTO §1).
+      if (mine !== requestId.current) return;
       setNotes([]);
       setError(true);
     } finally {

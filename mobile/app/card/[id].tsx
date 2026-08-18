@@ -34,13 +34,19 @@ export default function CardDetailScreen() {
   useEffect(() => {
     if (!editionForGate?.sensitive || bioGranted) return;
     let cancelled = false;
-    void authenticate(t('unlock your private diary', 'privates Tagebuch entsperren')).then(
-      (granted) => {
+    void authenticate(t('unlock your private diary', 'privates Tagebuch entsperren'))
+      .then((granted) => {
         if (cancelled) return;
         if (granted) setBioGranted(true);
         else router.back();
-      },
-    );
+      })
+      // Gürtel und Hosenträger: `authenticate` fängt inzwischen selbst und
+      // liefert false. Sollte hier je wieder etwas werfen, wäre der Bildschirm
+      // ohne dieses catch dauerhaft hinter dem Sichtschutz stehen geblieben —
+      // ohne Erfolg, ohne Abbruch, ohne Ausweg außer Wegwischen.
+      .catch(() => {
+        if (!cancelled) router.back();
+      });
     return () => {
       cancelled = true;
     };
