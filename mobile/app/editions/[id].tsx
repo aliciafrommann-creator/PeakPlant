@@ -171,7 +171,7 @@ export default function EditionScreen() {
                 containerStyle={styles.sampleSlot}
                 style={styles.sample}
                 scaleTo={0.985}
-                onPress={() => router.push(`/card/${sample.id}`)}
+                onPress={() => router.push({ pathname: '/card/[id]', params: { id: sample.id, sample: '1' } })}
                 accessibilityLabel={t(
                   `Read the sample card: ${sample.content ? l(sample.content.title) : sample.prompt}`,
                   `Beispielkarte lesen: ${sample.content ? l(sample.content.title) : sample.prompt}`,
@@ -226,17 +226,34 @@ export default function EditionScreen() {
                 <View style={styles.deckGrid}>
                   {cards.map((c) => {
                     const opened = c.status === 'activated';
-                    return opened ? (
+                    // Die Beispielkarte ist bei den erschienenen Editionen eine
+                    // echte Deck-Karte. Sie hier zusätzlich als „versiegelt"
+                    // zu zeigen, hieße: derselbe Bildschirm sagt oben „offen
+                    // für alle" und unten „die gedruckte Karte öffnet sie".
+                    const istBeispiel = sample?.id === c.id;
+                    return opened || istBeispiel ? (
                       <PressableScale
                         key={c.id}
                         containerStyle={styles.chipSlot}
                         style={[styles.chip, styles.chipOpen]}
                         scaleTo={0.96}
-                        onPress={() => router.push(`/card/${c.id}`)}
-                        accessibilityLabel={t(
-                          `Card ${c.number}, opened — read it again`,
-                          `Karte ${c.number}, geöffnet — noch einmal lesen`,
-                        )}
+                        onPress={() =>
+                          router.push({
+                            pathname: '/card/[id]',
+                            params: { id: c.id, ...(opened ? {} : { sample: '1' }) },
+                          })
+                        }
+                        accessibilityLabel={
+                          opened
+                            ? t(
+                                `Card ${c.number}, opened — read it again`,
+                                `Karte ${c.number}, geöffnet — noch einmal lesen`,
+                              )
+                            : t(
+                                `Card ${c.number}, the sample card — open to everyone`,
+                                `Karte ${c.number}, die Beispielkarte — offen für alle`,
+                              )
+                        }
                       >
                         <Text style={styles.chipNumOpen}>{String(c.number).padStart(2, '0')}</Text>
                       </PressableScale>

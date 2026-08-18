@@ -13,6 +13,7 @@ import { PressableScale } from '../../components/ui/PressableScale';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { findCard, isSampleCard, getEdition, SEED_EDITION } from '../../lib/seed';
+import { sampleNotice } from '../../lib/content/samples';
 import { editionInk } from '../../lib/editionInk';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
@@ -24,7 +25,22 @@ import { UnlockCurtain } from '../../components/card/UnlockCurtain';
 import type { CardGroup, CardSection } from '../../lib/types';
 
 export default function CardDetailScreen() {
-  const { id, unlocked } = useLocalSearchParams<{ id: string; unlocked?: string }>();
+  const { id, unlocked, sample } = useLocalSearchParams<{
+    id: string;
+    unlocked?: string;
+    /**
+     * Gesetzt, wenn die Karte über die Beispielkarte der Editionsseite
+     * geöffnet wurde — also von jemandem, der sie NICHT gescannt hat.
+     *
+     * Warum das nötig ist: Bei den erschienenen Editionen ist die
+     * Beispielkarte eine echte Deck-Karte. Ohne diese Unterscheidung könnte
+     * jeder mit zwei Tipps „MOMENT FESTHALTEN" drücken, und `activate()`
+     * schriebe Karte 01 als geöffnet in die Sammlung — „1 von 20 Karten
+     * geöffnet", ohne Deck, ohne Scan. Genau das verbietet Entscheidung 024
+     * („der Kauf bringt mehr Inhalt") und der Kommentar in `useMemories.ts`.
+     */
+    sample?: string;
+  }>();
   const { t, l } = useLanguage();
   const { activeSpace } = useSpaces();
   const v = voice(activeSpace?.type);
@@ -101,6 +117,11 @@ export default function CardDetailScreen() {
   // Etiketten jetzt über das Schriftgewicht (600 gegen 400) — der einzige
   // Hebel, der hier keine Lesbarkeit kostet.
   const ink = editionInk(edition.color);
+  // Als Beispiel gelesen: entweder über den Beispiel-Block (Parameter) oder
+  // weil es eine Karte einer noch nicht erschienenen Edition ist — die kann
+  // niemand gescannt haben.
+  const alsBeispiel = sample === '1' || isSampleCard(card.id);
+  const hinweis = sampleNotice(edition.name, edition.status === 'available' ? 'available' : 'upcoming');
 
   // A quiet note that adapts to the kind of card (and intimate editions).
   const quietNote = isQuestion
@@ -108,6 +129,33 @@ export default function CardDetailScreen() {
     : t(v.cardQuietAct.en, v.cardQuietAct.de);
 
   function renderPreserveCTA(keyPrefix: string) {
+    /**
+     * Eine Beispielkarte ist zum LESEN da.
+     *
+     * Der Festhalten-Weg war hier geerbt, nicht entschieden — und je nach
+     * Edition führte er in eine aufgeblähte Sammlung (01–03: `activate()`
+     * gelingt, die Karte gilt als geöffnet) oder in einen Moment, der im
+     * Tagebuch der Edition gar nicht auftaucht (04–12: die Karte steht nicht
+     * in `SEED_CARDS`, also nicht im Filter). Beide Male sagt die Oberfläche
+     * etwas, das nicht stimmt.
+     */
+    if (alsBeispiel) {
+      return (
+        <View key={`${keyPrefix}-cta`} style={styles.ctaBlock}>
+          <Text style={styles.noPressure}>
+            {edition.status === 'available'
+              ? t(
+                  'this one is here to read. with the printed card, the moment lands in your diary.',
+                  'diese hier ist zum Lesen da. Mit der gedruckten Karte landet der Moment in eurem Tagebuch.',
+                )
+              : t(
+                  'this one is here to read — the edition it belongs to does not exist yet.',
+                  'diese hier ist zum Lesen da — die Edition dazu gibt es noch nicht.',
+                )}
+          </Text>
+        </View>
+      );
+    }
     return (
       <View key={`${keyPrefix}-cta`} style={styles.ctaBlock}>
         <PressableScale
@@ -199,13 +247,10 @@ export default function CardDetailScreen() {
         {/* Eine Beispielkarte sagt, dass sie eine ist. Sie sieht sonst genau
             aus wie eine, die jemand mit einem gekauften Deck geöffnet hat —
             und das wäre eine Behauptung, die nicht stimmt (MANIFESTO §1). */}
-        {isSampleCard(card.id) && (
+        {alsBeispiel && (
           <View style={styles.sampleNote}>
             <Text style={styles.sampleNoteText}>
-              {t(
-                `a sample card from ${edition.name} — open to everyone, so you can see what a card is. the printed deck brings the rest.`,
-                `eine Beispielkarte aus ${edition.name} — offen für alle, damit ihr seht, was eine Karte ist. Das gedruckte Deck bringt den Rest.`,
-              )}
+              {t(hinweis.en, hinweis.de)}
             </Text>
           </View>
         )}

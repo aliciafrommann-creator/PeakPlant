@@ -283,13 +283,25 @@ Jetzt hat **jede** Edition genau eine offen lesbare Karte:
   freigehalten; erscheint die Edition, wandert die Karte unverändert in ihre
   Datei.
 
-Zwei Grenzen, beide durch `lib/content/samples.test.ts` gehalten:
+Drei Grenzen:
 1. Eine Beispielkarte ist **nie** in `SEED_CARDS`. Deck-Liste, Sammel-Zählung
    und Scanner arbeiten weiter nur mit echten Karten — sonst zählte eine
-   Edition Karten, die niemand gekauft hat.
-2. Die Kartenansicht **sagt**, dass es eine Beispielkarte ist. Sie sieht sonst
-   aus wie eine mit einem gekauften Deck geöffnete, und das wäre eine
-   Behauptung, die nicht stimmt (MANIFESTO §1).
+   Edition Karten, die niemand gekauft hat. (Test)
+2. Die Kartenansicht **sagt**, dass es eine Beispielkarte ist, und sie sagt für
+   angekündigte Editionen etwas anderes als für erschienene — „das gedruckte
+   Deck bringt den Rest" wäre dort schlicht falsch. Der Text steht als reine
+   Funktion `sampleNotice()` in `lib/content/samples.ts`, damit ein Test ihn
+   halten kann. Der erste Anlauf hatte ihn direkt im JSX; man konnte den ganzen
+   Block löschen, ohne dass ein Test rot wurde — und AGENTS.md behauptete
+   trotzdem, er sei „gehalten". (Test)
+3. **Auf einer Beispielkarte gibt es kein „Moment festhalten".** Das war der
+   teuerste Fund des Gegenlesens: Bei den Editionen 01–03 ist die
+   Beispielkarte eine echte Deck-Karte, `activate()` gelingt — jeder ohne Deck
+   und ohne Scan konnte mit zwei Tipps „1 von 20 Karten geöffnet" erzeugen.
+   Bei 04–12 wäre der Moment in einem Tagebuch gelandet, das ihn nicht anzeigt.
+   Die Karte ist zum Lesen da; das sagt sie jetzt auch. Erkannt wird der Fall
+   am Parameter `sample=1` (Weg über die Editionsseite) oder daran, dass es
+   eine Karte einer noch nicht erschienenen Edition ist.
 
 Neu dafür in `lib/seed.ts`: `READABLE_CARDS`, `findCard()`, `isSampleCard()`,
 `sampleCardFor()`. Alle Anzeige-Stellen lesen jetzt `findCard`; `SEED_CARDS`

@@ -54,7 +54,7 @@ export const SAMPLE_CARDS: MomentCard[] = [
             'When did you last have someone’s undivided attention?',
             'What do you reach for your phone to avoid?',
             'What did the first ten minutes feel like — and the last ten?',
-            'Would you do this weekly, honestly?',
+            'Would you want this again, and how often?',
           ],
         },
         {
@@ -121,6 +121,11 @@ export const SAMPLE_CARDS: MomentCard[] = [
     content: {
       title: 'The Small Thing That Always Lands',
       sections: [
+        {
+          heading: 'Before you begin',
+          body:
+            'This is not a test of who notices more. If nothing comes to mind straight away, that is normal — the small things are small precisely because nobody announces them.',
+        },
         {
           heading: 'Make a little moment out of it',
           body:
@@ -199,7 +204,7 @@ export const SAMPLE_CARDS: MomentCard[] = [
     edition: 'edition-08',
     status: 'sealed',
     content: {
-      title: 'The Yes You Owe Each Other',
+      title: 'The Yes You Have Been Saving',
       sections: [
         {
           heading: 'Make a little moment out of it',
@@ -214,7 +219,7 @@ export const SAMPLE_CARDS: MomentCard[] = [
             'What did you assume it would be like, and what was it actually like?',
             'What else do you say no to out of habit rather than dislike?',
             'Which of the two would you do again?',
-            'Who says yes more easily in this pair, and is that fair?',
+            'Who finds it easier to say yes, and what makes it easier?',
           ],
         },
         {
@@ -244,7 +249,7 @@ export const SAMPLE_CARDS: MomentCard[] = [
           heading: 'Make a little moment out of it',
           body:
             'Take blankets, cushions, whatever is in the flat, and build somewhere small to sit. Properly small — smaller than feels sensible.\n\n' +
-            'One lamp, or candles. Something warm to drink. No overhead light, no screens inside the fort.\n\n' +
+            'One lamp — not candles, this is a room made of blankets. Something warm to drink. No overhead light, no screens inside the fort.\n\n' +
             'Stay in it for the whole evening. Leaving it to fetch snacks is allowed and encouraged.',
         },
         {
@@ -281,10 +286,16 @@ export const SAMPLE_CARDS: MomentCard[] = [
       title: 'Three Ways In',
       sections: [
         {
+          heading: 'Before you begin',
+          body:
+            'You pick which of the three you tell, and how much of it. Some scars have a long story behind them and some have none — either answer is a full answer, and swapping to a different one is not a failure.\n\n' +
+            'The person listening asks questions and does not push.',
+        },
+        {
           heading: 'Make a little moment out of it',
           body:
             'Somewhere unhurried — a long walk, a table with no rush. Each of you picks one of the three: a scar, a nickname, or a photo on your phone that is older than five years.\n\n' +
-            'Tell the whole story, not the short version. The other one only listens and asks questions.\n\n' +
+            'Tell as much of it as you want to. The other one listens.\n\n' +
             'Then swap. Then, if it is going well, pick a second one.',
         },
         {
@@ -333,7 +344,7 @@ export const SAMPLE_CARDS: MomentCard[] = [
             'What did you talk about when logistics were banned?',
             'How long has it been since a conversation that was not admin?',
             'Which fifteen minutes could be this, every week?',
-            'What would have to give way for thirty?',
+            'What would a longer version cost, and is it worth it to you?',
           ],
         },
         {
@@ -413,3 +424,31 @@ export const SAMPLE_CARD_BY_EDITION: Record<string, string> = {
   'edition-11': 'card-e11-s',
   'edition-12': 'card-e12-s',
 };
+
+/**
+ * Der Hinweis, den eine offen gelesene Beispielkarte trägt.
+ *
+ * Als reine Funktion, damit ein Test sie halten kann: Ein Wächter, der eine
+ * Zeile JSX nicht sieht, hat am 18.08.2026 genau diese Beschriftung als
+ * „gehalten" gemeldet, während man sie löschen konnte, ohne dass ein Test rot
+ * wurde (MANIFESTO §1 — eine Abwägung, die kein Test hält, ist nicht gehalten).
+ *
+ * Der Text unterscheidet nach dem Zustand der Edition, weil sonst eine der
+ * beiden Aussagen falsch wäre: Bei einer angekündigten Edition gibt es kein
+ * gedrucktes Deck, das „den Rest bringt" — es gibt genau diese eine Karte.
+ */
+export function sampleNotice(
+  editionName: string,
+  editionStatus: 'available' | 'upcoming',
+): { en: string; de: string } {
+  if (editionStatus === 'available') {
+    return {
+      en: `a sample card from ${editionName} — open to everyone. the printed deck brings the rest.`,
+      de: `eine Beispielkarte aus ${editionName} — offen für alle. Das gedruckte Deck bringt den Rest.`,
+    };
+  }
+  return {
+    en: `a sample card from ${editionName} — this edition is still in the making, and this card is all there is of it so far.`,
+    de: `eine Beispielkarte aus ${editionName} — diese Edition entsteht noch, und mehr als diese Karte gibt es davon bisher nicht.`,
+  };
+}

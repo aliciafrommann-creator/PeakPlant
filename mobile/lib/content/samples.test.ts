@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { SEED_EDITIONS, SEED_CARDS, findCard, isSampleCard, sampleCardFor } from '../seed';
-import { SAMPLE_CARDS, SAMPLE_CARD_BY_EDITION } from './samples';
+import { SAMPLE_CARDS, SAMPLE_CARD_BY_EDITION, sampleNotice } from './samples';
 
 /**
  * Der Wächter für die Beispielkarten.
@@ -70,5 +70,71 @@ describe('Beispielkarten', () => {
     expect(findCard(undefined)).toBeUndefined();
     expect(isSampleCard('card-e04-s')).toBe(true);
     expect(isSampleCard('card-01')).toBe(false);
+  });
+});
+
+describe('Der Hinweis auf einer Beispielkarte', () => {
+  it('verspricht bei einer angekündigten Edition kein Deck', () => {
+    // „Das gedruckte Deck bringt den Rest" war für die Editionen 04–12 falsch:
+    // Es gibt kein Deck und keinen Rest — die Beispielkarte IST alles.
+    for (const sprache of ['en', 'de'] as const) {
+      const kommend = sampleNotice('Hideout', 'upcoming')[sprache].toLowerCase();
+      expect(kommend).not.toContain(sprache === 'de' ? 'deck bringt' : 'deck brings');
+    }
+  });
+
+  it('nennt bei einer erschienenen Edition das Deck', () => {
+    expect(sampleNotice('Grow Together', 'available').de).toContain('Deck');
+    expect(sampleNotice('Grow Together', 'available').en).toContain('deck');
+  });
+
+  it('nennt immer die Edition beim Namen', () => {
+    for (const status of ['available', 'upcoming'] as const) {
+      expect(sampleNotice('Soft & Wild', status).en).toContain('Soft & Wild');
+      expect(sampleNotice('Soft & Wild', status).de).toContain('Soft & Wild');
+    }
+  });
+
+  it('spricht niemanden als zwei Menschen an', () => {
+    // Seit dem Solo-Space (Entscheidung 027) gilt das auch hier — der erste
+    // Entwurf sagte „damit ihr seht".
+    const verboten = [' euch', 'eurem', 'ihr beide', 'you two'];
+    for (const status of ['available', 'upcoming'] as const) {
+      const text = `${sampleNotice('X', status).en} ${sampleNotice('X', status).de}`.toLowerCase();
+      for (const w of verboten) expect(text, `„${w}" in ${status}`).not.toContain(w);
+    }
+  });
+});
+
+describe('Beispielkarten-Inhalt hält die Produktregeln', () => {
+  it('keine offene Flamme in der Decken-Höhle', () => {
+    // Eine Höhle aus Decken und Kissen, ein ganzer Abend darin — die einzige
+    // Stelle im Kartensatz mit echtem Risiko.
+    const nest = SAMPLE_CARDS.find((k) => k.edition === 'edition-09');
+    const text = JSON.stringify(nest?.content ?? {}).toLowerCase();
+    expect(text).not.toMatch(/\bor candles\b/);
+  });
+
+  it('die Fragekarten haben eine Entschärfung vorweg', () => {
+    // So machen es die echten Fragekarten in Edition 01: erst „Before you
+    // begin", das den Druck herausnimmt, dann die Frage.
+    for (const k of SAMPLE_CARDS.filter((x) => x.type === 'question')) {
+      const ueberschriften = (k.content?.sections ?? []).map((a) =>
+        (typeof a.heading === 'string' ? a.heading : a.heading.en).toLowerCase(),
+      );
+      expect(ueberschriften[0], `${k.id}: erster Abschnitt ist „${ueberschriften[0]}"`).toContain('before');
+    }
+  });
+
+  it('keine Schuld- oder Bewertungssprache', () => {
+    // MANIFESTO §3: einladen, nie drängen. „The Yes You Owe Each Other" und
+    // „is that fair?" luden zum Aufrechnen zwischen zwei Menschen ein.
+    const verboten = [' owe ', 'is that fair', 'you should', 'you must'];
+    const funde: string[] = [];
+    for (const k of SAMPLE_CARDS) {
+      const text = `${k.prompt} ${JSON.stringify(k.content ?? {})}`.toLowerCase();
+      for (const w of verboten) if (text.includes(w)) funde.push(`${k.id}: „${w.trim()}"`);
+    }
+    expect(funde, funde.join(' · ')).toEqual([]);
   });
 });

@@ -23,7 +23,7 @@ import { MemoryFeedSkeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { BackButton } from '../../components/ui/BackButton';
 import { MemoryCard } from '../../components/memory/MemoryCard';
-import { SEED_CARDS, READABLE_CARDS, SEED_EDITIONS } from '../../lib/seed';
+import { READABLE_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { shareMemory } from '../../lib/share';
 import type { Memory } from '../../lib/types';
 
