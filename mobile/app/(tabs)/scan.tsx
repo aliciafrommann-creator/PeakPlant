@@ -200,7 +200,7 @@ export default function ScanScreen() {
 
         <TouchableOpacity
           style={styles.demoButton}
-          onPress={() => router.push('/card/card-01')}
+          onPress={() => router.push({ pathname: '/card/[id]', params: { id: 'card-01', sample: '1' } })}
           activeOpacity={0.8}
           accessibilityRole="button"
           accessibilityLabel={t('Try a demo card', 'Demokarte ausprobieren')}

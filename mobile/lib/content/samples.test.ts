@@ -1,6 +1,17 @@
 import { describe, it, expect } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
 import { SEED_EDITIONS, SEED_CARDS, findCard, isSampleCard, sampleCardFor } from '../seed';
 import { SAMPLE_CARDS, SAMPLE_CARD_BY_EDITION, sampleNotice } from './samples';
+
+/** Die Bildschirme, die eine Karte öffnen können. */
+const QUELLEN = [
+  'app/card/[id].tsx',
+  'app/c/[id].tsx',
+  'app/(tabs)/scan.tsx',
+  'app/editions/[id].tsx',
+  'app/memory/create.tsx',
+];
 
 /**
  * Der Wächter für die Beispielkarten.
@@ -136,5 +147,50 @@ describe('Beispielkarten-Inhalt hält die Produktregeln', () => {
       for (const w of verboten) if (text.includes(w)) funde.push(`${k.id}: „${w.trim()}"`);
     }
     expect(funde, funde.join(' · ')).toEqual([]);
+  });
+});
+
+describe('Der Riegel: eine Beispielkarte füllt keine Sammlung', () => {
+  /**
+   * WARUM DIESER TEST DEN QUELLTEXT LIEST: Die erste Fassung des Riegels hing
+   * an einem URL-Parameter, den zwei von sechs Aufrufern setzten. Der
+   * Demo-Knopf im Scanner und der geteilte Link `/c/card-01` setzten ihn
+   * nicht — vier Tipps ohne Deck ergaben „1 von 20 Karten geöffnet". Und kein
+   * Test hätte das gemerkt: Man konnte den ganzen `alsBeispiel`-Zweig löschen,
+   * und alles blieb grün, während AGENTS.md die Grenze als gehalten führte.
+   *
+   * Grob, aber es hält genau die Aussage: Der Nachweis wird an EINER Stelle
+   * gesetzt, und ohne ihn hängt `memory/create` den Moment an keine Karte.
+   */
+  const lies = (rel: string) => fs.readFileSync(path.resolve(__dirname, '../..', rel), 'utf8');
+
+  it('`scanned` wird nur in der Kartenansicht gesetzt', () => {
+    const treffer = QUELLEN.filter((f) => /scanned:\s*'1'/.test(lies(f)));
+    expect(treffer, `setzt den Nachweis: ${treffer.join(', ')}`).toEqual(['app/card/[id].tsx']);
+  });
+
+  it('ohne Nachweis hängt `memory/create` den Moment an keine Karte', () => {
+    const quelle = lies('app/memory/create.tsx');
+    expect(quelle).toMatch(/scanned === '1'[\s\S]{0,120}cardId/);
+  });
+
+  it('jeder Weg in die Kartenansicht ist entschieden, keiner vergessen', () => {
+    // Jeder `router.push`/`Redirect` nach `/card/` setzt entweder `sample`
+    // (dann ist es kein Scan) oder steht hier mit Begründung.
+    const OHNE_SAMPLE_ERLAUBT: Record<string, string> = {
+      // Der einzige echte Scan: Hier hatte jemand die gedruckte Karte in der Hand.
+      'app/(tabs)/scan.tsx': 'Scanner-Erfolg',
+    };
+    const offen: string[] = [];
+    for (const f of QUELLEN) {
+      const quelle = lies(f);
+      for (const m of quelle.matchAll(/(?:router\.push|Redirect href)[^\n]*\/card\/[^\n]*/g)) {
+        const zeile = m[0];
+        if (zeile.includes("sample: '1'") || zeile.includes('sample=1')) continue;
+        if (OHNE_SAMPLE_ERLAUBT[f]) continue;
+        offen.push(`${f}: ${zeile.trim().slice(0, 90)}`);
+      }
+    }
+    expect(offen, `Weg in die Kartenansicht ohne Entscheidung:\n  ${offen.join('\n  ')}`).toEqual([]);
   });
 });

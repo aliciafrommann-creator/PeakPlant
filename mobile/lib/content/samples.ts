@@ -178,7 +178,7 @@ export const SAMPLE_CARDS: MomentCard[] = [
           bullets: [
             'What did you do, and why that?',
             'When did you last take an evening like this without apologising for it?',
-            'What have you quietly given up since becoming a pair?',
+            'What is something you would like to make more room for?',
             'What would you need to take one of these every month?',
           ],
         },

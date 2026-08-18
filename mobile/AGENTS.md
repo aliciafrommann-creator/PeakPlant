@@ -283,7 +283,7 @@ Jetzt hat **jede** Edition genau eine offen lesbare Karte:
   freigehalten; erscheint die Edition, wandert die Karte unverändert in ihre
   Datei.
 
-Drei Grenzen:
+Vier Punkte:
 1. Eine Beispielkarte ist **nie** in `SEED_CARDS`. Deck-Liste, Sammel-Zählung
    und Scanner arbeiten weiter nur mit echten Karten — sonst zählte eine
    Edition Karten, die niemand gekauft hat. (Test)
@@ -294,14 +294,27 @@ Drei Grenzen:
    halten kann. Der erste Anlauf hatte ihn direkt im JSX; man konnte den ganzen
    Block löschen, ohne dass ein Test rot wurde — und AGENTS.md behauptete
    trotzdem, er sei „gehalten". (Test)
-3. **Auf einer Beispielkarte gibt es kein „Moment festhalten".** Das war der
-   teuerste Fund des Gegenlesens: Bei den Editionen 01–03 ist die
-   Beispielkarte eine echte Deck-Karte, `activate()` gelingt — jeder ohne Deck
-   und ohne Scan konnte mit zwei Tipps „1 von 20 Karten geöffnet" erzeugen.
-   Bei 04–12 wäre der Moment in einem Tagebuch gelandet, das ihn nicht anzeigt.
-   Die Karte ist zum Lesen da; das sagt sie jetzt auch. Erkannt wird der Fall
-   am Parameter `sample=1` (Weg über die Editionsseite) oder daran, dass es
-   eine Karte einer noch nicht erschienenen Edition ist.
+3. **Eine Karte zählt nur, wenn sie gescannt wurde.** Das war der teuerste
+   Fund des Gegenlesens, und zwar zweimal. Erst: Bei den Editionen 01–03 ist
+   die Beispielkarte eine echte Deck-Karte, `activate()` gelingt — jeder ohne
+   Deck konnte mit zwei Tipps „1 von 20 Karten geöffnet" erzeugen. Dann, in
+   der Nacharbeit: Der Riegel hing an einem URL-Parameter, den nur zwei von
+   sechs Aufrufern setzten — der Demo-Knopf im Scanner und der geteilte Link
+   `peak-plant.com/c/card-01` setzten ihn nicht.
+
+   Der Riegel sitzt deshalb jetzt an der SCHREIBSTELLE: `app/memory/create.tsx`
+   hängt einen Moment nur dann an eine Karte, wenn `scanned=1` mitkommt — und
+   das setzt ausschließlich die Kartenansicht, und dort nur, wenn sie nicht als
+   Beispiel geöffnet wurde. Ein vergessener Parameter irgendwo kann die
+   Sammlung nicht mehr aufblähen. (Test: drei Wächter in
+   `lib/content/samples.test.ts`, Rot-Beweis für beide Richtungen geführt.)
+
+4. **Die angekündigten Editionen sind wieder antippbar** — nach derselben
+   Regel, die sie im PR davor zu einer Zeile gemacht hat. K3 sagt: Biete keine
+   Handlung an, die niemand ausführen kann. Damals führte hinter jeder
+   geplanten Edition eine leere Seite; jetzt liegt dort eine offen lesbare
+   Karte. Ohne diesen Weg wären die neun Beispielkarten toter Code — die
+   Editionsseite von `edition-04` war aus der App heraus nicht erreichbar.
 
 Neu dafür in `lib/seed.ts`: `READABLE_CARDS`, `findCard()`, `isSampleCard()`,
 `sampleCardFor()`. Alle Anzeige-Stellen lesen jetzt `findCard`; `SEED_CARDS`

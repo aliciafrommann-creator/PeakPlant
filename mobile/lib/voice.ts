@@ -67,6 +67,8 @@ export interface Voice {
   sharingBoundary: Phrase;
   /** Über der eigenen Bewertung eines Ortes. */
   spaceRecommends: Phrase;
+  /** „in eurem Space" — ohne das „privat" davor. */
+  inYourSpace: Phrase;
   /** Reiter „Momente": Kicker, Titel, leerer Zustand. */
   momentsKicker: Phrase;
   momentsEmptyTitle: Phrase;
@@ -133,6 +135,7 @@ const GETEILT: Voice = {
     de: 'nur diese Zeile geht raus. Eure Notiz, euer Foto, eure Namen und euer Space bleiben hier.',
   },
   spaceRecommends: { en: 'YOUR SPACE RECOMMENDS THIS', de: 'EUER SPACE EMPFIEHLT DIESEN ORT' },
+  inYourSpace: { en: 'in your space', de: 'in eurem Space' },
   momentsKicker: { en: 'YOUR MOMENTS', de: 'EURE MOMENTE' },
   momentsEmptyTitle: { en: 'your story starts here.', de: 'eure Geschichte beginnt hier.' },
   momentsEmptyHint: {
@@ -212,6 +215,7 @@ const ALLEIN: Voice = {
     de: 'nur diese Zeile geht raus. Deine Notiz, dein Foto, dein Name und dein Space bleiben hier.',
   },
   spaceRecommends: { en: 'YOUR SPACE RECOMMENDS THIS', de: 'DU EMPFIEHLST DIESEN ORT' },
+  inYourSpace: { en: 'in your space', de: 'in deinem Space' },
   momentsKicker: { en: 'YOUR MOMENTS', de: 'DEINE MOMENTE' },
   momentsEmptyTitle: { en: 'your story starts here.', de: 'deine Geschichte beginnt hier.' },
   momentsEmptyHint: {

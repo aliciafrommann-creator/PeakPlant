@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Shadows, Layout } from '../../constants/spacing';
+import { PressableScale } from '../../components/ui/PressableScale';
 import { Typography } from '../../constants/typography';
 import { SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
@@ -198,15 +199,41 @@ export default function EditionsScreen() {
                 überwiegend Dinge, die euch nicht gehören und die man nicht
                 öffnen kann. Die Information ist nicht weg, sie ist jetzt eine
                 Zeile statt neun Sackgassen (MANIFESTO §5). */}
+            {/* Seit dem 18.08.2026 wieder antippbar — nach derselben Regel,
+                die sie damals zu einer Zeile gemacht hat. K3 sagt: Biete keine
+                Handlung an, die niemand ausführen kann. Damals führte hinter
+                jeder geplanten Edition eine leere Seite; jetzt liegt dort eine
+                offen lesbare Beispielkarte, also GIBT es eine Handlung. Ohne
+                diesen Weg wären die neun Karten toter Code. */}
             {plannedCount > 0 && (
-              <Text style={styles.planned}>
-                {plannedCount === 1
-                  ? t('one more edition is in the works.', 'eine weitere Edition ist in Arbeit.')
-                  : t(
-                      `${plannedCount} more editions are in the works.`,
-                      `${plannedCount} weitere Editionen sind in Arbeit.`,
-                    )}
-              </Text>
+              <View style={styles.plannedBlock}>
+                <Text style={styles.planned}>
+                  {plannedCount === 1
+                    ? t('one more edition is in the works — with a card you can already read.', 'eine weitere Edition ist in Arbeit — mit einer Karte, die du schon lesen kannst.')
+                    : t(
+                        `${plannedCount} more editions are in the works — each with a card you can already read.`,
+                        `${plannedCount} weitere Editionen sind in Arbeit — jede mit einer Karte, die du schon lesen kannst.`,
+                      )}
+                </Text>
+                <View style={styles.plannedRow}>
+                  {SEED_EDITIONS.filter((e) => e.status !== 'available').map((e) => (
+                    <PressableScale
+                      key={e.id}
+                      containerStyle={styles.plannedChipSlot}
+                      style={styles.plannedChip}
+                      scaleTo={0.96}
+                      onPress={() => router.push(`/editions/${e.id}`)}
+                      accessibilityLabel={t(
+                        `${e.name} — in the works, read its sample card`,
+                        `${e.name} — in Arbeit, Beispielkarte lesen`,
+                      )}
+                    >
+                      <Text style={styles.plannedChipSymbol}>{e.symbol}</Text>
+                      <Text style={styles.plannedChipName}>{e.name.toLowerCase()}</Text>
+                    </PressableScale>
+                  ))}
+                </View>
+              </View>
             )}
             <ShopLink variant="inline" />
           </>
@@ -229,12 +256,32 @@ const styles = StyleSheet.create({
     ...Typography.micro,
     color: Colors.accentInk,
   },
+  plannedBlock: { marginTop: Spacing.md, marginBottom: Spacing.xs },
   planned: {
     ...Typography.micro,
     marginHorizontal: Spacing.screen,
-    marginTop: Spacing.md,
-    marginBottom: Spacing.xs,
+    marginBottom: Spacing.sm,
   },
+  plannedRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.screen,
+  },
+  plannedChipSlot: {},
+  plannedChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    minHeight: 44,
+    paddingHorizontal: Spacing.md,
+    borderRadius: Radii.pill,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    backgroundColor: Colors.backgroundWarm,
+  },
+  plannedChipSymbol: { fontSize: 15 },
+  plannedChipName: { fontSize: 12, fontWeight: '500', color: Colors.textMuted },
   header: {
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.lg,
