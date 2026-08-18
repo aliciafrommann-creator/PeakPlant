@@ -17,7 +17,7 @@ import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { useLanguage } from '../../lib/hooks/useLanguage';
-import { getEdition, SEED_EDITION, SEED_CARDS } from '../../lib/seed';
+import { getEdition, SEED_EDITION, SEED_CARDS, sampleCardFor } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { MemoryCard } from '../../components/memory/MemoryCard';
@@ -34,7 +34,7 @@ export default function EditionScreen() {
   const v = voice(activeSpace?.type);
   const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
   const obscured = usePrivacyOverlay();
-  const { t } = useLanguage();
+  const { t, l } = useLanguage();
 
   const edition = getEdition(id ?? '') ?? SEED_EDITION;
 
@@ -91,6 +91,7 @@ export default function EditionScreen() {
   // 4,5:1, die kleine Schrift braucht. Hierarchie kommt hier aus Größe,
   // Gewicht und Sperrung.
   const fg = editionInk(edition.color);
+  const sample = sampleCardFor(edition.id);
   const btnBg = fg;
   const btnText = fg === EDITION_INK_DARK ? EDITION_INK_LIGHT : EDITION_INK_DARK;
 
@@ -159,6 +160,35 @@ export default function EditionScreen() {
               <Text style={[styles.diaryLabel, { color: fg }]}>{t('YOUR DIARY', 'EUER TAGEBUCH')}</Text>
             )}
             </View>
+
+            {/* Die Beispielkarte. Vorher zeigte diese Seite zwölf nummerierte
+                Umrisse und keinen einzigen Satz davon, was auf einer Karte
+                steht — bei den angekündigten Editionen nicht einmal das.
+                Eine offene Karte ist ein Beleg statt einer Behauptung
+                (Alicia, 18.08.2026). */}
+            {sample && (
+              <PressableScale
+                containerStyle={styles.sampleSlot}
+                style={styles.sample}
+                scaleTo={0.985}
+                onPress={() => router.push(`/card/${sample.id}`)}
+                accessibilityLabel={t(
+                  `Read the sample card: ${sample.content ? l(sample.content.title) : sample.prompt}`,
+                  `Beispielkarte lesen: ${sample.content ? l(sample.content.title) : sample.prompt}`,
+                )}
+              >
+                <Text style={styles.sampleLabel}>{t('SAMPLE CARD', 'BEISPIELKARTE')}</Text>
+                <Text style={styles.sampleTitle}>
+                  {sample.content ? l(sample.content.title) : sample.prompt}
+                </Text>
+                <Text style={styles.samplePrompt}>{sample.prompt}</Text>
+                <Text style={styles.sampleCta}>
+                  {edition.status === 'available'
+                    ? t('read it — one of the twenty, open to everyone', 'lesen — eine der zwanzig, offen für alle')
+                    : t('read it — this edition is still in the making', 'lesen — diese Edition entsteht noch')}
+                </Text>
+              </PressableScale>
+            )}
 
             {/* Das Deck. Aufgeschlagene Karten sind wieder lesbar, versiegelte
                 zeigen, was die gedruckte Ausgabe der App hinzufügt. */}
@@ -330,6 +360,19 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     marginTop: Spacing.xl,
   },
+  sampleSlot: { paddingHorizontal: Spacing.screen, paddingTop: Spacing.lg },
+  sample: {
+    backgroundColor: Colors.backgroundWarm,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    borderRadius: Radii.md,
+    padding: Spacing.md,
+    gap: 6,
+  },
+  sampleLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 1.4, color: Colors.textSubtle },
+  sampleTitle: { ...Typography.cardTitle },
+  samplePrompt: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },
+  sampleCta: { fontSize: 11, fontWeight: '600', letterSpacing: 1.2, color: Colors.accentInk, marginTop: 4 },
   memoryWrapper: { paddingHorizontal: Spacing.screen },
   deck: {
     paddingHorizontal: Spacing.screen,

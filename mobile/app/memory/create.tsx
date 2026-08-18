@@ -29,7 +29,7 @@ import { currentWeeklyChallenge, weeklyProgressFor, inSameIsoWeek } from '../../
 import { persistPickedPhoto } from '../../lib/photoStorage';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { FadeInImage } from '../../components/ui/FadeInImage';
-import { SEED_CARDS } from '../../lib/seed';
+import { findCard } from '../../lib/seed';
 
 const MOMENT = Sections.together; // warm apricot — capturing "our" moment
 // Die Schrift-/Vordergrund-Fassung derselben Farbe. `MOMENT` als Symbol- oder
@@ -80,7 +80,7 @@ export default function CreateMemoryScreen() {
   // card screen). Everything else is a free moment — attributing it to card-01
   // would fake the collection count (MANIFESTO §1).
   const selectedCardId = typeof cardId === 'string' && cardId.length > 0 ? cardId : undefined;
-  const card = selectedCardId ? SEED_CARDS.find((c) => c.id === selectedCardId) : undefined;
+  const card = findCard(selectedCardId);
 
   const cardTitle = card?.content ? l(card.content.title) : card?.prompt ?? '';
   const notePlaceholder = t(

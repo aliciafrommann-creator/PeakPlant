@@ -17,7 +17,7 @@ import { BackButton } from '../../components/ui/BackButton';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
-import { SEED_CARDS } from '../../lib/seed';
+import { findCard } from '../../lib/seed';
 import { memoryRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
@@ -69,7 +69,7 @@ export default function MemoryDetailScreen() {
     };
   }, [id]);
 
-  const card = memory ? SEED_CARDS.find((c) => c.id === memory.cardId) : undefined;
+  const card = memory ? findCard(memory.cardId) : undefined;
 
   const startEdit = () => {
     if (!memory) return;

@@ -30,7 +30,7 @@ import { voice } from '../../lib/voice';
 import { spaceTheme, glyphForSpace } from '../../lib/spaceTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { EmptyState } from '../../components/ui/EmptyState';
-import { SEED_CARDS } from '../../lib/seed';
+import { READABLE_CARDS } from '../../lib/seed';
 import { savedDateRepository } from '../../lib/repositories';
 import { shareMemory } from '../../lib/share';
 import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
@@ -230,7 +230,7 @@ export default function HomeScreen() {
     [memories],
   );
 
-  const cardById = useMemo(() => new Map(SEED_CARDS.map((c) => [c.id, c])), []);
+  const cardById = useMemo(() => new Map(READABLE_CARDS.map((c) => [c.id, c])), []);
 
   const openMemory = useCallback((m: Memory) => router.push(`/memory/${m.id}`), []);
   const shareOne = useCallback(

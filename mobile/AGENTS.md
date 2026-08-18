@@ -267,6 +267,34 @@ npx eslint app components lib --ext .ts,.tsx
 npx vitest run   # unit tests
 ```
 
+### Entscheidung 026 — Eine offene Beispielkarte je Edition (Alicia, 18.08.2026)
+
+Die Editionsseite zeigte Karten als nummerierte Umrisse. Wer kein Deck hat —
+und das sind bis Oktober alle — sah zwölf Rechtecke und keinen einzigen Satz
+davon, was auf einer Karte steht. Bei den neun angekündigten Editionen war das
+buchstäblich alles: `cards: []`, also nicht einmal Umrisse. Der Satz „jede
+Karte bringt einen geführten Abend in die App" stand da als Behauptung.
+
+Jetzt hat **jede** Edition genau eine offen lesbare Karte:
+- Editionen 01–03: eine der zwanzig echten (die erste Date-Karte). Neunzehn
+  bleiben zu — Entscheidung 024 („der Kauf bringt mehr Inhalt") hält.
+- Editionen 04–12: eine neu geschriebene Karte in `lib/content/samples.ts`,
+  gleiche Struktur und gleicher Ton wie eine echte. Nummer 1 ist dafür
+  freigehalten; erscheint die Edition, wandert die Karte unverändert in ihre
+  Datei.
+
+Zwei Grenzen, beide durch `lib/content/samples.test.ts` gehalten:
+1. Eine Beispielkarte ist **nie** in `SEED_CARDS`. Deck-Liste, Sammel-Zählung
+   und Scanner arbeiten weiter nur mit echten Karten — sonst zählte eine
+   Edition Karten, die niemand gekauft hat.
+2. Die Kartenansicht **sagt**, dass es eine Beispielkarte ist. Sie sieht sonst
+   aus wie eine mit einem gekauften Deck geöffnete, und das wäre eine
+   Behauptung, die nicht stimmt (MANIFESTO §1).
+
+Neu dafür in `lib/seed.ts`: `READABLE_CARDS`, `findCard()`, `isSampleCard()`,
+`sampleCardFor()`. Alle Anzeige-Stellen lesen jetzt `findCard`; `SEED_CARDS`
+bleibt die Deck-Wahrheit.
+
 ### Entscheidung 025 — Kontrast wird gerechnet, und die Frage lautet „worauf?" (18.08.2026)
 
 Der erste Durchgang suchte nach einem FARBNAMEN (`textFaint`, dann

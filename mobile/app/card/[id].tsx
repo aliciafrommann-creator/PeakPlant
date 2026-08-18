@@ -12,7 +12,7 @@ import { BackButton } from '../../components/ui/BackButton';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
-import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
+import { findCard, isSampleCard, getEdition, SEED_EDITION } from '../../lib/seed';
 import { editionInk } from '../../lib/editionInk';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
@@ -33,7 +33,7 @@ export default function CardDetailScreen() {
   // Gate lives HERE, not only at the callers: deep links (/c/<id>) and the
   // scanner reach this screen directly, bypassing the tab-level gates (A6-4.1).
   const [bioGranted, setBioGranted] = useState(false);
-  const cardForGate = SEED_CARDS.find((c) => c.id === id);
+  const cardForGate = findCard(id);
   const editionForGate = cardForGate ? getEdition(cardForGate.edition) : undefined;
   const needsBio = !!editionForGate?.sensitive && !bioGranted;
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function CardDetailScreen() {
   const [showCurtain, setShowCurtain] = useState(unlocked === 'true');
   const dismissCurtain = useCallback(() => setShowCurtain(false), []);
 
-  const card = SEED_CARDS.find((c) => c.id === id);
+  const card = findCard(id);
   const edition = card ? (getEdition(card.edition) ?? SEED_EDITION) : SEED_EDITION;
 
   if (!card) {
@@ -196,6 +196,20 @@ export default function CardDetailScreen() {
           </View>
         </View>
 
+        {/* Eine Beispielkarte sagt, dass sie eine ist. Sie sieht sonst genau
+            aus wie eine, die jemand mit einem gekauften Deck geöffnet hat —
+            und das wäre eine Behauptung, die nicht stimmt (MANIFESTO §1). */}
+        {isSampleCard(card.id) && (
+          <View style={styles.sampleNote}>
+            <Text style={styles.sampleNoteText}>
+              {t(
+                `a sample card from ${edition.name} — open to everyone, so you can see what a card is. the printed deck brings the rest.`,
+                `eine Beispielkarte aus ${edition.name} — offen für alle, damit ihr seht, was eine Karte ist. Das gedruckte Deck bringt den Rest.`,
+              )}
+            </Text>
+          </View>
+        )}
+
         <Text style={styles.quietNote}>{quietNote}</Text>
 
         {sections.map(renderSection)}
@@ -276,6 +290,19 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
+  },
+  sampleNote: {
+    backgroundColor: Colors.backgroundCream,
+    borderRadius: Radii.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  sampleNoteText: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: Colors.textMuted,
+    lineHeight: 18,
   },
   quietNote: {
     fontSize: 12,
