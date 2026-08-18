@@ -58,6 +58,25 @@ export const CHALLENGES: Challenge[] = [
     durationLabel: { en: 'over a few weeks', de: 'über ein paar wochen' },
   },
   {
+    id: 'ch-s1',
+    title: { en: 'a season of your own', de: 'eine saison für dich' },
+    subtitle: {
+      en: 'preserve four moments this season. any card, any order, nobody waiting.',
+      de: 'halte vier momente in dieser saison fest — welche karte, welche reihenfolge, niemand wartet.',
+    },
+    goalCount: 4, spaceTypes: ['solo'], badge: '🪨', durationLabel: SEASON,
+  },
+  {
+    id: 'ch-s2',
+    title: { en: 'three quiet ones', de: 'drei ruhige' },
+    subtitle: {
+      en: 'three unhurried moments with nothing to show for them.',
+      de: 'drei momente ohne eile, aus denen nichts vorzuzeigen ist.',
+    },
+    goalCount: 3, spaceTypes: ['solo'], badge: '🌙',
+    durationLabel: { en: 'over a few weeks', de: 'über ein paar wochen' },
+  },
+  {
     id: 'ch-3',
     title: { en: 'out in the world', de: 'raus in die welt' },
     subtitle: {
@@ -138,6 +157,41 @@ export const WEEKLY_CHALLENGES: Challenge[] = [
     title: { en: 'one kind word', de: 'ein liebes wort' },
     subtitle: { en: 'tell or write each other one real thank-you.', de: 'sagt oder schreibt euch ein ehrliches dankeschön.' },
     goalCount: 1, spaceTypes: ['couple'], badge: '💛', durationLabel: THIS_WEEK,
+  },
+  // ── SOLO ──────────────────────────────────────────────────────────────
+  // Eigene Wochen-Anlässe für einen Space mit einer Person. Bewusst NICHT die
+  // Paar-Anlässe mit gestrichenem „zusammen": „ein sanfter abend" allein ist
+  // etwas anderes als zu zweit, und der Text darf das sagen. Ziel bleibt 1 —
+  // ein Anlass, keine Quote (MANIFESTO §3).
+  {
+    id: 'wk-s1',
+    title: { en: 'one hour that is yours', de: 'eine stunde, die dir gehört' },
+    subtitle: { en: 'take one unhurried hour this week and spend it on nothing useful.', de: 'nimm dir diese woche eine stunde ohne eile — für nichts nützliches.' },
+    goalCount: 1, spaceTypes: ['solo'], badge: '🌙', durationLabel: THIS_WEEK,
+  },
+  {
+    id: 'wk-s2',
+    title: { en: 'one door, once', de: 'einmal raus' },
+    subtitle: { en: 'get outside once this week with nowhere to be.', de: 'geh diese woche einmal raus, ohne ein ziel zu haben.' },
+    goalCount: 1, spaceTypes: ['solo'], badge: '🌿', durationLabel: THIS_WEEK,
+  },
+  {
+    id: 'wk-s3',
+    title: { en: 'one thing done badly', de: 'einmal etwas schlecht machen' },
+    subtitle: { en: 'make something clumsy this week and keep it anyway.', de: 'mach diese woche etwas ungeschickt — und heb es trotzdem auf.' },
+    goalCount: 1, spaceTypes: ['solo'], badge: '✨', durationLabel: THIS_WEEK,
+  },
+  {
+    id: 'wk-s4',
+    title: { en: 'one first time', de: 'einmal zum ersten mal' },
+    subtitle: { en: 'try one small thing you have never done.', de: 'probier eine kleine sache, die du noch nie gemacht hast.' },
+    goalCount: 1, spaceTypes: ['solo'], badge: '🧭', durationLabel: THIS_WEEK,
+  },
+  {
+    id: 'wk-s5',
+    title: { en: 'one meal at a table', de: 'einmal am tisch essen' },
+    subtitle: { en: 'eat one meal at a proper table, no screen, no rush.', de: 'iss einmal an einem richtigen tisch — ohne bildschirm, ohne eile.' },
+    goalCount: 1, spaceTypes: ['solo'], badge: '🍽️', durationLabel: THIS_WEEK,
   },
   // Copy is explicitly two-people — couple only (audit A4-10).
   {

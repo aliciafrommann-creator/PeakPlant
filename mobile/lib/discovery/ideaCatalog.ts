@@ -98,6 +98,7 @@ type Family = {
 
 const BOTH: SpaceType[] = ['couple', 'friends'];
 const COUPLE: SpaceType[] = ['couple'];
+const SOLO: SpaceType[] = ['solo'];
 const ALL_TIMES: TimeOfDay[] = ['morning', 'afternoon', 'evening'];
 const ALL_SEASONS: Season[] = ['any'];
 
@@ -384,6 +385,88 @@ const FAMILIES: Family[] = [
     season: ALL_SEASONS, tags: ['intimate', 'nostalgia', 'couple'],
     variants: ['first date', 'first coffee together', 'the night you met', 'an early trip', 'your favourite ordinary day'],
   },
+  // ── SOLO ──────────────────────────────────────────────────────────────
+  // Eigene Familien statt umgebogener Paar-Texte. Eine Person allein läse
+  // sonst „pick a recipe neither of you has tried" — das ist kein Vorschlag,
+  // sondern eine Erinnerung (MANIFESTO §1). `soloText.test.ts` prüft jede
+  // erzeugte Zeile gegen eine Liste von Zwei-Personen-Wendungen.
+  {
+    title: 'learn to make {x} properly', idea: 'make {x} three times this month, until the recipe is not needed any more.',
+    category: 'food', spaceTypes: SOLO, priceBand: '€€', indoorOutdoor: 'indoor', avgDurationMin: 120,
+    energy: 'medium', idealTimeOfDay: ['afternoon', 'evening'], weatherFit: ['any', 'rain', 'cold'],
+    season: ALL_SEASONS, tags: ['cooking', 'food', 'home', 'solo'], variants: BAKES,
+  },
+  {
+    title: 'a table for one at a {x} place', idea: 'book it, bring a book, order a starter as well. an evening out is an evening out.',
+    category: 'food', spaceTypes: SOLO, priceBand: '€€', indoorOutdoor: 'indoor', avgDurationMin: 90,
+    energy: 'low', idealTimeOfDay: ['evening'], weatherFit: ['any', 'rain', 'cold'],
+    season: ALL_SEASONS, tags: ['food', 'out', 'solo'], variants: CUISINES,
+  },
+  {
+    title: 'walk {x}', idea: 'no route and nothing in your ears. leave with an unfinished thought and come back when it has an ending.',
+    category: 'outdoors', spaceTypes: SOLO, priceBand: 'free', indoorOutdoor: 'outdoor', avgDurationMin: 90,
+    energy: 'low', idealTimeOfDay: ['morning', 'afternoon', 'evening'], weatherFit: ['sunny', 'cold'],
+    season: ALL_SEASONS, tags: ['walk', 'outdoors', 'quiet', 'solo'], variants: WALK_THEMES,
+  },
+  {
+    title: 'a morning of {x}', idea: 'the first hour of the day spent on {x}, and on nothing that has to be finished.',
+    category: 'calm', spaceTypes: SOLO, priceBand: 'free', indoorOutdoor: 'flexible', avgDurationMin: 60,
+    energy: 'low', idealTimeOfDay: ['morning'], weatherFit: ['any', 'rain', 'cold'],
+    season: ALL_SEASONS, tags: ['calm', 'morning', 'solo'],
+    variants: [
+      'coffee and no phone', 'writing three pages', 'a long stretch on the floor',
+      'sitting by a window', 'a slow shower and clean sheets', 'one album start to finish',
+      'watching the street wake up', 'reading in bed past the alarm', 'breathing, timed and boring',
+      'tidying one drawer', 'a walk before breakfast', 'silence, deliberately',
+    ],
+  },
+  {
+    title: 'make {x}, badly is fine', idea: 'one evening, one attempt at {x}. keep whatever comes out of it.',
+    category: 'create', spaceTypes: SOLO, priceBand: '€', indoorOutdoor: 'indoor', avgDurationMin: 75,
+    energy: 'medium', idealTimeOfDay: ['evening'], weatherFit: ['any', 'rain', 'cold'],
+    season: ALL_SEASONS, tags: ['create', 'make', 'solo'],
+    variants: [
+      'a pencil drawing of this room', 'a clay bowl that will not sit flat', 'a zine about this week',
+      'a four-line poem', 'a playlist for this exact month', 'one printed photo for the wall',
+      'a letter you will not send', 'a repair of something broken', 'a shelf that holds something',
+      'bread from a starter', 'a hand-drawn map of your neighbourhood', 'a voice memo to your future self',
+    ],
+  },
+  {
+    title: 'learn the first bit of {x}', idea: 'not the whole thing — the opening. one evening a week until it is yours.',
+    category: 'learn', spaceTypes: SOLO, priceBand: '€', indoorOutdoor: 'indoor', avgDurationMin: 60,
+    energy: 'medium', idealTimeOfDay: ['evening'], weatherFit: ['any', 'rain', 'cold'],
+    season: ALL_SEASONS, tags: ['learn', 'skill', 'solo'],
+    variants: [
+      'a song on any instrument', 'a language, twenty words a day', 'knots that actually hold',
+      'sourdough', 'chess openings', 'sewing a straight seam', 'reading music',
+      'a card trick', 'juggling three balls', 'shorthand', 'drawing hands', 'whistling properly',
+    ],
+  },
+  {
+    title: 'an hour at {x}', idea: 'go at opening time, while the rooms are still empty, and spend the whole hour on very little.',
+    category: 'culture', spaceTypes: SOLO, priceBand: '€€', indoorOutdoor: 'indoor', avgDurationMin: 90,
+    energy: 'low', idealTimeOfDay: ['morning', 'afternoon'], weatherFit: ['any', 'rain', 'cold'],
+    season: ALL_SEASONS, tags: ['culture', 'quiet', 'solo'],
+    variants: [
+      'the museum you keep meaning to visit', 'a gallery with one good room', 'the city library',
+      'a church with a high ceiling', 'the botanical glasshouse', 'an archive open to the public',
+      'a bookshop with chairs', 'the old part of the cemetery', 'a cinema matinee',
+      'a record shop with listening decks', 'a covered market', 'the observation deck',
+    ],
+  },
+  {
+    title: '{x}, on your own terms', idea: 'the version nobody else would sit through. no compromise tonight.',
+    category: 'play', spaceTypes: SOLO, priceBand: 'free', indoorOutdoor: 'indoor', avgDurationMin: 120,
+    energy: 'low', idealTimeOfDay: ['evening'], weatherFit: ['any', 'rain', 'cold'],
+    season: ALL_SEASONS, tags: ['play', 'home', 'solo'],
+    variants: [
+      'the four-hour film', 'the subtitled one', 'a whole season in one go',
+      'the game you loved at twelve', 'a jigsaw on the kitchen table', 'a crossword done in pen',
+      'dancing around the kitchen', 'a documentary about something useless', 'karaoke with the door shut',
+      'a book read in one sitting', 'the album you are embarrassed by', 'a very long bath',
+    ],
+  },
 ];
 
 /**
@@ -461,6 +544,23 @@ const TWISTS_BY_CATEGORY: Record<IdeaCategory, Twist[]> = {
   ],
 };
 
+/**
+ * Twists für Solo-Familien.
+ *
+ * WARUM EIGENE: Die Twists oben sind für zwei geschrieben („sit together
+ * afterwards", „ten photos each"). An eine Solo-Familie gehängt, entsteht aus
+ * einem sauberen Vorschlag wieder ein Paar-Satz — und zwar erst beim Bauen des
+ * Katalogs, wo es beim Lesen der Familie niemand sieht. Genau das hat der
+ * Wächter am 18.08.2026 gefunden: 24 erzeugte Solo-Ideen mit „each other"
+ * bzw. „the other" drin, obwohl keine Familie das Wort enthielt.
+ */
+const SOLO_TWISTS: Twist[] = [
+  NONE,
+  { tag: 'phone in a drawer', extra: 'leave it in another room for the whole thing.' },
+  { tag: 'write one line after', extra: 'one sentence about how it actually went, kept in your diary.' },
+  { tag: 'make it a habit', extra: 'if it lands, put it in the calendar for next week too.' },
+];
+
 /** Fix "a apple" → "an apple" for our vowel-initial variants. Safe for the
  *  controlled vocabulary here (no "a university"/"a one-off" style words). */
 function fixArticles(s: string): string {
@@ -472,7 +572,11 @@ function buildCatalog(): DateIdea[] {
   const out: DateIdea[] = [];
   const seen = new Set<string>();
   FAMILIES.forEach((fam, fi) => {
-    const twists = TWISTS_BY_CATEGORY[fam.category] ?? [NONE];
+    // Solo-Familien bekommen Solo-Twists — sonst schreibt der Katalog den
+    // Zwei-Personen-Ton wieder hinein, den die Familie vermieden hat.
+    const twists = fam.spaceTypes.includes('solo')
+      ? SOLO_TWISTS
+      : TWISTS_BY_CATEGORY[fam.category] ?? [NONE];
     fam.variants.forEach((variant, vi) => {
       const baseTitle = fixArticles(fam.title.replace('{x}', variant));
       const baseIdea = fixArticles(fam.idea.replace('{x}', variant));

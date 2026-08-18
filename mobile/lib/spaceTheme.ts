@@ -14,6 +14,9 @@ export interface SpaceTheme {
 const THEMES: Record<SpaceType, SpaceTheme> = {
   couple: { emoji: '🌶️', unit: 'chilli', units: 'chillis' },
   friends: { emoji: '🌻', unit: 'sunflower', units: 'sunflowers' },
+  // Ein Solo-Space sammelt Steine: etwas, das man aufhebt, weil man an dem Tag
+  // dort war. Kein Wachstumsbild, das nach Fortschritt aussieht (MANIFESTO §3).
+  solo: { emoji: '🪨', unit: 'stone', units: 'stones' },
 };
 
 export function spaceTheme(type: SpaceType): SpaceTheme {
