@@ -308,17 +308,23 @@ Daraus, verbindlich:
    `const TOGETHER = Sections.together` (Ketten, Kleinschreibung, Objektfelder
    und Importe gehen weiterhin durch — steht so im Dateikopf). (B) Jede
    andere Schriftfarbe muss auf dem Papierton bestehen oder eine erklärte
-   Dunkel-Tinte sein. Stand: 1083 Style-Blöcke, 476 mit auflösbarer
-   Schriftfarbe geprüft, 7 begründete Ausnahmen (`// kontrast-ok: <Grund>`).
+   Dunkel-Tinte sein. Größenordnung: gut tausend Style-Blöcke, knapp
+   fünfhundert davon geprüft, eine Handvoll begründete Ausnahmen
+   (`// kontrast-ok: <Grund>`). Bewusst gerundet — die genauen Zahlen standen
+   hier zweimal falsch, beide Male durch den Commit, der sie aufschrieb.
    Was er NICHT kann, steht im Kopf der Datei — vor allem: ob eine helle
    Schrift auf der richtigen Fläche sitzt, bleibt Menschenarbeit.
 4. Ein statischer Farbwert in einem Stil, dessen Farbe beim Rendern gesetzt
    wird, gehört gelöscht.
-5. **Ein Text über einem Foto oder einem Kamerabild bringt seinen Grund
-   selbst mit — und ein Bedienelement auch.** Ein Schleier repariert die
-   Schrift und verschlechtert einen Rahmen: Der Umriss-Knopf im Scanner fiel
-   dadurch von 3,80:1 auf 2,46:1. Gefüllte Knöpfe haben diese Abhängigkeit
-   nicht. Halbdurchsichtige Streifen sind kein bekannter Untergrund:
+5. **Ein Bedienelement braucht Kontrast zu seiner Umgebung — als Rand wie als
+   Füllung.** Entscheidend ist der schlechteste GERECHNETE Untergrund, nicht
+   die Bauart. Der Knopf im Scanner hat das dreimal vorgeführt: Beschriftung
+   unsichtbar (1,00:1) → Schleier drüber, Rand fällt auf 2,46:1 → dunkle
+   Füllung „damit er von nichts mehr abhängt", gemessen **2,16:1**, also
+   schlechter als der Rand davor. Erst die HELLE Füllung gegen den dunklen
+   Schleier trägt (10,26:1). „Eine Füllung hängt von nichts ab" war eine
+   plausible Begründung ohne Rechnung — genau die Sorte, die dieser Abschnitt
+   verbieten soll. Halbdurchsichtige Streifen sind kein bekannter Untergrund:
    Der Scanner setzte helle Schrift über das LIVE-Kamerabild (1,07:1 über
    einer weißen Wand), und der Streifen auf der Momente-Wand ließ ein dunkles
    Foto mit 8 % durch. Entweder deckend, oder ein Schleier, dessen

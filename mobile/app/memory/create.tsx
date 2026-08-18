@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Colors, Accents, AccentInks, Sections } from '../../constants/colors';
+import { Colors, Accents, AccentInks, Sections, SectionInks } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
@@ -31,6 +31,11 @@ import { FadeInImage } from '../../components/ui/FadeInImage';
 import { SEED_CARDS } from '../../lib/seed';
 
 const MOMENT = Sections.together; // warm apricot — capturing "our" moment
+// Die Schrift-/Vordergrund-Fassung derselben Farbe. `MOMENT` als Symbol- oder
+// Randfarbe erreichte auf `Colors.surface` 2,65:1 und auf `Accents.cream`
+// 2,14:1 — beides unter den 3:1, die WCAG 1.4.11 für ein bedeutungstragendes
+// grafisches Objekt verlangt. Als Fläche bleibt `MOMENT` richtig.
+const MOMENT_INK = SectionInks.together;
 
 export default function CreateMemoryScreen() {
   const {
@@ -330,7 +335,7 @@ export default function CreateMemoryScreen() {
             ) : (
               <View style={styles.photoPlaceholder}>
                 <View style={styles.photoIconCircle}>
-                  <Ionicons name="camera-outline" size={26} color={MOMENT} />
+                  <Ionicons name="camera-outline" size={26} color={MOMENT_INK} />
                 </View>
                 <Text style={styles.photoText}>{t('ADD A PHOTO', 'FOTO HINZUFÜGEN')}</Text>
                 <Text style={styles.photoHint}>{t('take one, or pick from your library · optional', 'aufnehmen oder aus der Galerie wählen · optional')}</Text>
@@ -470,7 +475,7 @@ const styles = StyleSheet.create({
   photoAreaEmpty: {
     backgroundColor: Accents.cream,
     borderWidth: 1.5,
-    borderColor: MOMENT,
+    borderColor: MOMENT_INK,
     borderStyle: 'dashed',
   },
   photoPreview: {

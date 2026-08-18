@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
 import { PressableScale } from '../../components/ui/PressableScale';
-import { Colors, Sections, SectionInks } from '../../constants/colors';
+import { Colors, SectionInks } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useAppStore } from '../../lib/store';
@@ -26,7 +26,6 @@ import type { RatingSummary } from '../../lib/discovery/ratings';
 import { confirmSuccess } from '../../lib/haptics';
 import type { SavedDate } from '../../lib/types';
 
-const TOGETHER = Sections.together;
 // Die Schrift-Fassung derselben Farbe. Als 11-pt-Etikett stand `TOGETHER`
 // (apricot) auf Papier bei 2,35:1 — schlechter als jeder Fund des ersten
 // Durchgangs, und vom Wächter nicht zu sehen, weil er nur Palettenpfade kennt

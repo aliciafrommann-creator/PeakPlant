@@ -16,7 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView, type WebViewMessageEvent } from 'react-native-webview';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import { Colors, Sections, SectionInks } from '../../constants/colors';
+import { Colors, SectionInks } from '../../constants/colors';
 import { Spacing, Radii, Shadows, Opacity } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -47,7 +47,6 @@ import type { LivePlace } from '../../lib/discovery/providers/interface';
 import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
 import type { DateFeedback, PublicPlaceFeedback, PublicPlaceSpot, SavedDate } from '../../lib/types';
 
-const PLACES = Sections.community; // raspberry blossom — shared, social, a little playful
 // Schrift-Fassung: blossom lag als Etikett bei 3,61:1 (Papier) bzw. 3,65:1
 // (backgroundCream).
 const PLACES_INK = SectionInks.community;

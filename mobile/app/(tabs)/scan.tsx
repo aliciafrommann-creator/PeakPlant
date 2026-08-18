@@ -289,28 +289,32 @@ const styles = StyleSheet.create({
     borderRadius: Radii.md,
   },
   /**
-   * Gefüllt, nicht umrandet.
+   * Hell gefüllt — und diesmal nachgerechnet statt begründet.
    *
-   * Vorher war die einzige sichtbare Grenze dieses Knopfs ein 1-px-Rand in
-   * `Colors.accent`. Auf flachem Dunkel waren das 3,80:1 — gerade genug. Auf
-   * dem neuen Schleier über einem hellen Kamerabild fällt derselbe Rand auf
-   * **2,46:1**: Die eigene Korrektur hat die Beschriftung gerettet und die
-   * Umrandung verschlechtert. Eine Füllung hat diese Abhängigkeit nicht — sie
-   * bringt ihre eigene Fläche mit, in jedem Zustand.
+   * Die Geschichte dieses Knopfs ist die Lehre: Erst stand die Beschriftung in
+   * `Colors.text` auf `backgroundDark` (1,00:1, unsichtbar). Dann kam ein
+   * Schleier, der die Schrift rettete und den Rand auf 2,46:1 drückte. Dann
+   * eine dunkle Füllung mit der Begründung „eine Füllung hängt von nichts ab"
+   * — gemessen 2,16:1 gegen den Schleier, also SCHLECHTER als der Rand davor.
+   *
+   * Die Begründung war falsch: Eine Füllung braucht Kontrast zu ihrer
+   * Umgebung genauso wie ein Rand. Was zählt, ist der schlechteste gerechnete
+   * Untergrund — hier der Schleier über einem weißen Kamerabild (#3E3C3A).
+   * Dagegen steht diese helle Füllung bei **10,26:1**, die Beschriftung in
+   * `Colors.text` darauf bei **15,88:1**.
    */
   permissionButton: {
     height: 48,
     paddingHorizontal: Spacing.xl,
-    backgroundColor: Colors.accentInk,
+    backgroundColor: Colors.onDarkStrong,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
-  // Hier stand `Colors.text` auf #1E1C1A — dieselbe Farbe, 1,00:1, die
-  // Beschriftung war schlicht unsichtbar.
-  // kontrast-ok: weiß auf der Füllung `accentInk` = 5,09:1, unabhängig davon,
-  // was hinter dem Knopf liegt.
-  permissionButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
+  // `Colors.text` auf der hellen Füllung des Knopfs = 15,88:1. Dieselbe Farbe
+  // war hier einmal unsichtbar (1,00:1) — weil sie damals auf `backgroundDark`
+  // lag. Die Farbe war nie das Problem, der Untergrund war es.
+  permissionButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   bottom: { paddingHorizontal: Spacing.screen, paddingVertical: Spacing.xl, gap: Spacing.lg },
   divider: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   dividerLine: { flex: 1, height: 1, backgroundColor: Colors.border },

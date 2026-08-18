@@ -13,7 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Colors, Accents } from '../../constants/colors';
+import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { PressableScale } from '../ui/PressableScale';
 import { FadeInImage } from '../ui/FadeInImage';
@@ -21,6 +21,7 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { acknowledgeSelection } from '../../lib/haptics';
 import { bestInk } from '../../lib/contrast';
+import { colorForSpace } from '../../lib/spaceColors';
 import { composeInviteText } from '../../lib/shareText';
 import type { Space } from '../../lib/types';
 
@@ -30,22 +31,6 @@ interface SpacePickerProps {
   activeSpaceId?: string;
   onSelect: (id: string) => void;
   onClose: () => void;
-}
-
-/** Each space keeps a warm identity colour, stable by position (matches the
- *  rest of the app). */
-const SPACE_COLORS = [
-  Accents.chili,
-  Accents.blossom,
-  Accents.sunflower,
-  Accents.ember,
-  Accents.apricot,
-  Accents.terracotta,
-  Accents.sage,
-] as const;
-
-function colorForSpace(index: number): string {
-  return SPACE_COLORS[index % SPACE_COLORS.length];
 }
 
 function glyphFor(type: Space['type']): string {
@@ -136,9 +121,15 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                           // Die Tinte wird gerechnet, nicht gesetzt: Der Punkt
                           // trägt eine von sieben Akzentfarben, und weiß
                           // erreichte auf sechs davon keine 4,5:1 (Sonnenblume
-                          // 1,96). Das Zeichen trägt Bedeutung — ♥ heißt Paar,
-                          // ✦ heißt geteilt, 🪨 heißt allein.
-                          <Text style={[styles.dotGlyph, { color: bestInk(color, Colors.text, Colors.white) }]}>
+                          // 1,96). Das Zeichen trägt Bedeutung, ♥ heißt Paar.
+                          //
+                          // Dunkle Tinte ist `Colors.black`, nicht `Colors.text`:
+                          // Mit dem wärmeren `text` blieben Chili (3,80) und
+                          // Blossom (4,17) unter der Latte — auf zwei von sieben
+                          // Farben hätte KEINE der beiden Tinten gereicht. Mit
+                          // Schwarz sind es 4,70 und 5,15. `lib/spaceInk.test.ts`
+                          // hält das für jede künftige Farbe fest.
+                          <Text style={[styles.dotGlyph, { color: bestInk(color, Colors.black, Colors.white) }]}>
                             {space.emoji ?? glyphFor(space.type)}
                           </Text>
                         )}
@@ -258,8 +249,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  // kontrast-ok: Die Farbe kommt beim Rendern aus `bestInk(…)` — auf jeder der
-  // sieben Punktfarben die besser lesbare der beiden Tinten.
+  // Ohne `color`: Die Farbe kommt beim Rendern aus `bestInk(…)`. (Kein
+  // `kontrast-ok`-Marker — der Block hat keine Farbe, der Wächter überspringt
+  // ihn ohnehin, und ein Marker, der nichts entschuldigt, täuscht eine
+  // Ausnahme vor, die es nicht gibt.)
   dotGlyph: {
     fontSize: 16,
   },

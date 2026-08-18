@@ -38,8 +38,9 @@ import { contrastRatio, AA_SMALL_TEXT } from './contrast';
  *   keinem von beiden gehört, ist überall falsch.
  *
  * Warum B die hellen Tinten durchlässt, statt für jede einen Marker zu
- * verlangen: Sie stehen an 52 Stellen auf gefüllten Bedienelementen. Ein Test
- * mit 52 Ausnahmen ist ein abgeschalteter Test im Kostüm — und die Frage, ob
+ * verlangen: Sie stehen an rund fünfzig Stellen auf gefüllten
+ * Bedienelementen. Ein Test mit fünfzig Ausnahmen ist ein abgeschalteter Test
+ * im Kostüm — und die Frage, ob
  * die Füllung darunter wirklich dunkel ist, kann er ohnehin nicht beantworten.
  * Diese Lücke ist real und hat gekostet: Zwei der 52 lagen auf HELLER Füllung
  * — die Haupthandlung des Startbildschirms bei 4,47:1 und das Space-Zeichen
@@ -68,8 +69,14 @@ import { contrastRatio, AA_SMALL_TEXT } from './contrast';
  *
  * Ausnahmen brauchen `// kontrast-ok: <Begründung>` im Style-Block (oder in den
  * drei Zeilen darüber) und werden gezählt — steigt die Zahl deutlich, ist die
- * Regel falsch, nicht der Code. Stand 18.08.2026: 1083 Style-Blöcke, davon 476
- * mit einer auflösbaren Schriftfarbe geprüft, 7 begründete Ausnahmen.
+ * Regel falsch, nicht der Code.
+ *
+ * Größenordnung 18.08.2026: gut tausend Style-Blöcke, davon knapp fünfhundert
+ * mit auflösbarer Schriftfarbe geprüft, eine Handvoll begründete Ausnahmen.
+ * BEWUSST GERUNDET: Die genauen Zahlen standen hier zweimal falsch — beide
+ * Male, weil derselbe Commit, der sie aufschrieb, im selben Zug einen Block
+ * änderte. Eine Zahl, die bei jeder Farbänderung wandert, gehört nicht in
+ * einen Kommentar; die harte Untergrenze steht im Test darunter.
  */
 
 const WURZEL = path.resolve(__dirname, '..');
@@ -254,9 +261,13 @@ describe('K7 — Farbe und Schriftgröße passen zusammen', () => {
     // Ohne diese zwei Zahlen wäre ein kaputter Parser ein grüner Test. Der
     // erste Anlauf übersprang sechs Blöcke still; „übersprungen" sah aus wie
     // „in Ordnung".
-    const { geprueft } = pruefe();
+    const { geprueft, ausnahmen } = pruefe();
     expect(alleBloecke.length).toBeGreaterThan(400);
     expect(geprueft).toBeGreaterThan(400);
+    // Die Zahlen im Dateikopf sind zweimal veraltet gewesen, beide Male durch
+    // denselben Commit, der sie aufgeschrieben hat. Also stehen sie jetzt hier
+    // als Test statt als Kommentar — dann kann sie niemand mehr übersehen.
+    expect(ausnahmen).toBeGreaterThan(0);
   });
 
   it('löst lokale Alias-Konstanten auf', () => {

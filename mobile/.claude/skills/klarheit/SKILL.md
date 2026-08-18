@@ -145,10 +145,13 @@ schlimmeren trugen andere Namen. Deshalb, in dieser Reihenfolge:
    Schrift benutzt, brauchst du daneben die Ink-Fassung. Der Wächter löst nur
    den einfachsten Fall auf — Ketten, Kleinschreibung, Objektfelder und
    Importe sieht er nicht.
-10. Ein Schleier repariert die Schrift und kann einen Rahmen zerstören. Ein
-    Bedienelement, das nur an einem Umriss erkennbar ist, hängt vom Untergrund
-    ab; eine Füllung tut das nicht. Im Scanner fiel genau dieser Rand durch
-    die eigene Korrektur von 3,80:1 auf 2,46:1.
+10. Ein Bedienelement braucht Kontrast zu seiner Umgebung — als Rand wie als
+    Füllung. Entscheidend ist der schlechteste GERECHNETE Untergrund, nicht die
+    Bauart. Im Scanner ging das dreimal schief: Ein Schleier rettete die
+    Schrift und drückte den Rand auf 2,46:1; eine dunkle Füllung „damit er von
+    nichts abhängt" lag bei 2,16:1, also schlechter. „Eine Füllung hängt von
+    nichts ab" ist eine plausible Begründung ohne Rechnung — und das ist der
+    Fehler, nicht die Bauart.
 11. Eine Farbe, die als **Vorgabewert in den Props** steht
     (`color = Colors.accent`), ist kein Style-Block — sie fehlt in jeder
     Zählung, die Style-Blöcke durchgeht. Der lauteste Knopf der App wurde so
