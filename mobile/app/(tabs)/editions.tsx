@@ -143,7 +143,7 @@ export default function EditionsScreen() {
             <View style={styles.headerTop}>
               <View>
                 <Text style={styles.kicker}>{t('COLLECTION', 'SAMMLUNG')}</Text>
-                <Text style={styles.title}>{t('your editions', 'eure Editionen')}</Text>
+                <Text style={styles.title}>{t('your editions', 'deine Editionen')}</Text>
               </View>
               <TouchableOpacity
                 style={styles.scanButton}

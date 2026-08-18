@@ -22,3 +22,19 @@ const THEMES: Record<SpaceType, SpaceTheme> = {
 export function spaceTheme(type: SpaceType): SpaceTheme {
   return THEMES[type];
 }
+
+/**
+ * Das Zeichen eines Space, wenn er kein eigenes Emoji hat.
+ *
+ * Als Funktion und nicht als Ternär im Bildschirm: Genau solche
+ * `type === 'friends' ? … : …` haben beim Hinzufügen von `solo` an vier
+ * Stellen still das Falsche geliefert — der Solo-Space bekam das Herz und das
+ * Chili des Paar-Space (18.08.2026).
+ */
+export function glyphForSpace(type: SpaceType | undefined): string {
+  if (type === 'couple') return '♥';
+  if (type === 'solo') return '🪨';
+  if (type === 'friends') return '✦';
+  // Unbekannt heißt unbekannt — kein Zeichen, das etwas behauptet.
+  return '✦';
+}

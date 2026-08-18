@@ -225,6 +225,13 @@ export const localSpaceRepository: ISpaceRepository = {
       throw new Error('unknown invite code');
     }
 
+    // Dieselbe Regel wie in der Datenbank (Migration 0024): In einen
+    // Solo-Space kommt niemand hinein. Ohne diese Zeile gäbe es zwei
+    // Wahrheiten — und die lokale wäre die falsche.
+    if (space.type === 'solo' && !members.some((m) => m.spaceId === space!.id && m.userId === userId)) {
+      throw new Error('space is solo');
+    }
+
     const alreadyMember = members.some((m) => m.spaceId === space!.id && m.userId === userId);
     if (!alreadyMember) {
       const member: SpaceMember = {

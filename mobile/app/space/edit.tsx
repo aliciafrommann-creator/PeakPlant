@@ -18,6 +18,8 @@ import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Opacity } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { spaceRepository } from '../../lib/repositories';
+import { glyphForSpace } from '../../lib/spaceTheme';
+import { voice } from '../../lib/voice';
 import {
   setSpaceEmoji,
   getSpaceEmoji,
@@ -75,7 +77,8 @@ export default function EditSpaceScreen() {
   // What the avatar should show right now: a new pick wins, then the existing
   // saved avatar (unless being removed), else the emoji fallback.
   const shownAvatarUrl = photoUri ?? (removePhoto ? undefined : space?.avatarUrl);
-  const fallbackEmoji = emoji ?? (space?.type === 'couple' ? '♥' : '✦');
+  const fallbackEmoji = emoji ?? glyphForSpace(space?.type);
+  const v = voice(space?.type);
 
   useEffect(() => {
     if (space && !nameInitialized.current) {
@@ -374,12 +377,9 @@ export default function EditSpaceScreen() {
 
           {/* Collectible emoji */}
           <View style={styles.section}>
-            <Text style={styles.label}>{t('YOUR COLLECTIBLE', 'EUER SAMMELZEICHEN')}</Text>
+            <Text style={styles.label}>{t(v.collectibleLabel.en, v.collectibleLabel.de)}</Text>
             <Text style={styles.collectibleHint}>
-              {t(
-                'you earn one each time you finish a challenge together.',
-                'ihr verdient eins, jedes Mal wenn ihr eine Challenge zusammen abschließt.',
-              )}
+              {t(v.collectibleHint.en, v.collectibleHint.de)}
             </Text>
             <View style={styles.grid}>
               {COLLECTIBLE_GRID.map((e) => {
@@ -443,15 +443,20 @@ export default function EditSpaceScreen() {
                 </View>
               ))
             )}
-            <Text style={styles.memberHint}>
-              {t(
-                // „the invite code above" zeigte auf etwas, das auf diesem
-                // Bildschirm gar nicht steht (hier gibt es Name, Emoji,
-                // Sammelstück und Mitglieder — keinen Code).
-                'everyone here can see your shared diary. your invite code lets people in — share it only with people you trust.',
-                'alle hier sehen euer gemeinsames Tagebuch. Der Einladungscode lässt Menschen herein — teil ihn nur mit Menschen, denen du vertraust.',
-              )}
-            </Text>
+            {/* In einem Solo-Space lässt der Code NIEMANDEN herein — dieser
+                Satz stand dort trotzdem, vier Zeilen über dem Block, der das
+                Gegenteil sagt (MANIFESTO §1). */}
+            {space.type !== 'solo' && (
+              <Text style={styles.memberHint}>
+                {t(
+                  // „the invite code above" zeigte auf etwas, das auf diesem
+                  // Bildschirm gar nicht steht (hier gibt es Name, Emoji,
+                  // Sammelstück und Mitglieder — keinen Code).
+                  'everyone here can see your shared diary. your invite code lets people in — share it only with people you trust.',
+                  'alle hier sehen euer gemeinsames Tagebuch. Der Einladungscode lässt Menschen herein — teil ihn nur mit Menschen, denen du vertraust.',
+                )}
+              </Text>
+            )}
           </View>
 
           {/* Der eine Weg aus dem Solo-Space heraus. Nur sichtbar, wenn es

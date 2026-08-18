@@ -14,6 +14,7 @@ import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { spaceRepository } from '../../lib/repositories';
+import { classifyJoinError } from '../../lib/joinErrors';
 import { getActiveUser } from '../../lib/session';
 import { confirmSuccess } from '../../lib/haptics';
 import { useAppStore } from '../../lib/store';
@@ -103,9 +104,40 @@ export default function NewSpaceScreen() {
       void confirmSuccess();
       setActiveSpace(space.id);
       router.back();
-    } catch {
+    } catch (err) {
       setBusy(false);
-      setError(t("that code didn't work. check it and try again.", 'Dieser Code hat nicht funktioniert. Prüfe ihn und versuche es erneut.'));
+      // Vorher fing dieser Zweig JEDEN Fehler mit „Prüfe den Code" ab — auch
+      // die drei Fälle, in denen der Code völlig richtig ist. Der Mensch suchte
+      // den Fehler dann bei sich. `classifyJoinError` gibt es genau dafür; nur
+      // dieser Bildschirm hat es nie benutzt (MANIFESTO §1).
+      switch (classifyJoinError(err)) {
+        case 'space_solo':
+          setError(t(
+            'this space is for one person. whoever sent the code can open it up — then the same code works.',
+            'Dieser Space ist für eine Person. Wer dir den Code geschickt hat, kann ihn öffnen — danach funktioniert derselbe Code.',
+          ));
+          break;
+        case 'space_full':
+          setError(t(
+            'this space already has two people in it. ask for a fresh code — a new one appears once the first pair is complete.',
+            'In diesem Space sind schon zwei Menschen. Bitte um einen frischen Code — sobald das erste Paar vollständig ist, entsteht ein neuer.',
+          ));
+          break;
+        case 'too_many_attempts':
+          setError(t(
+            'that was a lot of tries in a short time. take a breath and try again in an hour.',
+            'Das waren viele Versuche in kurzer Zeit. Atme kurz durch und versuch es in einer Stunde nochmal.',
+          ));
+          break;
+        case 'not_authenticated':
+          setError(t(
+            'your sign-in expired. sign in again, then enter the code.',
+            'Deine Anmeldung ist abgelaufen. Melde dich neu an und gib den Code dann ein.',
+          ));
+          break;
+        default:
+          setError(t("that code didn't work. check it and try again.", 'Dieser Code hat nicht funktioniert. Prüfe ihn und versuche es erneut.'));
+      }
     }
   };
 

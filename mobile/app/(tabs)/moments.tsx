@@ -140,7 +140,7 @@ export default function MomentsScreen() {
             <BackButton />
             <View style={styles.kickerRow}>
               <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
-              <Text style={styles.kicker}>{t('YOUR MOMENTS', 'EURE MOMENTE')}</Text>
+              <Text style={styles.kicker}>{t(v.momentsKicker.en, v.momentsKicker.de)}</Text>
             </View>
             <Text style={styles.title}>
               {t('everything you kept.', 'alles, was ihr behalten habt.')}
@@ -165,7 +165,7 @@ export default function MomentsScreen() {
             <MemoryFeedSkeleton />
           ) : error ? (
             <EmptyState
-              title={t("couldn't load your moments.", 'eure Momente konnten nicht geladen werden.')}
+              title={t("couldn't load your moments.", 'deine Momente konnten nicht geladen werden.')}
               hint={t(
                 'they are safe — this is just a connection hiccup.',
                 'sie sind sicher — das ist nur ein Verbindungsproblem.',
@@ -175,11 +175,8 @@ export default function MomentsScreen() {
             />
           ) : (
             <EmptyState
-              title={t('your story starts here.', 'eure Geschichte beginnt hier.')}
-              hint={t(
-                'live a card together, scan its QR — and the moment lands here, with your photo and your words.',
-                'erlebt eine Karte zusammen, scannt ihren QR-Code — und der Moment landet hier, mit eurem Foto und euren Worten.',
-              )}
+              title={t(v.momentsEmptyTitle.en, v.momentsEmptyTitle.de)}
+              hint={t(v.momentsEmptyHint.en, v.momentsEmptyHint.de)}
               ctaLabel={t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
               onCta={() => router.push('/(tabs)/scan')}
               // Ohne physisches Deck war „Karte scannen" hier eine Sackgasse:

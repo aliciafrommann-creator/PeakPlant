@@ -646,15 +646,22 @@ export default function DiscoverScreen() {
         </View>
 
         <Text style={styles.tagline}>
+          {/* Drei Arten, drei Sätze. Der Solo-Space fiel vorher in den
+              Else-Zweig — und die App behauptete eine Beziehung. */}
           {activeSpace?.type === 'friends'
             ? t(
                 'time with friends is not something to optimise.\nit is something to notice.',
                 'Zeit mit Freunden ist nichts zum Optimieren.\nSie ist etwas zum Bemerken.',
               )
-            : t(
-                'your relationship is not something to optimise.\nit is something to notice.',
-                'Eure Beziehung ist nichts zum Optimieren.\nSie ist etwas zum Bemerken.',
-              )}
+            : activeSpace?.type === 'solo'
+              ? t(
+                  'your life is not something to optimise.\nit is something to notice.',
+                  'Dein Leben ist nichts zum Optimieren.\nEs ist etwas zum Bemerken.',
+                )
+              : t(
+                  'your relationship is not something to optimise.\nit is something to notice.',
+                  'Eure Beziehung ist nichts zum Optimieren.\nSie ist etwas zum Bemerken.',
+                )}
         </Text>
       </ScrollView>
     </SafeAreaView>

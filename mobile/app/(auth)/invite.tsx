@@ -25,7 +25,8 @@ import { composeInviteText } from '../../lib/shareText';
 import { isValidInviteCode } from '../../lib/invite';
 import { classifyJoinError } from '../../lib/joinErrors';
 import { peekPendingJoinCode, consumePendingJoinCode } from '../../lib/pendingDestination';
-import type { Space } from '../../lib/types';
+import { defaultSpaceName } from '../../lib/repositories/spaceCreation';
+import type { Space, SpaceType } from '../../lib/types';
 
 const FIRST_SPACE = SEED_SPACES[0];
 
@@ -80,7 +81,7 @@ export default function InviteScreen() {
     return user;
   }, []);
 
-  const createBackendSpace = useCallback(async () => {
+  const createBackendSpace = useCallback(async (type: SpaceType = 'couple') => {
     if (creating) return;
     setCreating(true);
     setError(null);
@@ -88,8 +89,8 @@ export default function InviteScreen() {
       const user = await requireUser();
       if (!user) return;
       const created = await spaceRepository.create({
-        type: 'couple',
-        name: user.name ? `${user.name}'s space` : 'Our space',
+        type,
+        name: user.name ? `${user.name}'s space` : defaultSpaceName(type),
         ownerUserId: user.id,
         ownerName: user.name,
       });
@@ -256,11 +257,11 @@ export default function InviteScreen() {
         <View style={styles.inner}>
           <View style={styles.header}>
             <Text style={styles.label}>{t('SET UP YOUR SPACE', 'RICHTE DEINEN SPACE EIN')}</Text>
-            <Text style={styles.title}>{t('start, or\njoin a partner', 'starten, oder\nPartner beitreten')}</Text>
+            <Text style={styles.title}>{t('who is this\nspace for?', 'für wen ist\ndieser Space?')}</Text>
             <Text style={styles.subtitle}>
               {t(
-                'starting creates a shared space and gives you a code to share. joining links you into a space your partner already made.',
-                'Beim Starten entsteht ein gemeinsamer Space mit einem Code zum Teilen. Beim Beitreten verbindest du dich mit dem Space deines Partners.',
+                'a space for yourself works fully on its own — and you can open it up to someone later without losing a thing. or start a shared one right away, or join one that already exists.',
+                'Ein Space für dich allein funktioniert vollständig — und du kannst ihn später öffnen, ohne dass etwas verloren geht. Oder du startest gleich einen gemeinsamen, oder trittst einem bestehenden bei.',
               )}
             </Text>
           </View>
@@ -268,19 +269,36 @@ export default function InviteScreen() {
           {error && <Text style={styles.error} accessibilityLiveRegion="polite">{error}</Text>}
 
           <View style={styles.bottom}>
+            {/* „Nur ich" steht ZUERST und ist die laute Handlung.
+                Grund, aus den Daten: In der Produktionsdatenbank hat kein
+                einziger Space eine zweite Person. Dieser Bildschirm legte
+                trotzdem fest einen Paar-Space an — und reproduzierte damit
+                genau den Zustand, den er behauptet zu lösen. Wer allein
+                anfängt, soll nicht erst ein Paar behaupten müssen
+                (MANIFESTO §1 und §3). */}
             <TouchableOpacity
               style={[styles.continueButton, creating && styles.disabled]}
-              onPress={createBackendSpace}
+              onPress={() => void createBackendSpace('solo')}
               disabled={creating}
               activeOpacity={0.8}
               accessibilityRole="button"
-              accessibilityLabel={t('Start a new space', 'Neuen Space starten')}
+              accessibilityLabel={t('Start a space just for me', 'Space nur für mich starten')}
             >
               {creating ? (
                 <ActivityIndicator color={Colors.white} size="small" />
               ) : (
-                <Text style={styles.continueText}>{t('START A SPACE', 'SPACE STARTEN')}</Text>
+                <Text style={styles.continueText}>{t('JUST FOR ME', 'NUR FÜR MICH')}</Text>
               )}
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.shareButton, creating && styles.disabled]}
+              onPress={() => void createBackendSpace('couple')}
+              disabled={creating}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel={t('Start a shared space', 'Gemeinsamen Space starten')}
+            >
+              <Text style={styles.shareText}>{t('SHARED, WITH SOMEONE', 'GEMEINSAM, MIT JEMANDEM')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.shareButton, creating && styles.disabled]}
@@ -300,56 +318,76 @@ export default function InviteScreen() {
 
   // ---- CREATED: show the owner's code to share --------------------------
   const inviteCode = space?.inviteCode;
-  const canShare = !!inviteCode;
+  const istSolo = space?.type === 'solo';
+  const canShare = !!inviteCode && !istSolo;
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
         <View style={styles.header}>
-          <Text style={styles.label}>{t('INVITE YOUR PARTNER', 'PARTNER EINLADEN')}</Text>
-          <Text style={styles.title}>{t('your\ninvite code', 'dein\nEinladungscode')}</Text>
+          {/* Ein Solo-Space hat einen Code, aber der lässt niemanden herein
+              (Migration 0024). Ihn hier zu zeigen wäre eine Sackgasse mit
+              Anleitung — deshalb sagt dieser Bildschirm dann etwas anderes. */}
+          <Text style={styles.label}>
+            {istSolo ? t('YOUR SPACE IS READY', 'DEIN SPACE STEHT') : t('INVITE YOUR PARTNER', 'PARTNER EINLADEN')}
+          </Text>
+          <Text style={styles.title}>
+            {istSolo ? t('this one\nis yours', 'der hier\ngehört dir') : t('your\ninvite code', 'dein\nEinladungscode')}
+          </Text>
           <Text style={styles.subtitle}>
-            {t(
-              'share this with your partner so you can build your shared diary together. you can also start friends spaces later.',
-              'Teile diesen Code mit deinem Partner, damit ihr gemeinsam euer Tagebuch aufbaut. Du kannst später auch Freunde-Spaces starten.',
-            )}
+            {istSolo
+              ? t(
+                  'everything works from here on your own. if you ever want someone in it, you can open it up in the space settings — nothing you kept is lost.',
+                  'Ab hier funktioniert alles allein. Wenn du irgendwann jemanden darin haben willst, kannst du den Space in den Einstellungen öffnen — nichts von dem, was du festgehalten hast, geht dabei verloren.',
+                )
+              : t(
+                  'share this with your partner so you can build your shared diary together. you can also start friends spaces later.',
+                  'Teile diesen Code mit deinem Partner, damit ihr gemeinsam euer Tagebuch aufbaut. Du kannst später auch Freunde-Spaces starten.',
+                )}
           </Text>
         </View>
 
-        <View style={styles.codeContainer}>
-          <Text style={styles.codeLabelOnDark}>{t('YOUR CODE', 'DEIN CODE')}</Text>
-          {creating && !inviteCode ? (
-            <ActivityIndicator color={Colors.accent} style={styles.codeLoading} />
-          ) : (
-            <Text style={styles.code}>{inviteCode ?? '- - - -'}</Text>
-          )}
-          <Text style={styles.codeHint}>
-            {t(
-              // Vorher stand hier „on their welcome screen". Der Knopf steht
-              // nicht dort, sondern erst nach der Anmeldung — wer danach auf
-              // dem Willkommensbildschirm sucht, findet ihn nie.
-              'after signing in, your partner taps "I have a code" and enters this.',
-              'Nach der Anmeldung tippt dein Mensch auf "Ich habe einen Code" und gibt diesen ein.',
+        {/* Code und Teilen gibt es nur, wenn beides auch etwas bewirkt.
+            In einem Solo-Space lässt der Code niemanden herein — ein
+            Teilen-Knopf wäre eine Einladung in eine Sackgasse. */}
+        {!istSolo && (
+          <>
+          <View style={styles.codeContainer}>
+            <Text style={styles.codeLabelOnDark}>{t('YOUR CODE', 'DEIN CODE')}</Text>
+            {creating && !inviteCode ? (
+              <ActivityIndicator color={Colors.accent} style={styles.codeLoading} />
+            ) : (
+              <Text style={styles.code}>{inviteCode ?? '- - - -'}</Text>
             )}
-          </Text>
-        </View>
+            <Text style={styles.codeHint}>
+              {t(
+                // Vorher stand hier „on their welcome screen". Der Knopf steht
+                // nicht dort, sondern erst nach der Anmeldung — wer danach auf
+                // dem Willkommensbildschirm sucht, findet ihn nie.
+                'after signing in, your partner taps "I have a code" and enters this.',
+                'Nach der Anmeldung tippt dein Mensch auf "Ich habe einen Code" und gibt diesen ein.',
+              )}
+            </Text>
+          </View>
 
-        <View style={styles.divider}>
-          <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>{t('OR', 'ODER')}</Text>
-          <View style={styles.dividerLine} />
-        </View>
+          <View style={styles.divider}>
+            <View style={styles.dividerLine} />
+            <Text style={styles.dividerText}>{t('OR', 'ODER')}</Text>
+            <View style={styles.dividerLine} />
+          </View>
 
-        <TouchableOpacity
-          style={[styles.shareButton, !canShare && styles.disabled]}
-          activeOpacity={0.8}
-          onPress={onShare}
-          disabled={!canShare}
-          accessibilityRole="button"
-          accessibilityLabel={t('Share invite link', 'Einladungslink teilen')}
-        >
-          <Text style={styles.shareText}>{t('SHARE INVITE', 'EINLADUNG TEILEN')}</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.shareButton, !canShare && styles.disabled]}
+            activeOpacity={0.8}
+            onPress={onShare}
+            disabled={!canShare}
+            accessibilityRole="button"
+            accessibilityLabel={t('Share invite link', 'Einladungslink teilen')}
+          >
+            <Text style={styles.shareText}>{t('SHARE INVITE', 'EINLADUNG TEILEN')}</Text>
+          </TouchableOpacity>
+          </>
+        )}
 
         {error && (
           <Text style={styles.error} accessibilityLiveRegion="polite">
@@ -369,13 +407,20 @@ export default function InviteScreen() {
             {/* Setup is not the finish line — the first preserved moment is.
                 A PeakPlant verb here instead of a generic CONTINUE, so the
                 last step of onboarding names where it leads (MANIFESTO §5). */}
-            <Text style={styles.continueText}>{t('YOUR FIRST MOMENT', 'EUER ERSTER MOMENT')}</Text>
+            <Text style={styles.continueText}>
+              {istSolo ? t('YOUR FIRST MOMENT', 'DEIN ERSTER MOMENT') : t('YOUR FIRST MOMENT', 'EUER ERSTER MOMENT')}
+            </Text>
           </TouchableOpacity>
           <Text style={styles.hint}>
-            {t(
-              'your partner can join later using the code above',
-              'Dein Partner kann später mit dem Code oben beitreten',
-            )}
+            {istSolo
+              ? t(
+                  'you can open this space up later — nothing gets lost',
+                  'Du kannst diesen Space später öffnen — dabei geht nichts verloren',
+                )
+              : t(
+                  'your partner can join later using the code above',
+                  'Dein Partner kann später mit dem Code oben beitreten',
+                )}
           </Text>
         </View>
       </View>

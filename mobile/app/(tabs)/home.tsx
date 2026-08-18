@@ -27,6 +27,7 @@ import { PeakRow } from '../../components/home/PeakRow';
 import { AloneRow } from '../../components/home/AloneRow';
 import { spaceRepository } from '../../lib/repositories';
 import { voice } from '../../lib/voice';
+import { spaceTheme, glyphForSpace } from '../../lib/spaceTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { SEED_CARDS } from '../../lib/seed';
@@ -292,7 +293,9 @@ export default function HomeScreen() {
               <FadeInImage source={{ uri: activeSpace.avatarUrl }} style={styles.headerAvatarImage} />
             ) : (
               <Text style={styles.headerAvatarEmoji}>
-                {activeSpace?.emoji ?? (activeSpace?.type === 'friends' ? '✦' : '♥')}
+                {/* Ein binäres Ternär mit drei Werten: Der Solo-Space fiel in den
+                    Else-Zweig und bekam das HERZ — das Zeichen für ein Paar. */}
+                {activeSpace?.emoji ?? glyphForSpace(activeSpace?.type)}
               </Text>
             )}
           </View>
@@ -492,7 +495,10 @@ export default function HomeScreen() {
         {activeSpace && (
           <PeakRow
             momentsKept={memories.length}
-            emoji={activeSpace.collectibleEmoji ?? (activeSpace.type === 'friends' ? '🌻' : '🌶️')}
+            // Dasselbe Muster, dieselbe Folge: Der Solo-Space sammelte Chili,
+            // das Paar-Sammelstück. `spaceTheme` legt dafür 🪨 fest — der
+            // Eintrag erreichte nur den Wochen-Banner, nie diese Reihe.
+            emoji={activeSpace.collectibleEmoji ?? spaceTheme(activeSpace.type).emoji}
             label={
               memories.length === 1
                 ? t('1 peak collected', '1 Peak gesammelt')

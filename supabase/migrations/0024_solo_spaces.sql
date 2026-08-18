@@ -216,7 +216,7 @@ $$;
 
 revoke all on function public.open_space(uuid, text) from public;
 revoke all on function public.open_space(uuid, text) from anon;
-grant execute on function public.open_space(uuid, text) to authenticated;
+grant execute on function public.open_space(uuid, text) to authenticated, service_role;
 
 -- ── 5) `type` und `invite_code` gehören nicht dem Client ─────────────────────
 -- Die UPDATE-Policy aus 0012 („Mitglieder dürfen ihren Space ändern") war für
@@ -228,4 +228,12 @@ grant execute on function public.open_space(uuid, text) to authenticated;
 -- heute genau `name`, `emoji`, `avatar_path`, `collectible_emoji`
 -- (lib/repositories/supabase.ts) — nachgesehen, nicht angenommen.
 revoke update on public.spaces from authenticated;
+-- `anon` ebenso: Heute adressiert keine Policy die Rolle, also folgenlos —
+-- aber „type und invite_code gehören nicht dem Client" halb umzusetzen wäre
+-- eine Aussage, die der Code nicht hält.
+revoke update on public.spaces from anon;
 grant update (name, emoji, avatar_path, collectible_emoji) on public.spaces to authenticated;
+
+-- ACHTUNG FÜR SPÄTERE MIGRATIONEN: Ein Spaltengrant deckt keine KÜNFTIGEN
+-- Spalten ab. Wer `spaces` eine vom Client beschreibbare Spalte gibt, muss den
+-- Grant hier nachziehen — sonst scheitert das Schreiben stumm mit 403.

@@ -67,6 +67,24 @@ export interface Voice {
   sharingBoundary: Phrase;
   /** Über der eigenen Bewertung eines Ortes. */
   spaceRecommends: Phrase;
+  /** Reiter „Momente": Kicker, Titel, leerer Zustand. */
+  momentsKicker: Phrase;
+  momentsEmptyTitle: Phrase;
+  momentsEmptyHint: Phrase;
+  /** Sammlung: die Zeile über den Editionen. */
+  editionsLead: Phrase;
+  /** Der Satz unter dem Scanner. */
+  scanHint: Phrase;
+  /** Challenges: der Kicker und der Sinn. */
+  challengeKicker: Phrase;
+  challengePurpose: Phrase;
+  /** Space-Einstellungen: das Sammelstück. */
+  collectibleLabel: Phrase;
+  collectibleHint: Phrase;
+  /** Was beim Löschen eines Moments passiert. */
+  memoryDeleteWarning: Phrase;
+  /** Push: die zwei erlaubten Anlässe. */
+  pushNewMoment: Phrase;
 }
 
 const GETEILT: Voice = {
@@ -115,6 +133,35 @@ const GETEILT: Voice = {
     de: 'nur diese Zeile geht raus. Eure Notiz, euer Foto, eure Namen und euer Space bleiben hier.',
   },
   spaceRecommends: { en: 'YOUR SPACE RECOMMENDS THIS', de: 'EUER SPACE EMPFIEHLT DIESEN ORT' },
+  momentsKicker: { en: 'YOUR MOMENTS', de: 'EURE MOMENTE' },
+  momentsEmptyTitle: { en: 'your story starts here.', de: 'eure Geschichte beginnt hier.' },
+  momentsEmptyHint: {
+    en: 'live a card together, scan its QR — and the moment lands here, with your photo and your words.',
+    de: 'erlebt eine Karte zusammen, scannt ihren QR-Code — und der Moment landet hier, mit eurem Foto und euren Worten.',
+  },
+  editionsLead: {
+    en: 'each edition is a printed deck. everything else in the app works without one.',
+    de: 'jede Edition ist ein gedrucktes Deck. Alles andere in der App geht auch ohne — eure Momente, Ideen und Orte.',
+  },
+  scanHint: {
+    en: 'scan the QR on a card to open the guided evening behind it.',
+    de: 'scannt den QR-Code auf einer Karte, dann öffnet sich der geführte Abend dahinter — gemeinsam erlebt, hier festgehalten.',
+  },
+  challengeKicker: { en: 'YOUR CHALLENGES', de: 'EURE CHALLENGES' },
+  challengePurpose: {
+    en: 'a gentle reason to do something — no score, no ranking.',
+    de: 'ein sanfter Anlass, gemeinsam etwas zu tun — keine Wertung, keine Rangliste.',
+  },
+  collectibleLabel: { en: 'YOUR COLLECTIBLE', de: 'EUER SAMMELZEICHEN' },
+  collectibleHint: {
+    en: 'you earn one every time a challenge is complete.',
+    de: 'ihr verdient eins, jedes Mal wenn ihr eine Challenge zusammen abschließt.',
+  },
+  memoryDeleteWarning: {
+    en: 'this takes it out of the diary for both of you.',
+    de: 'Das nimmt ihn für euch beide aus dem Tagebuch.',
+  },
+  pushNewMoment: { en: 'There is a new moment in your space.', de: 'In eurem Space liegt ein neuer Moment.' },
 };
 
 const ALLEIN: Voice = {
@@ -165,6 +212,35 @@ const ALLEIN: Voice = {
     de: 'nur diese Zeile geht raus. Deine Notiz, dein Foto, dein Name und dein Space bleiben hier.',
   },
   spaceRecommends: { en: 'YOUR SPACE RECOMMENDS THIS', de: 'DU EMPFIEHLST DIESEN ORT' },
+  momentsKicker: { en: 'YOUR MOMENTS', de: 'DEINE MOMENTE' },
+  momentsEmptyTitle: { en: 'your story starts here.', de: 'deine Geschichte beginnt hier.' },
+  momentsEmptyHint: {
+    en: 'live a card, scan its QR — and the moment lands here, with your photo and your words.',
+    de: 'erlebe eine Karte, scanne ihren QR-Code — und der Moment landet hier, mit deinem Foto und deinen Worten.',
+  },
+  editionsLead: {
+    en: 'each edition is a printed deck. everything else in the app works without one.',
+    de: 'jede Edition ist ein gedrucktes Deck. Alles andere in der App geht auch ohne — deine Momente, Ideen und Orte.',
+  },
+  scanHint: {
+    en: 'scan the QR on a card to open the guided evening behind it.',
+    de: 'scanne den QR-Code auf einer Karte, dann öffnet sich der geführte Abend dahinter — erlebt und hier festgehalten.',
+  },
+  challengeKicker: { en: 'YOUR CHALLENGES', de: 'DEINE CHALLENGES' },
+  challengePurpose: {
+    en: 'a gentle reason to do something — no score, no ranking.',
+    de: 'ein sanfter Anlass, etwas zu tun — keine Wertung, keine Rangliste.',
+  },
+  collectibleLabel: { en: 'YOUR COLLECTIBLE', de: 'DEIN SAMMELZEICHEN' },
+  collectibleHint: {
+    en: 'you earn one every time a challenge is complete.',
+    de: 'du verdienst eins, jedes Mal wenn du eine Challenge abschließt.',
+  },
+  memoryDeleteWarning: {
+    en: 'this takes it out of the diary.',
+    de: 'Das nimmt ihn aus dem Tagebuch.',
+  },
+  pushNewMoment: { en: 'There is a new moment in your space.', de: 'In deinem Space liegt ein neuer Moment.' },
 };
 
 /**
