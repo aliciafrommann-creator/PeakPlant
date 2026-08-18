@@ -13,6 +13,7 @@ import type { PartnerNote } from '../types';
 export function useNotes(spaceId?: string) {
   const [notes, setNotes] = useState<PartnerNote[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [userId, setUserId] = useState<string | undefined>();
 
   useEffect(() => {
@@ -31,12 +32,18 @@ export function useNotes(spaceId?: string) {
       setLoading(false);
       return;
     }
+    setError(false);
     try {
       const data = await noteRepository.getAll(spaceId);
       setNotes(data);
     } catch {
-      // Notes are non-critical to the home render; degrade to empty.
+      // Leer bleiben, damit der Startbildschirm nie bricht — ABER sagen, dass
+      // es ein Fehler war. Vorher war beides ununterscheidbar: „noch nichts
+      // geschrieben" erschien auch dann, wenn die Notiz der anderen Person
+      // nur nicht geladen werden konnte. In einer Paar-App ist das die
+      // teuerste Scheinnull von allen (MANIFESTO §1).
       setNotes([]);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -76,5 +83,5 @@ export function useNotes(spaceId?: string) {
   const latestNote = notes[0] ?? null;
   const latestFromPartner = notes.find((n) => n.authorId && n.authorId !== userId) ?? null;
 
-  return { notes, loading, latestNote, latestFromPartner, userId, sendNote, deleteNote };
+  return { notes, loading, error, latestNote, latestFromPartner, userId, sendNote, deleteNote };
 }

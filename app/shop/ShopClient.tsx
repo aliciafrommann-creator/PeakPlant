@@ -280,9 +280,15 @@ export function ShopClient({ offers }: { offers: Record<ProductKey, ProductOffer
               ))}
             </div>
             <div style={{ borderTop: '1px solid #ebebeb', paddingTop: '1rem' }}>
+              {/* Diese Liste nennt nur, was die App HEUTE kann. Draußen sind:
+                  „one free workshop per edition" (es gibt in der App keinerlei
+                  Workshop-Mechanik, und /community sagt bewusst „das bauen wir
+                  auf" statt es zu versprechen) und „how to grow your seed
+                  paper" (die Anleitung steht auf der Website, nicht in der App).
+                  Beides waren Kaufbestandteile, die es nicht gibt (§1). */}
               <p style={{ fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', opacity: 0.35, marginBottom: '0.6rem', fontFamily: PP }}>the app — your space</p>
               <p style={{ fontSize: '0.82rem', color: '#777', fontWeight: 300, lineHeight: 1.7, fontFamily: PP }}>
-                a private space — for couples or your circle of friends · your growing moment diary · a gentle weekly challenge · curated date ideas & a places map · how to grow your seed paper · one free workshop per edition
+                a private space for the two of you · your growing moment diary · a gentle weekly challenge · curated date ideas & a places map · every card you scan opens its guided evening in the app
               </p>
             </div>
             <PurchaseBlock
@@ -394,10 +400,18 @@ export function ShopClient({ offers }: { offers: Record<ProductKey, ProductOffer
             either way, so a JS-only breakpoint ships the phone a three-column
             layout and only corrects it after hydration. */}
         <div className="pp-question-grid" style={{ gap: '0' }}>
+          {/* DIE ECHTEN Fragen aus dem fertigen Deck (mobile/lib/content/
+              edition01.ts). Hier standen bis zum 18.08.2026 drei erfundene
+              Näherungen — auf genau der Seite, auf der Geld fließt, und
+              nachprüfbar in dem Moment, in dem jemand das gedruckte Deck in
+              der Hand hält. Die Startseite und /edition-01 zitieren korrekt
+              und tragen dort den Hinweis „never invented approximations"; der
+              Shop war die eine Stelle, an der es niemand angewandt hat.
+              Wer sie ändert, gleicht sie mit der Kartendatei ab (§1). */}
           {[
-            'what makes you feel seen by me?',
-            'when do you feel most alive with me?',
-            'what helps you open up to me?',
+            'Where do you sometimes still feel unseen by me?',
+            'What is already growing beautifully between us?',
+            'What dream would you like me to take seriously?',
           ].map((q, i) => (
             <motion.div key={i}
               initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}

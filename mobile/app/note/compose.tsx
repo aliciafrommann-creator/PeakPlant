@@ -27,7 +27,7 @@ const MAX_CHARS = 280;
 export default function ComposeNoteScreen() {
   const { activeSpace } = useSpaces();
   const { t, language } = useLanguage();
-  const { notes, loading, userId, sendNote, deleteNote } = useNotes(activeSpace?.id);
+  const { notes, loading, error: notesError, userId, sendNote, deleteNote } = useNotes(activeSpace?.id);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
 
@@ -126,10 +126,15 @@ export default function ComposeNoteScreen() {
         >
           {!loading && notes.length === 0 && (
             <Text style={styles.emptyNote}>
-              {t(
-                'nothing written yet. what you write stays here, for the two of you.',
-                'noch nichts geschrieben. Was du schreibst, bleibt hier — für euch beide.',
-              )}
+              {notesError
+                ? t(
+                    'we could not load your notes just now — nothing is lost.',
+                    'wir konnten eure Notizen gerade nicht laden — nichts davon ist weg.',
+                  )
+                : t(
+                    'nothing written yet. what you write stays here, for the two of you.',
+                    'noch nichts geschrieben. Was du schreibst, bleibt hier — für euch beide.',
+                  )}
             </Text>
           )}
           {notes.map((n) => {

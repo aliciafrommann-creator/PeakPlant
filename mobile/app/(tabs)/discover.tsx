@@ -720,7 +720,10 @@ function RecommendationCard({
         </View>
       )}
 
-      <Text style={styles.provenance}>{curatedLabel} · {checkedLabel} {rec.freshnessAt}</Text>
+      <Text style={styles.provenance}>
+        {curatedLabel}
+        {rec.freshnessAt ? ` · ${checkedLabel} ${rec.freshnessAt}` : ''}
+      </Text>
       <View style={styles.cardFooter}>
         <Text style={styles.cta}>{seeLabel}</Text>
         {onSave && !compact && (

@@ -57,8 +57,17 @@ function CouplesHero({ locale }: { locale: string }) {
         <h1 style={{ fontFamily: PP, fontSize: 'clamp(1.6rem, 3vw, 2.6rem)', fontWeight: 200, color: '#ffffff', letterSpacing: '-0.03em', lineHeight: 1.2, maxWidth: 540, margin: '0 auto 1.25rem' }}>
           {isDE ? 'wann hat das leben begonnen, sich so schnell anzufühlen?' : 'when did life start feeling this fast?'}
         </h1>
+        {/* Hier stand bis zum 18.08.2026 „friends, family & solo editions sind
+            unterwegs" — im Präsens, ohne Jahr. Das widerspricht Alicias
+            eigener Festlegung im BACKLOG: nicht auf die Website, Jahreszahlen
+            immer im Futur („geplant für 2027"), und family editions erst nach
+            der rechtlichen Prüfung (Minderjährige + intime Editionen). Dazu
+            sagt lib/seed.ts ausdrücklich, dass friends editions KEINE
+            Produktlinie sind; alle zwölf angelegten Editionen sind für Paare.
+            Ein Versprechen, das drei Dokumente widerlegen, gehört nicht in den
+            ersten Satz der Startseite (§1). */}
         <p style={{ fontFamily: PP, fontSize: '0.8rem', letterSpacing: '0.06em', color: 'rgba(255,255,255,0.75)', fontWeight: 300, maxWidth: 420, margin: '0 auto 2rem', lineHeight: 1.7 }}>
-          {isDE ? 'ein kartenset für paare — dates, acts, questions. jede karte wird ein festgehaltener moment. friends, family & solo editions sind unterwegs.' : 'a card deck for couples — dates, acts, questions. every card becomes a moment you keep. friends, family & solo editions are on their way.'}
+          {isDE ? 'ein kartenset für paare — dates, acts, questions. jede karte wird ein festgehaltener moment.' : 'a card deck for couples — dates, acts, questions. every card becomes a moment you keep.'}
         </p>
         <a href="#waitlist" className="pp-hero-cta"
           style={{ marginBottom: '1.75rem', color: '#ffffff', textDecoration: 'none', fontFamily: PP }}>

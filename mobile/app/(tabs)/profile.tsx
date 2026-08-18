@@ -25,7 +25,7 @@ import { SpacePicker } from '../../components/space/SpacePicker';
 export default function ProfileScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { t } = useLanguage();
-  const { memories } = useMemories(activeSpace?.id);
+  const { memories, loading: memoriesLoading, error: memoriesError } = useMemories(activeSpace?.id);
   const { chillyCount } = useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
   const ritualsEnabled = useAppStore((s) => s.features.rituals);
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -78,12 +78,18 @@ export default function ProfileScreen() {
                 : t('friends space', 'Freunde-Space')}
             </Text>
             {/* Archive, not a scoreboard: a quiet line, never big vanity numbers. */}
+            {!memoriesLoading && !memoriesError && (
             <Text style={styles.archiveLine}>
               {t(
+                // Solange geladen wird oder das Laden scheiterte, ist die
+                // Wahrheit „wir wissen es nicht" — und eine 0 wäre dann eine
+                // Scheinzahl (MANIFESTO §1). Der Bildschirm sagt dann lieber
+                // nichts über Zahlen.
                 `${memories.length} moment${memories.length !== 1 ? 's' : ''} kept · ${chillyCount} challenge${chillyCount !== 1 ? 's' : ''} done together`,
                 `${memories.length} Moment${memories.length !== 1 ? 'e' : ''} festgehalten · ${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''} zusammen geschafft`,
               )}
             </Text>
+            )}
           </TouchableOpacity>
         )}
 

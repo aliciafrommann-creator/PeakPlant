@@ -172,7 +172,14 @@ function toRecommendation(s: Scored, c: DateConstraints, isAlternative: boolean)
     priceBand: effectivePrice(s.moment, s.place),
     indoorOutdoor: s.moment.indoorOutdoor,
     isAlternative,
-    freshnessAt: s.place?.lastVerifiedAt ?? '2026-06-01',
+    // Vorher ein festes Literal: die rund 100 kuratierten Momente OHNE Ort
+    // zeigten damit alle „geprüft 2026-06-01" — eine erfundene Prüfung, die
+    // obendrein von selbst altert. Und Orte mit dem internen Platzhalter
+    // 'live-search-required' zeigten genau diesen Wert als Prüfdatum an.
+    freshnessAt:
+      s.place?.lastVerifiedAt && s.place.lastVerifiedAt !== 'live-search-required'
+        ? s.place.lastVerifiedAt
+        : undefined,
   };
 }
 
