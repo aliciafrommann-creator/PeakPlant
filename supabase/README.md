@@ -28,6 +28,43 @@ credentials), tracked as O-001/O-002 in the Decision Register.
 > policy + `space-avatars` bucket with 4 member policies). Security advisors
 > reported no new findings from these migrations.
 
+### `0022_shares_audiences_follows.sql` — NOCH NICHT ANGEWANDT
+
+Der Unterbau für geteilte Aktivitäten, Feed und später Abende. **Additiv,
+idempotent, rührt keine bestehende Tabelle an** — und verändert das Verhalten
+der App nicht: solange keine Oberfläche schreibt, bleibt alles leer, und die
+App läuft auch ohne diese Migration unverändert weiter.
+
+Drei neue Tabellen und eine Ansicht:
+
+| Objekt | Wofür | Die Zusage, die darin steckt |
+|---|---|---|
+| `audiences` | Der Anker: ein Ort oder ein Thema | `kind` kennt **kein** `'person'` |
+| `shares` | Die widerrufliche Freigabe, zeigt auf einen Moment | `memories` wird nicht angefasst; kein UPDATE-Pfad |
+| `public_shares` (View) | Was andere lesen | Weder `space_id` noch `created_by` noch `memory_id` — nicht gefiltert, **nicht vorhanden** |
+| `follows` | Wem ich folge | Keine Spalte für einen gefolgten Menschen |
+
+**Die Form, um die es geht:** Ein Moment wird nie geteilt. Eine Spalte
+`visibility` auf `memories` wäre die naheliegende und falsche Lösung — ein
+fehlerhafter UPDATE macht damit ein Tagebuch öffentlich, dasselbe Bild kann
+nicht an zwei Publika hängen, und Zurücknehmen wird Rückbau statt Löschen.
+Stattdessen zeigt eine eigene Zeile auf den Moment; sie zu löschen entfernt das
+Sichtbare und lässt den Moment unberührt.
+
+**Warum vorerst nur Ort und Thema, kein Kreis:** Ein Publikum füllt sich nur,
+wenn sein Anker existiert, bevor jemand etwas hineinlegt. Ort und Thema tun das
+(Strava-Segmente, Letterboxd hängt alles an *dem Film*). Ein Kreis existiert
+erst mit dem sozialen Graph — bei heute zwei Konten und keinem Paar wäre er per
+Konstruktion leer. Der CHECK auf `kind` lässt sich später erweitern.
+
+**Der Feed ist keine Tabelle**, sondern die Abfrage „`public_shares`, deren
+`audience_id` ich folge". Nicht materialisiert, damit ein Widerruf sofort und
+überall wirkt und nichts nachzuräumen ist.
+
+Anwenden erst nach ausdrücklicher Freigabe. Danach: Spalten und Policies
+gegenprüfen und `get_advisors(type: security)` laufen lassen — die Ansicht
+`public_shares` ist der Punkt, an dem ein Advisor-Hinweis relevant wäre.
+
 ## Applying 0012 (manual)
 
 Run from the repo root once, against the linked project:
