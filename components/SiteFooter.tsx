@@ -28,6 +28,10 @@ export function SiteFooter({ locale }: { locale: string }) {
     { href: '/impressum', label: 'Impressum' },
     { href: '/datenschutz', label: isDE ? 'Datenschutz' : 'Privacy' },
     { href: '/agb', label: 'AGB' },
+    // Eigener Link, obwohl die Belehrung IN den AGB steht: Sie ist eine
+    // Pflichtinformation, und wer sie sucht, sucht nach diesem Wort
+    // (18.08.2026).
+    { href: '/agb#widerruf', label: isDE ? 'Widerruf' : 'Right of withdrawal' },
   ]
 
   return (
