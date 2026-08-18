@@ -142,7 +142,17 @@ schlimmeren trugen andere Namen. Deshalb, in dieser Reihenfolge:
    ist gerechnet (Kamera auf eine weiße Wand ist der schlechteste Fall).
 9. Eine lokale Konstante versteckt die Farbe vor jedem Wächter
    (`const TOGETHER = Sections.together`). Wenn du eine anlegst und sie als
-   Schrift benutzt, brauchst du daneben die Ink-Fassung.
+   Schrift benutzt, brauchst du daneben die Ink-Fassung. Der Wächter löst nur
+   den einfachsten Fall auf — Ketten, Kleinschreibung, Objektfelder und
+   Importe sieht er nicht.
+10. Ein Schleier repariert die Schrift und kann einen Rahmen zerstören. Ein
+    Bedienelement, das nur an einem Umriss erkennbar ist, hängt vom Untergrund
+    ab; eine Füllung tut das nicht. Im Scanner fiel genau dieser Rand durch
+    die eigene Korrektur von 3,80:1 auf 2,46:1.
+11. Eine Farbe, die als **Vorgabewert in den Props** steht
+    (`color = Colors.accent`), ist kein Style-Block — sie fehlt in jeder
+    Zählung, die Style-Blöcke durchgeht. Der lauteste Knopf der App wurde so
+    zweimal übersehen.
 
 *Funde:* eine Knopfbeschriftung in `Colors.text` auf dunklem Grund — **1,00:1,
 schlicht unsichtbar**; `Sections.together` als 11-pt-Etikett auf Papier

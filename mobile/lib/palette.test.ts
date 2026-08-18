@@ -27,9 +27,9 @@ import { contrastRatio, AA_SMALL_TEXT } from './contrast';
  *   `AccentInks` / `SectionInks`. Das ist die Regel, die alle elf Funde vom
  *   18.08.2026 mechanisch fängt — von `Accents.apricot` mit 2,14:1 bis
  *   `Sections.grow` mit 3,27:1 — und zwar unabhängig davon, ob sie auf Papier,
- *   Creme oder Warm liegen. Sie greift auch über lokale Konstanten
+ *   Creme oder Warm liegen. Sie greift auch über einfache lokale Konstanten
  *   (`const TOGETHER = Sections.together`), an denen ein erster Anlauf
- *   vorbeigesehen hat.
+ *   vorbeigesehen hat — mit den Grenzen, die unten stehen.
  *
  *   **B — Eine Schriftfarbe aus `Colors` muss zu einem der beiden Gründe
  *   gehören.** Entweder sie besteht auf dem PAPIERTON (#F3F1EC, der dunkelste
@@ -38,9 +38,12 @@ import { contrastRatio, AA_SMALL_TEXT } from './contrast';
  *   keinem von beiden gehört, ist überall falsch.
  *
  * Warum B die hellen Tinten durchlässt, statt für jede einen Marker zu
- * verlangen: Sie stehen an 35 Stellen auf gefüllten Bedienelementen. Ein Test
- * mit 35 Ausnahmen ist ein abgeschalteter Test im Kostüm — und die Frage, ob
+ * verlangen: Sie stehen an 52 Stellen auf gefüllten Bedienelementen. Ein Test
+ * mit 52 Ausnahmen ist ein abgeschalteter Test im Kostüm — und die Frage, ob
  * die Füllung darunter wirklich dunkel ist, kann er ohnehin nicht beantworten.
+ * Diese Lücke ist real und hat gekostet: Zwei der 52 lagen auf HELLER Füllung
+ * — die Haupthandlung des Startbildschirms bei 4,47:1 und das Space-Zeichen
+ * bei bis zu 1,96:1. Gefunden hat sie ein Mensch, nicht dieser Test.
  *
  * WAS ER NICHT KANN, damit niemand mehr erwartet als da ist:
  *   · Er weiß nicht, WELCHE Fläche unter einem Text liegt. Weiße Schrift auf
@@ -50,6 +53,11 @@ import { contrastRatio, AA_SMALL_TEXT } from './contrast';
  *     Farben aus `constants/typography.ts`.
  *   · Er kennt Style-Blöcke nur in `StyleSheet.create`-Form mit zwei Leerzeichen
  *     Einrückung, und keine berechneten oder roh als Hex geschriebenen Farben.
+ *   · Er löst lokale Konstanten auf — aber nur EINSTUFIG, nur in
+ *     GROSSSCHREIBUNG (`const TOGETHER = Sections.together`) und nur innerhalb
+ *     derselben Datei. Eine Kette (`const B = A`), ein kleingeschriebener
+ *     Alias, ein Objektfeld (`OBJ.ink`) oder ein Import aus einer anderen
+ *     Datei gehen still durch.
  *   · Ein Block, der nur eine Farbe überschreibt (`actionTextDone`), hat kein
  *     eigenes `fontSize` — er wird über den `fontSize`-losen Zweig mitgeprüft.
  *

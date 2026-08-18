@@ -34,7 +34,15 @@ export default function ScanScreen() {
 
   // Gentle breathing pulse on the scan frame — signals "actively looking".
   useEffect(() => {
-    if (reducedMotion) return;
+    // Bei reduzierter Bewegung läuft der Puls nicht — dann muss der Rahmen
+    // aber SICHTBAR stehenbleiben. Vorher blieb `pulse` auf 0 und damit die
+    // Deckkraft dauerhaft bei 0,55: der Zielrahmen, das einzige Element, das
+    // zeigt wohin man halten soll, stand bei 2,05–2,22:1 (WCAG 1.4.11
+    // verlangt 3:1). Ein vierter Zustand, den die erste Zählung übersah.
+    if (reducedMotion) {
+      pulse.setValue(1);
+      return;
+    }
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, { toValue: 1, duration: 1200, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
@@ -280,20 +288,29 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.lg,
     borderRadius: Radii.md,
   },
+  /**
+   * Gefüllt, nicht umrandet.
+   *
+   * Vorher war die einzige sichtbare Grenze dieses Knopfs ein 1-px-Rand in
+   * `Colors.accent`. Auf flachem Dunkel waren das 3,80:1 — gerade genug. Auf
+   * dem neuen Schleier über einem hellen Kamerabild fällt derselbe Rand auf
+   * **2,46:1**: Die eigene Korrektur hat die Beschriftung gerettet und die
+   * Umrandung verschlechtert. Eine Füllung hat diese Abhängigkeit nicht — sie
+   * bringt ihre eigene Fläche mit, in jedem Zustand.
+   */
   permissionButton: {
     height: 48,
     paddingHorizontal: Spacing.xl,
-    borderWidth: 1,
-    borderColor: Colors.accent,
+    backgroundColor: Colors.accentInk,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
   // Hier stand `Colors.text` auf #1E1C1A — dieselbe Farbe, 1,00:1, die
-  // Beschriftung war schlicht unsichtbar. Der Knopf sitzt in der
-  // `permissionBox` und damit auf deren Schleier.
-  // kontrast-ok: onDarkStrong ≥ 10,26:1, auch über hellem Kamerabild.
-  permissionButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.onDarkStrong },
+  // Beschriftung war schlicht unsichtbar.
+  // kontrast-ok: weiß auf der Füllung `accentInk` = 5,09:1, unabhängig davon,
+  // was hinter dem Knopf liegt.
+  permissionButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.white },
   bottom: { paddingHorizontal: Spacing.screen, paddingVertical: Spacing.xl, gap: Spacing.lg },
   divider: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   dividerLine: { flex: 1, height: 1, backgroundColor: Colors.border },

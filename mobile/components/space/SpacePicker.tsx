@@ -20,6 +20,7 @@ import { FadeInImage } from '../ui/FadeInImage';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { acknowledgeSelection } from '../../lib/haptics';
+import { bestInk } from '../../lib/contrast';
 import { composeInviteText } from '../../lib/shareText';
 import type { Space } from '../../lib/types';
 
@@ -132,7 +133,12 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                         {space.avatarUrl ? (
                           <FadeInImage source={{ uri: space.avatarUrl }} style={styles.dotImage} />
                         ) : (
-                          <Text style={styles.dotGlyph}>
+                          // Die Tinte wird gerechnet, nicht gesetzt: Der Punkt
+                          // trägt eine von sieben Akzentfarben, und weiß
+                          // erreichte auf sechs davon keine 4,5:1 (Sonnenblume
+                          // 1,96). Das Zeichen trägt Bedeutung — ♥ heißt Paar,
+                          // ✦ heißt geteilt, 🪨 heißt allein.
+                          <Text style={[styles.dotGlyph, { color: bestInk(color, Colors.text, Colors.white) }]}>
                             {space.emoji ?? glyphFor(space.type)}
                           </Text>
                         )}
@@ -147,8 +153,12 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                             : t('friends space', 'Freunde-Space')}
                         </Text>
                       </View>
+                      {/* Das Häkchen NICHT in der Punktfarbe: Es sitzt auf
+                          `Colors.surface`, und Sonnenblume erreicht dort 1,9:1
+                          — unter den 3:1, die WCAG 1.4.11 für ein
+                          bedeutungstragendes Symbol verlangt. */}
                       {active && (
-                        <Ionicons name="checkmark-circle" size={20} color={color} style={styles.check} />
+                        <Ionicons name="checkmark-circle" size={20} color={Colors.text} style={styles.check} />
                       )}
                     </PressableScale>
 
@@ -248,9 +258,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  // kontrast-ok: Die Farbe kommt beim Rendern aus `bestInk(…)` — auf jeder der
+  // sieben Punktfarben die besser lesbare der beiden Tinten.
   dotGlyph: {
     fontSize: 16,
-    color: Colors.white,
   },
   dotImage: {
     width: 38,

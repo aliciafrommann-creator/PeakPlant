@@ -283,7 +283,9 @@ Style-Blöcken, also im behaupteten Umfang:
   2,38:1 (Anrede in `note/compose`) und 4,28:1.
 - Zwei Texte im dunklen Einladungs-Kasten, einer davon über einen Stil, der
   sich zwei verschiedene Untergründe teilte.
-- Vier Bedienelemente mit weißer kleiner Schrift auf `accent`: 4,47:1.
+- Fünf Bedienelemente mit weißer kleiner Schrift auf `accent`: 4,47:1. (Beim
+  ersten Zählen waren es „vier" — der fünfte, der schwebende Haupt-Knopf, trägt
+  seine Füllung als Vorgabewert in den Props und nicht in einem Style-Block.)
 - Und in der zweiten Runde: vier Etiketten hinter lokalen Konstanten
   (`TOGETHER` = apricot als 11-pt-Schrift = **2,35:1**, schlechter als alles
   aus Runde eins), ein Überschreibungs-Block ohne eigenes `fontSize`, und der
@@ -302,7 +304,9 @@ Daraus, verbindlich:
 3. **Ein Wächter mit zwei Regeln**, beide ohne Kenntnis des Untergrunds
    prüfbar (`lib/palette.test.ts`): (A) Ein Akzent ist eine Füllung, keine
    Schrift — `Accents.*`/`Sections.*` unter 24 pt sind verboten, auch hinter
-   lokalen Konstanten wie `const TOGETHER = Sections.together`. (B) Jede
+   einstufigen, großgeschriebenen, dateilokalen Konstanten wie
+   `const TOGETHER = Sections.together` (Ketten, Kleinschreibung, Objektfelder
+   und Importe gehen weiterhin durch — steht so im Dateikopf). (B) Jede
    andere Schriftfarbe muss auf dem Papierton bestehen oder eine erklärte
    Dunkel-Tinte sein. Stand: 1083 Style-Blöcke, 476 mit auflösbarer
    Schriftfarbe geprüft, 7 begründete Ausnahmen (`// kontrast-ok: <Grund>`).
@@ -311,7 +315,10 @@ Daraus, verbindlich:
 4. Ein statischer Farbwert in einem Stil, dessen Farbe beim Rendern gesetzt
    wird, gehört gelöscht.
 5. **Ein Text über einem Foto oder einem Kamerabild bringt seinen Grund
-   selbst mit.** Halbdurchsichtige Streifen sind kein bekannter Untergrund:
+   selbst mit — und ein Bedienelement auch.** Ein Schleier repariert die
+   Schrift und verschlechtert einen Rahmen: Der Umriss-Knopf im Scanner fiel
+   dadurch von 3,80:1 auf 2,46:1. Gefüllte Knöpfe haben diese Abhängigkeit
+   nicht. Halbdurchsichtige Streifen sind kein bekannter Untergrund:
    Der Scanner setzte helle Schrift über das LIVE-Kamerabild (1,07:1 über
    einer weißen Wand), und der Streifen auf der Momente-Wand ließ ein dunkles
    Foto mit 8 % durch. Entweder deckend, oder ein Schleier, dessen

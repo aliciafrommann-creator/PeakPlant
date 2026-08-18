@@ -25,7 +25,11 @@ export function FloatingActionButton({
   onPress,
   icon = 'add',
   label,
-  color = Colors.accent,
+  // accentInk statt accent: Die Beschriftung ist weiß und 12 pt — auf
+  // `accent` sind das 4,47:1 und damit knapp durchgefallen. Am 18.08.2026
+  // wurden vier solche Bedienelemente korrigiert und dieses hier übersehen,
+  // weil seine Füllung ein Vorgabewert in den Props ist und kein Style-Block.
+  color = Colors.accentInk,
   accessibilityLabel,
   style,
 }: FloatingActionButtonProps) {
