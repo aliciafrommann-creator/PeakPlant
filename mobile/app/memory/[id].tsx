@@ -24,6 +24,9 @@ import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import { FadeInImage } from '../../components/ui/FadeInImage';
 import { shareMemory } from '../../lib/share';
+import { ShareToChallenge } from '../../components/memory/ShareToChallenge';
+import { useSpaces } from '../../lib/hooks/useSpaces';
+import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { confirmSuccess } from '../../lib/haptics';
 import type { Memory } from '../../lib/types';
 
@@ -37,7 +40,9 @@ export default function MemoryDetailScreen() {
   const [draftNote, setDraftNote] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { t } = useLanguage();
+  const { t, l } = useLanguage();
+  const { activeSpace } = useSpaces();
+  const { weekly } = useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
   const obscured = usePrivacyOverlay();
 
   useEffect(() => {
@@ -247,6 +252,21 @@ export default function MemoryDetailScreen() {
             )}
 
             <Text style={styles.date}>{formattedDate}</Text>
+
+            {/* Teilen steht UNTER den Handlungen des Moments und ist bewusst
+                keine Pille: der Bildschirm hat ein Hauptobjekt und zwei laute
+                Handlungen (bearbeiten, löschen) — Teilen ist eine dritte
+                Möglichkeit, kein drittes Ziel (klarheit K1). */}
+            {!editing && activeSpace && (
+              <ShareToChallenge
+                memoryId={memory.id}
+                spaceId={activeSpace.id}
+                challengeId={weekly.id}
+                challengeTitle={l(weekly.title)}
+                cardTitle={card?.content ? l(card.content.title) : card?.prompt}
+                t={t}
+              />
+            )}
 
             {!editing && (
               <View style={styles.actions}>
