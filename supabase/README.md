@@ -97,6 +97,26 @@ Der Widerruf kaskadiert über den Fremdschlüssel. Die Trigger-Funktion ist für
   ohne Policy = serverseitige Tabellen mit Absicht; die vier
   SECURITY-DEFINER-Funktions-Warnungen; Leaked-Password-Schutz braucht Pro).
 
+### Themen-Publika der Challenges — angelegt (18.08.2026)
+
+Damit „mit der Wochen-Challenge teilen" nicht ins Leere läuft, stehen in
+`audiences` dreizehn Zeilen, eine je Challenge:
+
+```sql
+select kind, anchor, title from public.audiences order by anchor;
+-- theme · challenge:ch-1 … challenge:wk-8
+```
+
+Angelegt wurden **alle**, nicht nur die laufende: der Pool hängt vom Space-Typ
+ab, und die Rotation soll nächste Woche keine Lücke reißen. Die Zeilen tragen
+nur Kürzel und Titel — keine personenbezogenen Daten. Wer eine Challenge
+umbenennt, zieht den Titel hier nach; wer eine hinzufügt, legt den Anker
+`challenge:<id>` mit an, sonst sagt die App bei ihr ehrlich „noch nicht offen
+zum Teilen".
+
+Löschen ist gefahrlos: die Freigaben daran verschwinden mit (`on delete
+cascade`), die Momente bleiben unberührt.
+
 ## Applying 0012 (manual)
 
 Run from the repo root once, against the linked project:
