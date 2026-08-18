@@ -31,7 +31,7 @@ const TOGETHER = Sections.together;
 
 export default function StoryScreen() {
   const { activeSpace } = useSpaces();
-  const { memories, loading, refresh } = useMemories(activeSpace?.id);
+  const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
   const { chillyCount } = useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
   const { t } = useLanguage();
   const obscured = usePrivacyOverlay();
@@ -103,6 +103,34 @@ export default function StoryScreen() {
     ...(cardsKept > 0 ? [{ value: cardsKept, label: t('CARDS', 'KARTEN') }] : []),
     ...(chillyCount > 0 ? [{ value: chillyCount, label: t('CHALLENGES', 'CHALLENGES') }] : []),
   ];
+
+  // Ein Ladefehler ist nicht dasselbe wie „noch nichts erlebt". Wer offline
+  // vierzig Momente hat, bekam hier gesagt, seine Geschichte beginne gerade
+  // erst. moments.tsx und editions/[id].tsx machen das längst richtig — dieser
+  // Bildschirm war der letzte, der es nicht tat.
+  if (!loading && error && memories.length === 0) {
+    return (
+      <SafeAreaView style={styles.container}>
+        {obscured && <PrivacyScreen />}
+        <View style={styles.header}>
+          <BackButton />
+          <View style={styles.kickerRow}>
+            <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
+            <Text style={styles.kicker}>{t('OUR STORY', 'EURE GESCHICHTE')}</Text>
+          </View>
+        </View>
+        <EmptyState
+          title={t("couldn't load your story.", 'eure Geschichte konnte nicht geladen werden.')}
+          hint={t(
+            'everything you kept is safe — this was the connection.',
+            'alles, was ihr behalten habt, ist sicher — das war die Verbindung.',
+          )}
+          ctaLabel={t('TRY AGAIN', 'NOCHMAL VERSUCHEN')}
+          onCta={refresh}
+        />
+      </SafeAreaView>
+    );
+  }
 
   if (!loading && memories.length === 0) {
     return (

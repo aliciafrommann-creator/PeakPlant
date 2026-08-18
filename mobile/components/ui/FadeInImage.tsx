@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { Animated, StyleSheet, View, type ImageProps, type StyleProp, type ViewStyle } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Animated, StyleSheet, Text, View, type ImageProps, type StyleProp, type ViewStyle } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 
@@ -15,6 +15,13 @@ export function FadeInImage({
 }: Omit<ImageProps, 'style'> & { style?: StyleProp<ViewStyle> }) {
   const reduced = useReducedMotion();
   const opacity = useRef(new Animated.Value(0)).current;
+  /**
+   * Vorher gab es nur `onLoad`. Lud ein Bild nicht — offline, oder eine
+   * signierte URL nach Ablauf ihrer Stunde —, blieb die Deckkraft für immer
+   * auf null: ein flacher grauer Kasten, ununterscheidbar von einem gelöschten
+   * Foto. Auf der Momente-Wand war offline jede Kachel so einer.
+   */
+  const [failed, setFailed] = useState(false);
 
   const onLoad = () => {
     if (reduced) {
@@ -32,12 +39,28 @@ export function FadeInImage({
         {...rest}
         style={[StyleSheet.absoluteFillObject, { opacity }]}
         onLoad={onLoad}
+        onError={() => setFailed(true)}
       />
+      {failed && (
+        <View style={[StyleSheet.absoluteFillObject, styles.failed]}>
+          {/* Kein Fehlersymbol und kein Ausrufezeichen: das Foto ist nicht
+              kaputt, es ist gerade nur nicht erreichbar. */}
+          <Text style={styles.failedMark}>◌</Text>
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  failed: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  failedMark: {
+    fontSize: 18,
+    color: Colors.textFaint,
+  },
   // The quiet fill visible until the photo fades in — never a white hole.
   holder: { backgroundColor: Colors.border, overflow: 'hidden' },
 });

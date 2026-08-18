@@ -88,13 +88,29 @@ export default function CreateMemoryScreen() {
   };
 
   const fromLibrary = async () => {
-    applyResult(
-      await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        quality: 0.8,
-        allowsEditing: true,
-      }),
-    );
+    try {
+      applyResult(
+        await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          quality: 0.8,
+          allowsEditing: true,
+        }),
+      );
+    } catch {
+      // Der Kamera-Weg erklärt eine Verweigerung sauber; dieser hier tat es
+      // nicht: das Blatt schloss sich und nichts geschah, ohne ein Wort.
+      Alert.alert(
+        t('no access to your photos', 'kein Zugriff auf deine Fotos'),
+        t(
+          'PeakPlant may not open your library on this phone. You can take a photo instead — or allow photo access in your phone settings.',
+          'PeakPlant darf die Galerie auf diesem Handy nicht öffnen. Du kannst stattdessen ein Foto aufnehmen — oder den Zugriff in den Handy-Einstellungen erlauben.',
+        ),
+        [
+          { text: t('take a photo', 'Foto aufnehmen'), onPress: () => void fromCamera() },
+          { text: t('not now', 'jetzt nicht'), style: 'cancel' },
+        ],
+      );
+    }
   };
 
   /**

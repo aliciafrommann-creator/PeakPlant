@@ -66,6 +66,13 @@ export default function ScanScreen() {
     if (handled.current) return;
     const outcome = resolveScan(data, { cardExists, usedTokens: usedTokens.current });
 
+    // Auch die Fehlerfälle sind BEHANDELT. Vorher setzten sie nur `setError`
+    // und kehrten zurück, ohne `handled` zu setzen — `onBarcodeScanned` feuert
+    // aber weiter, solange der Code im Bild ist. Ein fremder QR-Code löste
+    // damit viele Zustandswechsel pro Sekunde aus. Der Wiederholen-Knopf setzt
+    // `handled` ohnehin zurück, das ist der vorgesehene Weg heraus.
+    handled.current = true;
+
     switch (outcome.status) {
       case 'malformed':
         setError(t("that doesn't look like a PeakPlant card.", 'Das sieht nicht wie eine PeakPlant-Karte aus.'));

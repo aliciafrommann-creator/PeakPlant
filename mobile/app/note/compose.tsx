@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
 import { Colors, Accents } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
@@ -19,15 +19,43 @@ import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useNotes } from '../../lib/hooks/useNotes';
 import { confirmSuccess } from '../../lib/haptics';
+import { relativeDay } from '../../lib/relativeTime';
+import { PressableScale } from '../../components/ui/PressableScale';
 
 const MAX_CHARS = 280;
 
 export default function ComposeNoteScreen() {
   const { activeSpace } = useSpaces();
-  const { t } = useLanguage();
-  const { sendNote } = useNotes(activeSpace?.id);
+  const { t, language } = useLanguage();
+  const { notes, loading, userId, sendNote, deleteNote } = useNotes(activeSpace?.id);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+
+  /** Nur eigene Notizen, und nur nach Rückfrage — Löschen ist endgültig. */
+  const confirmDelete = useCallback(
+    (id: string) => {
+      Alert.alert(
+        t('delete this note?', 'diese Notiz löschen?'),
+        t('it is gone for both of you.', 'sie ist dann für euch beide weg.'),
+        [
+          { text: t('cancel', 'Abbrechen'), style: 'cancel' },
+          {
+            text: t('delete', 'löschen'),
+            style: 'destructive',
+            onPress: () => {
+              void deleteNote(id).catch(() =>
+                Alert.alert(
+                  t('Error', 'Fehler'),
+                  t('Could not delete the note.', 'Notiz konnte nicht gelöscht werden.'),
+                ),
+              );
+            },
+          },
+        ],
+      );
+    },
+    [deleteNote, t],
+  );
 
   const remaining = MAX_CHARS - text.length;
   const canSend = text.trim().length > 0 && !sending;
@@ -38,7 +66,12 @@ export default function ComposeNoteScreen() {
     try {
       await sendNote(text);
       void confirmSuccess();
-      router.back();
+      // Vorher sprang der Bildschirm nach dem Senden zurück — und die Notiz
+      // war weg, denn niemand zeigte sie je wieder an. Jetzt bleibt man hier
+      // und sieht sie unten erscheinen: eine Handlung mit sichtbarer Folge
+      // (MANIFESTO §5).
+      setText('');
+      setSending(false);
     } catch {
       Alert.alert(
         t('Error', 'Fehler'),
@@ -60,7 +93,7 @@ export default function ComposeNoteScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.flex}
       >
-        <View style={styles.noteArea}>
+        <View style={styles.composer}>
           <Text style={styles.addressee}>
             {(activeSpace?.name ?? t('partner', 'partner')).toLowerCase()} ♥
           </Text>
@@ -79,6 +112,49 @@ export default function ComposeNoteScreen() {
             {remaining}
           </Text>
         </View>
+
+        {/* Die geschriebenen Notizen. Bis zum 18.08.2026 zeigte sie NIEMAND:
+            `noteRepository` speicherte sie, der Startbildschirm rendert nur
+            die letzte Notiz DES PARTNERS, und dieser Bildschirm zeigte gar
+            nichts. Wer allein im Space ist — und das sind heute alle —
+            schrieb ins Leere. */}
+        <ScrollView
+          style={styles.flex}
+          contentContainerStyle={styles.list}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {!loading && notes.length === 0 && (
+            <Text style={styles.emptyNote}>
+              {t(
+                'nothing written yet. what you write stays here, for the two of you.',
+                'noch nichts geschrieben. Was du schreibst, bleibt hier — für euch beide.',
+              )}
+            </Text>
+          )}
+          {notes.map((n) => {
+            const mine = !n.authorId || n.authorId === userId;
+            return (
+              <PressableScale
+                key={n.id}
+                containerStyle={styles.noteSlot}
+                style={[styles.note, mine ? styles.noteMine : styles.noteTheirs]}
+                scaleTo={0.99}
+                haptic={false}
+                onLongPress={mine ? () => confirmDelete(n.id) : undefined}
+                accessibilityLabel={`${mine ? t('you wrote', 'du hast geschrieben') : (n.authorName ?? t('your person', 'dein Mensch'))}: ${n.text}`}
+                accessibilityHint={mine ? t('Hold to delete', 'Gedrückt halten zum Löschen') : undefined}
+              >
+                <Text style={styles.noteText}>{n.text}</Text>
+                <Text style={styles.noteMeta}>
+                  {mine ? t('you', 'du') : (n.authorName ?? t('your person', 'dein Mensch'))}
+                  {'  ·  '}
+                  {relativeDay(n.createdAt, language)}
+                </Text>
+              </PressableScale>
+            );
+          })}
+        </ScrollView>
 
         <View style={styles.footer}>
           <TouchableOpacity
@@ -99,6 +175,49 @@ export default function ComposeNoteScreen() {
 }
 
 const styles = StyleSheet.create({
+  composer: {
+    paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.md,
+    gap: Spacing.xs,
+  },
+  list: {
+    paddingHorizontal: Spacing.screen,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  emptyNote: {
+    ...Typography.micro,
+    color: Colors.textMuted,
+    lineHeight: 18,
+  },
+  noteSlot: {},
+  note: {
+    padding: Spacing.md,
+    borderRadius: Radii.sm,
+    gap: 6,
+  },
+  noteMine: {
+    backgroundColor: Colors.backgroundWarm,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  /** Vom anderen Menschen: warm hervorgehoben — das ist das Wertvollste hier. */
+  noteTheirs: {
+    backgroundColor: Colors.backgroundCream,
+    borderLeftWidth: 2,
+    borderLeftColor: Colors.accent,
+  },
+  noteText: {
+    ...Typography.editorial,
+    fontSize: 16,
+    lineHeight: 23,
+    color: Colors.text,
+  },
+  noteMeta: {
+    ...Typography.micro,
+    color: Colors.textMuted,
+  },
   container: { flex: 1, backgroundColor: Colors.backgroundCream },
   flex: { flex: 1 },
   header: {
@@ -122,11 +241,6 @@ const styles = StyleSheet.create({
     color: Colors.textSubtle,
   },
   titleSpacer: { width: 32 },
-  noteArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.screen,
-    paddingTop: Spacing.xl,
-  },
   addressee: {
     fontSize: 13,
     fontWeight: '500',

@@ -157,9 +157,24 @@ export default function EditionScreen() {
 
             {/* Das Deck. Aufgeschlagene Karten sind wieder lesbar, versiegelte
                 zeigen, was die gedruckte Ausgabe der App hinzufügt. */}
-            {cards.length > 0 && (
+            {/* Auch bei cardsFailed rendern: der Hinweis war vorher in
+                `cards.length > 0` eingeschlossen — und `cards` ist leer genau
+                dann, wenn das Laden fehlschlug. Der Wiederholen-Knopf konnte
+                also nie erscheinen, und die Seite sah aus wie eine Edition
+                ohne Karten. */}
+            {(cards.length > 0 || cardsFailed) && (
               <View style={styles.deck}>
                 <Text style={styles.deckLabel}>{t('THE DECK', 'DAS DECK')}</Text>
+
+                {cardsFailed && (
+                  <TouchableOpacity onPress={loadCards} accessibilityRole="button">
+                    <Text style={styles.deckRetry}>
+                      {t('could not load the deck — tap to try again.', 'das Deck konnte nicht geladen werden — tippen zum erneut Versuchen.')}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+
+                {cards.length > 0 && (
                 <Text style={styles.deckHint}>
                   {openedCount > 0
                     ? t(
@@ -171,13 +186,6 @@ export default function EditionScreen() {
                         'jede Karte bringt einen geführten Abend in die App — etwas zum Tun, Fragen zum Sprechen und was ihr festhaltet. Die gedruckte Karte öffnet sie.',
                       )}
                 </Text>
-
-                {cardsFailed && (
-                  <TouchableOpacity onPress={loadCards} accessibilityRole="button">
-                    <Text style={styles.deckRetry}>
-                      {t('could not load the deck — tap to try again.', 'das Deck konnte nicht geladen werden — tippen zum erneut Versuchen.')}
-                    </Text>
-                  </TouchableOpacity>
                 )}
 
                 <View style={styles.deckGrid}>

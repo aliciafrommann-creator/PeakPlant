@@ -24,6 +24,8 @@ import { PressableScale } from '../../components/ui/PressableScale';
 import { FloatingActionButton } from '../../components/ui/FloatingActionButton';
 import { MomentWall } from '../../components/home/MomentWall';
 import { PeakRow } from '../../components/home/PeakRow';
+import { AloneRow } from '../../components/home/AloneRow';
+import { spaceRepository } from '../../lib/repositories';
 import { Ionicons } from '@expo/vector-icons';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { SEED_CARDS } from '../../lib/seed';
@@ -89,8 +91,15 @@ export default function HomeScreen() {
       return;
     }
     if (!enrolled) {
-      await acceptChallenge();
-      void confirmSuccess();
+      try {
+        await acceptChallenge();
+        void confirmSuccess();
+      } catch {
+        // Ein Tipp, der nichts tut und nichts sagt, ist schlimmer als einer,
+        // der scheitert und es zugibt (MANIFESTO §5: jede Primäraktion hat
+        // eine sichtbare Folge).
+        setReward(t('could not join — check your connection', 'Annehmen ging nicht — prüf die Verbindung'));
+      }
       return;
     }
     router.push({
@@ -154,6 +163,32 @@ export default function HomeScreen() {
         alive = false;
       };
     }, [activeSpace]),
+  );
+
+  /**
+   * Ist außer dir schon jemand hier?
+   *
+   * Kein Bildschirm der App las bisher die Mitgliederzahl — ein Space mit
+   * einem Menschen sah exakt aus wie einer mit zweien, während überall „ihr
+   * beide" stand. In der Produktionsdatenbank: vier Spaces, keiner mit einem
+   * zweiten Mitglied. Nach dem Onboarding fragte die App nie wieder.
+   *
+   * `undefined` heißt „wissen wir noch nicht" — dann wird nichts behauptet.
+   */
+  const [memberCount, setMemberCount] = useState<number | undefined>(undefined);
+  useFocusEffect(
+    useCallback(() => {
+      if (!activeSpace?.id) {
+        setMemberCount(undefined);
+        return;
+      }
+      let alive = true;
+      spaceRepository
+        .getMembers(activeSpace.id)
+        .then((m) => { if (alive) setMemberCount(m.length); })
+        .catch(() => { if (alive) setMemberCount(undefined); });
+      return () => { alive = false; };
+    }, [activeSpace?.id]),
   );
 
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -305,6 +340,12 @@ export default function HomeScreen() {
           />
         }
       >
+        {/* Nur wenn wir es WISSEN und die Zahl wirklich eins ist. Bei
+            unbekannt (Ladefehler) wird nichts behauptet. */}
+        {activeSpace && memberCount === 1 && (
+          <AloneRow inviteCode={activeSpace.inviteCode} spaceName={activeSpace.name} t={t} />
+        )}
+
         {/* Ein Vorschlag, eine Zeile. Er steht über der Wand, weil er das
             Angebot des Tages ist — aber er nimmt keinen Platz weg, den die
             Momente brauchen. */}
