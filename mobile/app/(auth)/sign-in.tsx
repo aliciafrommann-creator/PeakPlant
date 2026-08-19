@@ -28,6 +28,41 @@ export default function SignInScreen() {
 
   const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
+  /**
+   * Aus einem technischen Fehler einen Satz machen, den ein Mensch lesen kann.
+   *
+   * Alicia sah auf ihrem Telefon rot und auf Englisch „Supabase not
+   * configured" — den Namen eines Dienstes, von dem sie nichts wissen muss,
+   * ohne Erklärung und ohne Ausweg. Das ist der Fehlertyp aus K4: „kaputt"
+   * sah aus wie eine Bedienfehlermeldung.
+   *
+   * Der häufigste Grund dafür ist NICHT ein Ausfall, sondern eine fehlende
+   * `.env` beim lokalen Entwickeln. Deshalb steht der Hinweis dazu — er hilft
+   * genau der Person, die ihn braucht, und verwirrt sonst niemanden, weil er
+   * im gebauten Programm nie erscheint.
+   */
+  const menschlich = (e: unknown): string => {
+    const roh = e instanceof Error ? e.message : '';
+    if (/not configured/i.test(roh)) {
+      return __DEV__
+        ? t(
+            'this copy of the app has no backend keys — copy .env.example to .env and restart with `npx expo start -c`.',
+            'Diese Kopie der App hat keine Server-Zugänge — kopiere .env.example nach .env und starte neu mit `npx expo start -c`.',
+          )
+        : t(
+            'sign-in is unavailable right now. nothing of yours is affected — please try again in a moment.',
+            'Die Anmeldung geht gerade nicht. An deinen Sachen ändert das nichts — versuch es gleich noch einmal.',
+          );
+    }
+    if (/network|fetch|timeout/i.test(roh)) {
+      return t(
+        'that was the connection, not you. try again.',
+        'Das war die Verbindung, nicht du. Versuch es nochmal.',
+      );
+    }
+    return t('Could not send the code.', 'Code konnte nicht gesendet werden.');
+  };
+
   const sendCode = async () => {
     if (busy) return;
     if (!isValidEmail(email)) {
@@ -40,7 +75,7 @@ export default function SignInScreen() {
       await sendEmailCode(email.trim().toLowerCase());
       setStage('code');
     } catch (e) {
-      setError(e instanceof Error ? e.message : t('Could not send the code.', 'Code konnte nicht gesendet werden.'));
+      setError(menschlich(e));
     } finally {
       setBusy(false);
     }
@@ -53,7 +88,7 @@ export default function SignInScreen() {
     try {
       await sendEmailCode(email.trim().toLowerCase());
     } catch (e) {
-      setError(e instanceof Error ? e.message : t('Could not resend the code.', 'Code konnte nicht erneut gesendet werden.'));
+      setError(menschlich(e));
     } finally {
       setBusy(false);
     }
@@ -77,7 +112,28 @@ export default function SignInScreen() {
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <SafeAreaView style={styles.container}>
         <View style={styles.inner}>
+          {/* EIN WEG ZURÜCK. Bis zum 19.08.2026 war dieser Bildschirm eine
+              Sackgasse: Wer versehentlich auf „ich habe schon ein Konto"
+              tippte, kam nicht mehr heraus — kein Zurück, keine Reiterleiste.
+              (Alicia auf dem Gerät: „man kommt auch nicht zurück".) */}
           <View style={styles.top}>
+            <TouchableOpacity
+              onPress={() => {
+                if (stage === 'code') {
+                  setStage('email');
+                  setCode('');
+                  setError(null);
+                  return;
+                }
+                if (router.canGoBack()) router.back();
+                else router.replace('/(auth)/welcome');
+              }}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel={t('Back', 'Zurück')}
+            >
+              <Text style={styles.back}>{t('← BACK', '← ZURÜCK')}</Text>
+            </TouchableOpacity>
             <Logo size="md" />
           </View>
 
@@ -169,7 +225,13 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   inner: { flex: 1, paddingHorizontal: Spacing.screen, paddingVertical: Spacing.xl, justifyContent: 'space-between' },
-  top: { paddingTop: Spacing.md },
+  top: { paddingTop: Spacing.md, gap: Spacing.md },
+  back: {
+    fontSize: 12,
+    fontWeight: '500',
+    letterSpacing: 1.2,
+    color: Colors.textMuted,
+  },
   center: { flex: 1, justifyContent: 'center', gap: Spacing.md },
   title: { ...Typography.editorial },
   subtitle: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
