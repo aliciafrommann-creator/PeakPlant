@@ -180,7 +180,9 @@ export const SEED_EDITIONS: Edition[] = [
     description: 'unexpected dares and spontaneous detours.',
     symbol: '🎲',
     color: '#E8633A',
-    ink: 'light',
+    // Dunkel, nicht hell: auf diesem Orange erreicht #1A1A1A 5,20:1, die helle
+    // Tinte nur 3,13:1. Bis 18.08.2026 stand hier 'light' — von Hand geschätzt.
+    ink: 'dark',
     status: 'upcoming',
     cardCount: 0,
     cards: [],
@@ -192,7 +194,10 @@ export const SEED_EDITIONS: Edition[] = [
     subtitle: 'Edition 09 — Nest',
     description: 'slow, cozy moments to retreat into together.',
     symbol: '🏕️',
-    color: '#8D7B68',
+    // War #8D7B68: dort erreicht KEINE der beiden Tinten die 4,5:1 für kleine
+    // Schrift (dunkel 4,28 / hell 3,80). Eine Nuance dunkler, und die helle
+    // Tinte steht bei 5,65:1 — was zu „Hideout" ohnehin besser passt.
+    color: '#6F6052',
     ink: 'light',
     status: 'upcoming',
     cardCount: 0,

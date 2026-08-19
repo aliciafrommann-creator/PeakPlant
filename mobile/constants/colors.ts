@@ -33,11 +33,53 @@ export const Colors = {
   textMuted: '#5A554E', //  6,54:1 — sekundärer Fließtext
   textSubtle: '#726D65', // 4,55:1 — kleine Etiketten, Meta. Besteht AA.
   /**
-   * Die leiseste Stufe: 3,03:1. Besteht AA NUR für großen Text (ab 24 pt bzw.
-   * 18,66 pt fett) und für Nicht-Text — Trennlinien, deaktivierte Symbole,
-   * Dekoration. Für kleine Schrift gehört `textSubtle` her.
+   * Die leiseste Stufe: **3,03:1 auf dem Papierton**. Damit besteht sie AA
+   * genau in vier Fällen — und sonst nie:
+   *
+   *   1. Großer Text: ab 24 pt normal oder 18,66 pt fett (dort genügen 3:1).
+   *   2. Nicht-Text: Trennlinien, Rahmen, Dekoration.
+   *   3. Deaktivierte Bedienelemente (WCAG 1.4.3 nimmt inaktive Elemente aus).
+   *   4. **Auf dunklem Grund** — gegen `Colors.text` (#1E1C1A) sind es 4,97:1,
+   *      also besteht sie dort auch für kleine Schrift. Das betrifft die
+   *      ausgewählten Karten in Sprache, Onboarding und Space-Anlegen.
+   *
+   * Für kleine Schrift auf hellem Grund gehört `textSubtle` her (4,55:1).
+   *
+   * Diese Liste ist nicht theoretisch. Durchsicht am 18.08.2026, und der
+   * Umfang gehört ehrlich dazu: geprüft wurden die **neun Stellen in
+   * Style-Blöcken**, die `textFaint` mit kleiner Schrift verbanden. Sechs
+   * fielen unter 1–4 und waren richtig. Drei waren echte Fehler und sind
+   * korrigiert: `chipNumSealed` 13 pt und `bulletDot` 15 pt auf dem Papierton,
+   * `failedMark` 18 pt auf `Colors.border` (#E4DFD7 — NICHT Papier; dort
+   * reichte auch `textSubtle` mit 3,87:1 nicht, es steht jetzt `textMuted`).
+   *
+   * Nachgereicht am selben Tag: alle 18 `placeholderTextColor` (jeder von
+   * ihnen lag auf einer hellen Fläche und war damit zu leise) auf
+   * `textSubtle`. Und zwei Flächen, die auf zwölf verschiedenen Untergründen
+   * liegen (Editions-Kopf, Kartenfläche): dort wird die Tinte jetzt gerechnet
+   * statt gesetzt, siehe `lib/editionInk.ts`.
+   *
+   * Und der wichtigste Teil, gefunden erst beim Gegenlesen: Dem FARBNAMEN zu
+   * folgen war der falsche Ansatz. `textFaint` war nie das Problem — der
+   * schlimmste Fund war eine Knopfbeschriftung in `Colors.text` auf dunklem
+   * Grund (1,00:1, schlicht unsichtbar), dazu elf Stellen mit Akzent- oder
+   * Sektionsfarbe als 11–13-pt-Schrift. Deshalb steht die Prüfung jetzt
+   * umgedreht in `lib/palette.test.ts`: nicht „welcher Farbname", sondern
+   * „welche Farbe unter 24 pt", gegen den hellen Grund gerechnet, mit
+   * markierten Ausnahmen für dunkle Flächen.
    */
   textFaint: '#908A81',
+
+  /**
+   * Schrift auf dunklen Flächen (`backgroundDark` #1E1C1A).
+   *
+   * Bis 18.08.2026 stand dort teilweise `textSubtle` — auf hellem Grund
+   * richtig, auf dunklem 3,31:1 und damit zu wenig. Betroffen waren der
+   * Kamera-Hinweis im Scanner und der Hinweis im Einladungs-Kasten.
+   * `onDark` erreicht 8,07:1, `onDarkStrong` 15,88:1.
+   */
+  onDark: '#B8B2A8',
+  onDarkStrong: '#FAF7F0',
 
   // --- Primary accent (legacy `accent` retuned: gold → sun-faded chili) ---
   /** Flächen, Ränder, Symbole. Als FÜLLUNG richtig, als kleine Schrift nicht. */
@@ -46,7 +88,14 @@ export const Colors = {
    * Derselbe Chili, nur so weit abgedunkelt, dass er als kleine Schrift auf
    * dem Papierton AA besteht: 4,51:1 statt 3,96:1. Optisch kaum zu
    * unterscheiden — für Etiketten in Akzentfarbe (z. B. 9–11 pt) die richtige
-   * Wahl. `accent` bleibt die Füllfarbe.
+   * Wahl.
+   *
+   * Er trägt seit dem 18.08.2026 auch die GEGENRICHTUNG: Als Füllung unter
+   * weißer kleiner Schrift kommt `accent` nur auf 4,47:1 — knapp, aber
+   * durchgefallen, und zwar an genau vier Bedienelementen (Gold-Knopf,
+   * Freigeschaltet-Banner, zwei Filter-Chips). Auf `accentInk` sind es 5,09:1.
+   * `accent` bleibt die Füllfarbe überall dort, wo KEINE kleine Schrift
+   * darauf liegt.
    */
   accentInk: '#C04528',
   accentLight: '#F0CDBF',
@@ -85,6 +134,31 @@ export const Accents = {
 } as const;
 
 /**
+ * Dieselben Akzente, so weit abgedunkelt, dass sie als KLEINE SCHRIFT auf
+ * jedem hellen Untergrund der App AA bestehen (Papier, warm, creme, weiß und
+ * `Accents.cream`) — 4,50:1 im schlechtesten dieser Fälle.
+ *
+ * WARUM: Am 18.08.2026 fand die Nachprüfung elf Stellen, an denen ein Akzent
+ * als 11–13-pt-Schrift stand: `Accents.chili` 3,96:1, `Sections.grow` (sage)
+ * 3,27:1, `Accents.apricot` auf Creme **2,38:1** — der schlechteste Textwert
+ * der App, ausgerechnet an der Anrede einer Notiz. Als FÜLLUNG sind die
+ * Originaltöne richtig; als Schrift waren sie es nie. Genau dieselbe
+ * Unterscheidung gab es für `accent` / `accentInk` schon — sie war nur nicht
+ * auf die übrigen Akzente ausgedehnt.
+ *
+ * Regel: Fläche, Rand, Symbol → `Accents`. Schrift unter 24 pt → `AccentInks`.
+ */
+export const AccentInks = {
+  chili: '#B44126',
+  apricot: '#925A33',
+  sunflower: '#7F6422',
+  ember: '#A74D2C',
+  blossom: '#B23A67',
+  terracotta: '#A84D2B',
+  sage: '#5F6A4F',
+} as const;
+
+/**
  * Emotional identity per section. This is the ambient/header colour; actions
  * stay on the primary chili accent unless a section overrides it. Kept
  * deliberately un-green-dominant — sage appears only where growth is the point.
@@ -98,6 +172,18 @@ export const Sections = {
   rituals: Accents.sage, // calm, grounded
   scan: Colors.backgroundDark, // focused, camera-native
   community: Accents.blossom, // social — the bold raspberry pop
+} as const;
+
+/** Die Schrift-Fassung von `Sections` — siehe `AccentInks`. */
+export const SectionInks = {
+  discover: AccentInks.sunflower,
+  saved: AccentInks.ember,
+  together: AccentInks.apricot,
+  moments: AccentInks.apricot,
+  grow: AccentInks.sage,
+  rituals: AccentInks.sage,
+  scan: Colors.backgroundDark,
+  community: AccentInks.blossom,
 } as const;
 
 /** Semantic status colours. Green stays reserved for success only. */

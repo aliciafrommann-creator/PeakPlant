@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.sm,
   },
-  cardText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.accent },
+  cardText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.accentInk },
   cardHint: {
     fontSize: 12,
     fontWeight: '300',

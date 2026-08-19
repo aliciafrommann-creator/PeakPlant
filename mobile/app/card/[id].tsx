@@ -13,6 +13,7 @@ import { PressableScale } from '../../components/ui/PressableScale';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { SEED_CARDS, getEdition, SEED_EDITION } from '../../lib/seed';
+import { editionInk } from '../../lib/editionInk';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { useBiometric } from '../../lib/hooks/useBiometric';
@@ -89,6 +90,14 @@ export default function CardDetailScreen() {
   const title = card.content ? l(card.content.title) : card.prompt;
   const sections = card.content?.sections ?? [];
 
+  // Die Kartenfläche trägt die Editionsfarbe. Die Tinte wird dazu gerechnet
+  // (lib/editionInk.ts) und in voller Stärke gesetzt: die frühere Abstufung
+  // über Deckkraft (0,7 und 0,6 auf 11 pt) fiel auf fast jeder Editionsfarbe
+  // unter die 4,5:1 für kleine Schrift. Unterschieden werden die beiden
+  // Etiketten jetzt über das Schriftgewicht (600 gegen 400) — der einzige
+  // Hebel, der hier keine Lesbarkeit kostet.
+  const ink = editionInk(edition.color);
+
   // A quiet note that adapts to the kind of card (and intimate editions).
   const quietNote = isQuestion
     ? t(
@@ -97,7 +106,7 @@ export default function CardDetailScreen() {
       )
     : t(
         'Choose what feels right for both of you. You can pause, change or stop at any time.',
-        'Macht, was sich für euch beide richtig anfühlt. Ihr könnt jederzeit pausieren, ändern oder aufhören.'
+        'Macht, was sich für euch richtig anfühlt. Ihr könnt jederzeit pausieren, ändern oder aufhören.'
       );
 
   function renderPreserveCTA(keyPrefix: string) {
@@ -116,7 +125,7 @@ export default function CardDetailScreen() {
           <Text style={styles.privacyNote}>
             {t(
               'This stays private to your space — only you and your partner can see it.',
-              'Das bleibt privat in eurem Space — nur ihr beide könnt es sehen.',
+              'Das bleibt privat in eurem Space.',
             )}
           </Text>
         )}
@@ -174,17 +183,17 @@ export default function CardDetailScreen() {
         {/* Card visual — mirrors the physical card */}
         <View style={[styles.cardVisual, { backgroundColor: edition.color }]}>
           <View style={styles.cardInner}>
-            <Text style={[styles.cardEdition, tone(edition.ink, 0.7)]}>
+            <Text style={[styles.cardEdition, { color: ink }]}>
               PEAKPLANT — {edition.name.toUpperCase()}
             </Text>
-            <Text style={[styles.cardKindLabel, tone(edition.ink, 0.6)]}>
+            <Text style={[styles.cardKindLabel, { color: ink }]}>
               {groupLabel.toUpperCase()} · #{String(card.number).padStart(2, '0')}
             </Text>
-            <Text style={[styles.cardTitle, tone(edition.ink, 1)]}>{title}</Text>
+            <Text style={[styles.cardTitle, { color: ink }]}>{title}</Text>
             <View
               style={[
                 styles.cardDot,
-                { backgroundColor: edition.ink === 'dark' ? '#1A1A1A' : '#FAF7F0' },
+                { backgroundColor: ink },
               ]}
             />
           </View>
@@ -200,12 +209,6 @@ export default function CardDetailScreen() {
       </ScrollView>
     </SafeAreaView>
   );
-}
-
-/** Foreground color for text on an edition's color, by ink + opacity. */
-function tone(ink: 'dark' | 'light', opacity: number) {
-  const base = ink === 'dark' ? '26,26,26' : '250,247,240';
-  return { color: `rgba(${base},${opacity})` };
 }
 
 const styles = StyleSheet.create({
@@ -312,7 +315,8 @@ const styles = StyleSheet.create({
   },
   bulletDot: {
     fontSize: 15,
-    color: Colors.textFaint,
+    // 15 pt auf dem Papierton: textFaint sind 3,03:1, nötig 4,5.
+    color: Colors.textSubtle,
     lineHeight: 22,
   },
   bulletText: {
@@ -361,7 +365,8 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: Colors.accent,
+    // Weiße 11-pt-Schrift darauf — accent wären 4,47:1 (siehe accentInk).
+    backgroundColor: Colors.accentInk,
     paddingVertical: 10,
     alignItems: 'center',
     zIndex: 100,

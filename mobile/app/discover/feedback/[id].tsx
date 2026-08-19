@@ -194,7 +194,7 @@ export default function FeedbackScreen() {
             <TextInput
               style={styles.tipInput}
               placeholder={t('your practical takeaway...', 'dein praktisches Fazit...')}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               multiline
               maxLength={MAX_TIP}
               value={tip}
@@ -278,6 +278,7 @@ const styles = StyleSheet.create({
   stars: { flexDirection: 'row', gap: Spacing.md },
   starBtn: { padding: Spacing.xs },
   star: { fontSize: 36, color: Colors.border },
+  // kontrast-ok: grafisches Objekt (Stern), 3,96:1 gegen die geforderten 3:1.
   starFilled: { color: Colors.accent },
   tipBlock: { gap: Spacing.sm },
   tipNote: {

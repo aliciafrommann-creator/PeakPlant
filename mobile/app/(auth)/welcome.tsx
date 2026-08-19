@@ -36,11 +36,19 @@ export default function WelcomeScreen() {
           >
             <Text style={styles.beginText}>BEGIN</Text>
           </TouchableOpacity>
-          {/* Stand vorher: „no account needed to explore". Im echten Betrieb
-              ist das Konto zwei Schritte vorher entstanden (app/index.tsx:57
-              schickt ohne Sitzung zuerst auf sign-in) — dieser Bildschirm
-              kommt erst danach. Ein Satz, den der Code nicht hält, ist genau
-              das, was MANIFESTO §1 verbietet. */}
+          {/* Wer schon ein Konto hat, soll nicht durch den Einstieg laufen.
+              Seit dieser Bildschirm wieder der erste ist, ist das der Weg für
+              Rückkehrer — ruhig, nicht als zweite Pille. */}
+          <TouchableOpacity
+            style={styles.signInLink}
+            onPress={() => router.push('/(auth)/sign-in')}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="I already have an account"
+          >
+            <Text style={styles.signInText}>i already have an account</Text>
+          </TouchableOpacity>
+
           <Text style={styles.hint}>
             nothing here is public — this space is yours
           </Text>
@@ -109,6 +117,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: Radii.pill,
+  },
+  signInLink: {
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Spacing.sm,
+  },
+  signInText: {
+    ...Typography.body,
+    color: Colors.textMuted,
+    textDecorationLine: 'underline',
   },
   beginText: {
     fontSize: 11,

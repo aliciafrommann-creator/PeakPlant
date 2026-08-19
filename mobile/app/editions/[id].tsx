@@ -22,6 +22,7 @@ import { cardRepository } from '../../lib/repositories';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { ShopLink } from '../../components/edition/ShopLink';
+import { editionInk, EDITION_INK_DARK, EDITION_INK_LIGHT } from '../../lib/editionInk';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import { EmptyState } from '../../components/ui/EmptyState';
 import type { Memory, MomentCard } from '../../lib/types';
@@ -82,12 +83,14 @@ export default function EditionScreen() {
     return SEED_CARDS.find((c) => c.id === cardId);
   }
 
-  const onLight = edition.ink === 'dark';
-  const fg = onLight ? '#1A1A1A' : '#FAF7F0';
-  const fgMuted = onLight ? 'rgba(26,26,26,0.62)' : 'rgba(250,247,240,0.78)';
-  const fgFaint = onLight ? 'rgba(26,26,26,0.5)' : 'rgba(250,247,240,0.62)';
-  const btnBg = onLight ? '#1A1A1A' : '#FAF7F0';
-  const btnText = onLight ? '#FAF7F0' : '#1A1A1A';
+  // Die Tinte wird gerechnet, nicht aus dem Seed geglaubt (lib/editionInk.ts).
+  // Und sie wird NICHT abgeschwächt: die frühere Deckkraft-Stufung
+  // (0,62 / 0,5) blieb auf elf bzw. auf allen zwölf Editionsfarben unter den
+  // 4,5:1, die kleine Schrift braucht. Hierarchie kommt hier aus Größe,
+  // Gewicht und Sperrung.
+  const fg = editionInk(edition.color);
+  const btnBg = fg;
+  const btnText = fg === EDITION_INK_DARK ? EDITION_INK_LIGHT : EDITION_INK_DARK;
 
   function renderMemory({ item }: { item: Memory }) {
     return (
@@ -129,13 +132,13 @@ export default function EditionScreen() {
             <Text style={styles.symbol}>{edition.symbol}</Text>
             <Text style={[styles.editionLabel, { color: fg }]}>{edition.subtitle.toUpperCase()}</Text>
             <Text style={[styles.title, { color: fg }]}>{edition.name.toLowerCase()}</Text>
-            <Text style={[styles.description, { color: fgMuted }]}>{edition.description}</Text>
+            <Text style={[styles.description, { color: fg }]}>{edition.description}</Text>
 
             <View style={styles.statsRow}>
-              <Text style={[styles.stat, { color: fgMuted }]}>{momentCount}</Text>
+              <Text style={[styles.stat, { color: fg }]}>{momentCount}</Text>
               {edition.sensitive && (
-                <Text style={[styles.privateNote, { color: fgFaint }]}>
-                  {t('this diary stays private to you two', 'dieses Tagebuch bleibt privat — nur für euch beide')}
+                <Text style={[styles.privateNote, { color: fg }]}>
+                  {t('this diary stays private to your space', 'dieses Tagebuch bleibt privat in eurem Space')}
                 </Text>
               )}
             </View>
@@ -151,7 +154,7 @@ export default function EditionScreen() {
             </TouchableOpacity>
 
             {editionMemories.length > 0 && (
-              <Text style={[styles.diaryLabel, { color: fgFaint }]}>{t('YOUR DIARY', 'EUER TAGEBUCH')}</Text>
+              <Text style={[styles.diaryLabel, { color: fg }]}>{t('YOUR DIARY', 'EUER TAGEBUCH')}</Text>
             )}
             </View>
 
@@ -281,12 +284,16 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   symbol: { fontSize: 36, marginBottom: Spacing.sm },
-  editionLabel: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
-  title: { ...Typography.editorial, color: Colors.white },
+  // ACHTUNG, für alle Stile in diesem Kopf: Die Schriftfarbe wird beim
+  // Rendern gesetzt (`fg`, gerechnet aus der Editionsfarbe). Hier steht
+  // deshalb KEINE Farbe — ein statischer Wert, der nie zum Tragen kommt,
+  // täuscht beim Lesen eine Entscheidung vor und liest sich beim Prüfen wie
+  // ein Fehler. Genau das ist beim ersten Durchgang passiert.
+  editionLabel: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2 },
+  title: { ...Typography.editorial },
   description: {
     fontSize: 14,
     fontWeight: '300',
-    color: Colors.textFaint,
     lineHeight: 20,
     marginBottom: Spacing.sm,
   },
@@ -295,31 +302,30 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '400',
     letterSpacing: 1.5,
-    color: Colors.textSubtle,
     textTransform: 'uppercase',
   },
   privateNote: {
     fontSize: 11,
     fontWeight: '300',
-    color: Colors.textSubtle,
     letterSpacing: 0.3,
     fontStyle: 'italic',
     marginTop: 4,
   },
+  // Füllung und Beschriftung kommen ebenfalls beim Rendern (`btnBg`/`btnText`)
+  // — die Werte hier waren tot und widersprachen sich sogar (Colors.accent mit
+  // backgroundDark-Schrift wären 3,80:1).
   scanButton: {
     height: 52,
-    backgroundColor: Colors.accent,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: Spacing.md,
     borderRadius: Radii.pill,
   },
-  scanButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.backgroundDark },
+  scanButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2 },
   diaryLabel: {
     fontSize: 11,
     fontWeight: '500',
     letterSpacing: 1.2,
-    color: Colors.textSubtle,
     marginTop: Spacing.xl,
   },
   memoryWrapper: { paddingHorizontal: Spacing.screen },
@@ -382,7 +388,10 @@ const styles = StyleSheet.create({
   chipNumSealed: {
     fontSize: 13,
     fontWeight: '400',
-    color: Colors.textFaint,
+    // textFaint erreicht auf dem Papierton nur 3,03:1 — bei 13 pt zu wenig
+    // (AA verlangt 4,5). textSubtle liegt bei 4,55:1 und sieht fast gleich
+    // zurückgenommen aus.
+    color: Colors.textSubtle,
     fontVariant: ['tabular-nums'],
   },
 });

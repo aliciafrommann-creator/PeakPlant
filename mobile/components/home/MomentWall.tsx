@@ -149,7 +149,10 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    backgroundColor: 'rgba(243,241,236,0.92)',
+    // Der Streifen liegt ÜBER einem Foto. Bei 0,92 blieb ein dunkles Foto mit
+    // 8 % durch und zog den Grund auf #E0DED9 — dort steht `accentInk` bei
+    // 3,79:1 statt der 4,51 auf Papier. Voll deckend ist der Grund bekannt.
+    backgroundColor: Colors.background,
   },
   cardNo: {
     fontSize: 11,

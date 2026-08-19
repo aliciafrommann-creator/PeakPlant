@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Colors, Accents, Sections } from '../../constants/colors';
+import { Colors, Accents, AccentInks, Sections, SectionInks } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
@@ -31,6 +31,11 @@ import { FadeInImage } from '../../components/ui/FadeInImage';
 import { SEED_CARDS } from '../../lib/seed';
 
 const MOMENT = Sections.together; // warm apricot — capturing "our" moment
+// Die Schrift-/Vordergrund-Fassung derselben Farbe. `MOMENT` als Symbol- oder
+// Randfarbe erreichte auf `Colors.surface` 2,65:1 und auf `Accents.cream`
+// 2,14:1 — beides unter den 3:1, die WCAG 1.4.11 für ein bedeutungstragendes
+// grafisches Objekt verlangt. Als Fläche bleibt `MOMENT` richtig.
+const MOMENT_INK = SectionInks.together;
 
 export default function CreateMemoryScreen() {
   const {
@@ -330,7 +335,7 @@ export default function CreateMemoryScreen() {
             ) : (
               <View style={styles.photoPlaceholder}>
                 <View style={styles.photoIconCircle}>
-                  <Ionicons name="camera-outline" size={26} color={MOMENT} />
+                  <Ionicons name="camera-outline" size={26} color={MOMENT_INK} />
                 </View>
                 <Text style={styles.photoText}>{t('ADD A PHOTO', 'FOTO HINZUFÜGEN')}</Text>
                 <Text style={styles.photoHint}>{t('take one, or pick from your library · optional', 'aufnehmen oder aus der Galerie wählen · optional')}</Text>
@@ -346,7 +351,7 @@ export default function CreateMemoryScreen() {
             <TextInput
               style={styles.noteInput}
               placeholder={notePlaceholder}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               multiline
               value={note}
               onChangeText={setNote}
@@ -382,8 +387,14 @@ export default function CreateMemoryScreen() {
 
           <Text style={styles.privateNote}>
             {t(
-              'stays private to your space — only the two of you can see it.',
-              'bleibt privat in eurem Space — nur ihr beide könnt es sehen.',
+              // „nur ihr beide" war zweimal falsch: für einen Menschen allein
+              // stimmt es nicht, und es verspricht mehr als der Code hält —
+              // es gibt keine Verschlüsselung, der Server-Schlüssel umgeht RLS
+              // (MANIFESTO §1/§2). „privat in eurem Space" ist wahr, egal wie
+              // viele ihr seid, und ist die Formulierung, die das Manifest
+              // selbst als richtig benennt.
+              'stays private to your space.',
+              'bleibt privat in eurem Space.',
             )}
           </Text>
         </ScrollView>
@@ -413,7 +424,9 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
     letterSpacing: 1.2,
-    color: Accents.chili,
+    // Ein Fehlertext, den man nicht liest, ist kein Fehlertext: Accents.chili
+    // sind auf Papier 3,96:1. AccentInks.chili sind 4,99:1.
+    color: AccentInks.chili,
   },
   container: {
     flex: 1,
@@ -440,16 +453,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
     color: Colors.text,
   },
-  saveText: {
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-    color: Colors.accentInk,
-  },
-  saveDisabled: {
-    opacity: 0.3,
-    color: Colors.textFaint,
-  },
   content: {
     padding: Spacing.screen,
     gap: Spacing.xl,
@@ -472,7 +475,7 @@ const styles = StyleSheet.create({
   photoAreaEmpty: {
     backgroundColor: Accents.cream,
     borderWidth: 1.5,
-    borderColor: MOMENT,
+    borderColor: MOMENT_INK,
     borderStyle: 'dashed',
   },
   photoPreview: {
@@ -519,7 +522,9 @@ const styles = StyleSheet.create({
   photoHint: {
     fontSize: 11,
     fontWeight: '400',
-    color: Colors.textSubtle,
+    // Dieser Hinweis steht im leeren Fotofeld auf `Accents.cream` (#EFE6D4),
+    // nicht auf Papier — textSubtle kämen dort nur auf 4,14:1.
+    color: Colors.textMuted,
     letterSpacing: 0.3,
   },
   noteSection: {

@@ -267,7 +267,7 @@ export default function BrowseIdeasScreen() {
               <TextInput
                 style={styles.search}
                 placeholder={t('search ideas (english)…', 'Ideen suchen (englisch)…')}
-                placeholderTextColor={Colors.textFaint}
+                placeholderTextColor={Colors.textSubtle}
                 value={query}
                 onChangeText={setQuery}
                 autoCorrect={false}
@@ -576,7 +576,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     backgroundColor: Colors.surface,
   },
-  chipOn: { backgroundColor: Colors.accent, borderColor: Colors.accent },
+  // Weiße 12-pt-Schrift auf der Füllung — accentInk statt accent (4,47 → 5,09).
+  chipOn: { backgroundColor: Colors.accentInk, borderColor: Colors.accentInk },
   chipText: { fontSize: 12, fontWeight: '500', color: Colors.text },
   chipTextOn: { color: Colors.white },
   card: {
@@ -606,7 +607,8 @@ const styles = StyleSheet.create({
   action: { flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 5, height: Layout.tapMin },
   actionDone: { opacity: 1 },
   actionText: { fontSize: 11, fontWeight: '500', color: Colors.textMuted, letterSpacing: 0.3 },
-  actionTextDone: { color: Colors.accent },
+  // Überschreibt `actionText` (11 pt) — `Colors.accent` waren dort 3,96:1.
+  actionTextDone: { color: Colors.accentInk },
   empty: { alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.xxl, paddingHorizontal: Spacing.screen },
   emptyText: { fontSize: 16, fontWeight: '200', color: Colors.textMuted },
   emptyBtn: {

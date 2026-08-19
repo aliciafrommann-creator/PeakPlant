@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
 import { PressableScale } from '../../components/ui/PressableScale';
-import { Colors, Sections } from '../../constants/colors';
+import { Colors, SectionInks } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { ProgressBar } from '../../components/challenge/ProgressBar';
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   headerLabel: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   content: { padding: Spacing.screen, gap: Spacing.sm, paddingBottom: Spacing.xxxl },
   badge: { fontSize: 40, minHeight: 28 },
-  duration: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Sections.grow, marginTop: Spacing.sm },
+  duration: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: SectionInks.grow, marginTop: Spacing.sm },
   title: { ...Typography.editorial },
   subtitle: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 24, marginTop: 4 },
   progressCard: {

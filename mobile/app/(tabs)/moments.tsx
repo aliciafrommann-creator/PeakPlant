@@ -146,10 +146,10 @@ export default function MomentsScreen() {
             {memories.length > 0 && (
               <Text style={styles.subtitle}>
                 {memories.length === 1
-                  ? t('1 moment · only the two of you can see this.', '1 Moment · nur ihr beide seht das hier.')
+                  ? t('1 moment · private to your space.', '1 Moment · privat in eurem Space.')
                   : t(
-                      `${memories.length} moments · only the two of you can see this.`,
-                      `${memories.length} Momente · nur ihr beide seht das hier.`,
+                      `${memories.length} moments · private to your space.`,
+                      `${memories.length} Momente · privat in eurem Space.`,
                     )}
               </Text>
             )}

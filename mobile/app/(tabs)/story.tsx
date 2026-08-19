@@ -10,7 +10,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
-import { Colors, Accents, Sections } from '../../constants/colors';
+import { Colors, AccentInks, Sections } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
@@ -283,7 +283,9 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   insightRow: { flexDirection: 'row', gap: 10, alignItems: 'flex-start', paddingVertical: 7 },
-  insightMark: { fontSize: 13, color: Accents.chili, lineHeight: 22 },
+  // Das Zeichen steht direkt neben dem Text und wird mitgelesen — also gilt
+  // die Textschwelle. Accents.chili waren 3,96:1 auf Papier.
+  insightMark: { fontSize: 13, color: AccentInks.chili, lineHeight: 22 },
   insightText: {
     flex: 1,
     fontSize: 15,

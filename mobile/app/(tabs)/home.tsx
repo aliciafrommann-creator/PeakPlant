@@ -414,7 +414,7 @@ export default function HomeScreen() {
             <Text style={styles.leadHint}>
               {t(
                 'do something together, then keep it here — a photo, a few words. it stays private to the two of you.',
-                'macht etwas zusammen und haltet es hier fest — ein Foto, ein paar Worte. Es bleibt privat für euch beide.',
+                'haltet fest, was euch bleiben soll — ein Foto, ein paar Worte. Es bleibt privat in eurem Space.',
               )}
             </Text>
           </View>

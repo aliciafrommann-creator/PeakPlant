@@ -200,7 +200,7 @@ export default function InviteScreen() {
               <TextInput
                 style={styles.joinInput}
                 placeholder="PEAK-AB23CD"
-                placeholderTextColor={Colors.textFaint}
+                placeholderTextColor={Colors.textSubtle}
                 value={code}
                 onChangeText={(v) => { setCode(v.toUpperCase()); if (error) setError(null); }}
                 autoCapitalize="characters"
@@ -311,7 +311,7 @@ export default function InviteScreen() {
         </View>
 
         <View style={styles.codeContainer}>
-          <Text style={styles.codeLabel}>{t('YOUR CODE', 'DEIN CODE')}</Text>
+          <Text style={styles.codeLabelOnDark}>{t('YOUR CODE', 'DEIN CODE')}</Text>
           {creating && !inviteCode ? (
             <ActivityIndicator color={Colors.accent} style={styles.codeLoading} />
           ) : (
@@ -413,11 +413,21 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     borderRadius: Radii.lg,
   },
+  // Auf Papier (Beitritts-Formular). accentInk = 4,51:1.
   codeLabel: {
     fontSize: 12,
     fontWeight: '500',
     letterSpacing: 1.2,
     color: Colors.accentInk,
+  },
+  // Derselbe Text im dunklen `codeContainer`. Bis 18.08.2026 teilte er sich
+  // den Stil oben — ein Stil auf zwei Untergründen, und auf dem dunklen kam
+  // accentInk auf 3,34:1. kontrast-ok: onDark auf backgroundDark = 8,07:1.
+  codeLabelOnDark: {
+    fontSize: 12,
+    fontWeight: '500',
+    letterSpacing: 1.2,
+    color: Colors.onDark,
   },
   code: {
     fontSize: 36,
@@ -432,7 +442,8 @@ const styles = StyleSheet.create({
   codeHint: {
     fontSize: 12,
     fontWeight: '300',
-    color: Colors.textSubtle,
+    // kontrast-ok: ebenfalls im dunklen `codeContainer` (3,31:1 → 8,07:1).
+    color: Colors.onDark,
     lineHeight: 18,
   },
   joinInput: {

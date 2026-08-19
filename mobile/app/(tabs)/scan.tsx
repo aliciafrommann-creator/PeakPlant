@@ -34,7 +34,15 @@ export default function ScanScreen() {
 
   // Gentle breathing pulse on the scan frame — signals "actively looking".
   useEffect(() => {
-    if (reducedMotion) return;
+    // Bei reduzierter Bewegung läuft der Puls nicht — dann muss der Rahmen
+    // aber SICHTBAR stehenbleiben. Vorher blieb `pulse` auf 0 und damit die
+    // Deckkraft dauerhaft bei 0,55: der Zielrahmen, das einzige Element, das
+    // zeigt wohin man halten soll, stand bei 2,05–2,22:1 (WCAG 1.4.11
+    // verlangt 3:1). Ein vierter Zustand, den die erste Zählung übersah.
+    if (reducedMotion) {
+      pulse.setValue(1);
+      return;
+    }
     const loop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulse, { toValue: 1, duration: 1200, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
@@ -174,9 +182,11 @@ export default function ScanScreen() {
               </TouchableOpacity>
             </View>
           ) : (
-            <Text style={styles.cameraText}>
-              {t('point at the QR code on your moment card', 'QR-Code auf deiner Momentkarte anvisieren')}
-            </Text>
+            <View style={styles.scrim}>
+              <Text style={styles.cameraText}>
+                {t('point at the QR code on your moment card', 'QR-Code auf deiner Momentkarte anvisieren')}
+              </Text>
+            </View>
           )}
         </View>
       </View>
@@ -243,21 +253,67 @@ const styles = StyleSheet.create({
   cameraText: {
     fontSize: 13,
     fontWeight: '300',
-    color: Colors.textSubtle,
+    // kontrast-ok: steht immer im `scrim` bzw. in der `permissionBox` — im
+    // schlechtesten Fall (Kamera auf Weiß) 5,21:1, auf flachem Dunkel 8,07:1.
+    color: Colors.onDark,
     textAlign: 'center',
     lineHeight: 20,
     letterSpacing: 0.3,
   },
-  permissionBox: { alignItems: 'center', gap: Spacing.lg },
+  /**
+   * Der Grund unter diesen Texten ist NICHT immer dunkel.
+   *
+   * Ohne Kameraerlaubnis liegt hier flaches `backgroundDark`. Sobald die
+   * Erlaubnis da ist — also im häufigsten Zustand und im Fehlerfall —, läuft
+   * darunter das LIVE-KAMERABILD. Eine helle Wand, und helle Schrift steht bei
+   * 1,07:1. Ein erster Anlauf hat genau das gebaut: den Unsichtbarkeitsfehler
+   * aus dem einen Zustand in den anderen verschoben.
+   *
+   * Deshalb bringen die Texte ihren Grund selbst mit. Bei 0,86 Deckkraft
+   * ergibt sich im schlechtesten Fall (Kamera auf Weiß) #3E3C3A —
+   * `onDarkStrong` steht dort bei 10,26:1, `onDark` bei 5,21:1. Beides gilt
+   * dann in allen drei Zuständen, ohne Fallunterscheidung.
+   */
+  scrim: {
+    backgroundColor: 'rgba(30,28,26,0.86)',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radii.sm,
+  },
+  permissionBox: {
+    alignItems: 'center',
+    gap: Spacing.lg,
+    backgroundColor: 'rgba(30,28,26,0.86)',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.lg,
+    borderRadius: Radii.md,
+  },
+  /**
+   * Hell gefüllt — und diesmal nachgerechnet statt begründet.
+   *
+   * Die Geschichte dieses Knopfs ist die Lehre: Erst stand die Beschriftung in
+   * `Colors.text` auf `backgroundDark` (1,00:1, unsichtbar). Dann kam ein
+   * Schleier, der die Schrift rettete und den Rand auf 2,46:1 drückte. Dann
+   * eine dunkle Füllung mit der Begründung „eine Füllung hängt von nichts ab"
+   * — gemessen 2,16:1 gegen den Schleier, also SCHLECHTER als der Rand davor.
+   *
+   * Die Begründung war falsch: Eine Füllung braucht Kontrast zu ihrer
+   * Umgebung genauso wie ein Rand. Was zählt, ist der schlechteste gerechnete
+   * Untergrund — hier der Schleier über einem weißen Kamerabild (#3E3C3A).
+   * Dagegen steht diese helle Füllung bei **10,26:1**, die Beschriftung in
+   * `Colors.text` darauf bei **15,88:1**.
+   */
   permissionButton: {
     height: 48,
     paddingHorizontal: Spacing.xl,
-    borderWidth: 1,
-    borderColor: Colors.accent,
+    backgroundColor: Colors.onDarkStrong,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
+  // `Colors.text` auf der hellen Füllung des Knopfs = 15,88:1. Dieselbe Farbe
+  // war hier einmal unsichtbar (1,00:1) — weil sie damals auf `backgroundDark`
+  // lag. Die Farbe war nie das Problem, der Untergrund war es.
   permissionButtonText: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   bottom: { paddingHorizontal: Spacing.screen, paddingVertical: Spacing.xl, gap: Spacing.lg },
   divider: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },

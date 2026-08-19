@@ -73,7 +73,27 @@ export default function Index() {
         const user = await getActiveUser();
         if (!active) return;
         if (!user) {
-          setRoute('/(auth)/sign-in');
+          /**
+           * Wer neu ist, sieht ZUERST, worum es geht.
+           *
+           * Bis zum 18.08.2026 landeten Abgemeldete direkt auf der Anmeldung.
+           * Damit war `welcome.tsx` — der Eröffnungssatz der App, „collect
+           * moments. grow together." — im echten Betrieb nur für Menschen
+           * sichtbar, die sich bereits angemeldet hatten. Ein Bildschirm, der
+           * das Produkt erklärt, und ihn sieht niemand, der es noch nicht
+           * kennt.
+           *
+           * Instagram, Strava, BeReal und DeepL zeigen alle erst, was sie
+           * sind, und fragen danach nach einem Konto. Bei uns ist die Kette
+           * ohnehin so gebaut: welcome → language → intro → onboarding →
+           * invite, und `invite.tsx` schickt selbst zur Anmeldung, sobald ein
+           * Space entstehen soll. Genau dort hat sie auch ihren Grund („damit
+           * dieser Moment mehr ist als dieses eine Handy").
+           *
+           * Für Rückkehrer steht auf welcome ein ruhiger Weg direkt zur
+           * Anmeldung — sonst müssten sie den Einstieg noch einmal durchlaufen.
+           */
+          setRoute(joinCode ? '/(auth)/invite' : '/(auth)/welcome');
           return;
         }
         // Wer über einen Einladungslink kommt, will beitreten — auch mit

@@ -8,7 +8,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
-import { Colors, Sections } from '../../constants/colors';
+import { Colors, SectionInks } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
 import { ChallengeCard } from '../../components/challenge/ChallengeCard';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -132,6 +132,6 @@ const styles = StyleSheet.create({
   content: { padding: Spacing.screen, gap: Spacing.xl, paddingBottom: Spacing.xxxl },
   intro: { fontSize: 14, fontWeight: '300', color: Colors.textMuted, lineHeight: 21 },
   section: { gap: Spacing.md },
-  sectionLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Sections.grow },
+  sectionLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: SectionInks.grow },
   list: { gap: Spacing.md },
 });

@@ -97,21 +97,22 @@ describe('K7 — Schrift und Kontrast', () => {
   });
 
   /**
-   * NICHT AUTOMATISIERT — und das ist eine Entscheidung, keine Lücke.
+   * KONTRAST BLEIBT HIER UNGEPRÜFT — und das ist eine Entscheidung, keine Lücke.
    *
-   * Die Regel ist echt: `textFaint` erreicht auf dem Papierton 2,4:1,
-   * `textSubtle` 3,5:1 — nötig wären 4,5:1. Ein erster Wächter fand dafür rund
-   * achtzig Stellen. Nur: Ein Quelltext-Test sieht den UNTERGRUND nicht. Ein
-   * großer Teil dieser Stellen liegt auf dunklen Flächen (Karten-Bildschirm,
-   * Anmeldung, Editions-Kopf), wo dieselbe Farbe richtig und ein Wechsel auf
-   * `textMuted` schlechter wäre.
+   * Die alten Werte (`textSubtle` 3,51:1, `textFaint` 2,41:1) sind seit dem
+   * 17.08.2026 korrigiert; heute stehen sie bei 4,55:1 und 3,03:1 auf dem
+   * Papierton. Die leiseste Stufe besteht damit für Großes und Nicht-Text,
+   * nicht für kleine Schrift — welcher Fall vorliegt, hängt am UNTERGRUND.
+   * Die verbliebenen Dunkel-Fälle sind `language.tsx`, `onboarding.tsx` und
+   * `space/new.tsx` (dort 4,97:1 gegen `Colors.text`, also richtig).
    *
-   * Ein Test mit achtzig Ausnahmen ist ein abgeschalteter Test im Kostüm. Also
-   * bleibt K7-Kontrast eine Urteilsfrage im Skill `klarheit` — geprüft, wenn
-   * ein Mensch eine Fläche anfasst, mit dem Wissen, worauf sie liegt.
+   * Was mechanisch geprüft WIRD, steht in `lib/palette.test.ts`: dort ist die
+   * Frage umgedreht — nicht „welcher Farbname", sondern „welche Farbe unter
+   * 24 pt", geprüft gegen den hellen Grund, mit sichtbar markierten Ausnahmen
+   * für dunkle Flächen. Dazu rechnet `lib/contrast.ts` die Verhältnisse und
+   * `lib/editionInk.test.ts` hält die zwölf Editionsfarben fest.
    *
-   * Was hier mechanisch bleibt, ist die Untergrenze der Schriftgröße: die gilt
-   * auf jedem Untergrund.
+   * Hier bleibt die Untergrenze der Schriftgröße — die gilt auf jedem Grund.
    */
 });
 

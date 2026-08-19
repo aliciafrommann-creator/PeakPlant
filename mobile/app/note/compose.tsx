@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BackButton } from '../../components/ui/BackButton';
-import { Colors, Accents } from '../../constants/colors';
+import { Colors, AccentInks } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
@@ -36,7 +36,7 @@ export default function ComposeNoteScreen() {
     (id: string) => {
       Alert.alert(
         t('delete this note?', 'diese Notiz löschen?'),
-        t('it is gone for both of you.', 'sie ist dann für euch beide weg.'),
+        t('it is gone for everyone in your space.', 'sie ist dann für alle in eurem Space weg.'),
         [
           { text: t('cancel', 'Abbrechen'), style: 'cancel' },
           {
@@ -102,7 +102,7 @@ export default function ComposeNoteScreen() {
             value={text}
             onChangeText={(v) => setText(v.slice(0, MAX_CHARS))}
             placeholder={t('write something beautiful...', 'schreib etwas Schönes...')}
-            placeholderTextColor={Colors.textFaint}
+            placeholderTextColor={Colors.textSubtle}
             multiline
             autoFocus
             textAlignVertical="top"
@@ -133,7 +133,7 @@ export default function ComposeNoteScreen() {
                   )
                 : t(
                     'nothing written yet. what you write stays here, for the two of you.',
-                    'noch nichts geschrieben. Was du schreibst, bleibt hier — für euch beide.',
+                    'noch nichts geschrieben. Was du schreibst, bleibt hier — in eurem Space.',
                   )}
             </Text>
           )}
@@ -250,7 +250,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
     letterSpacing: 1,
-    color: Accents.apricot,
+    // Auf `backgroundCream` war Accents.apricot 2,38:1 — der schlechteste
+    // Textwert der App, ausgerechnet an der Anrede. Jetzt 5,04:1.
+    color: AccentInks.apricot,
     marginBottom: Spacing.lg,
   },
   input: {
@@ -267,7 +269,8 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.md,
   },
   counterWarn: {
-    color: Accents.chili,
+    // 4,01:1 auf backgroundCream → 5,05:1.
+    color: AccentInks.chili,
   },
   footer: {
     paddingHorizontal: Spacing.screen,

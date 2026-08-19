@@ -11,7 +11,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { BackButton } from '../../components/ui/BackButton';
 import { PressableScale } from '../../components/ui/PressableScale';
-import { Colors, Sections } from '../../constants/colors';
+import { Colors, SectionInks } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useAppStore } from '../../lib/store';
@@ -26,7 +26,11 @@ import type { RatingSummary } from '../../lib/discovery/ratings';
 import { confirmSuccess } from '../../lib/haptics';
 import type { SavedDate } from '../../lib/types';
 
-const TOGETHER = Sections.together;
+// Die Schrift-Fassung derselben Farbe. Als 11-pt-Etikett stand `TOGETHER`
+// (apricot) auf Papier bei 2,35:1 — schlechter als jeder Fund des ersten
+// Durchgangs, und vom Wächter nicht zu sehen, weil er nur Palettenpfade kennt
+// und hier eine lokale Konstante steht.
+const TOGETHER_INK = SectionInks.together;
 
 export default function TogetherDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -380,7 +384,7 @@ const styles = StyleSheet.create({
   backText: { fontSize: 12, fontWeight: '400', letterSpacing: 1.5, color: Colors.textMuted, width: 60 },
   headerLabel: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   content: { padding: Spacing.screen, gap: Spacing.md, paddingBottom: Spacing.xxxl },
-  category: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: TOGETHER },
+  category: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: TOGETHER_INK },
   title: { ...Typography.editorial },
   idea: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 26 },
   experience: { gap: Spacing.sm, marginTop: Spacing.md },

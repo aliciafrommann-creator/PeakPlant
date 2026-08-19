@@ -13,13 +13,15 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Colors, Accents } from '../../constants/colors';
+import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { PressableScale } from '../ui/PressableScale';
 import { FadeInImage } from '../ui/FadeInImage';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { acknowledgeSelection } from '../../lib/haptics';
+import { bestInk } from '../../lib/contrast';
+import { colorForSpace } from '../../lib/spaceColors';
 import { composeInviteText } from '../../lib/shareText';
 import type { Space } from '../../lib/types';
 
@@ -29,22 +31,6 @@ interface SpacePickerProps {
   activeSpaceId?: string;
   onSelect: (id: string) => void;
   onClose: () => void;
-}
-
-/** Each space keeps a warm identity colour, stable by position (matches the
- *  rest of the app). */
-const SPACE_COLORS = [
-  Accents.chili,
-  Accents.blossom,
-  Accents.sunflower,
-  Accents.ember,
-  Accents.apricot,
-  Accents.terracotta,
-  Accents.sage,
-] as const;
-
-function colorForSpace(index: number): string {
-  return SPACE_COLORS[index % SPACE_COLORS.length];
 }
 
 function glyphFor(type: Space['type']): string {
@@ -132,7 +118,18 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                         {space.avatarUrl ? (
                           <FadeInImage source={{ uri: space.avatarUrl }} style={styles.dotImage} />
                         ) : (
-                          <Text style={styles.dotGlyph}>
+                          // Die Tinte wird gerechnet, nicht gesetzt: Der Punkt
+                          // trägt eine von sieben Akzentfarben, und weiß
+                          // erreichte auf sechs davon keine 4,5:1 (Sonnenblume
+                          // 1,96). Das Zeichen trägt Bedeutung, ♥ heißt Paar.
+                          //
+                          // Dunkle Tinte ist `Colors.black`, nicht `Colors.text`:
+                          // Mit dem wärmeren `text` blieben Chili (3,80) und
+                          // Blossom (4,17) unter der Latte — auf zwei von sieben
+                          // Farben hätte KEINE der beiden Tinten gereicht. Mit
+                          // Schwarz sind es 4,70 und 5,15. `lib/spaceInk.test.ts`
+                          // hält das für jede künftige Farbe fest.
+                          <Text style={[styles.dotGlyph, { color: bestInk(color, Colors.black, Colors.white) }]}>
                             {space.emoji ?? glyphFor(space.type)}
                           </Text>
                         )}
@@ -147,8 +144,12 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                             : t('friends space', 'Freunde-Space')}
                         </Text>
                       </View>
+                      {/* Das Häkchen NICHT in der Punktfarbe: Es sitzt auf
+                          `Colors.surface`, und Sonnenblume erreicht dort 1,9:1
+                          — unter den 3:1, die WCAG 1.4.11 für ein
+                          bedeutungstragendes Symbol verlangt. */}
                       {active && (
-                        <Ionicons name="checkmark-circle" size={20} color={color} style={styles.check} />
+                        <Ionicons name="checkmark-circle" size={20} color={Colors.text} style={styles.check} />
                       )}
                     </PressableScale>
 
@@ -248,9 +249,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  // Ohne `color`: Die Farbe kommt beim Rendern aus `bestInk(…)`. (Kein
+  // `kontrast-ok`-Marker — der Block hat keine Farbe, der Wächter überspringt
+  // ihn ohnehin, und ein Marker, der nichts entschuldigt, täuscht eine
+  // Ausnahme vor, die es nicht gibt.)
   dotGlyph: {
     fontSize: 16,
-    color: Colors.white,
   },
   dotImage: {
     width: 38,

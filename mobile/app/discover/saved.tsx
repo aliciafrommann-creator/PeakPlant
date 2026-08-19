@@ -521,7 +521,7 @@ export default function SavedDatesScreen() {
             <TextInput
               style={styles.sheetInput}
               placeholder={t('YYYY-MM-DD, e.g. 2026-07-04', 'JJJJ-MM-TT, z.B. 2026-07-04')}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               value={planText}
               onChangeText={setPlanText}
               autoFocus
@@ -530,7 +530,7 @@ export default function SavedDatesScreen() {
             <TextInput
               style={styles.sheetNotes}
               placeholder={t('notes (optional) — who books, what to bring...', 'Notizen (optional) - wer bucht, was mitbringen...')}
-              placeholderTextColor={Colors.textFaint}
+              placeholderTextColor={Colors.textSubtle}
               value={planNotes}
               onChangeText={setPlanNotes}
               multiline

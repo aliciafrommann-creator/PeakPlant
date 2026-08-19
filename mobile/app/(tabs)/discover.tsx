@@ -811,7 +811,8 @@ const styles = StyleSheet.create({
     borderRadius: Radii.pill,
     ...Shadows.subtle,
   },
-  chipOn: { backgroundColor: Colors.accent, borderColor: Colors.accent },
+  // Weiße 13-pt-Schrift auf der Füllung — accentInk statt accent (4,47 → 5,09).
+  chipOn: { backgroundColor: Colors.accentInk, borderColor: Colors.accentInk },
   chipText: { fontSize: 13, fontWeight: '600', color: Colors.text, letterSpacing: 0.2 },
   chipTextOn: { color: Colors.white },
   loading: { gap: Spacing.md, paddingBottom: Spacing.xxl },
@@ -876,9 +877,9 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  cta: { fontSize: 12, fontWeight: '600', letterSpacing: 1.2, color: Colors.accent },
+  cta: { fontSize: 12, fontWeight: '600', letterSpacing: 1.2, color: Colors.accentInk },
   save: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
-  savedDone: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.accent },
+  savedDone: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.accentInk },
   actionRow: { flexDirection: 'row', gap: Spacing.sm, paddingHorizontal: Spacing.screen, marginTop: Spacing.md },
   actionBtn: {
     height: 44,

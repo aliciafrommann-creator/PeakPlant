@@ -158,6 +158,8 @@ const styles = StyleSheet.create({
     marginLeft: 28,
   },
   optionSubSelected: {
+    // kontrast-ok: greift NUR auf der ausgewählten Karte, und die ist
+    // `Colors.text` (#1E1C1A) — dort steht textFaint bei 4,97:1.
     color: Colors.textFaint,
   },
   actions: {

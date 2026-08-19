@@ -267,6 +267,73 @@ npx eslint app components lib --ext .ts,.tsx
 npx vitest run   # unit tests
 ```
 
+### Entscheidung 025 — Kontrast wird gerechnet, und die Frage lautet „worauf?" (18.08.2026)
+
+Der erste Durchgang suchte nach einem FARBNAMEN (`textFaint`, dann
+`placeholderTextColor`). Er fand neun Verdachtsfälle, davon drei echte Fehler,
+und übersah die schwereren, weil die anders hießen. Zwei Gegenlese-Durchgänge
+fanden danach 18 weitere Stellen im ersten und 6 im zweiten — alle in
+Style-Blöcken, also im behaupteten Umfang:
+
+- `permissionButtonText` im Scanner: `Colors.text` auf `backgroundDark` =
+  **1,00:1**. Ohne Kameraerlaubnis wird die Kameraansicht nicht gerendert, der
+  Grund ist dann flaches #1E1C1A — die Beschriftung „KAMERA ERLAUBEN" war
+  unsichtbar. Sichtbar war nur der Rand des Knopfs.
+- Elf Stellen mit `Accents.*` / `Sections.*` als 11–13-pt-Schrift, zwischen
+  2,38:1 (Anrede in `note/compose`) und 4,28:1.
+- Zwei Texte im dunklen Einladungs-Kasten, einer davon über einen Stil, der
+  sich zwei verschiedene Untergründe teilte.
+- Fünf Bedienelemente mit weißer kleiner Schrift auf `accent`: 4,47:1. (Beim
+  ersten Zählen waren es „vier" — der fünfte, der schwebende Haupt-Knopf, trägt
+  seine Füllung als Vorgabewert in den Props und nicht in einem Style-Block.)
+- Und in der zweiten Runde: vier Etiketten hinter lokalen Konstanten
+  (`TOGETHER` = apricot als 11-pt-Schrift = **2,35:1**, schlechter als alles
+  aus Runde eins), ein Überschreibungs-Block ohne eigenes `fontSize`, und der
+  Scanner — wo die erste Korrektur den Unsichtbarkeitsfehler nur in einen
+  anderen Zustand verschoben hatte.
+
+Daraus, verbindlich:
+
+1. **Zwei Paletten.** `Accents`/`Sections` füllen, `AccentInks`/`SectionInks`
+   schreiben (neu, ≥ 4,50:1 auf Papier, warm, creme, weiß und `Accents.cream`
+   — auf `Colors.border` sind es 4,21–4,33, dort gehört keine kleine Schrift
+   hin). Für dunkle Flächen `Colors.onDark` / `onDarkStrong`.
+2. **Gerechnet, nicht geschätzt.** `lib/contrast.ts` — inklusive `composite()`
+   für Deckkraft und `bestInk()` für Flächen, deren Farbe erst zur Laufzeit
+   feststeht (Editions-Kopf, Kartenfläche: `lib/editionInk.ts`).
+3. **Ein Wächter mit zwei Regeln**, beide ohne Kenntnis des Untergrunds
+   prüfbar (`lib/palette.test.ts`): (A) Ein Akzent ist eine Füllung, keine
+   Schrift — `Accents.*`/`Sections.*` unter 24 pt sind verboten, auch hinter
+   einstufigen, großgeschriebenen, dateilokalen Konstanten wie
+   `const TOGETHER = Sections.together` (Ketten, Kleinschreibung, Objektfelder
+   und Importe gehen weiterhin durch — steht so im Dateikopf). (B) Jede
+   andere Schriftfarbe muss auf dem Papierton bestehen oder eine erklärte
+   Dunkel-Tinte sein. Größenordnung: gut tausend Style-Blöcke, knapp
+   fünfhundert davon geprüft, eine Handvoll begründete Ausnahmen
+   (`// kontrast-ok: <Grund>`). Bewusst gerundet — die genauen Zahlen standen
+   hier zweimal falsch, beide Male durch den Commit, der sie aufschrieb.
+   Was er NICHT kann, steht im Kopf der Datei — vor allem: ob eine helle
+   Schrift auf der richtigen Fläche sitzt, bleibt Menschenarbeit.
+4. Ein statischer Farbwert in einem Stil, dessen Farbe beim Rendern gesetzt
+   wird, gehört gelöscht.
+5. **Ein Bedienelement braucht Kontrast zu seiner Umgebung — als Rand wie als
+   Füllung.** Entscheidend ist der schlechteste GERECHNETE Untergrund, nicht
+   die Bauart. Der Knopf im Scanner hat das dreimal vorgeführt: Beschriftung
+   unsichtbar (1,00:1) → Schleier drüber, Rand fällt auf 2,46:1 → dunkle
+   Füllung „damit er von nichts mehr abhängt", gemessen **2,16:1**, also
+   schlechter als der Rand davor. Erst die HELLE Füllung gegen den dunklen
+   Schleier trägt (10,26:1). „Eine Füllung hängt von nichts ab" war eine
+   plausible Begründung ohne Rechnung — genau die Sorte, die dieser Abschnitt
+   verbieten soll. Halbdurchsichtige Streifen sind kein bekannter Untergrund:
+   Der Scanner setzte helle Schrift über das LIVE-Kamerabild (1,07:1 über
+   einer weißen Wand), und der Streifen auf der Momente-Wand ließ ein dunkles
+   Foto mit 8 % durch. Entweder deckend, oder ein Schleier, dessen
+   schlechtester Fall gerechnet ist.
+
+Seed-Korrektur nebenbei: Edition 08 stand auf `ink: 'light'`, obwohl Dunkel
+dort 5,20:1 statt 3,13:1 erreicht; Edition 09 hatte eine Farbe, auf der KEINE
+der beiden Tinten reicht (4,28 / 3,80) und ist eine Nuance dunkler.
+
 ### Entscheidung 024 — Decks bleiben physisch, der Scan bringt mehr Inhalt (Alicia, 18.08.2026)
 
 Ausgangsbefund beim Prüfen des Scan-Wegs: Alle 60 Kartentexte liegen im
