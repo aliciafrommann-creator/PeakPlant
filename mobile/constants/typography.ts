@@ -37,6 +37,33 @@ import { Colors } from './colors';
 const editorialSans = Platform.select({ ios: 'Helvetica Neue', android: undefined, default: undefined });
 
 export const Typography = {
+  /**
+   * DER GESTAPELTE TITEL — die eine Aussage, gesetzt wie auf einer Packung.
+   *
+   * Alicias Richtung vom 19.08.2026, nach dem Vorbild von „the deep talk":
+   * schwere Serife, alles klein geschrieben, Zeilenabstand UNTER der
+   * Schriftgröße, sodass die Zeilen sich fast berühren. Das macht aus einer
+   * Überschrift ein Objekt.
+   *
+   * Zwei Regeln, ohne die es kippt:
+   *   1. HÖCHSTENS EINE pro Bildschirm. Zwei gestapelte Titel heben sich auf.
+   *   2. Nie unter 24 pt. Eine Serife wird klein dünn, und dünn auf einer
+   *      Färbung ist genau die Kombination, die der Kontrast-Durchgang
+   *      rausgeräumt hat.
+   *
+   * Die Schrift ist heute die System-Serife (Georgia bzw. die Android-Serife)
+   * — kein Schrift-Asset, keine zusätzliche Abhängigkeit. Die Richtung trägt
+   * schon so; ein eigener Schnitt (Bodoni Moda o. ä.) wäre eine eigene
+   * Entscheidung samt Asset und Ladeweg.
+   */
+  stack: {
+    fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'Georgia' }),
+    fontSize: 34,
+    fontWeight: '700' as const,
+    letterSpacing: -1,
+    color: Colors.text,
+    lineHeight: 31,
+  },
   /** Das Größte der App: die eine Aussage auf Willkommen/Onboarding. War 40/44. */
   display: {
     fontFamily: editorialSans,

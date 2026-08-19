@@ -24,6 +24,7 @@ import { MemoryCard } from '../../components/memory/MemoryCard';
 import { ShopLink } from '../../components/edition/ShopLink';
 import { editionInk, EDITION_INK_DARK, EDITION_INK_LIGHT } from '../../lib/editionInk';
 import { dyeFor } from '../../constants/dyes';
+import { DyeField } from '../../components/ui/DyeField';
 import { voice } from '../../lib/voice';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -140,7 +141,7 @@ export default function EditionScreen() {
         }
         ListHeaderComponent={
           <>
-            <View style={[styles.header, { backgroundColor: flaeche }]}>
+            <DyeField editionId={edition.id} style={styles.header}>
             <Text style={styles.symbol}>{edition.symbol}</Text>
             <Text style={[styles.editionLabel, { color: fg }]}>{edition.subtitle.toUpperCase()}</Text>
             <Text style={[styles.title, { color: fg }]}>{edition.name.toLowerCase()}</Text>
@@ -168,7 +169,7 @@ export default function EditionScreen() {
             {editionMemories.length > 0 && (
               <Text style={[styles.diaryLabel, { color: fg }]}>{t('YOUR DIARY', 'EUER TAGEBUCH')}</Text>
             )}
-            </View>
+            </DyeField>
 
             {/* Die Beispielkarte. Vorher zeigte diese Seite zwölf nummerierte
                 Umrisse und keinen einzigen Satz davon, was auf einer Karte

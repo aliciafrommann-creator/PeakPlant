@@ -16,6 +16,7 @@ import { findCard, isSampleCard, getEdition, SEED_EDITION } from '../../lib/seed
 import { sampleNotice } from '../../lib/content/samples';
 import { editionInk } from '../../lib/editionInk';
 import { dyeFor } from '../../constants/dyes';
+import { DyeField } from '../../components/ui/DyeField';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { useBiometric } from '../../lib/hooks/useBiometric';
@@ -243,7 +244,7 @@ export default function CardDetailScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
         {/* Card visual — mirrors the physical card */}
-        <View style={[styles.cardVisual, { backgroundColor: kartenGrund }]}>
+        <DyeField editionId={edition.id} style={styles.cardVisual}>
           <View style={styles.cardInner}>
             <Text style={[styles.cardEdition, { color: ink }]}>
               PEAKPLANT — {edition.name.toUpperCase()}
@@ -259,7 +260,7 @@ export default function CardDetailScreen() {
               ]}
             />
           </View>
-        </View>
+        </DyeField>
 
         {/* Eine Beispielkarte sagt, dass sie eine ist. Sie sieht sonst genau
             aus wie eine, die jemand mit einem gekauften Deck geöffnet hat —

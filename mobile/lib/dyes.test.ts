@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { DYES, dyeFor } from '../constants/dyes';
+import fs from 'node:fs';
+import path from 'node:path';
+import { DYES, HOUSE_DYE, dyeFor } from '../constants/dyes';
 import { SEED_EDITIONS } from './seed';
 import { Colors } from '../constants/colors';
 import { contrastRatio, luminance } from './contrast';
@@ -73,11 +75,65 @@ describe('Batik-Farbwelten', () => {
     expect(new Set(namen).size, 'doppelte Namen').toBe(namen.length);
   });
 
+  it('jede Welt bringt ihr Zeichen mit', () => {
+    // Alicia zu den Entwürfen: „mit den emojis haaammmer". Also gehört das
+    // Zeichen zum Rezept — und keine zwei Welten teilen sich eins, sonst
+    // sagt es nichts mehr.
+    const zeichen = [...Object.values(DYES), HOUSE_DYE].map((d) => d.emoji);
+    expect(zeichen.every((e) => e.trim().length > 0)).toBe(true);
+    expect(new Set(zeichen).size, 'doppelte Zeichen').toBe(zeichen.length);
+  });
+
+  it('das Haus-Rezept trägt Schrift und ist keine Editionswelt', () => {
+    // Ohne eigenes Rezept müsste sich der Startbildschirm die Welt einer
+    // fremden Edition borgen — eine Aussage, die nicht stimmt.
+    expect(editionInkPassesAA(HOUSE_DYE.ground)).toBe(true);
+    expect(Object.values(DYES).some((d) => d.ground === HOUSE_DYE.ground)).toBe(false);
+    expect(HOUSE_DYE.namedByAlicia).toBe(false);
+  });
+
   it('Alicias vier Welten sind als ihre gekennzeichnet', () => {
     // Damit später niemand meine abgeleiteten Rezepte für ihre Entscheidung
     // hält — und damit man sieht, welche acht noch auf sie warten.
     const ihre = Object.entries(DYES).filter(([, d]) => d.namedByAlicia).map(([id]) => id);
     expect(ihre).toEqual(['edition-01', 'edition-02', 'edition-03', 'edition-04']);
     expect(DYES['edition-02'].name).toBe('Cyber Midnight');
+  });
+});
+
+describe('Die gedruckten Färbungen', () => {
+  /**
+   * WARUM DAS GEPRÜFT WIRD: Die Färbung ist ein Bild, das aus dem Rezept
+   * gerendert wurde (`scripts/renderDyes.mjs`). Rezept und Bild können
+   * auseinanderlaufen — jemand ändert eine Welt und vergisst, neu zu drucken.
+   * Dann zeigt die App eine Färbung, die es im Code nicht mehr gibt.
+   */
+  const ORDNER = path.resolve(__dirname, '..', 'assets', 'dyes');
+
+  it('zu jeder Welt gibt es ein Bild, und zum Haus auch', () => {
+    const fehlend = [...Object.keys(DYES), 'house'].filter(
+      (id) => !fs.existsSync(path.join(ORDNER, `${id}.png`)),
+    );
+    expect(fehlend, `nicht gedruckt: ${fehlend.join(', ')}`).toEqual([]);
+  });
+
+  it('kein Bild ohne Rezept', () => {
+    const erlaubt = new Set([...Object.keys(DYES), 'house']);
+    const verwaist = fs
+      .readdirSync(ORDNER)
+      .filter((f) => f.endsWith('.png'))
+      .map((f) => f.replace('.png', ''))
+      .filter((id) => !erlaubt.has(id));
+    expect(verwaist, `Bild ohne Rezept: ${verwaist.join(', ')}`).toEqual([]);
+  });
+
+  it('die Bilder bleiben klein genug fürs Bundle', () => {
+    // Bei voller Auflösung waren die dreizehn zusammen 1,5 MB. Das ist die
+    // Grenze, ab der eine Färbung teuer wird statt schön.
+    const gesamt = fs
+      .readdirSync(ORDNER)
+      .filter((f) => f.endsWith('.png'))
+      .reduce((summe, f) => summe + fs.statSync(path.join(ORDNER, f)).size, 0);
+    expect(gesamt / 1024, `${(gesamt / 1024).toFixed(0)} KB`).toBeLessThan(400);
   });
 });

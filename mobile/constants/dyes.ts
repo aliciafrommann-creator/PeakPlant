@@ -42,6 +42,14 @@ export interface Dye {
   /** Der Name der Farbwelt. */
   readonly name: string;
   /**
+   * Das Zeichen der Welt.
+   *
+   * Alicia am 19.08.2026 zu den Entwürfen: „mit den emojis haaammmer". Es
+   * gehört deshalb zum Rezept und nicht zur Edition — eine Welt bringt ihr
+   * Zeichen mit, so wie sie ihre Farben mitbringt.
+   */
+  readonly emoji: string;
+  /**
    * Der Grundton der Färbung — hell oder tief, je Welt.
    * Welche Tinte darauf liest, rechnet `editionInk()` aus.
    */
@@ -56,24 +64,28 @@ export const DYES: Readonly<Record<string, Dye>> = {
   // ── Alicias vier Welten (19.08.2026) ──────────────────────────────────
   'edition-01': {
     name: 'Velvet Passion',
+    emoji: '🌹',
     ground: '#F06AA8',
     lights: ['#FBC2DC', '#C0399B', '#F58A6E', '#F2C14E'],
     namedByAlicia: true,
   },
   'edition-02': {
     name: 'Cyber Midnight',
+    emoji: '🌙',
     ground: '#1D2B6B',
     lights: ['#22D3EE', '#8B5CF6', '#3B82F6', '#FF2D95'],
     namedByAlicia: true,
   },
   'edition-03': {
     name: 'Warm Ember',
+    emoji: '🔥',
     ground: '#F2A85E',
     lights: ['#FBD9A8', '#E8633A', '#D93B4E', '#F5C978'],
     namedByAlicia: true,
   },
   'edition-04': {
     name: 'Acid Electric',
+    emoji: '⚡',
     ground: '#C6F135',
     lights: ['#EAFCA0', '#E01E86', '#35E0E8', '#8B5CF6'],
     namedByAlicia: true,
@@ -85,52 +97,77 @@ export const DYES: Readonly<Record<string, Dye>> = {
   // sie nicht gewählt hat.
   'edition-05': {
     name: 'Horizon',
+    emoji: '✈️',
     ground: '#7FA8C9',
     lights: ['#D3E4F0', '#4F7593', '#9385AE', '#A8CBE0'],
     namedByAlicia: false,
   },
   'edition-06': {
     name: 'Bloom',
+    emoji: '✨',
     ground: '#F0A070',
     lights: ['#FBD5BC', '#D9477E', '#E8A33C', '#CF4B2C'],
     namedByAlicia: false,
   },
   'edition-07': {
     name: 'Mirror',
+    emoji: '🪞',
     ground: '#B8A9C9',
     lights: ['#E4DCEC', '#7C6690', '#D9477E', '#CBBFD9'],
     namedByAlicia: false,
   },
   'edition-08': {
     name: 'Spark',
+    emoji: '🎲',
     ground: '#E8633A',
     lights: ['#F8C4AE', '#F2B705', '#CF4B2C', '#F09070'],
     namedByAlicia: false,
   },
   'edition-09': {
     name: 'Nest',
+    emoji: '🏕️',
     ground: '#B79E85',
     lights: ['#E4D6C4', '#8D7B68', '#B5532E', '#CBB59B'],
     namedByAlicia: false,
   },
   'edition-10': {
     name: 'Seedling',
+    emoji: '🌱',
     ground: '#A3C9A8',
     lights: ['#DDEBDB', '#6F9C7A', '#C9DCC0', '#8FBF9A'],
     namedByAlicia: false,
   },
   'edition-11': {
     name: 'Lantern',
+    emoji: '🏮',
     ground: '#3D4A6B',
     lights: ['#7FA8C9', '#9AB4CE', '#5B4A7A', '#22D3EE'],
     namedByAlicia: false,
   },
   'edition-12': {
     name: 'Hearth',
+    emoji: '🧸',
     ground: '#D9A679',
     lights: ['#F0DCC2', '#CF4B2C', '#E8A33C', '#C08E5E'],
     namedByAlicia: false,
   },
+};
+
+/**
+ * Die Färbung des Hauses — für Flächen, hinter denen KEINE Edition steht
+ * (Startbildschirm, Entdecken, Orte). Ohne sie müsste jede solche Fläche
+ * entweder farblos bleiben oder sich die Welt einer fremden Edition borgen,
+ * und beides wäre eine Aussage, die nicht stimmt.
+ *
+ * Sie ist bewusst der Chili aus der Marke, aufgehellt bis er dunkle Schrift
+ * trägt — PeakPlant hat seine eigene Farbe, und die Editionen sind die Gäste.
+ */
+export const HOUSE_DYE: Dye = {
+  name: 'PeakPlant',
+  emoji: '✦',
+  ground: '#F0836A',
+  lights: ['#FBC9BC', '#D9477E', '#CF4B2C', '#F2B705'],
+  namedByAlicia: false,
 };
 
 /**

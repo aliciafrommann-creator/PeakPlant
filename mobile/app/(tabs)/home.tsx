@@ -27,6 +27,9 @@ import { PeakRow } from '../../components/home/PeakRow';
 import { AloneRow } from '../../components/home/AloneRow';
 import { spaceRepository } from '../../lib/repositories';
 import { voice } from '../../lib/voice';
+import { HOUSE_DYE } from '../../constants/dyes';
+import { DyeField } from '../../components/ui/DyeField';
+import { editionInk } from '../../lib/editionInk';
 import { spaceTheme, glyphForSpace } from '../../lib/spaceTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -84,6 +87,8 @@ export default function HomeScreen() {
   // Die Anrede richtet sich nach der Art des Space: „euer" oder „dein"
   // (lib/voice.ts). Ein Raum für eine Person darf keine zweite behaupten.
   const v = voice(activeSpace?.type);
+  // Die Tinte auf der Haus-Färbung — gerechnet, nicht gesetzt.
+  const hausTinte = editionInk(HOUSE_DYE.ground);
   const { latestFromPartner } = useNotes(activeSpace?.id);
   const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
     useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
@@ -365,7 +370,7 @@ export default function HomeScreen() {
         {activeSpace && todaysMoment && (
           <PressableScale
             containerStyle={styles.stripSlot}
-            style={styles.strip}
+            style={styles.stripPress}
             onPress={() => router.push(`/together/${todaysMoment.momentId}`)}
             scaleTo={0.99}
             accessibilityLabel={t(
@@ -373,11 +378,13 @@ export default function HomeScreen() {
               `Idee für heute: ${todaysMoment.title}`,
             )}
           >
-            <Text style={styles.stripSun}>☀</Text>
-            <Text style={styles.stripText} numberOfLines={1}>
-              {todaysMoment.title}
-            </Text>
-            <Ionicons name="arrow-forward" size={15} color={Colors.textMuted} />
+            <DyeField style={styles.strip}>
+              <Text style={styles.stripSun}>{HOUSE_DYE.emoji}</Text>
+              <Text style={[styles.stripText, { color: hausTinte }]} numberOfLines={1}>
+                {todaysMoment.title}
+              </Text>
+              <Ionicons name="arrow-forward" size={15} color={hausTinte} />
+            </DyeField>
           </PressableScale>
         )}
 
@@ -583,19 +590,26 @@ const styles = StyleSheet.create({
 
   // Vorschlagszeile
   stripSlot: { marginHorizontal: Spacing.screen, marginBottom: Spacing.md },
+  /**
+   * Die eine gefärbte Fläche des Startbildschirms (Entwurf „E · Batik leise",
+   * Alicia 19.08.2026). Bewusst NUR hier: Die Färbung bleibt besonders, weil
+   * sie selten ist — und bei vierzig Momenten erschlägt einen keine Farbfläche.
+   *
+   * Die Farbe kommt beim Rendern aus `HOUSE_DYE`, die Schrift aus
+   * `editionInk()`. Deshalb steht hier weder Hintergrund noch Schriftfarbe:
+   * ein toter Wert würde beim Lesen eine Entscheidung vortäuschen.
+   */
+  stripPress: { borderRadius: Radii.sm, overflow: 'hidden' },
   strip: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
     paddingVertical: 13,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.backgroundWarm,
     borderRadius: Radii.sm,
-    borderWidth: 1,
-    borderColor: Colors.border,
   },
   stripSun: { fontSize: 14 },
-  stripText: { flex: 1, fontSize: 15, fontWeight: '400', color: Colors.text },
+  stripText: { flex: 1, fontSize: 15, fontWeight: '500' },
 
   // Notiz vom Partner
   partnerNote: {
