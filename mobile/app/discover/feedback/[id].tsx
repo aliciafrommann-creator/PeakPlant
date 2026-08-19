@@ -20,6 +20,7 @@ import { useSpaces } from '../../../lib/hooks/useSpaces';
 import { feedbackRepository, publicPlaceFeedbackRepository } from '../../../lib/repositories';
 import { acknowledgeSelection, confirmSuccess } from '../../../lib/haptics';
 import type { PublicPlaceSpot } from '../../../lib/types';
+import { voice } from '../../../lib/voice';
 
 const MAX_TIP = 280;
 
@@ -63,6 +64,7 @@ export default function FeedbackScreen() {
   }>();
   const { t } = useLanguage();
   const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
 
   const [rating, setRating] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
   const [tip, setTip] = useState('');
@@ -234,10 +236,7 @@ export default function FeedbackScreen() {
           ) : null}
 
           <Text style={styles.privacyNote}>
-            {t(
-              'your diary memory stays separate and private. anonymous place sharing only happens when you turn it on above.',
-              'Eure Tagebucherinnerung bleibt getrennt und privat. Anonymes Orte-Teilen passiert nur, wenn du es oben aktivierst.',
-            )}
+            {t(v.feedbackPrivacyNote.en, v.feedbackPrivacyNote.de)}
           </Text>
         </ScrollView>
       </SafeAreaView>

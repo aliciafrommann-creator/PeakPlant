@@ -380,8 +380,8 @@ export default function DiscoverScreen() {
         </View>
 
         <View style={styles.titleBlock}>
-          <Text style={styles.generatorLabel}>{t('SURPRISE YOURSELVES · DATE GENERATOR', 'LASST EUCH ÜBERRASCHEN · DATE GENERATOR')}</Text>
-          <Text style={styles.title}>{t('what could you do\ntogether?', 'was könntet\nihr zusammen tun?')}</Text>
+          <Text style={styles.generatorLabel}>{t(v.discoverKicker.en, v.discoverKicker.de)}</Text>
+          <Text style={styles.title}>{t(v.discoverQuestion.en, v.discoverQuestion.de)}</Text>
           <Text style={styles.subtitle}>
             {t(
               `a real, doable idea — tuned to this ${timeOfDay}. tap a chip to refine.`,
@@ -496,10 +496,7 @@ export default function DiscoverScreen() {
               {t('we could not fetch an idea.', 'wir konnten gerade keine Idee holen.')}
             </Text>
             <Text style={styles.emptyHint}>
-              {t(
-                'that was the connection, not your filters — your saved ideas are safe.',
-                'das war die Verbindung, nicht eure Filter — eure gemerkten Ideen sind sicher.',
-              )}
+              {t(v.discoverConnectionHint.en, v.discoverConnectionHint.de)}
             </Text>
             <View style={styles.emptyActions}>
               <TouchableOpacity
@@ -658,7 +655,9 @@ export default function DiscoverScreen() {
                   'your life is not something to optimise.\nit is something to notice.',
                   'Dein Leben ist nichts zum Optimieren.\nEs ist etwas zum Bemerken.',
                 )
-              : t(
+              : // anrede-ok: Die drei Fassungen stehen direkt übereinander —
+                // Freunde, allein, Paar. Dies IST die Paar-Fassung.
+                t(
                   'your relationship is not something to optimise.\nit is something to notice.',
                   'Eure Beziehung ist nichts zum Optimieren.\nSie ist etwas zum Bemerken.',
                 )}

@@ -87,6 +87,94 @@ export interface Voice {
   memoryDeleteWarning: Phrase;
   /** Push: die zwei erlaubten Anlässe. */
   pushNewMoment: Phrase;
+
+  // ── Ladefehler ────────────────────────────────────────────────────────
+  // Diese Sätze sind Zusagen („deine Sachen sind sicher"). Ein Versprechen,
+  // das eine zweite Person mitmeint, die es nicht gibt, ist genau die Sorte
+  // Satz, bei der die falsche Anrede am meisten wiegt (MANIFESTO §1).
+  /** Startbildschirm: die Momente-Wand lädt nicht. */
+  loadMomentsFailedHint: Phrase;
+  /** Sammlung: der Stand einer Edition lässt sich nicht lesen. */
+  editionProgressFailed: Phrase;
+  /** Rückblick: lädt nicht. */
+  storyLoadFailedTitle: Phrase;
+  storyLoadFailedHint: Phrase;
+  /** Editions-Tagebuch: lädt nicht. */
+  diaryLoadFailedTitle: Phrase;
+  diaryLoadFailedHint: Phrase;
+  /** Gemerkte Ideen: laden nicht. */
+  savedIdeasLoadFailed: Phrase;
+  /** Entdecken: keine Idee geholt. */
+  discoverConnectionHint: Phrase;
+  /** Challenge: der Fortschritt lässt sich nicht lesen. */
+  challengeProgressFailed: Phrase;
+
+  // ── Überschriften und Wege ────────────────────────────────────────────
+  /** Die Fläche über dem Editions-Tagebuch. */
+  diaryLabel: Phrase;
+  /** Vorlesehinweis auf dem Weg zu allen Momenten. */
+  /** Vorlesehinweis auf dem Weg zu allen Momenten. */
+  openAllMoments: Phrase;
+  /** Der Name des Startreiters. */
+  homeTabTitle: Phrase;
+  /** Profil: der Weg zu den Ritualen. */
+  ritualsLink: Phrase;
+  /** Entdecken: Kicker und Frage über dem Ideen-Generator. */
+  discoverKicker: Phrase;
+  discoverQuestion: Phrase;
+  /** Entdecken: der Weg zu einer Idee. */
+  toDoTogetherLabel: Phrase;
+  /** Idee: die eigene Bewertung. */
+  ownFeedbackNote: Phrase;
+  /** Idee: der Satz über dem Knopf. */
+  saveMakePlanKeep: Phrase;
+  /** Idee/Liste: die Knöpfe am fertigen Plan. */
+  viewYourMemory: Phrase;
+  preserveYourMemory: Phrase;
+  openYourPlan: Phrase;
+  savedToYourList: Phrase;
+
+  // ── Sätze, die vom Tagebuch des Space sprechen ────────────────────────
+  /** Sammlung: warum ein Deck nichts freischaltet. */
+  deckOptionalLead: Phrase;
+  /** Editions-Tagebuch, noch leer: wie ein Moment hineinkommt. */
+  addToDiaryHint: Phrase;
+  /** Plus: was frei bleibt. */
+  plusFreeNote: Phrase;
+  /** Rituale sind ausgeschaltet. */
+  ritualsOffHint: Phrase;
+  /** Orts-Feedback: die Grenze zum Tagebuch. */
+  feedbackPrivacyNote: Phrase;
+  /**
+   * Die Challenge-Zeile auf dem Startbildschirm.
+   *
+   * Die einzige Wendung mit einem Platzhalter: `{n}` wird an der Stelle
+   * ersetzt. Ein Satz mit Zahl lässt sich nicht in zwei Hälften zerlegen,
+   * ohne dass eine der beiden Sprachen schief wird.
+   */
+  challengeCountLine: Phrase;
+
+  // ── Moment teilen und Challenge ───────────────────────────────────────
+  /** Teilen: die Challenge ist noch nicht offen. */
+  shareNotOpenYet: Phrase;
+  /** Teilen: die Verbindung hat nicht getragen. */
+  shareFailedNote: Phrase;
+  /** Teilen zurücknehmen. */
+  shareRevokeNote: Phrase;
+  /** Challenge: was der Fortschritt zählt. */
+  challengeProgressNote: Phrase;
+  /** Challenge: das Abzeichen ist verdient. */
+  challengeEarned: Phrase;
+
+  // ── Orte-Reiter ───────────────────────────────────────────────────────
+  /** Bestätigung nach einer eigenen Bewertung. */
+  placeDoneNote: Phrase;
+  /** Woher die private Bewertung kommt. */
+  privateFeedbackSource: Phrase;
+  /** Was passiert, wenn noch keine eigene Bewertung da ist. */
+  privateFeedbackEmpty: Phrase;
+  /** Der Haken an einem schon erlebten Ort. */
+  placeAlreadyDone: Phrase;
 }
 
 const GETEILT: Voice = {
@@ -165,6 +253,112 @@ const GETEILT: Voice = {
     de: 'Das nimmt ihn für euch beide aus dem Tagebuch.',
   },
   pushNewMoment: { en: 'There is a new moment in your space.', de: 'In eurem Space liegt ein neuer Moment.' },
+  loadMomentsFailedHint: {
+    en: 'your memories are safe — this is just a connection hiccup.',
+    de: 'eure Erinnerungen sind sicher — wir versuchen es gleich nochmal.',
+  },
+  editionProgressFailed: {
+    en: 'we could not read how far you are. your cards are safe — tap to try again.',
+    de: 'wir konnten euren Stand nicht lesen. Eure Karten sind sicher — tippen zum erneut Versuchen.',
+  },
+  storyLoadFailedTitle: {
+    en: "couldn't load your story.",
+    de: 'eure Geschichte konnte nicht geladen werden.',
+  },
+  storyLoadFailedHint: {
+    en: 'everything you kept is safe — this was the connection.',
+    de: 'alles, was ihr behalten habt, ist sicher — das war die Verbindung.',
+  },
+  diaryLoadFailedTitle: {
+    en: "couldn't load your diary.",
+    de: 'euer Tagebuch konnte nicht geladen werden.',
+  },
+  diaryLoadFailedHint: {
+    en: 'your moments are safe — this is just a connection hiccup.',
+    de: 'eure Momente sind sicher — das ist nur ein Verbindungsproblem.',
+  },
+  savedIdeasLoadFailed: {
+    en: 'we could not load your saved ideas.',
+    de: 'wir konnten eure gemerkten Ideen nicht laden.',
+  },
+  discoverConnectionHint: {
+    en: 'that was the connection, not your filters — your saved ideas are safe.',
+    de: 'das war die Verbindung, nicht eure Filter — eure gemerkten Ideen sind sicher.',
+  },
+  challengeProgressFailed: {
+    en: 'we could not read your progress — nothing of yours is lost.',
+    de: 'wir konnten euren Stand nicht lesen — nichts von euch ist weg.',
+  },
+  diaryLabel: { en: 'YOUR DIARY', de: 'EUER TAGEBUCH' },
+  openAllMoments: { en: 'Open all your moments', de: 'Alle eure Momente öffnen' },
+  homeTabTitle: { en: 'Together', de: 'Zusammen' },
+  ritualsLink: { en: 'your rituals', de: 'eure Rituale' },
+  discoverKicker: {
+    en: 'SURPRISE YOURSELVES · DATE GENERATOR',
+    de: 'LASST EUCH ÜBERRASCHEN · DATE GENERATOR',
+  },
+  discoverQuestion: { en: 'what could you do\ntogether?', de: 'was könntet\nihr zusammen tun?' },
+  toDoTogetherLabel: { en: 'TO DO TOGETHER', de: 'GEMEINSAM TUN' },
+  ownFeedbackNote: {
+    en: 'from your own feedback — private on this device',
+    de: 'aus eurem eigenen Feedback – privat auf diesem Gerät',
+  },
+  saveMakePlanKeep: {
+    en: 'save it, make a plan, then keep the memory when it becomes yours.',
+    de: 'Merkt es euch, macht einen Plan und bewahrt danach euren Moment.',
+  },
+  viewYourMemory: { en: 'VIEW YOUR MEMORY', de: 'EUREN MOMENT ANSEHEN' },
+  preserveYourMemory: { en: 'PRESERVE YOUR MEMORY', de: 'EUREN MOMENT FESTHALTEN' },
+  openYourPlan: { en: 'OPEN YOUR PLAN', de: 'EUREN PLAN ÖFFNEN' },
+  savedToYourList: { en: 'saved ✓ · your list', de: 'gemerkt ✓ · eure Liste' },
+  deckOptionalLead: {
+    en: 'everything in PeakPlant works without a deck — ideas, places, challenges, your diary. an edition is the printed version: real cards on seed paper, to pull together and scan.',
+    de: 'alles in PeakPlant geht ohne Deck — Ideen, Orte, Challenges, euer Tagebuch. Eine Edition ist die gedruckte Fassung: echte Karten auf Saatpapier, zum gemeinsamen Ziehen und Scannen.',
+  },
+  addToDiaryHint: {
+    en: 'complete a card, then scan its QR code to add it to your diary.',
+    de: 'Schließt eine Karte ab, dann scannt ihren QR-Code, um sie eurem Tagebuch hinzuzufügen.',
+  },
+  plusFreeNote: {
+    en: 'Plus is not available yet — everything in your diary stays free.',
+    de: 'Plus gibt es noch nicht zu kaufen — alles in eurem Tagebuch bleibt frei.',
+  },
+  ritualsOffHint: {
+    en: 'turn them on in Settings to start keeping the moments you return to.',
+    de: 'schalte sie in den Einstellungen ein, um eure wiederkehrenden Momente zu sammeln.',
+  },
+  feedbackPrivacyNote: {
+    en: 'your diary memory stays separate and private. anonymous place sharing only happens when you turn it on above.',
+    de: 'Eure Tagebucherinnerung bleibt getrennt und privat. Anonymes Orte-Teilen passiert nur, wenn du es oben aktivierst.',
+  },
+  challengeCountLine: { en: '{n} together', de: '{n} zusammen' },
+  shareNotOpenYet: {
+    en: "this week's challenge isn't open for sharing yet. your moment stays as it is.",
+    de: 'die Challenge dieser Woche ist noch nicht zum Teilen offen. Euer Moment bleibt, wie er ist.',
+  },
+  shareFailedNote: {
+    en: 'that was the connection — nothing changed, and your moment is untouched.',
+    de: 'das war die Verbindung — es hat sich nichts geändert, und euer Moment ist unberührt.',
+  },
+  shareRevokeNote: {
+    en: 'it disappears for everyone. your moment stays exactly where it is.',
+    de: 'es verschwindet für alle. Euer Moment bleibt genau da, wo er ist.',
+  },
+  challengeProgressNote: {
+    en: 'progress counts moments you preserve after joining. use photo/note when you actually did it together. leaving keeps every moment — only the challenge goes away.',
+    de: 'Fortschritt zählt Momente, die ihr nach dem Beitritt bewahrt. Nutzt Foto/Notiz, wenn ihr es wirklich zusammen gemacht habt. Verlassen behält jeden Moment — nur die Challenge verschwindet.',
+  },
+  challengeEarned: { en: 'earned. lovely work, together.', de: 'verdient. wunderbare Arbeit, gemeinsam.' },
+  placeDoneNote: { en: 'lovely — done together ♥', de: 'schön — zusammen erlebt ♥' },
+  privateFeedbackSource: {
+    en: 'from your own private feedback on this device — not a public community rating.',
+    de: 'Aus eurem privaten Feedback auf diesem Gerät – keine öffentliche Community-Bewertung.',
+  },
+  privateFeedbackEmpty: {
+    en: 'after you complete an idea here, your rating and practical tip will appear privately on this device.',
+    de: 'Wenn ihr hier eine Idee erlebt habt, erscheinen eure Bewertung und euer praktischer Tipp privat auf diesem Gerät.',
+  },
+  placeAlreadyDone: { en: '✓ you’ve done this together', de: '✓ ihr habt das zusammen gemacht' },
 };
 
 const ALLEIN: Voice = {
@@ -245,6 +439,112 @@ const ALLEIN: Voice = {
     de: 'Das nimmt ihn aus dem Tagebuch.',
   },
   pushNewMoment: { en: 'There is a new moment in your space.', de: 'In deinem Space liegt ein neuer Moment.' },
+  loadMomentsFailedHint: {
+    en: 'your memories are safe — this is just a connection hiccup.',
+    de: 'deine Erinnerungen sind sicher — wir versuchen es gleich nochmal.',
+  },
+  editionProgressFailed: {
+    en: 'we could not read how far you are. your cards are safe — tap to try again.',
+    de: 'wir konnten deinen Stand nicht lesen. Deine Karten sind sicher — tippen zum erneut Versuchen.',
+  },
+  storyLoadFailedTitle: {
+    en: "couldn't load your story.",
+    de: 'deine Geschichte konnte nicht geladen werden.',
+  },
+  storyLoadFailedHint: {
+    en: 'everything you kept is safe — this was the connection.',
+    de: 'alles, was du behalten hast, ist sicher — das war die Verbindung.',
+  },
+  diaryLoadFailedTitle: {
+    en: "couldn't load your diary.",
+    de: 'dein Tagebuch konnte nicht geladen werden.',
+  },
+  diaryLoadFailedHint: {
+    en: 'your moments are safe — this is just a connection hiccup.',
+    de: 'deine Momente sind sicher — das ist nur ein Verbindungsproblem.',
+  },
+  savedIdeasLoadFailed: {
+    en: 'we could not load your saved ideas.',
+    de: 'wir konnten deine gemerkten Ideen nicht laden.',
+  },
+  discoverConnectionHint: {
+    en: 'that was the connection, not your filters — your saved ideas are safe.',
+    de: 'das war die Verbindung, nicht deine Filter — deine gemerkten Ideen sind sicher.',
+  },
+  challengeProgressFailed: {
+    en: 'we could not read your progress — nothing of yours is lost.',
+    de: 'wir konnten deinen Stand nicht lesen — nichts von dir ist weg.',
+  },
+  diaryLabel: { en: 'YOUR DIARY', de: 'DEIN TAGEBUCH' },
+  openAllMoments: { en: 'Open all your moments', de: 'Alle deine Momente öffnen' },
+  homeTabTitle: { en: 'Today', de: 'Heute' },
+  ritualsLink: { en: 'your rituals', de: 'deine Rituale' },
+  discoverKicker: {
+    en: 'SURPRISE YOURSELF · IDEA GENERATOR',
+    de: 'LASS DICH ÜBERRASCHEN · IDEEN-GENERATOR',
+  },
+  discoverQuestion: { en: 'what could you do\ntoday?', de: 'was könntest\ndu heute tun?' },
+  toDoTogetherLabel: { en: 'TO DO', de: 'ETWAS TUN' },
+  ownFeedbackNote: {
+    en: 'from your own feedback — private on this device',
+    de: 'aus deinem eigenen Feedback – privat auf diesem Gerät',
+  },
+  saveMakePlanKeep: {
+    en: 'save it, make a plan, then keep the memory when it becomes yours.',
+    de: 'Merk es dir, mach einen Plan und bewahre danach deinen Moment.',
+  },
+  viewYourMemory: { en: 'VIEW YOUR MEMORY', de: 'DEINEN MOMENT ANSEHEN' },
+  preserveYourMemory: { en: 'PRESERVE YOUR MEMORY', de: 'DEINEN MOMENT FESTHALTEN' },
+  openYourPlan: { en: 'OPEN YOUR PLAN', de: 'DEINEN PLAN ÖFFNEN' },
+  savedToYourList: { en: 'saved ✓ · your list', de: 'gemerkt ✓ · deine Liste' },
+  deckOptionalLead: {
+    en: 'everything in PeakPlant works without a deck — ideas, places, challenges, your diary. an edition is the printed version: real cards on seed paper, to pull and scan.',
+    de: 'alles in PeakPlant geht ohne Deck — Ideen, Orte, Challenges, dein Tagebuch. Eine Edition ist die gedruckte Fassung: echte Karten auf Saatpapier, zum Ziehen und Scannen.',
+  },
+  addToDiaryHint: {
+    en: 'complete a card, then scan its QR code to add it to your diary.',
+    de: 'Schließ eine Karte ab, dann scann ihren QR-Code, um sie deinem Tagebuch hinzuzufügen.',
+  },
+  plusFreeNote: {
+    en: 'Plus is not available yet — everything in your diary stays free.',
+    de: 'Plus gibt es noch nicht zu kaufen — alles in deinem Tagebuch bleibt frei.',
+  },
+  ritualsOffHint: {
+    en: 'turn them on in Settings to start keeping the moments you return to.',
+    de: 'schalte sie in den Einstellungen ein, um deine wiederkehrenden Momente zu sammeln.',
+  },
+  feedbackPrivacyNote: {
+    en: 'your diary memory stays separate and private. anonymous place sharing only happens when you turn it on above.',
+    de: 'Deine Tagebucherinnerung bleibt getrennt und privat. Anonymes Orte-Teilen passiert nur, wenn du es oben aktivierst.',
+  },
+  challengeCountLine: { en: '{n}', de: '{n}' },
+  shareNotOpenYet: {
+    en: "this week's challenge isn't open for sharing yet. your moment stays as it is.",
+    de: 'die Challenge dieser Woche ist noch nicht zum Teilen offen. Dein Moment bleibt, wie er ist.',
+  },
+  shareFailedNote: {
+    en: 'that was the connection — nothing changed, and your moment is untouched.',
+    de: 'das war die Verbindung — es hat sich nichts geändert, und dein Moment ist unberührt.',
+  },
+  shareRevokeNote: {
+    en: 'it disappears for everyone. your moment stays exactly where it is.',
+    de: 'es verschwindet für alle. Dein Moment bleibt genau da, wo er ist.',
+  },
+  challengeProgressNote: {
+    en: 'progress counts moments you preserve after joining. use photo/note when you actually did it. leaving keeps every moment — only the challenge goes away.',
+    de: 'Fortschritt zählt Momente, die du nach dem Beitritt bewahrst. Nutz Foto/Notiz, wenn du es wirklich gemacht hast. Verlassen behält jeden Moment — nur die Challenge verschwindet.',
+  },
+  challengeEarned: { en: 'earned. lovely work.', de: 'verdient. wunderbare Arbeit.' },
+  placeDoneNote: { en: 'lovely — done ♥', de: 'schön — erlebt ♥' },
+  privateFeedbackSource: {
+    en: 'from your own private feedback on this device — not a public community rating.',
+    de: 'Aus deinem privaten Feedback auf diesem Gerät – keine öffentliche Community-Bewertung.',
+  },
+  privateFeedbackEmpty: {
+    en: 'after you complete an idea here, your rating and practical tip will appear privately on this device.',
+    de: 'Wenn du hier eine Idee erlebt hast, erscheinen deine Bewertung und dein praktischer Tipp privat auf diesem Gerät.',
+  },
+  placeAlreadyDone: { en: '✓ you’ve done this', de: '✓ du hast das gemacht' },
 };
 
 /**

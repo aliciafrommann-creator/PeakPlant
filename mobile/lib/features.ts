@@ -39,7 +39,10 @@ export const FEATURES: FeatureMeta[] = [
     label: 'rituals',
     labelDe: 'Rituale',
     description: 'turn a moment you loved into something you come back to together.',
-    descriptionDe: 'macht aus einem Moment, den ihr geliebt habt, etwas, zu dem ihr gemeinsam zurückkehrt.',
+    // Unpersönlich formuliert, weil dieser Katalog keinen Space kennt: Er
+    // beschreibt die Funktion, nicht die Menschen davor. „ihr … gemeinsam"
+    // behauptete eine zweite Person, die es in einem Solo-Space nicht gibt.
+    descriptionDe: 'macht aus einem geliebten Moment etwas, zu dem man zurückkehrt.',
     status: 'soon',
     defaultEnabled: false,
   },
@@ -84,7 +87,7 @@ export const FEATURES: FeatureMeta[] = [
     label: 'shared feed',
     labelDe: 'geteilter Feed',
     description: 'a finite, private feed of what your spaces have been up to.',
-    descriptionDe: 'ein begrenzter, privater Feed, was eure Spaces zuletzt erlebt haben.',
+    descriptionDe: 'ein begrenzter, privater Feed, was in deinen Spaces zuletzt passiert ist.',
     status: 'soon',
     defaultEnabled: false,
   },

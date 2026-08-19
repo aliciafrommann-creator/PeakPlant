@@ -413,10 +413,7 @@ export default function HomeScreen() {
           <EmptyState
             mark="✦"
             title={t("couldn't load your moments.", 'kurz die Verbindung verloren.')}
-            hint={t(
-              'your memories are safe — this is just a connection hiccup.',
-              'eure Erinnerungen sind sicher — wir versuchen es gleich nochmal.',
-            )}
+            hint={t(v.loadMomentsFailedHint.en, v.loadMomentsFailedHint.de)}
             ctaLabel={t('TRY AGAIN', 'NOCHMAL VERSUCHEN')}
             onCta={refresh}
           />
@@ -502,6 +499,7 @@ export default function HomeScreen() {
         {activeSpace && (
           <PeakRow
             momentsKept={memories.length}
+            spaceId={activeSpace.id}
             // Dasselbe Muster, dieselbe Folge: Der Solo-Space sammelte Chili,
             // das Paar-Sammelstück. `spaceTheme` legt dafür 🪨 fest — der
             // Eintrag erreichte nur den Wochen-Banner, nie diese Reihe.
@@ -526,8 +524,14 @@ export default function HomeScreen() {
                 : t(`${sharedWeeks.count} weeks collected`, `${sharedWeeks.count} Wochen gesammelt`),
               chillyCount > 0
                 ? t(
-                    `${chillyCount} challenge${chillyCount !== 1 ? 's' : ''} together`,
-                    `${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''} zusammen`,
+                    v.challengeCountLine.en.replace(
+                      '{n}',
+                      `${chillyCount} challenge${chillyCount !== 1 ? 's' : ''}`,
+                    ),
+                    v.challengeCountLine.de.replace(
+                      '{n}',
+                      `${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''}`,
+                    ),
                   )
                 : null,
             ]

@@ -258,6 +258,19 @@ notifications, automatic social sharing, generic AI chat surfaces.
   vergessen kann. Die Push-Schlüssel entstehen beim ersten `eas build`
   (Expo fragt, ob es sie anlegen darf); Tabellen: Migration `0021`.
 
+  **KORREKTUR (19.08.2026): Push ist gebaut, aber NICHT VERDRAHTET.** Alicia
+  fragte, ob alle Funktionen integriert sind. Eine Nachrechnung vom Router aus
+  fand achtzehn Dateien, die von keinem Bildschirm der App aus erreichbar sind
+  — darunter alle sieben Push-Dateien. Der Absatz oben beschrieb sie wie
+  lebende Logik („kein Schalter, den jemand vergessen kann"); tatsächlich ruft
+  **niemand** `decideDelivery()` oder `register()` auf. Die Regeln stimmen und
+  sind getestet, sie laufen nur nie. Das ist genau die Sorte Satz, die
+  MANIFESTO §1 verbietet — und sie stand hier, nicht in der Oberfläche, was sie
+  schlimmer macht: Sie hat die nächste Session belogen.
+  Der neue Wächter `lib/erreichbarkeit.test.ts` hält die Liste ab jetzt
+  ehrlich; jeder Eintrag trägt seinen Grund, und ein Eintrag, der nicht mehr
+  stimmt, macht den Test rot.
+
 ## Running
 
 ```
@@ -304,8 +317,67 @@ ausgelieferten PNG nach. **Merksatz:** Was die Tinte trägt, ist die Fläche, di
 ein Mensch sieht — nie der Wert, aus dem sie gerechnet wurde.
 
 **Die Regel, die das Ganze trägt, ist K7b im Skill `klarheit`:** eine gefärbte
-Fläche je Bildschirm, Papier bleibt der Grund, und nie eine Färbung in einer
+Fläche je Bildschirm, Papier bleibt der Grund, und nie DIESELBE Färbung in einer
 Wiederholung. Der Entwurf, der gewonnen hat, heißt nicht umsonst „leise".
+
+### Entscheidung 028 — Die Färbung geht über die Editionen hinaus (Alicia, 19.08.2026)
+
+Alicia zu den Editions-Kacheln: **„genau solche? auch bei den Tages-Challenges
+und Peaks und so."** Also bekommen auch Challenges und die Peak-Reihe eine
+Färbung — aber jede ihre EIGENE.
+
+**Die Korrektur eines eigenen Fehlschlusses.** Einen Durchgang vorher hatte ich
+der Challenge-Karte die Färbung wieder ABGENOMMEN, mit der Begründung: zehn
+Karten untereinander mit demselben Haus-Kopfband sind eine Farbwand. Der Befund
+stimmte, der Schluss nicht. Die Editionsliste trägt zwölf Färbungen und
+erschlägt niemanden — weil jeder Eintrag seine eigene hat. Das Problem war nie
+Farbe in einer Liste, sondern DIESELBE Farbe zehnmal.
+
+**Und dann der zweite Schritt, ebenfalls von Alicia:** „die Challenge kann auch
+je nach Thematik eine Batik-Färbung haben — sie gehört ja immer zu einer
+Emoji-Kategorie, wie alles andere auch, das zieht sich durch die App, auch die
+Filter." Das ist der Sprung von *verschieden* zu *bedeutet etwas*. Ein Hash
+verhindert die Farbwand, aber die Farbe sagt nichts. Jetzt tragen eine ruhige
+Idee, eine ruhige Challenge und der Filter „ruhig" DIESELBE Welt — Farbe wird
+zur zweiten Beschriftung.
+
+`WORLD_BY_CATEGORY` in `constants/dyes.ts` ordnet den zehn `IdeaCategory` ihre
+Welt zu — **gewählt, nicht gerechnet.** Ein Hash würde „Essen" irgendwohin
+werfen; die Tabelle ist eine Stimmungs-Entscheidung und gehört dorthin, wo man
+sie lesen und bestreiten kann (Essen → Warm Ember, ruhig → Cyber Midnight,
+Abenteuer → Lantern …). Zehn Kategorien, zwölf Welten: Die zwei übrigen sind
+`FREIE_WELTEN` und tragen die Flächen OHNE Thema, damit eine themenlose
+Challenge nie zufällig aussieht wie „Essen".
+
+Challenges haben dafür ein `category`-Feld bekommen — **absichtlich optional.**
+Drei sind reine Sammel-Challenges („vier Momente, welche Karten ist euch
+überlassen"); ihnen eine Kategorie anzudichten, damit die Tabelle voll aussieht,
+wäre eine erfundene Angabe.
+
+Gefärbt sind damit: Challenge-Karte und -Detailseite (Thema), die Filter-Chips
+und der Emoji-Punkt jeder Idee im Katalog (dieselbe Kategorie-Farbe), und die
+Peak-Reihe (die Welt des Space über `worldFor`, feste id-Zuordnung).
+
+**Chips tragen den flachen GRUNDTON, kein Bild.** Ein Chip ist rund 100 × 32 pt
+— ein Batik-Bild darin wird zu Matsch, und dreizehn nebeneinander sind genau
+die Farbwand, gegen die K7b argumentiert. Der Grundton trägt die Bedeutung, das
+Bild bleibt den großen Flächen vorbehalten.
+
+**Der Wächter prüft, was ein Mensch SIEHT.** Die Nachbarschaftsprüfung läuft
+über die nach Space-Art gefilterte Liste, nicht über die Rohliste: Darin stehen
+Solo- und Paar-Challenges verschränkt, und zwei Nachbarn dort landen im Betrieb
+nie untereinander. Ein Wächter, der etwas anderes prüft als das, was gezeigt
+wird, findet die falschen Fehler.
+
+Damit trägt der Startbildschirm zwei gefärbte Flächen — Vorschlag (Haus) und
+Peak-Reihe (die Welt des Space). Das ist keine Aufweichung von K7b, sondern
+ihr eigentlicher Inhalt: zwei VERSCHIEDENE schmale Bänder sind keine Farbwand.
+
+**Und die Peak-Reihe hat jetzt ihren Grund im Code.** Alicia zum Namen: „weil
+wir peaken und dann nicht abfallen, sondern da pflanzen und wieder peaken." Der
+volle Eintrag steht im MANIFESTO unter „Warum der Name" — er ist bindend und
+verbietet jede Darstellung, die einen ABSTIEG zeichnen könnte (keine Kurve,
+kein Höchststand, kein „dein bester Monat").
 
 ### Entscheidung 026 — Eine offene Beispielkarte je Edition (Alicia, 18.08.2026)
 

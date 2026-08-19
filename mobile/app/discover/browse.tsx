@@ -34,6 +34,9 @@ import {
   type IdeaCategory,
 } from '../../lib/discovery/ideaCatalog';
 import { TOGETHER_MOMENTS } from '../../lib/together';
+import { worldForCategory } from '../../constants/dyes';
+import { dyeOf } from '../../components/ui/DyeField';
+import { editionInk } from '../../lib/editionInk';
 import { CURATED_MOMENTS } from '../../lib/discovery/curatedMoments';
 import type { TimeOfDay, Energy, PriceBand, IndoorOutdoor, TogetherMoment } from '../../lib/together';
 import type { Season } from '../../lib/discovery/ideaCatalog';
@@ -386,6 +389,7 @@ export default function BrowseIdeasScreen() {
                       key={c}
                       label={`${CATEGORY_EMOJI[c]} ${t(CATEGORY_LABEL[c].en, CATEGORY_LABEL[c].de)}`}
                       on={filter.category === c}
+                      world={worldForCategory(c, c)}
                       onPress={() => patch({ category: c })}
                     />
                   ))}
@@ -416,16 +420,37 @@ function FilterGroup({ label, children }: { label: string; children: React.React
   );
 }
 
-function Chip({ label, on, onPress }: { label: string; on: boolean; onPress: () => void }) {
+/**
+ * Ein Filter-Chip. `world` färbt ihn im AKTIVEN Zustand mit dem Grundton
+ * seiner Kategorie-Welt — dieselbe Farbe, die eine Challenge oder eine Idee
+ * dieser Kategorie trägt (Entscheidung 028). Wer „ruhig" anschaltet, sieht
+ * dieselbe Nacht, die auf der ruhigen Challenge liegt.
+ *
+ * FLACHER GRUNDTON, KEINE FÄRBUNG: Ein Chip ist rund 100 × 32 pt. Ein
+ * Batik-Bild darin wird zu Matsch, und dreizehn davon nebeneinander sind
+ * genau die Farbwand, gegen die K7b argumentiert. Der Grundton trägt die
+ * Bedeutung, das Bild bleibt den großen Flächen vorbehalten.
+ */
+function Chip({
+  label, on, onPress, world,
+}: { label: string; on: boolean; onPress: () => void; world?: string }) {
+  const grund = world ? dyeOf(world).ground : undefined;
+  const tinte = grund ? editionInk(grund) : undefined;
   return (
     <TouchableOpacity
-      style={[styles.chip, on && styles.chipOn]}
+      style={[
+        styles.chip,
+        on && styles.chipOn,
+        on && grund ? { backgroundColor: grund, borderColor: grund } : null,
+      ]}
       onPress={onPress}
       activeOpacity={0.85}
       accessibilityRole="button"
       accessibilityState={{ selected: on }}
     >
-      <Text style={[styles.chipText, on && styles.chipTextOn]}>{label}</Text>
+      <Text style={[styles.chipText, on && styles.chipTextOn, on && tinte ? { color: tinte } : null]}>
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 }
@@ -453,7 +478,12 @@ function IdeaRow({
       accessibilityLabel={t(`See this idea: ${idea.title}`, `Diese Idee ansehen: ${idea.title}`)}
     >
       <View style={styles.cardTop}>
-        <Text style={styles.cardEmoji}>{CATEGORY_EMOJI[idea.category]}</Text>
+        {/* Der Punkt trägt den Grundton der Kategorie — dieselbe Farbe wie
+            ihr Filter-Chip und ihre Challenge. Eine Liste aus zwanzig Ideen
+            bekommt dadurch Struktur, ohne dass eine einzige Fläche laut wird. */}
+        <View style={[styles.cardEmojiDot, { backgroundColor: dyeOf(worldForCategory(idea.category, idea.category)).ground }]}>
+          <Text style={styles.cardEmoji}>{CATEGORY_EMOJI[idea.category]}</Text>
+        </View>
         <View style={styles.cardBody}>
           <Text style={styles.cardTitle}>{idea.title}</Text>
           <Text style={styles.cardIdea}>{idea.idea}</Text>
@@ -590,7 +620,15 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   cardTop: { flexDirection: 'row', gap: Spacing.md },
-  cardEmoji: { fontSize: 22, marginTop: 2 },
+  cardEmoji: { fontSize: 18 },
+  cardEmojiDot: {
+    width: 34,
+    height: 34,
+    borderRadius: Radii.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2,
+  },
   cardBody: { flex: 1, gap: 4 },
   cardTitle: { ...Typography.cardTitle, },
   cardIdea: { fontSize: 13, fontWeight: '300', color: Colors.textMuted, lineHeight: 19 },

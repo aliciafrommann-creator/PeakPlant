@@ -167,7 +167,7 @@ export default function EditionScreen() {
             </TouchableOpacity>
 
             {editionMemories.length > 0 && (
-              <Text style={[styles.diaryLabel, { color: fg }]}>{t('YOUR DIARY', 'EUER TAGEBUCH')}</Text>
+              <Text style={[styles.diaryLabel, { color: fg }]}>{t(v.diaryLabel.en, v.diaryLabel.de)}</Text>
             )}
             </DyeField>
 
@@ -289,11 +289,8 @@ export default function EditionScreen() {
         ListEmptyComponent={
           loading ? null : error ? (
             <EmptyState
-              title={t("couldn't load your diary.", 'euer Tagebuch konnte nicht geladen werden.')}
-              hint={t(
-                'your moments are safe — this is just a connection hiccup.',
-                'eure Momente sind sicher — das ist nur ein Verbindungsproblem.',
-              )}
+              title={t(v.diaryLoadFailedTitle.en, v.diaryLoadFailedTitle.de)}
+              hint={t(v.diaryLoadFailedHint.en, v.diaryLoadFailedHint.de)}
               ctaLabel={t('TRY AGAIN', 'ERNEUT VERSUCHEN')}
               onCta={refresh}
             />
@@ -303,10 +300,7 @@ export default function EditionScreen() {
             // dieselbe Erklärung, aber mit einem Ausgang (MANIFESTO §5).
             <EmptyState
               title={t('no moments yet.', 'noch keine Momente.')}
-              hint={t(
-                'complete a card, then scan its QR code to add it to your diary.',
-                'Schließt eine Karte ab, dann scannt ihren QR-Code, um sie eurem Tagebuch hinzuzufügen.',
-              )}
+              hint={t(v.addToDiaryHint.en, v.addToDiaryHint.de)}
               ctaLabel={t('SCAN A CARD', 'KARTE SCANNEN')}
               onCta={() => router.push('/(tabs)/scan')}
               secondaryLabel={t('no deck yet? keep a moment anyway', 'noch kein Deck? trotzdem einen Moment festhalten')}

@@ -29,6 +29,7 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useAppStore } from '../../lib/store';
 import { ritualRepository } from '../../lib/repositories';
 import type { Ritual, RitualCadence } from '../../lib/types';
+import { voice } from '../../lib/voice';
 
 const CADENCES: RitualCadence[] = ['weekly', 'monthly', 'seasonally', 'whenever'];
 
@@ -38,6 +39,7 @@ const RITUALS_INK = SectionInks.rituals;
 
 export default function RitualsScreen() {
   const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const { t } = useLanguage();
   const ritualsEnabled = useAppStore((s) => s.features.rituals);
 
@@ -154,10 +156,7 @@ export default function RitualsScreen() {
         <View style={styles.center}>
           <Text style={styles.emptyText}>{t('rituals are turned off.', 'Rituale sind ausgeschaltet.')}</Text>
           <Text style={styles.emptyHint}>
-            {t(
-              'turn them on in Settings to start keeping the moments you return to.',
-              'schalte sie in den Einstellungen ein, um eure wiederkehrenden Momente zu sammeln.',
-            )}
+            {t(v.ritualsOffHint.en, v.ritualsOffHint.de)}
           </Text>
           <TouchableOpacity style={styles.cta} onPress={() => router.push('/customize')} accessibilityRole="button">
             <Text style={styles.ctaText}>{t('OPEN SETTINGS', 'EINSTELLUNGEN ÖFFNEN')}</Text>

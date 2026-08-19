@@ -17,7 +17,15 @@ describe('Anrede je Space-Art', () => {
     // Person nichts zu suchen (MANIFESTO §1).
     // Mit Wortgrenzen: „ne-uer Moment" enthält „euer" als Zeichenkette und ist
     // trotzdem richtig. Ein Wächter, der so etwas meldet, wird abgeschaltet.
-    const verboten = ['euch', 'eurem', 'euren', 'euer', 'eure', 'ihr beide', 'you two', 'both of you', 'each other'];
+    // Nachgetragen am 19.08.2026: Der Kommentar darüber nannte „zusammen"
+    // als Beispiel — in der Liste stand es nicht. Ein Wächter, der etwas
+    // anderes prüft als das, was über ihm geschrieben steht, ist schlimmer
+    // als keiner: Er erzeugt Vertrauen, das er nicht deckt.
+    const verboten = [
+      'euch', 'eurem', 'euren', 'euer', 'eure', 'ihr beide',
+      'zusammen', 'gemeinsam', 'gemeinsame', 'gemeinsamen', 'miteinander',
+      'you two', 'both of you', 'each other', 'together',
+    ];
     const muster = verboten.map((w) => ({
       wort: w,
       re: new RegExp(`\\b${w}\\b`, 'i'),

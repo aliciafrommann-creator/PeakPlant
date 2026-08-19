@@ -15,6 +15,10 @@ import { ONBOARDING_GOALS } from '../../lib/seed';
 import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 
+/**
+ * ANREDE: läuft VOR der Wahl des Space-Typs (die fällt auf `invite.tsx`).
+ * Spricht deshalb die Person an, die das Telefon hält — nicht „ihr".
+ */
 export default function OnboardingScreen() {
   const storeGoals = useAppStore((s) => s.goals);
   const setGoals = useAppStore((s) => s.setGoals);
@@ -38,12 +42,12 @@ export default function OnboardingScreen() {
         <View style={styles.header}>
           <Text style={styles.label}>{t('GETTING STARTED', 'ERSTE SCHRITTE')}</Text>
           <Text style={styles.title}>
-            {t('what are you\ngrowing toward?', 'worauf wollt\nihr hinwachsen?')}
+            {t('what are you\ngrowing toward?', 'worauf willst\ndu hinwachsen?')}
           </Text>
           <Text style={styles.subtitle}>
             {t(
               'choose what feels true. you can always change this.',
-              'wählt, was sich richtig anfühlt. ihr könnt es jederzeit ändern.',
+              'wähl, was sich richtig anfühlt. du kannst es jederzeit ändern.',
             )}
           </Text>
         </View>

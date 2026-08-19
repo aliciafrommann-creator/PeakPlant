@@ -167,10 +167,7 @@ export default function EditionsScreen() {
                 accessibilityLabel={t('Try loading your progress again', 'Fortschritt erneut laden')}
               >
                 <Text style={styles.retryText}>
-                  {t(
-                    "we could not read how far you are. your cards are safe — tap to try again.",
-                    'wir konnten euren Stand nicht lesen. Eure Karten sind sicher — tippen zum erneut Versuchen.',
-                  )}
+                  {t(v.editionProgressFailed.en, v.editionProgressFailed.de)}
                 </Text>
               </TouchableOpacity>
             )}
@@ -186,10 +183,7 @@ export default function EditionsScreen() {
                 stimmt: das Deck ist das Schöne obendrauf, nicht die Eintritts-
                 karte (MANIFESTO §1). */}
             <Text style={styles.lead}>
-              {t(
-                'everything in PeakPlant works without a deck — ideas, places, challenges, your diary. an edition is the printed version: real cards on seed paper, to pull together and scan.',
-                'alles in PeakPlant geht ohne Deck — Ideen, Orte, Challenges, euer Tagebuch. Eine Edition ist die gedruckte Fassung: echte Karten auf Saatpapier, zum gemeinsamen Ziehen und Scannen.',
-              )}
+              {t(v.deckOptionalLead.en, v.deckOptionalLead.de)}
             </Text>
           </View>
         }

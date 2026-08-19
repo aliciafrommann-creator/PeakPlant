@@ -19,8 +19,14 @@ import { acknowledgeSelection } from '../../lib/haptics';
 
 /**
  * A 60–90 second explainer shown once, right after language: what PeakPlant is,
- * why it's better with a partner, and what to do first. Three calm slides, then
- * straight into setting up the space. Skippable — never a wall before the app.
+ * and what to do first. Three calm slides, then straight into setting up the
+ * space. Skippable — never a wall before the app.
+ *
+ * ANREDE: Dieser Bildschirm läuft VOR der Wahl des Space-Typs (der fällt auf
+ * `invite.tsx`). Er kann also nicht wissen, ob hier ein Mensch oder zwei
+ * sitzen — und darf deshalb keine zweite Person behaupten. Er spricht die
+ * Person an, die das Telefon in der Hand hält. `lib/voice.ts` greift erst,
+ * wenn es einen Space gibt.
  */
 type Slide = { mark: string; title: [string, string]; body: [string, string] };
 
@@ -29,13 +35,13 @@ const SLIDES: Slide[] = [
     mark: '✦',
     title: ['a space that\nis yours', 'ein Ort, der\ndir gehört'],
     body: [
-      'PeakPlant is a private little place to collect the real moments you make together — not a feed, not a follower count.',
-      'PeakPlant ist ein privater kleiner Ort, um die echten Momente zu sammeln, die ihr zusammen erlebt — kein Feed, keine Follower.',
+      'PeakPlant is a private little place to collect the real moments you actually live — not a feed, not a follower count.',
+      'PeakPlant ist ein privater kleiner Ort, um die echten Momente zu sammeln, die du wirklich erlebst — kein Feed, keine Follower.',
     ],
   },
   {
     mark: '♥',
-    title: ['better\nshared', 'gemeinsam\nschöner'],
+    title: ['alone or\nshared', 'allein oder\ngeteilt'],
     body: [
       'a space is yours alone or shared with the people in it. ideas to do and moments kept — private either way.',
       'ein Space gehört dir allein oder den Menschen darin. Ideen zum Erleben und Momente zum Behalten — privat in beiden Fällen.',
@@ -43,10 +49,10 @@ const SLIDES: Slide[] = [
   },
   {
     mark: '🌱',
-    title: ['your first\nmoment', 'euer erster\nMoment'],
+    title: ['your first\nmoment', 'dein erster\nMoment'],
     body: [
-      'pick a card or an idea, do it together, then keep it. that’s the whole loop — small, real, yours.',
-      'wählt eine Karte oder Idee, macht sie zusammen, dann haltet sie fest. das ist der ganze Kreis — klein, echt, eurer.',
+      'pick a card or an idea, live it, then keep it. that’s the whole loop — small, real, yours.',
+      'wähl eine Karte oder Idee, erlebe sie, dann halte sie fest. das ist der ganze Kreis — klein, echt, deiner.',
     ],
   },
 ];

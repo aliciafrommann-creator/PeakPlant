@@ -19,6 +19,7 @@ import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Opacity, Layout } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { voice } from '../../lib/voice';
 import { savedDateRepository } from '../../lib/repositories';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { transitionEffect } from '../../lib/savedDates/status';
@@ -33,6 +34,7 @@ import type { SavedDate } from '../../lib/types';
 export default function SavedDatesScreen() {
   const { plan } = useLocalSearchParams<{ plan?: string }>();
   const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const { t } = useLanguage();
   const autoOpenedPlan = useRef<string | null>(null);
 
@@ -316,7 +318,7 @@ export default function SavedDatesScreen() {
         <View style={styles.center}>
           <Text style={styles.emptyText}>
             {failed
-              ? t('we could not load your saved ideas.', 'wir konnten eure gemerkten Ideen nicht laden.')
+              ? t(v.savedIdeasLoadFailed.en, v.savedIdeasLoadFailed.de)
               : t('nothing saved yet.', 'noch nichts gespeichert.')}
           </Text>
           <Text style={styles.emptyHint}>
@@ -449,8 +451,8 @@ export default function SavedDatesScreen() {
                   >
                     <Text style={styles.actionDoneText}>
                       {d.memoryId
-                        ? t('VIEW YOUR MEMORY', 'EUREN MOMENT ANSEHEN')
-                        : t('PRESERVE YOUR MEMORY', 'EUREN MOMENT FESTHALTEN')}
+                        ? t(v.viewYourMemory.en, v.viewYourMemory.de)
+                        : t(v.preserveYourMemory.en, v.preserveYourMemory.de)}
                     </Text>
                   </TouchableOpacity>
                 )}
