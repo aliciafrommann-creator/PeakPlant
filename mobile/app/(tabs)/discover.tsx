@@ -92,7 +92,6 @@ const GROUP_OF: Record<string, string> = Object.fromEntries(
   FILTER_GROUPS.flatMap((g) => g.options.map((o) => [o.key, g.label])),
 );
 
-const DISCOVER = Sections.discover; // sunlit gold identity; actions stay chili
 
 export default function DiscoverScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
@@ -677,7 +676,12 @@ function RecommendationCard({
       scaleTo={compact ? 0.98 : 0.985}
       accessibilityLabel={`${rec.title}. ${rec.why}`}
     >
-      {!compact && <View style={styles.cardAccent} />}
+      {/* HIER STAND EIN GOLDENER ZIERSTREIFEN. Alicia, 19.08.2026: „was macht
+          das gelbe über plan one tiny adventure?" — genau die Frage ist das
+          Urteil. Er war 4 pt hoch, trug keine Bedeutung, und weil die Karte
+          kein `overflow: hidden` hat, hing er oben heraus wie ein Versehen.
+          Zierde, die eine Frage auslöst, ohne sie zu beantworten, ist keine
+          Zierde. */}
       <Text style={styles.cardTitle}>{rec.title}</Text>
       <Text style={styles.cardConcept}>{rec.concept}</Text>
 
@@ -820,16 +824,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.backgroundWarm,
     paddingTop: Spacing.lg,
     ...Shadows.subtle,
-  },
-  cardAccent: {
-    position: 'absolute',
-    top: 0,
-    left: Spacing.lg,
-    width: 40,
-    height: 4,
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4,
-    backgroundColor: DISCOVER,
   },
   cardTitle: { ...Typography.title, },
   cardConcept: { fontSize: 14, fontWeight: '400', color: Colors.textMuted, lineHeight: 21 },
