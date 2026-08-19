@@ -16,6 +16,9 @@ import { Typography } from '../../constants/typography';
 import { ProgressBar } from '../../components/challenge/ProgressBar';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { voice } from '../../lib/voice';
+import { DyeField, dyeOf } from '../../components/ui/DyeField';
+import { worldFor } from '../../constants/dyes';
+import { editionInk } from '../../lib/editionInk';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useChallenges } from '../../lib/hooks/useChallenges';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -64,6 +67,11 @@ export default function ChallengeDetailScreen() {
     : undefined;
   // The couple's own collectible (set in space/edit) stamps a finished challenge.
   const collectible = activeSpace?.collectibleEmoji ?? challenge.badge;
+  // Dieselbe Welt wie auf der Karte in der Liste (`worldFor(challenge.id)`) —
+  // wer eine Challenge antippt, soll dieselbe Farbe wiedersehen, sonst wirkt
+  // die Färbung dekorativ statt zugehörig.
+  const welt = worldFor(challenge.id);
+  const kopfTinte = editionInk(dyeOf(welt).ground);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -74,10 +82,14 @@ export default function ChallengeDetailScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Text style={styles.badge}>{progress?.complete ? collectible : ''}</Text>
-        <Text style={styles.duration}>{l(challenge.durationLabel).toUpperCase()}</Text>
-        <Text style={styles.title}>{l(challenge.title)}</Text>
-        <Text style={styles.subtitle}>{l(challenge.subtitle)}</Text>
+        <DyeField editionId={welt} style={styles.kopf}>
+          <Text style={styles.badge}>{progress?.complete ? collectible : dyeOf(welt).emoji}</Text>
+          <Text style={[styles.duration, { color: kopfTinte }]}>
+            {l(challenge.durationLabel).toUpperCase()}
+          </Text>
+          <Text style={[styles.title, { color: kopfTinte }]}>{l(challenge.title)}</Text>
+          <Text style={[styles.subtitle, { color: kopfTinte }]}>{l(challenge.subtitle)}</Text>
+        </DyeField>
 
         {/* Bei einem Ladefehler der Momente stünde hier ein Balken auf null —
             und das hieße „ihr habt noch nichts gemacht", obwohl wir es bloß
@@ -164,6 +176,12 @@ const styles = StyleSheet.create({
   backText: { fontSize: 12, fontWeight: '400', letterSpacing: 1.5, color: Colors.textMuted, width: 60 },
   headerLabel: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.text },
   content: { padding: Spacing.screen, gap: Spacing.sm, paddingBottom: Spacing.xxxl },
+  kopf: {
+    padding: Spacing.lg,
+    borderRadius: Radii.md,
+    gap: 2,
+    marginBottom: Spacing.sm,
+  },
   badge: { fontSize: 40, minHeight: 28 },
   duration: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: SectionInks.grow, marginTop: Spacing.sm },
   title: { ...Typography.editorial },

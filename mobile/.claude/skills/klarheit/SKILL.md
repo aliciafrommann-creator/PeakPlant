@@ -183,10 +183,16 @@ hieß „Batik leise", und der Name ist die Regel.
   dass der Startbildschirm zwei gefärbte Flächen hatte, weil die zweite in
   einer anderen Datei lag. Der Test zählt Dateien, nicht Bildschirme; die
   Lücke bleibt bestehen, sie ist nur kleiner geworden.)
-- **Nie eine Färbung in einer Wiederholung.** Zehn Challenge-Karten mit
-  demselben Kopfband sind die Farbwand, gegen die diese Regel argumentiert.
-  Eine Liste, deren Einträge je eine EIGENE Welt haben (die Sammlung), ist der
-  erlaubte Fall — dort ist die Färbung die Information.
+- **Nie DIESELBE Färbung in einer Wiederholung.** Das ist die korrigierte
+  Fassung. Der erste Anlauf verbot Färbungen in Listen überhaupt — nachdem zehn
+  Challenge-Karten mit demselben Haus-Kopfband zur Farbwand geworden waren. Das
+  war der falsche Schluss aus dem richtigen Befund: Das Problem war nie Farbe in
+  einer Liste, sondern DIESELBE Farbe zehnmal. Die Editionsliste war die ganze
+  Zeit der Gegenbeweis — sie trägt zwölf Färbungen und erschlägt niemanden,
+  weil jeder Eintrag seine eigene hat.
+  Wiederholte Flächen holen ihre Welt deshalb über `worldFor(id)`
+  (`constants/dyes.ts`): fest an der id, nicht zufällig. Eine Fläche, die bei
+  jedem Laden die Farbe wechselt, fühlt sich kaputt an.
 - **Die Tinte auf einer Färbung wird IMMER gerechnet** (`editionInk`), nie
   gesetzt. Die Fläche ist je Edition eine andere; eine feste Farbe stimmt
   höchstens für eine der dreizehn Welten. Auch das hält der Test.

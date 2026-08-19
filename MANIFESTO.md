@@ -19,6 +19,33 @@ ihnen schon wächst** — nicht daraus, eine Beziehung zu messen, zu bewerten od
 zu optimieren. „Deine Beziehung ist nichts zum Optimieren. Sie ist etwas zum
 Bemerken." Jede Funktion, jede Zeile Copy wird an dieser Latte gemessen.
 
+### Warum der Name — Alicia, 19.08.2026
+
+> „weil wir peaken und dann nicht abfallen, sondern da pflanzen und wieder
+> peaken."
+
+Das ist die ganze Produktlogik in einem Satz, und sie stand bis heute nirgends
+im Repo. Sie erklärt drei Dinge, die vorher wie Geschmacksfragen aussahen:
+
+1. **Ein Peak ist ein Feuerwerk, kein Gipfel.** Ein Gipfel hat eine Spitze und
+   danach geht es abwärts — das ist die Kurve, die jede Streak-App zeichnet.
+   Ein Feuerwerk hat keinen Abstieg. Es geht hoch, es ist schön, es ist vorbei,
+   und das nächste ist keine Wiederholung des ersten. Deshalb zeigt die App
+   Peaks als wachsende **Reihe**, nie als Kurve, nie als Höchststand.
+2. **Das Pflanzen ist der Teil zwischen zwei Peaks.** Ein festgehaltener Moment
+   ist nicht der Beweis, dass etwas gut lief — er ist das, was man an der Stelle
+   in den Boden setzt, damit dort etwas nachwächst. Das ist der Grund, warum die
+   Karten auf **Saatpapier** gedruckt sind: Die Metapher ist keine Verpackung,
+   sie ist das Produkt.
+3. **Peaks können nur steigen** (die Regel steht schon in `lib/peaks.ts`).
+   Jetzt steht auch der Grund dabei: Wer einen Peak abziehen kann, hat aus dem
+   Feuerwerk wieder einen Gipfel gemacht — und damit einen Abstieg erfunden, den
+   es in diesem Produkt nicht geben darf (§3).
+
+**Bindend daraus:** Keine Kurve, kein Höchststand, kein „dein bester Monat",
+kein Vergleich zwischen zwei Zeiträumen. Jede Darstellung, die einen ABSTIEG
+zeichnen könnte, widerspricht dem Namen.
+
 ---
 
 ## 1. Ehrlichkeit vor Eindruck — keine Fake-Claims

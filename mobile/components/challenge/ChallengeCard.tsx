@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors } from '../../constants/colors';
-import { HOUSE_DYE } from '../../constants/dyes';
+import { dyeOf, DyeField } from '../ui/DyeField';
+import { worldFor } from '../../constants/dyes';
 import { editionInk } from '../../lib/editionInk';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -20,7 +21,13 @@ export function ChallengeCard({ challenge, joined, progress, onPress }: Challeng
   const complete = progress?.complete ?? false;
   const { t, l } = useLanguage();
 
-  const kopfTinte = editionInk(HOUSE_DYE.ground);
+  // Jede Challenge hat ihre EIGENE Welt, fest an ihrer id (`worldFor`).
+  // Der erste Anlauf gab allen dasselbe Haus-Rezept, und zehn Karten
+  // untereinander wurden zur Farbwand; daraus hatte ich den falschen Schluss
+  // gezogen und die Farbe ganz ausgebaut. Der richtige: nicht Farbe in einer
+  // Liste ist das Problem, sondern DIESELBE Farbe. (Alicia, 19.08.2026)
+  const welt = worldFor(challenge.id);
+  const kopfTinte = editionInk(dyeOf(welt).ground);
 
   return (
     <TouchableOpacity
@@ -30,17 +37,12 @@ export function ChallengeCard({ challenge, joined, progress, onPress }: Challeng
       accessibilityRole="button"
       accessibilityLabel={`${l(challenge.title)}. ${l(challenge.subtitle)}`}
     >
-      {/* Das Kopfband trägt den GRUNDTON des Hauses als flache Fläche, nicht
-          die Färbung. Diese Karte steht in einer Liste: zehn Challenges
-          untereinander ergäben zehn gleiche Batik-Bänder — genau die Farbwand,
-          gegen die „Batik leise" argumentiert (Alicia, 19.08.2026). Eine
-          Färbung gehört auf eine einzelne Fläche, nicht in eine Wiederholung. */}
-      <View style={[styles.head, { backgroundColor: HOUSE_DYE.ground }]}>
-        <Text style={styles.badge}>{complete ? challenge.badge : HOUSE_DYE.emoji}</Text>
+      <DyeField editionId={welt} style={styles.head}>
+        <Text style={styles.badge}>{complete ? challenge.badge : dyeOf(welt).emoji}</Text>
         <Text style={[styles.duration, { color: kopfTinte }]}>
           {l(challenge.durationLabel).toUpperCase()}
         </Text>
-      </View>
+      </DyeField>
       <Text style={styles.title}>{l(challenge.title)}</Text>
       <Text style={styles.subtitle} numberOfLines={2}>
         {l(challenge.subtitle)}

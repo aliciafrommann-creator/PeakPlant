@@ -304,8 +304,38 @@ ausgelieferten PNG nach. **Merksatz:** Was die Tinte trägt, ist die Fläche, di
 ein Mensch sieht — nie der Wert, aus dem sie gerechnet wurde.
 
 **Die Regel, die das Ganze trägt, ist K7b im Skill `klarheit`:** eine gefärbte
-Fläche je Bildschirm, Papier bleibt der Grund, und nie eine Färbung in einer
+Fläche je Bildschirm, Papier bleibt der Grund, und nie DIESELBE Färbung in einer
 Wiederholung. Der Entwurf, der gewonnen hat, heißt nicht umsonst „leise".
+
+### Entscheidung 028 — Die Färbung geht über die Editionen hinaus (Alicia, 19.08.2026)
+
+Alicia zu den Editions-Kacheln: **„genau solche? auch bei den Tages-Challenges
+und Peaks und so."** Also bekommen auch Challenges und die Peak-Reihe eine
+Färbung — aber jede ihre EIGENE.
+
+**Die Korrektur eines eigenen Fehlschlusses.** Einen Durchgang vorher hatte ich
+der Challenge-Karte die Färbung wieder ABGENOMMEN, mit der Begründung: zehn
+Karten untereinander mit demselben Haus-Kopfband sind eine Farbwand. Der Befund
+stimmte, der Schluss nicht. Die Editionsliste trägt zwölf Färbungen und
+erschlägt niemanden — weil jeder Eintrag seine eigene hat. Das Problem war nie
+Farbe in einer Liste, sondern DIESELBE Farbe zehnmal.
+
+`worldFor(schluessel)` in `constants/dyes.ts` gibt jedem Schlüssel eine feste
+eigene Welt (FNV-1a über die zwölf Rezepte). **Fest, nicht zufällig:** Eine
+Challenge sieht morgen aus wie heute; eine Fläche, die bei jedem Laden die
+Farbe wechselt, fühlt sich kaputt an. Gemessen: die sieben Challenges landen in
+sechs verschiedenen Welten, die zwölf Wochen-Challenges in elf, und keine zwei
+benachbarten teilen sich eine.
+
+Damit trägt der Startbildschirm zwei gefärbte Flächen — Vorschlag (Haus) und
+Peak-Reihe (die Welt des Space). Das ist keine Aufweichung von K7b, sondern
+ihr eigentlicher Inhalt: zwei VERSCHIEDENE schmale Bänder sind keine Farbwand.
+
+**Und die Peak-Reihe hat jetzt ihren Grund im Code.** Alicia zum Namen: „weil
+wir peaken und dann nicht abfallen, sondern da pflanzen und wieder peaken." Der
+volle Eintrag steht im MANIFESTO unter „Warum der Name" — er ist bindend und
+verbietet jede Darstellung, die einen ABSTIEG zeichnen könnte (keine Kurve,
+kein Höchststand, kein „dein bester Monat").
 
 ### Entscheidung 026 — Eine offene Beispielkarte je Edition (Alicia, 18.08.2026)
 

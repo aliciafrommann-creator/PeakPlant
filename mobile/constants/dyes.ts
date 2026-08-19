@@ -179,3 +179,34 @@ export const HOUSE_DYE: Dye = {
 export function dyeFor(editionId: string): Dye | undefined {
   return DYES[editionId];
 }
+
+/**
+ * Eine Welt für irgendetwas, das keine Edition ist — eine Challenge, ein
+ * Space, ein Peak-Band.
+ *
+ * WARUM ES DAS BRAUCHT (Alicia, 19.08.2026: „auch bei den Tages-Challenges und
+ * Peaks und so"): Die Färbung soll über die Editionen hinaus. Der erste
+ * Versuch gab allen dasselbe Haus-Rezept — und zehn Challenge-Karten
+ * untereinander wurden zu einer Farbwand. Ich hatte daraus den falschen
+ * Schluss gezogen und die Farbe wieder ausgebaut.
+ *
+ * Der richtige Schluss: Das Problem war nie Farbe in einer Liste, sondern
+ * DIESELBE Farbe zehnmal. Die Editionsliste funktioniert ja — weil dort jeder
+ * Eintrag seine eigene Welt hat („immer etwas anders", Alicia).
+ *
+ * Also bekommt hier jeder Schlüssel eine feste eigene Welt. Fest heißt: Eine
+ * Challenge sieht morgen aus wie heute. Zufall wäre hier ein Fehler — eine
+ * Fläche, die bei jedem Laden die Farbe wechselt, fühlt sich kaputt an.
+ */
+export function worldFor(schluessel: string): string {
+  const ids = Object.keys(DYES);
+  // FNV-1a, 32 Bit. Klein, deterministisch, ohne Fremdpaket — und gut genug
+  // gestreut, damit benachbarte Schlüssel („ch-1", „ch-2") nicht in derselben
+  // Welt landen. Genau das prüft `lib/dyes.test.ts` nach.
+  let h = 0x811c9dc5;
+  for (let i = 0; i < schluessel.length; i++) {
+    h ^= schluessel.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return ids[h % ids.length];
+}

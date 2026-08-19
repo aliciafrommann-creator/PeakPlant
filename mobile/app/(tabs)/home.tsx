@@ -499,6 +499,7 @@ export default function HomeScreen() {
         {activeSpace && (
           <PeakRow
             momentsKept={memories.length}
+            spaceId={activeSpace.id}
             // Dasselbe Muster, dieselbe Folge: Der Solo-Space sammelte Chili,
             // das Paar-Sammelstück. `spaceTheme` legt dafür 🪨 fest — der
             // Eintrag erreichte nur den Wochen-Banner, nie diese Reihe.

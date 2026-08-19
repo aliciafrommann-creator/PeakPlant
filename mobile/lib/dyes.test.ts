@@ -2,8 +2,9 @@ import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { DYES, HOUSE_DYE, dyeFor } from '../constants/dyes';
+import { DYES, HOUSE_DYE, dyeFor, worldFor } from '../constants/dyes';
 import { SEED_EDITIONS } from './seed';
+import { CHALLENGES, WEEKLY_CHALLENGES } from './challenges';
 import { contrastRatio, luminance } from './contrast';
 import { editionInk, editionInkPassesAA } from './editionInk';
 
@@ -194,5 +195,45 @@ describe('Die gedruckten Färbungen', () => {
       .filter((f) => f.endsWith('.png'))
       .reduce((summe, f) => summe + fs.statSync(path.join(ORDNER, f)).size, 0);
     expect(gesamt / 1024, `${(gesamt / 1024).toFixed(0)} KB`).toBeLessThan(400);
+  });
+});
+
+describe('Welten für Dinge, die keine Edition sind (Entscheidung 028)', () => {
+  it('jede Welt ist eine echte Welt', () => {
+    for (const k of ['ch-1', 'wk-7', 'space-abc', '', 'ü&/(']) {
+      expect(DYES[worldFor(k)], `worldFor("${k}") zeigt ins Leere`).toBeDefined();
+    }
+  });
+
+  it('fest, nicht zufällig — derselbe Schlüssel gibt immer dieselbe Welt', () => {
+    // Eine Fläche, die bei jedem Laden die Farbe wechselt, fühlt sich kaputt
+    // an. Deshalb ist hier ein Hash und kein Zufall.
+    for (const k of ['ch-1', 'wk-3', 'space-42']) {
+      expect(worldFor(k)).toBe(worldFor(k));
+    }
+  });
+
+  it('keine zwei benachbarten Challenges teilen sich eine Welt', () => {
+    // DAS ist der eigentliche Punkt: Nicht Farbe in einer Liste war das
+    // Problem, sondern DIESELBE Farbe untereinander. Zwei gleiche Bänder
+    // direkt übereinander sind der Anfang der Farbwand.
+    for (const liste of [CHALLENGES, WEEKLY_CHALLENGES]) {
+      const doppelt: string[] = [];
+      for (let i = 1; i < liste.length; i++) {
+        if (worldFor(liste[i].id) === worldFor(liste[i - 1].id)) {
+          doppelt.push(`${liste[i - 1].id} und ${liste[i].id}`);
+        }
+      }
+      expect(doppelt, `gleiche Welt direkt untereinander: ${doppelt.join(' · ')}`).toEqual([]);
+    }
+  });
+
+  it('die Streuung ist breit genug, dass es nach Vielfalt aussieht', () => {
+    const alle = [...CHALLENGES, ...WEEKLY_CHALLENGES].map((c) => worldFor(c.id));
+    const verschieden = new Set(alle).size;
+    // Bei 19 Einträgen auf 12 Welten sind rechnerisch ~8,7 verschiedene zu
+    // erwarten. Unter 8 wäre die Streuung so schlecht, dass die Liste wieder
+    // eintönig wirkt — dann gehört die Hashfunktion überprüft, nicht der Test.
+    expect(verschieden, `nur ${verschieden} verschiedene Welten bei ${alle.length} Challenges`).toBeGreaterThanOrEqual(8);
   });
 });
