@@ -25,6 +25,7 @@ import { aggregateRatings, ratingsForMoment } from '../../lib/discovery/ratings'
 import type { RatingSummary } from '../../lib/discovery/ratings';
 import { confirmSuccess } from '../../lib/haptics';
 import type { SavedDate } from '../../lib/types';
+import { voice } from '../../lib/voice';
 
 // Die Schrift-Fassung derselben Farbe. Als 11-pt-Etikett stand `TOGETHER`
 // (apricot) auf Papier bei 2,35:1 — schlechter als jeder Fund des ersten
@@ -37,6 +38,7 @@ export default function TogetherDetailScreen() {
   const placesEnabled = useAppStore((s) => s.features.localShops);
   const { t } = useLanguage();
   const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   // Curated pool first; any library idea (idea-*) resolves too, so links and
   // taps from the browse library never dead-end (A3-18/24).
   const moment = useMemo(() => {
@@ -208,7 +210,7 @@ export default function TogetherDetailScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <BackButton label={t('BACK', 'ZURÜCK')} />
-        <Text style={styles.headerLabel}>{t('TO DO TOGETHER', 'GEMEINSAM TUN')}</Text>
+        <Text style={styles.headerLabel}>{t(v.toDoTogetherLabel.en, v.toDoTogetherLabel.de)}</Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -254,10 +256,7 @@ export default function TogetherDetailScreen() {
               <Text style={styles.ratingTip}>{'"'}{summary.latestTip}{'"'}</Text>
             ) : null}
             <Text style={styles.ratingNote}>
-              {t(
-                'from your own feedback — private on this device',
-                'aus eurem eigenen Feedback – privat auf diesem Gerät',
-              )}
+              {t(v.ownFeedbackNote.en, v.ownFeedbackNote.de)}
             </Text>
           </View>
         )}
@@ -286,10 +285,7 @@ export default function TogetherDetailScreen() {
         )}
 
         <Text style={styles.invite}>
-          {t(
-            'save it, make a plan, then keep the memory when it becomes yours.',
-            'Merkt es euch, macht einen Plan und bewahrt danach euren Moment.',
-          )}
+          {t(v.saveMakePlanKeep.en, v.saveMakePlanKeep.de)}
         </Text>
 
         <PressableScale
@@ -304,10 +300,10 @@ export default function TogetherDetailScreen() {
             <Text style={styles.ctaText}>
               {savedDate?.status === 'completed'
                 ? savedDate.memoryId
-                  ? t('VIEW YOUR MEMORY', 'EUREN MOMENT ANSEHEN')
+                  ? t(v.viewYourMemory.en, v.viewYourMemory.de)
                   : t('PRESERVE THIS MOMENT', 'DIESEN MOMENT BEWAHREN')
                 : savedDate?.status === 'planned'
-                  ? t('OPEN YOUR PLAN', 'EUREN PLAN ÖFFNEN')
+                  ? t(v.openYourPlan.en, v.openYourPlan.de)
                   : t('PLAN THIS DATE', 'DIESES DATE PLANEN')}
             </Text>
           )}
@@ -355,7 +351,7 @@ export default function TogetherDetailScreen() {
               accessibilityRole="button"
               accessibilityLabel={t('Open saved ideas', 'Gespeicherte Ideen öffnen')}
             >
-              <Text style={styles.quietActionSaved}>{t('saved ✓ · your list', 'gemerkt ✓ · eure Liste')}</Text>
+              <Text style={styles.quietActionSaved}>{t(v.savedToYourList.en, v.savedToYourList.de)}</Text>
             </TouchableOpacity>
           )}
         </View>

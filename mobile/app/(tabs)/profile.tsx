@@ -21,9 +21,11 @@ import { acknowledgeSelection } from '../../lib/haptics';
 import { PeakBloom } from '../../components/ui/PeakBloom';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { SpacePicker } from '../../components/space/SpacePicker';
+import { voice } from '../../lib/voice';
 
 export default function ProfileScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const { t } = useLanguage();
   const { memories, loading: memoriesLoading, error: memoriesError } = useMemories(activeSpace?.id);
   const { chillyCount } = useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
@@ -36,7 +38,7 @@ export default function ProfileScreen() {
     { emoji: '🎨', label: t('customize peakplant', 'PeakPlant anpassen'), route: '/customize' },
     { emoji: '🔖', label: t('saved plans', 'gemerkte Pläne'), route: '/discover/saved' },
     ...(ritualsEnabled
-      ? [{ emoji: '🌿', label: t('your rituals', 'eure Rituale'), route: '/rituals' }]
+      ? [{ emoji: '🌿', label: t(v.ritualsLink.en, v.ritualsLink.de), route: '/rituals' }]
       : []),
     { emoji: '🌍', label: t('language & preferences', 'Sprache & Einstellungen'), route: '/settings/preferences' },
     { emoji: '🔐', label: t('account & data', 'Konto & Daten'), route: '/account' },

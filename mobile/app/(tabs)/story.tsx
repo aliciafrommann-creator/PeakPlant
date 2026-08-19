@@ -122,11 +122,8 @@ export default function StoryScreen() {
           </View>
         </View>
         <EmptyState
-          title={t("couldn't load your story.", 'eure Geschichte konnte nicht geladen werden.')}
-          hint={t(
-            'everything you kept is safe — this was the connection.',
-            'alles, was ihr behalten habt, ist sicher — das war die Verbindung.',
-          )}
+          title={t(v.storyLoadFailedTitle.en, v.storyLoadFailedTitle.de)}
+          hint={t(v.storyLoadFailedHint.en, v.storyLoadFailedHint.de)}
           ctaLabel={t('TRY AGAIN', 'NOCHMAL VERSUCHEN')}
           onCta={refresh}
         />
@@ -145,7 +142,7 @@ export default function StoryScreen() {
           <BackButton />
           <View style={styles.kickerRow}>
             <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
-            <Text style={styles.kicker}>{t('OUR STORY', 'EURE GESCHICHTE')}</Text>
+            <Text style={styles.kicker}>{t(v.ourStoryKicker.en, v.ourStoryKicker.de)}</Text>
           </View>
         </View>
         <EmptyState
@@ -172,7 +169,7 @@ export default function StoryScreen() {
           <BackButton />
           <View style={styles.kickerRow}>
             <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
-            <Text style={styles.kicker}>{t('OUR STORY', 'EURE GESCHICHTE')}</Text>
+            <Text style={styles.kicker}>{t(v.ourStoryKicker.en, v.ourStoryKicker.de)}</Text>
           </View>
           <Text style={styles.title}>
             {t(`${v.whatGrew.en}.`, `${v.whatGrew.de}.`)}
@@ -222,7 +219,7 @@ export default function StoryScreen() {
           style={styles.momentsLink}
           onPress={() => router.push('/(tabs)/moments')}
           scaleTo={0.985}
-          accessibilityLabel={t('Open all your moments', 'Alle eure Momente öffnen')}
+          accessibilityLabel={t(v.openAllMoments.en, v.openAllMoments.de)}
         >
           <Text style={styles.momentsLinkText}>
             {t('READ EVERY MOMENT', 'JEDEN MOMENT LESEN')}

@@ -33,7 +33,7 @@ interface SignalRow {
 const CATEGORY_LABEL: Record<MomentCategory, [en: string, de: string]> = {
   food: ['food & drink', 'Essen & Trinken'],
   outdoors: ['the outdoors', 'die Natur'],
-  create: ['making things', 'gemeinsam gestalten'],
+  create: ['making things', 'Dinge gestalten'],
   calm: ['calm & quiet', 'ruhig & still'],
   play: ['playful things', 'verspielte Dinge'],
 };

@@ -99,10 +99,7 @@ export function ShareToChallenge({
         // es das nicht gibt, kann niemand daran teilen.
         Alert.alert(
           t('not open yet', 'noch nicht offen'),
-          t(
-            "this week's challenge isn't open for sharing yet. your moment stays as it is.",
-            'die Challenge dieser Woche ist noch nicht zum Teilen offen. Euer Moment bleibt, wie er ist.',
-          ),
+          t(vo.shareNotOpenYet.en, vo.shareNotOpenYet.de),
         );
         return;
       }
@@ -118,10 +115,7 @@ export function ShareToChallenge({
     } catch {
       Alert.alert(
         t('could not share', 'Teilen ging nicht'),
-        t(
-          'that was the connection — nothing changed, and your moment is untouched.',
-          'das war die Verbindung — es hat sich nichts geändert, und euer Moment ist unberührt.',
-        ),
+        t(vo.shareFailedNote.en, vo.shareFailedNote.de),
       );
     } finally {
       setBusy(false);
@@ -131,10 +125,7 @@ export function ShareToChallenge({
   function revoke(share: Share) {
     Alert.alert(
       t('take it back?', 'zurücknehmen?'),
-      t(
-        'it disappears for everyone. your moment stays exactly where it is.',
-        'es verschwindet für alle. Euer Moment bleibt genau da, wo er ist.',
-      ),
+      t(vo.shareRevokeNote.en, vo.shareRevokeNote.de),
       [
         { text: t('keep it shared', 'geteilt lassen'), style: 'cancel' },
         {

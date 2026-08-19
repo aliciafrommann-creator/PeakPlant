@@ -333,7 +333,7 @@ export const SEED_MEMORIES: Memory[] = [
 
 export const ONBOARDING_GOALS = [
   { id: 'g1', label: 'deeper conversations', description: 'go beyond day-to-day talk', labelDe: 'tiefere Gespräche', descriptionDe: 'über den Alltag hinaus denken' },
-  { id: 'g2', label: 'shared adventures', description: 'discover new places and things together', labelDe: 'gemeinsame Abenteuer', descriptionDe: 'neue Orte und Dinge zusammen entdecken' },
+  { id: 'g2', label: 'new adventures', description: 'discover new places and things', labelDe: 'neue Abenteuer', descriptionDe: 'neue Orte und Dinge entdecken' },
   { id: 'g3', label: 'more presence', description: 'be fully here, phones away', labelDe: 'mehr Präsenz', descriptionDe: 'ganz da sein, Handys weg' },
   { id: 'g4', label: 'understanding each other', description: 'know what the other person carries', labelDe: 'einander verstehen', descriptionDe: 'wissen, was den anderen bewegt' },
   { id: 'g5', label: 'playful moments', description: 'laugh more, create more', labelDe: 'spielerische Momente', descriptionDe: 'mehr lachen, mehr erschaffen' },

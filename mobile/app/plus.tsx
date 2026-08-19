@@ -17,12 +17,16 @@ import { useLanguage } from '../lib/hooks/useLanguage';
 import { useAppStore } from '../lib/store';
 import { billing } from '../lib/monetization/billing';
 import { PRICE_HYPOTHESES } from '../lib/monetization/config';
+import { voice } from './../lib/voice';
+import { useSpaces } from '../lib/hooks/useSpaces';
 
 const MONTHLY_PRODUCT_ID = 'couple_monthly';
 
 export default function PlusScreen() {
   const { t } = useLanguage();
   const activeSpaceId = useAppStore((s) => s.activeSpaceId);
+  const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const [loading, setLoading] = useState(false);
   const [restoring, setRestoring] = useState(false);
 
@@ -99,7 +103,7 @@ export default function PlusScreen() {
             ],
             [
               t('Personalized recommendations', 'Personalisierte Empfehlungen'),
-              t('Suggestions that learn from what you save and love.', 'Vorschläge, die aus euren Saves lernen.'),
+              t('Suggestions that learn from what you save and love.', 'Vorschläge, die aus deinen Saves lernen.'),
             ],
             [
               t('Live weather context', 'Live-Wetter-Kontext'),
@@ -142,10 +146,7 @@ export default function PlusScreen() {
         ) : (
           <View style={styles.ctaBlock}>
             <Text style={styles.priceNote}>
-              {t(
-                'Plus is not available yet — everything in your diary stays free.',
-                'Plus gibt es noch nicht zu kaufen — alles in eurem Tagebuch bleibt frei.',
-              )}
+              {t(v.plusFreeNote.en, v.plusFreeNote.de)}
             </Text>
           </View>
         )}

@@ -120,56 +120,70 @@ function istKommentar(zeile: string): boolean {
 }
 
 /**
- * DER RÜCKSTAND — sichtbar, gedeckelt, schrumpfend.
+ * Welche Zeilen einer Datei in einem MEHRZEILIGEN Kommentar liegen.
+ *
+ * `istKommentar` sieht nur den Zeilenanfang. Ein `{/* … *\/}`-Block, dessen
+ * zweite Zeile mit einem normalen Wort beginnt, rutschte deshalb durch — genau
+ * so eine Zeile stand am 19.08.2026 in `editions.tsx` und wurde als echte
+ * Fundstelle gezählt. Ein Wächter, der Erklärungen als Fehler meldet, erzieht
+ * dazu, Erklärungen wegzulassen.
+ */
+function imKommentarblock(zeilen: string[]): boolean[] {
+  const drin = new Array(zeilen.length).fill(false);
+  let offen = false;
+  zeilen.forEach((z, i) => {
+    let rest = z;
+    let hierDrin = offen;
+    while (rest.length) {
+      if (!offen) {
+        const auf = rest.search(/\{?\/\*/);
+        if (auf === -1) break;
+        offen = true;
+        hierDrin = true;
+        rest = rest.slice(auf + 2);
+      } else {
+        const zu = rest.indexOf('*/');
+        if (zu === -1) break;
+        offen = false;
+        rest = rest.slice(zu + 2);
+      }
+    }
+    drin[i] = hierDrin;
+  });
+  return drin;
+}
+
+/**
+ * DER RÜCKSTAND — leer, und das soll er bleiben.
  *
  * Beim Erweitern der Wortliste am 18.08.2026 fielen 67 Stellen an, die vorher
  * grün waren. Sie alle in einem Zug umzustellen war nicht ehrlich machbar; sie
  * stehen zu lassen und die Liste wieder zu verengen wäre ein abgeschalteter
- * Test im Kostüm gewesen.
+ * Test im Kostüm gewesen. Also trug jede Datei die Zahl ihrer bekannten
+ * Reststellen, und der Test scheiterte in DREI Richtungen — mehr Stellen als
+ * eingetragen, eine neue Datei, oder WENIGER als eingetragen (sonst verwandelt
+ * sich ein abgearbeiteter Rückstand still in einen Freibrief).
  *
- * Also: Jede Datei trägt die Zahl ihrer bekannten Reststellen. Der Test
- * scheitert in DREI Richtungen —
- *   · eine Datei bekommt mehr Stellen als eingetragen  → Rückschritt,
- *   · eine Datei ohne Eintrag bekommt eine Stelle      → neue Baustelle,
- *   · eine Datei hat WENIGER als eingetragen           → Zahl senken.
+ * Am 19.08.2026 ist er auf null. Von den 55 zuletzt offenen Stellen waren
+ * 41 echte Umstellungen (jetzt in `lib/voice.ts`), 4 schlichte
+ * Übersetzungsfehler (im Englischen stand nie eine zweite Person), 3 Sätze,
+ * die vor der Wahl des Space-Typs laufen und deshalb die Person ansprechen,
+ * die das Telefon hält, und 7 begründete Ausnahmen (`anrede-ok`) — Knöpfe und
+ * Zweige, die den geteilten Space GERADE beschreiben.
  *
- * Die letzte Richtung ist die wichtige: Ein Rückstand, den man abarbeitet,
- * ohne die Zahl zu senken, verwandelt sich still in einen Freibrief. So bleibt
- * die Liste ehrlich und wird kürzer, statt zu verwittern.
- *
- * Ziel ist ein leeres Objekt. Bis dahin sagt diese Datei, wie weit es noch ist.
+ * Ein Eintrag hier ist ab jetzt ein Rückschritt, kein Zwischenstand. Wer einen
+ * braucht, schreibt den Grund dazu.
  */
-const RUECKSTAND: Record<string, number> = {
-  'app/(auth)/intro.tsx': 4,
-  'app/(auth)/invite.tsx': 4,
-  'app/(tabs)/_layout.tsx': 1,
-  'app/(tabs)/community.tsx': 4,
-  'app/(tabs)/discover.tsx': 3,
-  'app/(tabs)/editions.tsx': 3,
-  'app/(tabs)/home.tsx': 2,
-  'app/(tabs)/profile.tsx': 1,
-  'app/(tabs)/scan.tsx': 1,
-  'app/(tabs)/story.tsx': 4,
-  'app/challenges/[id].tsx': 3,
-  'app/discover/feedback/[id].tsx': 1,
-  'app/discover/saved.tsx': 3,
-  'app/editions/[id].tsx': 4,
-  'app/plus.tsx': 2,
-  'app/rituals/index.tsx': 1,
-  'app/settings/preferences.tsx': 1,
-  'app/space/edit.tsx': 1,
-  'app/together/[id].tsx': 6,
-  'components/memory/ShareToChallenge.tsx': 3,
-  'lib/features.ts': 2,
-  'lib/seed.ts': 1,
-};
+const RUECKSTAND: Record<string, number> = {};
+
 
 function funde(): Record<string, number> {
   const proDatei: Record<string, number> = {};
   for (const f of QUELLEN) {
     const alleZeilen = fs.readFileSync(f, 'utf8').split('\n');
+    const imBlock = imKommentarblock(alleZeilen);
     alleZeilen.forEach((zeile, i) => {
-      if (istKommentar(zeile) || zeile.trimStart().startsWith('{/*')) return;
+      if (istKommentar(zeile) || imBlock[i]) return;
       // Fünf Zeilen zurück: Eine Begründung braucht oft drei, und dazwischen
       // steht noch die Zeile, die den Satz einleitet (`body: isDE ?`).
       const davor = alleZeilen.slice(Math.max(0, i - 5), i).join('\n');

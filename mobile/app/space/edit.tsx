@@ -452,6 +452,8 @@ export default function EditSpaceScreen() {
                   // „the invite code above" zeigte auf etwas, das auf diesem
                   // Bildschirm gar nicht steht (hier gibt es Name, Emoji,
                   // Sammelstück und Mitglieder — keinen Code).
+                  // anrede-ok: hängt an `space.type !== 'solo'` — ein Solo-Space
+                  // hat weder Mitglieder noch einen Code und sieht das nie.
                   'everyone here can see your shared diary. your invite code lets people in — share it only with people you trust.',
                   'alle hier sehen euer gemeinsames Tagebuch. Der Einladungscode lässt Menschen herein — teil ihn nur mit Menschen, denen du vertraust.',
                 )}

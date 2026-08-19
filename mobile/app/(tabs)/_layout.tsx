@@ -3,9 +3,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/colors';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { useSpaces } from '../../lib/hooks/useSpaces';
+import { voice } from '../../lib/voice';
 
 export default function TabsLayout() {
   const { t } = useLanguage();
+  // Der Name des ersten Reiters ist die erste Anrede, die jemand sieht.
+  // „Zusammen" über einem Solo-Space ist genau die Behauptung, gegen die
+  // `lib/voice.ts` gebaut wurde.
+  const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   // A hard-coded 60px bar crowds the home indicator on gesture-nav devices —
   // grow the bar by the bottom inset so icons/labels keep their breathing room.
   const insets = useSafeAreaInsets();
@@ -42,7 +49,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: t('Together', 'Zusammen'),
+          title: t(v.homeTabTitle.en, v.homeTabTitle.de),
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart-outline" size={size} color={color} />
           ),

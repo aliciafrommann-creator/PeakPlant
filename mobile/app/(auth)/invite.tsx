@@ -298,6 +298,8 @@ export default function InviteScreen() {
               accessibilityRole="button"
               accessibilityLabel={t('Start a shared space', 'Gemeinsamen Space starten')}
             >
+              {/* anrede-ok: Das ist der Knopf, mit dem man den GETEILTEN
+                  Space wählt — er beschreibt genau die zwei Menschen. */}
               <Text style={styles.shareText}>{t('SHARED, WITH SOMEONE', 'GEMEINSAM, MIT JEMANDEM')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -340,7 +342,9 @@ export default function InviteScreen() {
                   'everything works from here on your own. if you ever want someone in it, you can open it up in the space settings — nothing you kept is lost.',
                   'Ab hier funktioniert alles allein. Wenn du irgendwann jemanden darin haben willst, kannst du den Space in den Einstellungen öffnen — nichts von dem, was du festgehalten hast, geht dabei verloren.',
                 )
-              : t(
+              : // anrede-ok: der Zweig für den GETEILTEN Space; der Solo-Zweig
+                // steht direkt darüber.
+                t(
                   'share this with your partner so you can build your shared diary together. you can also start friends spaces later.',
                   'Teile diesen Code mit deinem Partner, damit ihr gemeinsam euer Tagebuch aufbaut. Du kannst später auch Freunde-Spaces starten.',
                 )}
@@ -402,12 +406,18 @@ export default function InviteScreen() {
             activeOpacity={0.8}
             disabled={creating}
             accessibilityRole="button"
-            accessibilityLabel={t('Go to your first moment', 'Zu eurem ersten Moment')}
+            accessibilityLabel={
+              // anrede-ok: beide Fassungen stehen hier nebeneinander.
+              istSolo
+                ? t('Go to your first moment', 'Zu deinem ersten Moment')
+                : t('Go to your first moment', 'Zu eurem ersten Moment')
+            }
           >
             {/* Setup is not the finish line — the first preserved moment is.
                 A PeakPlant verb here instead of a generic CONTINUE, so the
                 last step of onboarding names where it leads (MANIFESTO §5). */}
             <Text style={styles.continueText}>
+              {/* anrede-ok: beide Fassungen stehen hier nebeneinander. */}
               {istSolo ? t('YOUR FIRST MOMENT', 'DEIN ERSTER MOMENT') : t('YOUR FIRST MOMENT', 'EUER ERSTER MOMENT')}
             </Text>
           </TouchableOpacity>

@@ -645,7 +645,7 @@ export default function PlacesScreen() {
       // tip. The copy makes clear notes/photos never become public.
       const canShare = !!(selected && publicSpotForPlace(selected));
       Alert.alert(
-        t('lovely — done together ♥', 'schön — zusammen erlebt ♥'),
+        t(v.placeDoneNote.en, v.placeDoneNote.de),
         t(
           `Keep it as a private memory, or leave an anonymous tip on the map? Your notes and photos always stay ${v.privateToSpace.en}.`,
           `Als private Erinnerung behalten oder einen anonymen Tipp auf der Karte lassen? Notizen und Fotos bleiben immer ${v.privateToSpace.de}.`,
@@ -923,18 +923,12 @@ export default function PlacesScreen() {
                 <Text style={styles.feedbackTip}>“{ownSummary.latestTip}”</Text>
               ) : null}
               <Text style={styles.privateNote}>
-                {t(
-                  'from your own private feedback on this device — not a public community rating.',
-                  'Aus eurem privaten Feedback auf diesem Gerät – keine öffentliche Community-Bewertung.',
-                )}
+                {t(v.privateFeedbackSource.en, v.privateFeedbackSource.de)}
               </Text>
             </View>
           ) : (
             <Text style={styles.emptyFeedback}>
-              {t(
-                'after you complete an idea here, your rating and practical tip will appear privately on this device.',
-                'Wenn ihr hier eine Idee erlebt habt, erscheinen eure Bewertung und euer praktischer Tipp privat auf diesem Gerät.',
-              )}
+              {t(v.privateFeedbackEmpty.en, v.privateFeedbackEmpty.de)}
             </Text>
           )}
 
@@ -963,7 +957,7 @@ export default function PlacesScreen() {
             <View style={[styles.loopStatus, selectedIsDone && styles.loopStatusDone]}>
               <Text style={[styles.loopStatusText, selectedIsDone && styles.loopStatusTextDone]}>
                 {selectedIsDone
-                  ? t('✓ you’ve done this together', '✓ ihr habt das zusammen gemacht')
+                  ? t(v.placeAlreadyDone.en, v.placeAlreadyDone.de)
                   : t(v.plannedForSpace.en, v.plannedForSpace.de)}
               </Text>
             </View>

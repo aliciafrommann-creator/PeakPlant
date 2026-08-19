@@ -15,6 +15,7 @@ import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { ProgressBar } from '../../components/challenge/ProgressBar';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { voice } from '../../lib/voice';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useChallenges } from '../../lib/hooks/useChallenges';
 import { useLanguage } from '../../lib/hooks/useLanguage';
@@ -24,6 +25,7 @@ import { confirmSuccess, acknowledgeSelection } from '../../lib/haptics';
 export default function ChallengeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const { memories, error: memoriesError } = useMemories(activeSpace?.id);
   const { enrollmentFor, join, leave } = useChallenges(activeSpace?.id);
   const { t, l } = useLanguage();
@@ -82,10 +84,7 @@ export default function ChallengeDetailScreen() {
             nicht wissen (Regel K5). Dann zeigen wir keinen Balken. */}
         {enrollment && memoriesError && (
           <Text style={styles.subtitle}>
-            {t(
-              'we could not read your progress — nothing of yours is lost.',
-              'wir konnten euren Stand nicht lesen — nichts von euch ist weg.',
-            )}
+            {t(v.challengeProgressFailed.en, v.challengeProgressFailed.de)}
           </Text>
         )}
 
@@ -93,7 +92,7 @@ export default function ChallengeDetailScreen() {
           <View style={styles.progressCard}>
             <ProgressBar count={progress.count} goal={progress.goal} complete={progress.complete} />
             {progress.complete && (
-              <Text style={styles.done}>{collectible} {t('earned. lovely work, together.', 'verdient. wunderbare Arbeit, gemeinsam.')}</Text>
+              <Text style={styles.done}>{collectible} {t(v.challengeEarned.en, v.challengeEarned.de)}</Text>
             )}
           </View>
         )}
@@ -144,10 +143,7 @@ export default function ChallengeDetailScreen() {
         )}
 
         <Text style={styles.note}>
-          {t(
-            'progress counts moments you preserve after joining. use photo/note when you actually did it together. leaving keeps every moment — only the challenge goes away.',
-            'Fortschritt zählt Momente, die ihr nach dem Beitritt bewahrt. Nutzt Foto/Notiz, wenn ihr es wirklich zusammen gemacht habt. Verlassen behält jeden Moment — nur die Challenge verschwindet.',
-          )}
+          {t(v.challengeProgressNote.en, v.challengeProgressNote.de)}
         </Text>
       </ScrollView>
     </SafeAreaView>

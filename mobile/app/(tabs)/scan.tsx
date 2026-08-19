@@ -211,6 +211,8 @@ export default function ScanScreen() {
         <Text style={styles.hint}>
           {t(
             'uses Grow Together #01 — "Grow Something Together"',
+            // anrede-ok: „Grow Together #01 — Gemeinsam etwas wachsen lassen"
+            // ist der NAME einer Edition und ihrer Karte, keine Anrede.
             'nutzt Grow Together #01 - "Gemeinsam etwas wachsen lassen"',
           )}
         </Text>
