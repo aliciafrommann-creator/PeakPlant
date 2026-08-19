@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { dyeOf, DyeField } from '../ui/DyeField';
-import { worldFor } from '../../constants/dyes';
+import { worldForCategory } from '../../constants/dyes';
 import { editionInk } from '../../lib/editionInk';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -21,12 +21,13 @@ export function ChallengeCard({ challenge, joined, progress, onPress }: Challeng
   const complete = progress?.complete ?? false;
   const { t, l } = useLanguage();
 
-  // Jede Challenge hat ihre EIGENE Welt, fest an ihrer id (`worldFor`).
-  // Der erste Anlauf gab allen dasselbe Haus-Rezept, und zehn Karten
-  // untereinander wurden zur Farbwand; daraus hatte ich den falschen Schluss
-  // gezogen und die Farbe ganz ausgebaut. Der richtige: nicht Farbe in einer
-  // Liste ist das Problem, sondern DIESELBE Farbe. (Alicia, 19.08.2026)
-  const welt = worldFor(challenge.id);
+  // Die Farbe kommt vom THEMA, nicht von der id (Alicia, 19.08.2026: „sie
+  // gehört ja immer zu einer Emoji-Kategorie, wie alles andere auch"). Eine
+  // ruhige Challenge, eine ruhige Idee und der Filter „ruhig" tragen dieselbe
+  // Welt — so ist die Farbe eine zweite Beschriftung und nicht nur Abwechslung.
+  // Die drei Sammel-Challenges haben kein Thema und bekommen eine der
+  // themenfreien Welten.
+  const welt = worldForCategory(challenge.category, challenge.id);
   const kopfTinte = editionInk(dyeOf(welt).ground);
 
   return (

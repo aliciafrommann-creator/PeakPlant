@@ -2,9 +2,10 @@ import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { DYES, HOUSE_DYE, dyeFor, worldFor } from '../constants/dyes';
+import { DYES, HOUSE_DYE, dyeFor, worldFor, worldForCategory, WORLD_BY_CATEGORY, FREIE_WELTEN } from '../constants/dyes';
 import { SEED_EDITIONS } from './seed';
 import { CHALLENGES, WEEKLY_CHALLENGES } from './challenges';
+import { CATEGORY_EMOJI } from './discovery/ideaCatalog';
 import { contrastRatio, luminance } from './contrast';
 import { editionInk, editionInkPassesAA } from './editionInk';
 
@@ -198,10 +199,36 @@ describe('Die gedruckten Färbungen', () => {
   });
 });
 
-describe('Welten für Dinge, die keine Edition sind (Entscheidung 028)', () => {
-  it('jede Welt ist eine echte Welt', () => {
-    for (const k of ['ch-1', 'wk-7', 'space-abc', '', 'ü&/(']) {
-      expect(DYES[worldFor(k)], `worldFor("${k}") zeigt ins Leere`).toBeDefined();
+describe('Welten nach Thema (Entscheidung 028)', () => {
+  it('jede Kategorie hat eine Welt, und keine teilt sich eine', () => {
+    // Die Farbe ist eine zweite Beschriftung. Zwei Kategorien in derselben
+    // Welt hieße: zwei Bedeutungen, ein Zeichen — schlimmer als gar keine
+    // Farbe, weil es Ordnung vortäuscht.
+    const kategorien = Object.keys(CATEGORY_EMOJI);
+    const ohne = kategorien.filter((k) => !WORLD_BY_CATEGORY[k]);
+    expect(ohne, `Kategorie ohne Welt: ${ohne.join(', ')}`).toEqual([]);
+
+    const welten = kategorien.map((k) => WORLD_BY_CATEGORY[k]);
+    expect(new Set(welten).size, 'zwei Kategorien in derselben Welt').toBe(kategorien.length);
+
+    const unbekannt = welten.filter((w) => !DYES[w]);
+    expect(unbekannt, `Welt gibt es nicht: ${unbekannt.join(', ')}`).toEqual([]);
+  });
+
+  it('die themenfreien Welten sind wirklich frei', () => {
+    // Eine Fläche ohne Thema darf nie zufällig aussehen wie „Essen".
+    expect(FREIE_WELTEN.length, 'keine themenfreie Welt übrig').toBeGreaterThan(0);
+    const kollision = FREIE_WELTEN.filter((w) => Object.values(WORLD_BY_CATEGORY).includes(w));
+    expect(kollision, `belegt und frei zugleich: ${kollision.join(', ')}`).toEqual([]);
+  });
+
+  it('eine Challenge ohne Thema landet in einer freien Welt', () => {
+    const ohneThema = [...CHALLENGES, ...WEEKLY_CHALLENGES].filter((c) => !c.category);
+    expect(ohneThema.length, 'keine themenlose Challenge zum Prüfen').toBeGreaterThan(0);
+    for (const c of ohneThema) {
+      expect(FREIE_WELTEN, `${c.id} bekäme eine Themen-Welt`).toContain(
+        worldForCategory(c.category, c.id),
+      );
     }
   });
 
@@ -210,30 +237,41 @@ describe('Welten für Dinge, die keine Edition sind (Entscheidung 028)', () => {
     // an. Deshalb ist hier ein Hash und kein Zufall.
     for (const k of ['ch-1', 'wk-3', 'space-42']) {
       expect(worldFor(k)).toBe(worldFor(k));
+      expect(worldForCategory(undefined, k)).toBe(worldForCategory(undefined, k));
     }
+    expect(DYES[worldFor('irgendwas')]).toBeDefined();
   });
 
-  it('keine zwei benachbarten Challenges teilen sich eine Welt', () => {
+  it('keine zwei Challenges NEBENEINANDER teilen sich eine Welt', () => {
     // DAS ist der eigentliche Punkt: Nicht Farbe in einer Liste war das
-    // Problem, sondern DIESELBE Farbe untereinander. Zwei gleiche Bänder
-    // direkt übereinander sind der Anfang der Farbwand.
-    for (const liste of [CHALLENGES, WEEKLY_CHALLENGES]) {
-      const doppelt: string[] = [];
-      for (let i = 1; i < liste.length; i++) {
-        if (worldFor(liste[i].id) === worldFor(liste[i - 1].id)) {
-          doppelt.push(`${liste[i - 1].id} und ${liste[i].id}`);
+    // Problem, sondern DIESELBE Farbe untereinander.
+    //
+    // Geprüft wird die Liste, die ein Mensch WIRKLICH sieht — nach Space-Art
+    // gefiltert. Der erste Anlauf prüfte die Rohliste; darin stehen Solo- und
+    // Paar-Challenges verschränkt, und zwei Nachbarn dort landen im Betrieb
+    // nie untereinander. Ein Wächter, der etwas anderes prüft als das, was
+    // gezeigt wird, findet die falschen Fehler.
+    for (const typ of ['couple', 'friends', 'solo'] as const) {
+      for (const liste of [CHALLENGES, WEEKLY_CHALLENGES]) {
+        const sichtbar = liste.filter((c) => c.spaceTypes.includes(typ));
+        const doppelt: string[] = [];
+        for (let i = 1; i < sichtbar.length; i++) {
+          const a = worldForCategory(sichtbar[i - 1].category, sichtbar[i - 1].id);
+          const b = worldForCategory(sichtbar[i].category, sichtbar[i].id);
+          if (a === b) doppelt.push(`${sichtbar[i - 1].id} und ${sichtbar[i].id} (${typ})`);
         }
+        expect(doppelt, `gleiche Welt direkt untereinander: ${doppelt.join(' · ')}`).toEqual([]);
       }
-      expect(doppelt, `gleiche Welt direkt untereinander: ${doppelt.join(' · ')}`).toEqual([]);
     }
   });
 
-  it('die Streuung ist breit genug, dass es nach Vielfalt aussieht', () => {
-    const alle = [...CHALLENGES, ...WEEKLY_CHALLENGES].map((c) => worldFor(c.id));
-    const verschieden = new Set(alle).size;
-    // Bei 19 Einträgen auf 12 Welten sind rechnerisch ~8,7 verschiedene zu
-    // erwarten. Unter 8 wäre die Streuung so schlecht, dass die Liste wieder
-    // eintönig wirkt — dann gehört die Hashfunktion überprüft, nicht der Test.
-    expect(verschieden, `nur ${verschieden} verschiedene Welten bei ${alle.length} Challenges`).toBeGreaterThanOrEqual(8);
+  it('das Thema einer Challenge gibt es wirklich', () => {
+    // Eine Kategorie, die der Ideen-Katalog nicht kennt, wäre eine tote
+    // Angabe — die Färbung fiele still auf eine freie Welt zurück und sähe
+    // aus wie „kein Thema".
+    const erfunden = [...CHALLENGES, ...WEEKLY_CHALLENGES]
+      .filter((c) => c.category && !CATEGORY_EMOJI[c.category])
+      .map((c) => `${c.id}: ${c.category}`);
+    expect(erfunden, `Kategorie gibt es nicht: ${erfunden.join(', ')}`).toEqual([]);
   });
 });

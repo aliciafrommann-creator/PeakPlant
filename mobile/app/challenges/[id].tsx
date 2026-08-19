@@ -17,7 +17,7 @@ import { ProgressBar } from '../../components/challenge/ProgressBar';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { voice } from '../../lib/voice';
 import { DyeField, dyeOf } from '../../components/ui/DyeField';
-import { worldFor } from '../../constants/dyes';
+import { worldForCategory } from '../../constants/dyes';
 import { editionInk } from '../../lib/editionInk';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useChallenges } from '../../lib/hooks/useChallenges';
@@ -70,7 +70,7 @@ export default function ChallengeDetailScreen() {
   // Dieselbe Welt wie auf der Karte in der Liste (`worldFor(challenge.id)`) —
   // wer eine Challenge antippt, soll dieselbe Farbe wiedersehen, sonst wirkt
   // die Färbung dekorativ statt zugehörig.
-  const welt = worldFor(challenge.id);
+  const welt = worldForCategory(challenge.category, challenge.id);
   const kopfTinte = editionInk(dyeOf(welt).ground);
 
   return (

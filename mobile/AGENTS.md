@@ -320,12 +320,41 @@ stimmte, der Schluss nicht. Die Editionsliste trägt zwölf Färbungen und
 erschlägt niemanden — weil jeder Eintrag seine eigene hat. Das Problem war nie
 Farbe in einer Liste, sondern DIESELBE Farbe zehnmal.
 
-`worldFor(schluessel)` in `constants/dyes.ts` gibt jedem Schlüssel eine feste
-eigene Welt (FNV-1a über die zwölf Rezepte). **Fest, nicht zufällig:** Eine
-Challenge sieht morgen aus wie heute; eine Fläche, die bei jedem Laden die
-Farbe wechselt, fühlt sich kaputt an. Gemessen: die sieben Challenges landen in
-sechs verschiedenen Welten, die zwölf Wochen-Challenges in elf, und keine zwei
-benachbarten teilen sich eine.
+**Und dann der zweite Schritt, ebenfalls von Alicia:** „die Challenge kann auch
+je nach Thematik eine Batik-Färbung haben — sie gehört ja immer zu einer
+Emoji-Kategorie, wie alles andere auch, das zieht sich durch die App, auch die
+Filter." Das ist der Sprung von *verschieden* zu *bedeutet etwas*. Ein Hash
+verhindert die Farbwand, aber die Farbe sagt nichts. Jetzt tragen eine ruhige
+Idee, eine ruhige Challenge und der Filter „ruhig" DIESELBE Welt — Farbe wird
+zur zweiten Beschriftung.
+
+`WORLD_BY_CATEGORY` in `constants/dyes.ts` ordnet den zehn `IdeaCategory` ihre
+Welt zu — **gewählt, nicht gerechnet.** Ein Hash würde „Essen" irgendwohin
+werfen; die Tabelle ist eine Stimmungs-Entscheidung und gehört dorthin, wo man
+sie lesen und bestreiten kann (Essen → Warm Ember, ruhig → Cyber Midnight,
+Abenteuer → Lantern …). Zehn Kategorien, zwölf Welten: Die zwei übrigen sind
+`FREIE_WELTEN` und tragen die Flächen OHNE Thema, damit eine themenlose
+Challenge nie zufällig aussieht wie „Essen".
+
+Challenges haben dafür ein `category`-Feld bekommen — **absichtlich optional.**
+Drei sind reine Sammel-Challenges („vier Momente, welche Karten ist euch
+überlassen"); ihnen eine Kategorie anzudichten, damit die Tabelle voll aussieht,
+wäre eine erfundene Angabe.
+
+Gefärbt sind damit: Challenge-Karte und -Detailseite (Thema), die Filter-Chips
+und der Emoji-Punkt jeder Idee im Katalog (dieselbe Kategorie-Farbe), und die
+Peak-Reihe (die Welt des Space über `worldFor`, feste id-Zuordnung).
+
+**Chips tragen den flachen GRUNDTON, kein Bild.** Ein Chip ist rund 100 × 32 pt
+— ein Batik-Bild darin wird zu Matsch, und dreizehn nebeneinander sind genau
+die Farbwand, gegen die K7b argumentiert. Der Grundton trägt die Bedeutung, das
+Bild bleibt den großen Flächen vorbehalten.
+
+**Der Wächter prüft, was ein Mensch SIEHT.** Die Nachbarschaftsprüfung läuft
+über die nach Space-Art gefilterte Liste, nicht über die Rohliste: Darin stehen
+Solo- und Paar-Challenges verschränkt, und zwei Nachbarn dort landen im Betrieb
+nie untereinander. Ein Wächter, der etwas anderes prüft als das, was gezeigt
+wird, findet die falschen Fehler.
 
 Damit trägt der Startbildschirm zwei gefärbte Flächen — Vorschlag (Haus) und
 Peak-Reihe (die Welt des Space). Das ist keine Aufweichung von K7b, sondern

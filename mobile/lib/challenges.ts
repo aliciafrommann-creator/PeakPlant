@@ -1,6 +1,7 @@
 import { storage } from './storage';
 import { supabase, isSupabaseConfigured } from './supabase/client';
 import type { LocalizedText, SpaceType } from './types';
+import type { IdeaCategory } from './discovery/ideaCatalog';
 
 /**
  * Challenges — finite, opt-in, badge-not-score (PP-024).
@@ -22,6 +23,17 @@ export interface Challenge {
   badge: string;
   /** A soft, finite duration label — never a ticking countdown. */
   durationLabel: LocalizedText;
+  /**
+   * Das Thema — dieselbe Sprache wie die Ideen (`IdeaCategory`) und die
+   * Filter. Sie bestimmt die Färbung der Karte (Entscheidung 028, Alicia:
+   * „sie gehört ja immer zu einer Emoji-Kategorie, wie alles andere auch").
+   *
+   * ABSICHTLICH OPTIONAL: Drei Challenges haben kein Thema, sondern sind die
+   * Sammel-Challenges („vier Momente, welche Karten ist euch überlassen").
+   * Ihnen eine Kategorie anzudichten, damit die Tabelle voll aussieht, wäre
+   * eine erfundene Angabe — sie bekommen eine der themenfreien Welten.
+   */
+  category?: IdeaCategory;
 }
 
 export interface Enrollment {
@@ -56,6 +68,7 @@ export const CHALLENGES: Challenge[] = [
     },
     goalCount: 3, spaceTypes: ['couple', 'friends'], badge: '🌙',
     durationLabel: { en: 'over a few weeks', de: 'über ein paar wochen' },
+    category: 'calm',
   },
   {
     id: 'ch-s1',
@@ -75,6 +88,7 @@ export const CHALLENGES: Challenge[] = [
     },
     goalCount: 3, spaceTypes: ['solo'], badge: '🌙',
     durationLabel: { en: 'over a few weeks', de: 'über ein paar wochen' },
+    category: 'calm',
   },
   {
     id: 'ch-3',
@@ -85,6 +99,7 @@ export const CHALLENGES: Challenge[] = [
     },
     goalCount: 5, spaceTypes: ['couple', 'friends'], badge: '🧭',
     durationLabel: { en: 'whenever it fits', de: 'wann immer es passt' },
+    category: 'adventure',
   },
   {
     id: 'ch-4',
@@ -95,6 +110,7 @@ export const CHALLENGES: Challenge[] = [
     },
     goalCount: 6, spaceTypes: ['couple'], badge: '🌶️',
     durationLabel: { en: 'no rush', de: 'ohne eile' },
+    category: 'play',
   },
   {
     id: 'ch-5',
@@ -121,42 +137,49 @@ export const WEEKLY_CHALLENGES: Challenge[] = [
     title: { en: 'one soft evening', de: 'ein sanfter abend' },
     subtitle: { en: 'do one calm, unhurried thing together this week.', de: 'macht diese woche eine ruhige sache zusammen, ganz ohne eile.' },
     goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🌙', durationLabel: THIS_WEEK,
+    category: 'calm',
   },
   {
     id: 'wk-2',
     title: { en: 'one out the door', de: 'einmal vor die tür' },
     subtitle: { en: 'get outside together once this week — however small.', de: 'geht diese woche einmal zusammen raus — und sei es nur kurz.' },
     goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🌿', durationLabel: THIS_WEEK,
+    category: 'outdoors',
   },
   {
     id: 'wk-3',
     title: { en: 'one good laugh', de: 'einmal richtig lachen' },
     subtitle: { en: 'do one playful thing that makes you laugh together.', de: 'macht etwas verspieltes, bei dem ihr zusammen lachen müsst.' },
     goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '✨', durationLabel: THIS_WEEK,
+    category: 'play',
   },
   {
     id: 'wk-4',
     title: { en: 'one new thing', de: 'einmal etwas neues' },
     subtitle: { en: 'try one small thing neither of you has done.', de: 'probiert eine kleine sache, die ihr beide noch nie gemacht habt.' },
     goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🧭', durationLabel: THIS_WEEK,
+    category: 'adventure',
   },
   {
     id: 'wk-5',
     title: { en: 'one slow meal', de: 'einmal in ruhe essen' },
     subtitle: { en: 'share one unhurried meal together, no phones.', de: 'esst einmal in ruhe zusammen — ohne handys.' },
     goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🍽️', durationLabel: THIS_WEEK,
+    category: 'food',
   },
   {
     id: 'wk-6',
     title: { en: 'one little adventure', de: 'ein kleines abenteuer' },
     subtitle: { en: 'one tiny adventure, somewhere not far.', de: 'ein winziges abenteuer, irgendwo ganz in der nähe.' },
     goalCount: 1, spaceTypes: ['couple', 'friends'], badge: '🗺️', durationLabel: THIS_WEEK,
+    category: 'adventure',
   },
   {
     id: 'wk-7',
     title: { en: 'one kind word', de: 'ein liebes wort' },
     subtitle: { en: 'tell or write each other one real thank-you.', de: 'sagt oder schreibt euch ein ehrliches dankeschön.' },
     goalCount: 1, spaceTypes: ['couple'], badge: '💛', durationLabel: THIS_WEEK,
+    category: 'wellness',
   },
   // ── SOLO ──────────────────────────────────────────────────────────────
   // Eigene Wochen-Anlässe für einen Space mit einer Person. Bewusst NICHT die
@@ -168,30 +191,35 @@ export const WEEKLY_CHALLENGES: Challenge[] = [
     title: { en: 'one hour that is yours', de: 'eine stunde, die dir gehört' },
     subtitle: { en: 'take one unhurried hour this week and spend it on nothing useful.', de: 'nimm dir diese woche eine stunde ohne eile — für nichts nützliches.' },
     goalCount: 1, spaceTypes: ['solo'], badge: '🌙', durationLabel: THIS_WEEK,
+    category: 'calm',
   },
   {
     id: 'wk-s2',
     title: { en: 'one door, once', de: 'einmal raus' },
     subtitle: { en: 'get outside once this week with nowhere to be.', de: 'geh diese woche einmal raus, ohne ein ziel zu haben.' },
     goalCount: 1, spaceTypes: ['solo'], badge: '🌿', durationLabel: THIS_WEEK,
+    category: 'outdoors',
   },
   {
     id: 'wk-s3',
     title: { en: 'one thing done badly', de: 'einmal etwas schlecht machen' },
     subtitle: { en: 'make something clumsy this week and keep it anyway.', de: 'mach diese woche etwas ungeschickt — und heb es trotzdem auf.' },
     goalCount: 1, spaceTypes: ['solo'], badge: '✨', durationLabel: THIS_WEEK,
+    category: 'create',
   },
   {
     id: 'wk-s4',
     title: { en: 'one first time', de: 'einmal zum ersten mal' },
     subtitle: { en: 'try one small thing you have never done.', de: 'probier eine kleine sache, die du noch nie gemacht hast.' },
     goalCount: 1, spaceTypes: ['solo'], badge: '🧭', durationLabel: THIS_WEEK,
+    category: 'adventure',
   },
   {
     id: 'wk-s5',
     title: { en: 'one meal at a table', de: 'einmal am tisch essen' },
     subtitle: { en: 'eat one meal at a proper table, no screen, no rush.', de: 'iss einmal an einem richtigen tisch — ohne bildschirm, ohne eile.' },
     goalCount: 1, spaceTypes: ['solo'], badge: '🍽️', durationLabel: THIS_WEEK,
+    category: 'food',
   },
   // Copy is explicitly two-people — couple only (audit A4-10).
   {
@@ -199,6 +227,7 @@ export const WEEKLY_CHALLENGES: Challenge[] = [
     title: { en: 'one cosy night in', de: 'ein gemütlicher abend zu hause' },
     subtitle: { en: 'one cosy night in, just the two of you.', de: 'ein gemütlicher abend zu hause, nur ihr zwei.' },
     goalCount: 1, spaceTypes: ['couple'], badge: '🕯️', durationLabel: THIS_WEEK,
+    category: 'home',
   },
 ];
 

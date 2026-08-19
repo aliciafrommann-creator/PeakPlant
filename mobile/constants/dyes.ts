@@ -198,15 +198,71 @@ export function dyeFor(editionId: string): Dye | undefined {
  * Challenge sieht morgen aus wie heute. Zufall wäre hier ein Fehler — eine
  * Fläche, die bei jedem Laden die Farbe wechselt, fühlt sich kaputt an.
  */
-export function worldFor(schluessel: string): string {
-  const ids = Object.keys(DYES);
-  // FNV-1a, 32 Bit. Klein, deterministisch, ohne Fremdpaket — und gut genug
-  // gestreut, damit benachbarte Schlüssel („ch-1", „ch-2") nicht in derselben
-  // Welt landen. Genau das prüft `lib/dyes.test.ts` nach.
+// FNV-1a, 32 Bit. Klein, deterministisch, ohne Fremdpaket — und gut genug
+// gestreut, damit benachbarte Schlüssel („ch-1", „ch-2") nicht in derselben
+// Welt landen. Genau das prüft `lib/dyes.test.ts` nach.
+function hash(schluessel: string): number {
   let h = 0x811c9dc5;
   for (let i = 0; i < schluessel.length; i++) {
     h ^= schluessel.charCodeAt(i);
     h = Math.imul(h, 0x01000193) >>> 0;
   }
-  return ids[h % ids.length];
+  return h >>> 0;
+}
+
+export function worldFor(schluessel: string): string {
+  const ids = Object.keys(DYES);
+  return ids[hash(schluessel) % ids.length];
+}
+
+/**
+ * Die Welt einer KATEGORIE — Alicias Richtung vom 19.08.2026: „die Challenge
+ * kann auch je nach Thematik eine Batik-Färbung haben — sie gehört ja immer zu
+ * einer Emoji-Kategorie, wie alles andere auch, das zieht sich durch die App,
+ * auch die Filter."
+ *
+ * DAS IST DER SPRUNG von „verschieden" zu „bedeutet etwas". Vorher bekam jede
+ * Challenge über `worldFor(id)` eine eigene Welt — das verhinderte die
+ * Farbwand, aber die Farbe sagte nichts. Jetzt trägt eine ruhige Idee, eine
+ * ruhige Challenge und der Filter „ruhig" DIESELBE Welt. Farbe wird zur
+ * zweiten Beschriftung.
+ *
+ * GEWÄHLT, NICHT GERECHNET: Ein Hash würde „Essen" irgendwohin werfen. Die
+ * Zuordnung unten ist eine Stimmungs-Entscheidung und gehört deshalb als
+ * Tabelle hin, wo man sie lesen und bestreiten kann.
+ *
+ * Zehn Kategorien, zwölf Welten. Die zwei übrigen bleiben ABSICHTLICH frei —
+ * sie tragen die Flächen ohne Thema (siehe `FREIE_WELTEN`), damit eine
+ * kategorielose Challenge nicht zufällig aussieht wie „Essen".
+ */
+export const WORLD_BY_CATEGORY: Readonly<Record<string, string>> = {
+  food: 'edition-03', // Warm Ember — Terrakotta, Bernstein: warm und appetitlich
+  outdoors: 'edition-05', // Horizon — Himmelsblau
+  create: 'edition-04', // Acid Electric — laut, spielerisch, ungezähmt
+  calm: 'edition-02', // Cyber Midnight — tiefe Nacht, leise
+  play: 'edition-08', // Spark — Orange, Funken
+  culture: 'edition-07', // Mirror — Flieder, Bühne
+  adventure: 'edition-11', // Lantern — tiefes Blau mit Cyan, Aufbruch bei Nacht
+  learn: 'edition-09', // Nest — Sand und Papier
+  home: 'edition-12', // Hearth — warmer Sand, Herdfeuer
+  wellness: 'edition-10', // Seedling — Grün
+};
+
+/**
+ * Die Welten, die KEINE Kategorie beansprucht. Flächen ohne Thema (ein Space,
+ * eine Challenge ohne Kategorie) holen sich eine davon — so kann ihre Farbe
+ * nie fälschlich „Essen" oder „ruhig" bedeuten.
+ */
+export const FREIE_WELTEN: readonly string[] = Object.keys(DYES).filter(
+  (id) => !Object.values(WORLD_BY_CATEGORY).includes(id),
+);
+
+/**
+ * Die Welt für eine Fläche mit Thema — oder, ohne Thema, eine feste aus den
+ * freien Welten.
+ */
+export function worldForCategory(kategorie: string | undefined, schluessel: string): string {
+  const gewaehlt = kategorie ? WORLD_BY_CATEGORY[kategorie] : undefined;
+  if (gewaehlt) return gewaehlt;
+  return FREIE_WELTEN[hash(schluessel) % FREIE_WELTEN.length];
 }
