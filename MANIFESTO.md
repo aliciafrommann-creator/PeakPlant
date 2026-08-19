@@ -46,6 +46,27 @@ im Repo. Sie erklärt drei Dinge, die vorher wie Geschmacksfragen aussahen:
 kein Vergleich zwischen zwei Zeiträumen. Jede Darstellung, die einen ABSTIEG
 zeichnen könnte, widerspricht dem Namen.
 
+### Der Gefühls-Nordstern — Alicia, 19.08.2026
+
+Alicia nennt als Bild für das Produkt das Lied **„These Little Wonders"**
+(Rob Thomas, aus *Meet the Robinsons*, 2007) — der Gedanke darin: Das Große
+fällt mit der Zeit weg, die kleinen Stunden bleiben.
+
+Das ist die genaueste Beschreibung dessen, was diese App tun soll, die es
+bisher gibt: **nicht das Bedeutende bewahren, sondern das Kleine, das sich
+später als das Bedeutende herausstellt.** Ein Sonntagmorgen mit Kaffee ist
+kein Ereignis. Er ist genau das, was bleibt.
+
+Wer eine Funktion entwirft, prüft sie an dieser Frage: *Hilft das jemandem,
+eine kleine Stunde zu bemerken — oder macht es aus ihr ein Ereignis?* Das
+Zweite ist die Verwandlung, gegen die §3 geschrieben ist.
+
+**RECHTLICHE GRENZE, damit das nicht schiefgeht:** Der Liedtext ist
+urheberrechtlich geschützt. Er darf hier als Herkunft einer Idee stehen,
+weil dieses Dokument intern ist. Er darf **nicht** in die App, auf eine
+Karte, in Marketing oder auf die Website — dafür bräuchte es eine Lizenz.
+Die Idee ist frei, die Formulierung nicht.
+
 ---
 
 ## 1. Ehrlichkeit vor Eindruck — keine Fake-Claims

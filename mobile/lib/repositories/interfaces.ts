@@ -1,4 +1,4 @@
-import type {
+import type { Daily,
   Audience,
   AudienceKind,
   Share,
@@ -121,6 +121,23 @@ export interface INoteRepository {
  * es keinen Grund, fremde Freigaben zu holen. Wer ihn baut, ergaenzt hier eine
  * eigene Methode — und stolpert dabei ueber diesen Kommentar.
  */
+/**
+ * Tageskarten (`lib/daily.ts`).
+ *
+ * `upsert` statt `create`: Es gibt genau EINE Karte je Person und Tag. Wer
+ * seine ändert, ersetzt sie — deshalb trägt die Schnittstelle das schon im
+ * Namen. Ein `create`, das beim zweiten Aufruf eine zweite Karte anlegt, wäre
+ * der Fehler, den man erst bemerkt, wenn er in echten Daten steht.
+ */
+export interface IDailyRepository {
+  /** Alle Tageskarten eines Space, neueste zuerst. */
+  getAll(spaceId: string): Promise<Daily[]>;
+  /** Die eigene Karte für diesen Tag anlegen oder ersetzen. */
+  upsert(item: Omit<Daily, 'id' | 'createdAt' | 'updatedAt'>): Promise<Daily>;
+  /** Die eigene Karte eines Tages zurücknehmen. */
+  remove(id: string): Promise<void>;
+}
+
 export interface IShareRepository {
   /** Das Publikum zu einem Anker, oder null wenn es (noch) keines gibt. */
   audienceFor(kind: AudienceKind, anchor: string): Promise<Audience | null>;

@@ -12,6 +12,7 @@ import {
   localDateFeedbackRepository,
   localPublicPlaceFeedbackRepository,
   localRitualRepository,
+  localDailyRepository,
   localNoteRepository,
   localShareRepository,
 } from './local';
@@ -21,6 +22,7 @@ import {
   supabaseSpaceRepository,
   supabaseSavedDateRepository,
   supabasePublicPlaceFeedbackRepository,
+  supabaseDailyRepository,
   supabaseNoteRepository,
   supabaseShareRepository,
 } from './supabase';
@@ -49,6 +51,10 @@ export const ritualRepository = localRitualRepository;
 // the Supabase adapter when configured (requires migration 0011), local
 // otherwise. The hook degrades to empty on read error, so the home tab stays
 // intact even before the migration is applied.
+export const dailyRepository = isSupabaseConfigured
+  ? supabaseDailyRepository
+  : localDailyRepository;
+
 export const noteRepository = isSupabaseConfigured ? supabaseNoteRepository : localNoteRepository;
 
 /**
