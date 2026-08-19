@@ -71,21 +71,29 @@ export const Typography = {
    */
   stack: {
     fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'Georgia' }),
-    fontSize: 34,
+    // 34 → 28 (Alicia auf dem Gerät, 19.08.2026: „Schrift zu groß"). Die
+    // Untergrenze von 24 pt bleibt: Darunter wird die Serife dünn, und dünn
+    // auf einer Färbung ist die Kombination, die der Kontrast-Durchgang
+    // rausgeräumt hat. `lib/klarheit.test.ts` hält das fest.
+    fontSize: 28,
     fontWeight: '700' as const,
-    letterSpacing: -1,
+    letterSpacing: -0.8,
     color: Colors.text,
-    lineHeight: 31,
+    // Weiter unter der Schriftgröße — das ist die Stapel-Wirkung, nicht die
+    // Größe. Verhältnis wie vorher (31/34 ≈ 26/28).
+    lineHeight: 26,
     includeFontPadding: false,
   },
-  /** Das Größte der App: die eine Aussage auf Willkommen/Onboarding. War 40/44. */
+  /** Das Größte der App: die eine Aussage auf Willkommen/Onboarding.
+   *  War 44, dann 40, dann 32 — seit dem 19.08.2026 bei 28. Jede Runde kam
+   *  vom selben Satz auf einem echten Gerät: „Schrift zu groß." */
   display: {
     fontFamily: editorialSans,
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '300' as const,
     letterSpacing: -0.6,
     color: Colors.text,
-    lineHeight: 38,
+    lineHeight: 34,
   },
   /**
    * Der Titel, mit dem ein Bildschirm öffnet. Bewusst UNVERÄNDERT bei 26/32 —
@@ -96,11 +104,11 @@ export const Typography = {
    */
   editorial: {
     fontFamily: editorialSans,
-    fontSize: 26,
+    fontSize: 23,
     fontWeight: '300' as const,
     letterSpacing: -0.4,
     color: Colors.text,
-    lineHeight: 32,
+    lineHeight: 29,
   },
   /** Titel einer großen Karte oder Detailseite. Ersetzt handgesetzte 30–32. */
   title: {

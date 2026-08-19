@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xl,
     gap: Spacing.sm,
   },
-  symbol: { fontSize: 36, marginBottom: Spacing.sm },
+  symbol: { fontSize: 30, marginBottom: Spacing.sm },
   // ACHTUNG, für alle Stile in diesem Kopf: Die Schriftfarbe wird beim
   // Rendern gesetzt (`fg`, gerechnet aus der Editionsfarbe). Hier steht
   // deshalb KEINE Farbe — ein statischer Wert, der nie zum Tragen kommt,

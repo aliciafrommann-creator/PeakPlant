@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     gap: 2,
     marginBottom: Spacing.sm,
   },
-  badge: { fontSize: 40, minHeight: 28 },
+  badge: { fontSize: 32, minHeight: 28 },
   duration: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: SectionInks.grow, marginTop: Spacing.sm },
   title: { ...Typography.editorial },
   subtitle: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 24, marginTop: 4 },

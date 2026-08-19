@@ -91,18 +91,18 @@ const styles = StyleSheet.create({
    * hat einen. Wer eine zweite solche Ausnahme braucht, hat vermutlich keine.
    */
   hero: {
-    fontSize: 52,
+    fontSize: 40,
     fontWeight: '200',
     color: Colors.text,
     letterSpacing: -1,
-    lineHeight: 58,
+    lineHeight: 44,
   },
   hero2: {
     ...Typography.editorial,
-    fontSize: 52,
+    fontSize: 40,
     color: Colors.accent,
     letterSpacing: -1,
-    lineHeight: 58,
+    lineHeight: 44,
     marginBottom: Spacing.xl,
   },
   tagline: {

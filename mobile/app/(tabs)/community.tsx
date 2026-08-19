@@ -1517,7 +1517,7 @@ const styles = StyleSheet.create({
   sheetTitle: { fontSize: 24, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
   sheetNote: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18 },
   sheetStars: { flexDirection: 'row', gap: Spacing.md },
-  sheetStar: { fontSize: 34, color: Colors.border },
+  sheetStar: { fontSize: 28, color: Colors.border },
   // kontrast-ok: ein gefüllter Stern ist ein grafisches Objekt, kein Text —
   // dafür verlangt WCAG 1.4.11 drei zu eins, und `accent` steht bei 3,96:1.
   sheetStarOn: { color: Colors.accent },

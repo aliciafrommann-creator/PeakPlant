@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   noPhotoMark: {
-    fontSize: 40,
+    fontSize: 32,
     // Ein rein dekoratives Zeichen auf `Accents.cream` — als Nicht-Text
     // genügen 3:1, apricot lag bei 2,14:1 und verfehlte auch das.
     color: AccentInks.apricot,

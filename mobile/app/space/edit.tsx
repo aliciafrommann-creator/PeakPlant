@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   avatarImage: { width: 80, height: 80, borderRadius: Radii.pill },
-  avatarEmoji: { fontSize: 36 },
+  avatarEmoji: { fontSize: 30 },
   avatarActions: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   avatarAction: { fontSize: 12, fontWeight: '500', color: Colors.accentInk, letterSpacing: 0.3 },
   avatarActionMuted: { fontSize: 12, fontWeight: '400', color: Colors.textSubtle, letterSpacing: 0.3 },

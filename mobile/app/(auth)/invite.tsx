@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
     color: Colors.onDark,
   },
   code: {
-    fontSize: 36,
+    fontSize: 30,
     fontWeight: '200',
     color: Colors.white,
     letterSpacing: 8,
@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   joinInput: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '300',
     color: Colors.text,
     letterSpacing: 4,

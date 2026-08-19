@@ -19,6 +19,8 @@ import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { useAppStore } from '../../lib/store';
 import { acknowledgeSelection } from '../../lib/haptics';
 import { PeakBloom } from '../../components/ui/PeakBloom';
+import { PeakRow } from '../../components/home/PeakRow';
+import { spaceTheme } from '../../lib/spaceTheme';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { SpacePicker } from '../../components/space/SpacePicker';
 import { voice } from '../../lib/voice';
@@ -35,6 +37,17 @@ export default function ProfileScreen() {
   // Me = trust & control center: your spaces, your archive, your settings.
   // No vanity metrics — links lead to control, not a public persona.
   const links: { emoji: string; label: string; route: string }[] = [
+    // Die sechs Wege, die bis zum 19.08.2026 auf dem Startbildschirm standen.
+    // Sie sind nicht gelöscht, sie haben hier ihr Zuhause bekommen: „Du" ist
+    // der Ort für Steuerung und Nebenwege, der Startbildschirm der Ort für
+    // die Momente. (Alicia auf dem Gerät: „der Home Screen ist ultra
+    // überfordernd voll.")
+    { emoji: '🏔️', label: t('take on this week', 'Woche annehmen'), route: '/challenges' },
+    { emoji: '📝', label: t('write a note', 'Notiz schreiben'), route: '/note/compose' },
+    { emoji: '💬', label: t('ask peakplant', 'peakplant fragen'), route: '/ask' },
+    { emoji: '📷', label: t('scan a card', 'Karte scannen'), route: '/(tabs)/scan' },
+    { emoji: '🌱', label: t(v.whatGrew.en, v.whatGrew.de), route: '/(tabs)/story' },
+    { emoji: '🗂️', label: t('every moment, by month', 'jeder Moment, nach Monat'), route: '/(tabs)/moments' },
     { emoji: '🎨', label: t('customize peakplant', 'PeakPlant anpassen'), route: '/customize' },
     { emoji: '🔖', label: t('saved plans', 'gemerkte Pläne'), route: '/discover/saved' },
     ...(ritualsEnabled
@@ -56,6 +69,23 @@ export default function ProfileScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Die Peaks stehen seit dem 19.08.2026 hier statt auf dem
+            Startbildschirm. Alicias Wahl: die Wand führt dort allein. Eine
+            Zahl über das eigene Sammeln gehört zu „Du" — dem Ort für alles,
+            was man über sich selbst nachsieht. */}
+        {activeSpace && (
+          <PeakRow
+            momentsKept={memories.length}
+            spaceId={activeSpace.id}
+            emoji={activeSpace.collectibleEmoji ?? spaceTheme(activeSpace.type).emoji}
+            label={
+              memories.length === 1
+                ? t('1 peak collected', '1 Peak gesammelt')
+                : t(`${memories.length} peaks collected`, `${memories.length} Peaks gesammelt`)
+            }
+          />
+        )}
+
         {activeSpace && (
           <TouchableOpacity
             style={styles.spaceBlock}

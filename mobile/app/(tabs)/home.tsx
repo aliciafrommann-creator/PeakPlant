@@ -18,31 +18,26 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { MemoryFeedSkeleton } from '../../components/ui/Skeleton';
 import { FadeInImage } from '../../components/ui/FadeInImage';
 import { useNotes } from '../../lib/hooks/useNotes';
-import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { SpacePicker } from '../../components/space/SpacePicker';
 import { PressableScale } from '../../components/ui/PressableScale';
-import { FloatingActionButton } from '../../components/ui/FloatingActionButton';
 import { MomentWall } from '../../components/home/MomentWall';
-import { PeakRow } from '../../components/home/PeakRow';
 import { AloneRow } from '../../components/home/AloneRow';
 import { spaceRepository } from '../../lib/repositories';
 import { voice } from '../../lib/voice';
 import { HOUSE_DYE } from '../../constants/dyes';
 import { DyeField } from '../../components/ui/DyeField';
 import { editionInk } from '../../lib/editionInk';
-import { spaceTheme, glyphForSpace } from '../../lib/spaceTheme';
+import { glyphForSpace } from '../../lib/spaceTheme';
 import { Ionicons } from '@expo/vector-icons';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { READABLE_CARDS } from '../../lib/seed';
-import { savedDateRepository } from '../../lib/repositories';
 import { shareMemory } from '../../lib/share';
-import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
+import { acknowledgeSelection } from '../../lib/haptics';
 import { Toast } from '../../components/ui/Toast';
 import { consumePendingReward } from '../../lib/pendingReward';
-import { computeSharedWeeks } from '../../lib/streaks';
 import { discovery } from '../../lib/ai';
 import type { DateRecommendation } from '../../lib/discovery/types';
-import type { Memory, SavedDate } from '../../lib/types';
+import type { Memory} from '../../lib/types';
 
 const TOGETHER = Sections.together;
 
@@ -83,42 +78,14 @@ const WALL_LIMIT = 30;
 export default function HomeScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
   const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
-  const { t, l, language } = useLanguage();
+  const { t, language } = useLanguage();
   // Die Anrede richtet sich nach der Art des Space: „euer" oder „dein"
   // (lib/voice.ts). Ein Raum für eine Person darf keine zweite behaupten.
   const v = voice(activeSpace?.type);
   // Die Tinte auf der Haus-Färbung — gerechnet, nicht gesetzt.
   const hausTinte = editionInk(HOUSE_DYE.ground);
   const { latestFromPartner } = useNotes(activeSpace?.id);
-  const { weekly, enrolled, progress: challengeProgress, accept: acceptChallenge, chillyCount } =
-    useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
 
-  // Die Wochen-Challenge handelt an Ort und Stelle — ein Ziel pro Zustand:
-  // nicht dabei → annehmen; dabei → Moment hinzufügen; geschafft → ansehen.
-  const onWeekly = useCallback(async () => {
-    if (challengeProgress?.complete) {
-      router.push(`/challenges/${weekly.id}`);
-      return;
-    }
-    if (!enrolled) {
-      try {
-        await acceptChallenge();
-        void confirmSuccess();
-      } catch {
-        // Ein Tipp, der nichts tut und nichts sagt, ist schlimmer als einer,
-        // der scheitert und es zugibt (MANIFESTO §5: jede Primäraktion hat
-        // eine sichtbare Folge).
-        setReward(t('could not join — check your connection', 'Annehmen ging nicht — prüf die Verbindung'));
-      }
-      return;
-    }
-    router.push({
-      pathname: '/memory/create',
-      params: {
-        prefillNote: t(`weekly challenge: ${l(weekly.title)}`, `Wochen-Challenge: ${l(weekly.title)}`),
-      },
-    });
-  }, [challengeProgress?.complete, enrolled, acceptChallenge, weekly.id, weekly.title, t, l]);
 
   const hour = new Date().getHours();
   const greeting =
@@ -153,27 +120,6 @@ export default function HomeScreen() {
     };
   }, [activeSpace, timeOfDay]);
 
-  // Nur noch für den ruhigen Link „gemerkte Pläne" — die Terminkarte selbst
-  // ist weg, ihr Inhalt steckt jetzt im Untertitel des Links.
-  const [savedDates, setSavedDates] = useState<SavedDate[]>([]);
-  useFocusEffect(
-    useCallback(() => {
-      if (!activeSpace) {
-        setSavedDates([]);
-        return;
-      }
-      let alive = true;
-      savedDateRepository
-        .getAll(activeSpace.id)
-        .then((all) => {
-          if (alive) setSavedDates(all);
-        })
-        .catch(() => {});
-      return () => {
-        alive = false;
-      };
-    }, [activeSpace]),
-  );
 
   /**
    * Ist außer dir schon jemand hier?
@@ -221,19 +167,6 @@ export default function HomeScreen() {
   );
   const wallMemories = useMemo(() => recentMemories.slice(0, WALL_LIMIT), [recentMemories]);
 
-  const nextPlanned = useMemo(() => {
-    const planned = savedDates.filter((d) => d.status === 'planned');
-    return planned.sort((a, b) => {
-      const ta = a.plannedFor ? new Date(a.plannedFor).getTime() : Infinity;
-      const tb = b.plannedFor ? new Date(b.plannedFor).getTime() : Infinity;
-      return ta - tb;
-    })[0];
-  }, [savedDates]);
-
-  const sharedWeeks = useMemo(
-    () => computeSharedWeeks(memories.map((m) => m.createdAt)),
-    [memories],
-  );
 
   const cardById = useMemo(() => new Map(READABLE_CARDS.map((c) => [c.id, c])), []);
 
@@ -244,41 +177,6 @@ export default function HomeScreen() {
   );
 
   const isEmpty = !loading && !error && recentMemories.length === 0;
-
-  /** Ruhige Textlinks. Kein Link ist laut, keiner doppelt ein Ziel. */
-  const links: { key: string; label: string; onPress: () => void }[] = [
-    {
-      key: 'weekly',
-      label: challengeProgress?.complete
-        ? t('this week ✓', 'diese Woche ✓')
-        : enrolled
-          ? t('this week', 'diese Woche')
-          : t('take on this week', 'Woche annehmen'),
-      onPress: () => void onWeekly(),
-    },
-    {
-      key: 'saved',
-      label: nextPlanned
-        ? t('saved plans ·  next one waiting', 'gemerkte Pläne ·  einer steht an')
-        : t('saved plans', 'gemerkte Pläne'),
-      onPress: () => router.push('/discover/saved'),
-    },
-    {
-      key: 'ask',
-      label: t('ask peakplant', 'peakplant fragen'),
-      onPress: () => router.push('/ask'),
-    },
-    {
-      key: 'note',
-      label: t('write a note', 'Notiz schreiben'),
-      onPress: () => router.push('/note/compose'),
-    },
-    {
-      key: 'scan',
-      label: t('scan a card', 'Karte scannen'),
-      onPress: () => router.push('/(tabs)/scan'),
-    },
-  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -463,90 +361,31 @@ export default function HomeScreen() {
           </PressableScale>
         )}
 
-        {/* Die anderen Wege — ruhig, in einer Reihe, ohne Überschrift. */}
-        <View style={styles.links}>
-          {links.map((link) => (
-            <PressableScale
-              key={link.key}
-              containerStyle={styles.quietSlot}
-              style={styles.quietLink}
-              onPress={link.onPress}
-              scaleTo={0.99}
-              accessibilityLabel={link.label}
-            >
-              <Text style={styles.quietLinkText}>{link.label}</Text>
-              <Text style={styles.quietArrow}>→</Text>
-            </PressableScale>
-          ))}
-          {memories.length > 0 && (
-            <PressableScale
-              containerStyle={styles.quietSlot}
-              style={styles.quietLink}
-              onPress={() => router.push('/(tabs)/story')}
-              scaleTo={0.99}
-              accessibilityLabel={t(v.whatGrew.en, v.whatGrew.de)}
-            >
-              <Text style={styles.quietLinkText}>
-                {t(v.whatGrew.en, v.whatGrew.de)}
-              </Text>
-              <Text style={styles.quietArrow}>→</Text>
-            </PressableScale>
-          )}
-        </View>
+        {/* DIE SECHS TEXTLINKS STANDEN HIER — und sind zu „Du" gezogen.
+            Alicia auf dem Gerät, 19.08.2026: „der Home Screen ist ultra
+            überfordernd voll." Sie hatte recht, und es war ein Rückfall in
+            genau das, was Entscheidung 021 abgeschafft hatte: ein Hub statt
+            eines Bildschirms. Instagram und Strava zeigen EIN Objekt, groß,
+            wiederholt — die Nebenwege liegen woanders.
+
+            Nichts ist gelöscht: Jeder der sechs Wege hat jetzt sein Zuhause
+            im Reiter „Du". */}
 
         {/* Die Peaks: ein Zeichen je festgehaltenem Moment, in eurer eigenen
             Farbe. Die Regel und ihre Grenze stehen in lib/peaks.ts. */}
-        {activeSpace && (
-          <PeakRow
-            momentsKept={memories.length}
-            spaceId={activeSpace.id}
-            // Dasselbe Muster, dieselbe Folge: Der Solo-Space sammelte Chili,
-            // das Paar-Sammelstück. `spaceTheme` legt dafür 🪨 fest — der
-            // Eintrag erreichte nur den Wochen-Banner, nie diese Reihe.
-            emoji={activeSpace.collectibleEmoji ?? spaceTheme(activeSpace.type).emoji}
-            label={
-              memories.length === 1
-                ? t('1 peak collected', '1 Peak gesammelt')
-                : t(`${memories.length} peaks collected`, `${memories.length} Peaks gesammelt`)
-            }
-          />
-        )}
+        {/* PEAKS UND WOCHEN STANDEN HIER — beide sind zu „Du" gezogen.
+            Alicias Wahl vom 19.08.2026: der Startbildschirm führt mit der
+            Momente-Wand, sonst nichts. Das ist die Struktur, gegen die sie ihn
+            verglichen hat: Instagram zeigt EIN Objekt, groß, wiederholt.
+            Zahlen über dem Bildschirmende sind kein Objekt, sie sind ein
+            Armaturenbrett. */}
 
-        {/* Tatsachen, kein Fortschritt (MANIFESTO §3). Nichts hier kann
-            kleiner werden, und nichts sagt, wie viel noch „fehlt". */}
-        {memories.length > 0 && (
-          <Text style={styles.facts}>
-            {[
-              // „Momente festgehalten" steht jetzt als Peaks-Reihe darüber —
-              // zweimal dieselbe Zahl auf einem Bildschirm wäre Lärm.
-              sharedWeeks.count === 1
-                ? t('1 week collected', '1 Woche gesammelt')
-                : t(`${sharedWeeks.count} weeks collected`, `${sharedWeeks.count} Wochen gesammelt`),
-              chillyCount > 0
-                ? t(
-                    v.challengeCountLine.en.replace(
-                      '{n}',
-                      `${chillyCount} challenge${chillyCount !== 1 ? 's' : ''}`,
-                    ),
-                    v.challengeCountLine.de.replace(
-                      '{n}',
-                      `${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''}`,
-                    ),
-                  )
-                : null,
-            ]
-              .filter(Boolean)
-              .join('  ·  ')}
-          </Text>
-        )}
       </ScrollView>
 
-      <FloatingActionButton
-        icon="add"
-        label={t('KEEP A MOMENT', 'MOMENT FESTHALTEN')}
-        onPress={() => router.push('/memory/create')}
-        accessibilityLabel={t('Keep a moment in your diary', 'Einen Moment ins Tagebuch legen')}
-      />
+      {/* Der schwebende Knopf ist weg: „Moment festhalten" sitzt seit dem
+          19.08.2026 als runder Knopf in der MITTE der Reiterleiste, wie bei
+          Instagram. Zwei Wege zur selben Handlung auf einem Bildschirm sind
+          einer zu viel (MANIFESTO §5). */}
     </SafeAreaView>
   );
 }
