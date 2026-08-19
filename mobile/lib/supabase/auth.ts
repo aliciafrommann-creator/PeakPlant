@@ -8,6 +8,9 @@ import { supabase } from './client';
 export interface SessionUser {
   id: string;
   name: string;
+  /** Die Adresse, unter der das Konto geführt wird. Für die Auskunft nach
+   *  Art. 15 DSGVO: Sie ist die Angabe, die die App über den Menschen hat. */
+  email: string | null;
 }
 
 function client() {
@@ -51,9 +54,9 @@ export async function getSessionUser(): Promise<SessionUser | null> {
       .select('name')
       .eq('id', user.id)
       .maybeSingle();
-    return { id: user.id, name: profile?.name?.trim() || fallback };
+    return { id: user.id, name: profile?.name?.trim() || fallback, email: user.email ?? null };
   } catch {
-    return { id: user.id, name: fallback };
+    return { id: user.id, name: fallback, email: user.email ?? null };
   }
 }
 
