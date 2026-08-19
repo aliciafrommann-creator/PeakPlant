@@ -34,7 +34,20 @@ interface SpacePickerProps {
 }
 
 function glyphFor(type: Space['type']): string {
-  return type === 'couple' ? '♥' : '✦';
+  if (type === 'couple') return '♥';
+  // Der Stein aus `lib/spaceTheme.ts` — dasselbe Bild wie beim Sammelstück.
+  // Vorher fiel `solo` in den Else-Zweig und bekam ✦, das Zeichen für
+  // „geteilt". Ein binäres Ternär mit drei Werten ist der klassische Fehler
+  // beim Erweitern eines Enums.
+  if (type === 'solo') return '🪨';
+  return '✦';
+}
+
+/** Die Art in Worten. Ein Solo-Space war hier bis 18.08.2026 „Freunde-Space". */
+function typeLabel(type: Space['type'], t: (en: string, de: string) => string): string {
+  if (type === 'couple') return t('couple space', 'Paar-Space');
+  if (type === 'solo') return t('just you', 'nur du');
+  return t('friends space', 'Freunde-Space');
 }
 
 /**
@@ -109,9 +122,9 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                       style={styles.rowMain}
                       scaleTo={0.98}
                       onPress={() => onSelect(space.id)}
-                      accessibilityLabel={`${space.name}, ${
-                        space.type === 'couple' ? t('couple space', 'Paar-Space') : t('friends space', 'Freunde-Space')
-                      }${active ? `, ${t('current', 'aktuell')}` : ''}`}
+                      accessibilityLabel={`${space.name}, ${typeLabel(space.type, t)}${
+                        active ? `, ${t('current', 'aktuell')}` : ''
+                      }`}
                       accessibilityRole="button"
                     >
                       <View style={[styles.dot, { backgroundColor: color }]}>
@@ -138,11 +151,7 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                         <Text style={[styles.rowName, active && styles.rowNameActive]} numberOfLines={1}>
                           {space.name.toLowerCase()}
                         </Text>
-                        <Text style={styles.rowType}>
-                          {space.type === 'couple'
-                            ? t('couple space', 'Paar-Space')
-                            : t('friends space', 'Freunde-Space')}
-                        </Text>
+                        <Text style={styles.rowType}>{typeLabel(space.type, t)}</Text>
                       </View>
                       {/* Das Häkchen NICHT in der Punktfarbe: Es sitzt auf
                           `Colors.surface`, und Sonnenblume erreicht dort 1,9:1
@@ -163,15 +172,22 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
                       <Ionicons name="pencil-outline" size={16} color={Colors.textMuted} />
                     </Pressable>
 
-                    <Pressable
-                      style={styles.iconBtn}
-                      onPress={() => shareSpace(space)}
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                      accessibilityRole="button"
-                      accessibilityLabel={t(`Share ${space.name} by invite link`, `${space.name} per Einladungslink teilen`)}
-                    >
-                      <Ionicons name="share-outline" size={16} color={Colors.textMuted} />
-                    </Pressable>
+                    {/* Kein Teilen an einem Solo-Space: Der Code lässt dort
+                        niemanden herein (Migration 0024). Wer trotzdem tippte,
+                        verschickte eine Einladung, die beim Empfänger in
+                        „dieser Space ist für eine Person" endet — ein Weg, der
+                        garantiert scheitert, angeboten von uns. */}
+                    {space.type !== 'solo' && (
+                      <Pressable
+                        style={styles.iconBtn}
+                        onPress={() => shareSpace(space)}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        accessibilityRole="button"
+                        accessibilityLabel={t(`Share ${space.name} by invite link`, `${space.name} per Einladungslink teilen`)}
+                      >
+                        <Ionicons name="share-outline" size={16} color={Colors.textMuted} />
+                      </Pressable>
+                    )}
                   </View>
                 );
               })}

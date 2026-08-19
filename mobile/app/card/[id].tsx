@@ -18,12 +18,16 @@ import { useLanguage } from '../../lib/hooks/useLanguage';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { useBiometric } from '../../lib/hooks/useBiometric';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
+import { useSpaces } from '../../lib/hooks/useSpaces';
+import { voice } from '../../lib/voice';
 import { UnlockCurtain } from '../../components/card/UnlockCurtain';
 import type { CardGroup, CardSection } from '../../lib/types';
 
 export default function CardDetailScreen() {
   const { id, unlocked } = useLocalSearchParams<{ id: string; unlocked?: string }>();
   const { t, l } = useLanguage();
+  const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const obscured = usePrivacyOverlay();
   const { authenticate } = useBiometric();
   // Gate lives HERE, not only at the callers: deep links (/c/<id>) and the
@@ -100,14 +104,8 @@ export default function CardDetailScreen() {
 
   // A quiet note that adapts to the kind of card (and intimate editions).
   const quietNote = isQuestion
-    ? t(
-        'Take your time. You can pause, skip or return to this card whenever it feels right.',
-        'Lasst euch Zeit. Ihr könnt jederzeit pausieren, überspringen oder später zurückkommen.'
-      )
-    : t(
-        'Choose what feels right for both of you. You can pause, change or stop at any time.',
-        'Macht, was sich für euch richtig anfühlt. Ihr könnt jederzeit pausieren, ändern oder aufhören.'
-      );
+    ? t(v.cardQuietQuestion.en, v.cardQuietQuestion.de)
+    : t(v.cardQuietAct.en, v.cardQuietAct.de);
 
   function renderPreserveCTA(keyPrefix: string) {
     return (
@@ -123,10 +121,9 @@ export default function CardDetailScreen() {
         </PressableScale>
         {edition.sensitive && (
           <Text style={styles.privacyNote}>
-            {t(
-              'This stays private to your space — only you and your partner can see it.',
-              'Das bleibt privat in eurem Space.',
-            )}
+            {/* „only you and your partner" stimmte in einem Freundes-Space
+                nie und in einem Solo-Space erst recht nicht (MANIFESTO §1). */}
+            {t(`This stays ${v.privateToSpace.en}.`, `Das bleibt ${v.privateToSpace.de}.`)}
           </Text>
         )}
         <Text style={styles.noPressure}>

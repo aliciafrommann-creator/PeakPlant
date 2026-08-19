@@ -24,6 +24,18 @@ import type {
  */
 
 const BOTH: SpaceType[] = ['couple', 'friends'];
+/**
+ * Funktioniert auch allein — und der Text sagt nirgends „ihr".
+ *
+ * Diese Einstufung ist eine Behauptung über den TEXT, nicht nur über die
+ * Tätigkeit (MANIFESTO §1). „paint each other badly" allein anzubieten wäre
+ * keine Einladung, sondern ein Fehler. `lib/discovery/soloText.test.ts` prüft
+ * jeden hier markierten Eintrag Wort für Wort gegen eine Liste von
+ * Zwei-Personen-Wendungen und wird rot, wenn jemand einen falsch markiert.
+ */
+const ALL: SpaceType[] = ['couple', 'friends', 'solo'];
+/** Nur allein — die neuen Einträge unten, für eine Person geschrieben. */
+const SOLO: SpaceType[] = ['solo'];
 const COUPLE: SpaceType[] = ['couple'];
 const FRIENDS: SpaceType[] = ['friends'];
 
@@ -70,7 +82,7 @@ export const CURATED_MOMENTS: TogetherMoment[] = [
   // ── FOOD ───────────────────────────────────────────────────────────────
   m('cm-f1', 'a country you’ve never cooked', 'pick a cuisine new to you both and make one dish from scratch.', 'food', { ...IN_EVE, priceBand: '€€', avgDurationMin: 150 }),
   m('cm-f2', 'build-your-own night', 'tacos, pizzas or ramen bowls — lay out the parts and each build your own.', 'food', { ...IN_EVE, priceBand: '€€', avgDurationMin: 90 }),
-  m('cm-f3', 'a strict €10 dinner', 'two courses, ten euros, no compromises on joy. see how good cheap can be.', 'food', { ...IN_EVE, priceBand: '€', avgDurationMin: 90 }),
+  m('cm-f3', 'a strict €10 dinner', 'two courses, ten euros, no compromises on joy. see how good cheap can be.', 'food', { ...IN_EVE, priceBand: '€', avgDurationMin: 90 , spaceTypes: ALL }),
   m('cm-f4', 'blind snack taste test', 'grab odd supermarket snacks, blindfold, rate each one out of ten.', 'food', { ...IN_EVE, priceBand: '€', avgDurationMin: 45, energy: 'low' }),
   m('cm-f5', 'breakfast in bed, together', 'no getting up properly — assemble something lovely and eat it under the covers.', 'food', { indoorOutdoor: 'indoor', idealTimeOfDay: ['morning'], energy: 'low', priceBand: '€', avgDurationMin: 60, weatherFit: ['any', 'rain', 'cold'] }),
   m('cm-f6', 'a grandparent’s recipe', 'cook something one of your families always made — from memory if you can.', 'food', { ...IN_EVE, priceBand: '€€', avgDurationMin: 120 }),
@@ -79,37 +91,37 @@ export const CURATED_MOMENTS: TogetherMoment[] = [
   m('cm-f9', 'corner-shop picnic', 'ten minutes, one small shop, build the best picnic you can from it.', 'food', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['afternoon'], priceBand: '€', avgDurationMin: 90, weatherFit: ['sunny'] }),
   m('cm-f10', 'a three-stop crawl', 'starter at one place, main at another, dessert at a third. walk between.', 'food', { indoorOutdoor: 'flexible', idealTimeOfDay: ['evening'], priceBand: '€€', avgDurationMin: 150 }),
   m('cm-f11', 'dumpling-folding session', 'make a big batch together — half will look terrible, all will taste great.', 'food', { ...IN_EVE, priceBand: '€', avgDurationMin: 120 }),
-  m('cm-f12', 'dessert first', 'flip the order: pudding, then the proper meal. rules are made up anyway.', 'food', { ...IN_EVE, priceBand: '€', avgDurationMin: 90 }),
+  m('cm-f12', 'dessert first', 'flip the order: pudding, then the proper meal. rules are made up anyway.', 'food', { ...IN_EVE, priceBand: '€', avgDurationMin: 90 , spaceTypes: ALL }),
   m('cm-f13', 'a spicy-food dare', 'cook it hotter than usual, milk on standby, no backing out.', 'food', { ...IN_EVE, priceBand: '€', avgDurationMin: 75, spaceTypes: COUPLE }),
   m('cm-f14', 'plate it like a restaurant', 'cook something simple, then plate it absurdly fancy and "review" it.', 'food', { ...IN_EVE, priceBand: '€', avgDurationMin: 90 }),
   m('cm-f15', 'an all-green feast', 'everything you cook has to be green. it’s sillier and better than it sounds.', 'food', { ...IN_EVE, priceBand: '€€', avgDurationMin: 100 }),
   m('cm-f16', 'a slow tea ceremony', 'good tea, no phones, pour for each other and actually slow down.', 'food', { ...LOW_EVE, priceBand: '€', avgDurationMin: 45 }),
-  m('cm-f17', 'market haul, then improvise', 'buy whatever looks best at the market, figure out lunch on the way home.', 'food', { indoorOutdoor: 'flexible', idealTimeOfDay: ['morning', 'afternoon'], priceBand: '€€', avgDurationMin: 150, weatherFit: ['sunny', 'any'] }),
+  m('cm-f17', 'market haul, then improvise', 'buy whatever looks best at the market, figure out lunch on the way home.', 'food', { indoorOutdoor: 'flexible', idealTimeOfDay: ['morning', 'afternoon'], priceBand: '€€', avgDurationMin: 150, weatherFit: ['sunny', 'any'] , spaceTypes: ALL }),
   m('cm-f18', 'cocktails from one bottle', 'one spirit (or none), whatever’s in the cupboard, invent two drinks.', 'food', { ...IN_EVE, priceBand: '€€', avgDurationMin: 60 }),
-  m('cm-f19', 'a film-themed snack spread', 'pick a film, match every snack to it, dim the lights.', 'food', { ...LOW_EVE, priceBand: '€', avgDurationMin: 150 }),
-  m('cm-f20', 'midnight breakfast', 'pancakes and eggs at 11pm in pyjamas, for no reason at all.', 'food', { ...IN_EVE, priceBand: '€', avgDurationMin: 60, energy: 'low' }),
+  m('cm-f19', 'a film-themed snack spread', 'pick a film, match every snack to it, dim the lights.', 'food', { ...LOW_EVE, priceBand: '€', avgDurationMin: 150 , spaceTypes: ALL }),
+  m('cm-f20', 'midnight breakfast', 'pancakes and eggs at 11pm in pyjamas, for no reason at all.', 'food', { ...IN_EVE, priceBand: '€', avgDurationMin: 60, energy: 'low' , spaceTypes: ALL }),
 
   // ── OUTDOORS ─────────────────────────────────────────────────────────────
-  m('cm-o1', 'before the city wakes', 'a sunrise walk while it’s still quiet — almost no one else out.', 'outdoors', { ...OUT_DAY, idealTimeOfDay: ['morning'], avgDurationMin: 75, energy: 'low' }),
-  m('cm-o2', 'the highest free view', 'find the best viewpoint that costs nothing and just sit with it.', 'outdoors', { ...OUT_DAY, avgDurationMin: 120 }),
-  m('cm-o3', 'barefoot in the grass', 'shoes off in a park for an hour. surprisingly hard to feel bad doing it.', 'outdoors', { ...OUT_DAY, avgDurationMin: 60, energy: 'low' }),
-  m('cm-o4', 'cloud-watching', 'a blanket, the sky, and naming the shapes you see. nothing else.', 'outdoors', { ...OUT_DAY, avgDurationMin: 60, energy: 'low' }),
-  m('cm-o5', 'cycle somewhere new', 'pick a direction you’ve never ridden and follow it until it gets interesting.', 'outdoors', { ...OUT_DAY, avgDurationMin: 150, energy: 'high' }),
+  m('cm-o1', 'before the city wakes', 'a sunrise walk while it’s still quiet — almost no one else out.', 'outdoors', { ...OUT_DAY, idealTimeOfDay: ['morning'], avgDurationMin: 75, energy: 'low' , spaceTypes: ALL }),
+  m('cm-o2', 'the highest free view', 'find the best viewpoint that costs nothing and just sit with it.', 'outdoors', { ...OUT_DAY, avgDurationMin: 120 , spaceTypes: ALL }),
+  m('cm-o3', 'barefoot in the grass', 'shoes off in a park for an hour. surprisingly hard to feel bad doing it.', 'outdoors', { ...OUT_DAY, avgDurationMin: 60, energy: 'low' , spaceTypes: ALL }),
+  m('cm-o4', 'cloud-watching', 'a blanket, the sky, and naming the shapes you see. nothing else.', 'outdoors', { ...OUT_DAY, avgDurationMin: 60, energy: 'low' , spaceTypes: ALL }),
+  m('cm-o5', 'cycle somewhere new', 'pick a direction you’ve never ridden and follow it until it gets interesting.', 'outdoors', { ...OUT_DAY, avgDurationMin: 150, energy: 'high' , spaceTypes: ALL }),
   m('cm-o6', 'skip stones', 'find the nearest water and see who can get the most skips. petty competitive bliss.', 'outdoors', { ...OUT_DAY, avgDurationMin: 45 }),
   m('cm-o7', 'a coin-flip walk', 'heads left, tails right, at every corner. let the city decide the date.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['afternoon'], priceBand: 'free', avgDurationMin: 120, weatherFit: ['sunny', 'cold'] }),
-  m('cm-o8', 'name five plants', 'on any green walk, identify five things growing. an app counts as cheating (do it anyway).', 'outdoors', { ...OUT_DAY, avgDurationMin: 75, energy: 'low' }),
-  m('cm-o9', 'a cold outdoor swim', 'lake, sea or lido — get in, scream a bit, feel completely alive after.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['morning', 'afternoon'], priceBand: 'free', avgDurationMin: 90, energy: 'high', weatherFit: ['sunny'] }),
+  m('cm-o8', 'name five plants', 'on any green walk, identify five things growing. an app counts as cheating (do it anyway).', 'outdoors', { ...OUT_DAY, avgDurationMin: 75, energy: 'low' , spaceTypes: ALL }),
+  m('cm-o9', 'a cold outdoor swim', 'lake, sea or lido — get in, scream a bit, feel completely alive after.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['morning', 'afternoon'], priceBand: 'free', avgDurationMin: 90, energy: 'high', weatherFit: ['sunny'] , spaceTypes: ALL }),
   m('cm-o10', 'golden-hour photo walk', 'one hour before sunset, ten photos each, best one wins bragging rights.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['evening'], priceBand: 'free', avgDurationMin: 75, weatherFit: ['sunny'] }),
   m('cm-o11', 'walk past phone signal', 'hike far enough that the bars drop. talk like there’s nothing else to check.', 'outdoors', { ...OUT_DAY, avgDurationMin: 180, energy: 'high' }),
   m('cm-o12', 'plant and revisit', 'plant something — a tree, a bulb, a balcony pot — and agree to come back to it.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['morning', 'afternoon'], priceBand: '€', avgDurationMin: 90, weatherFit: ['sunny', 'any'] }),
   m('cm-o13', 'a question per block', 'walk and ask each other one real question every street. no small talk allowed.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['afternoon', 'evening'], priceBand: 'free', avgDurationMin: 90, energy: 'low', weatherFit: ['sunny', 'cold'], spaceTypes: COUPLE }),
   m('cm-o14', 'a sunset picnic dinner', 'carry dinner somewhere with a view and eat it as the light goes.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['evening'], priceBand: '€', avgDurationMin: 120, energy: 'low', weatherFit: ['sunny'] }),
-  m('cm-o15', 'the part of town you skip', 'explore the neighbourhood you always mean to and never do.', 'outdoors', { ...OUT_DAY, avgDurationMin: 120 }),
-  m('cm-o16', 'a botanical slow loop', 'a garden or park, walked at half speed, noticing more than usual.', 'outdoors', { ...OUT_DAY, avgDurationMin: 90, energy: 'low' }),
-  m('cm-o17', 'collect something', 'leaves, shells, odd stones — bring home a small pocketful from the walk.', 'outdoors', { ...OUT_DAY, avgDurationMin: 75, energy: 'low' }),
+  m('cm-o15', 'the part of town you skip', 'explore the neighbourhood you always mean to and never do.', 'outdoors', { ...OUT_DAY, avgDurationMin: 120 , spaceTypes: ALL }),
+  m('cm-o16', 'a botanical slow loop', 'a garden or park, walked at half speed, noticing more than usual.', 'outdoors', { ...OUT_DAY, avgDurationMin: 90, energy: 'low' , spaceTypes: ALL }),
+  m('cm-o17', 'collect something', 'leaves, shells, odd stones — bring home a small pocketful from the walk.', 'outdoors', { ...OUT_DAY, avgDurationMin: 75, energy: 'low' , spaceTypes: ALL }),
   m('cm-o18', 'a run you’ll both moan about', 'a short run together you’ll resent for ten minutes and love after.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['morning'], priceBand: 'free', avgDurationMin: 45, energy: 'high', weatherFit: ['sunny', 'cold'] }),
-  m('cm-o19', 'a weekly outdoor market', 'wander a market with no shopping list and one snack budget.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['morning'], priceBand: '€', avgDurationMin: 90, weatherFit: ['sunny', 'any'] }),
-  m('cm-o20', 'watch a storm safely', 'when the weather turns, find a dry spot and watch it roll through.', 'outdoors', { indoorOutdoor: 'flexible', idealTimeOfDay: ['afternoon', 'evening'], priceBand: 'free', avgDurationMin: 60, energy: 'low', weatherFit: ['rain'] }),
+  m('cm-o19', 'a weekly outdoor market', 'wander a market with no shopping list and one snack budget.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['morning'], priceBand: '€', avgDurationMin: 90, weatherFit: ['sunny', 'any'] , spaceTypes: ALL }),
+  m('cm-o20', 'watch a storm safely', 'when the weather turns, find a dry spot and watch it roll through.', 'outdoors', { indoorOutdoor: 'flexible', idealTimeOfDay: ['afternoon', 'evening'], priceBand: 'free', avgDurationMin: 60, energy: 'low', weatherFit: ['rain'] , spaceTypes: ALL }),
 
   // ── CREATE ───────────────────────────────────────────────────────────────
   m('cm-c1', 'paint each other badly', 'portraits, ten minutes each, the worse the funnier. keep them.', 'create', { ...IN_EVE, priceBand: '€', avgDurationMin: 60 }),
@@ -117,20 +129,20 @@ export const CURATED_MOMENTS: TogetherMoment[] = [
   m('cm-c3', 'a playlist of your story', 'build a shared playlist — one song per chapter of you two.', 'create', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 60, spaceTypes: COUPLE }),
   m('cm-c4', 'a clay evening', 'air-dry clay at the kitchen table, make each other something small.', 'create', { ...IN_EVE, priceBand: '€', avgDurationMin: 90 }),
   m('cm-c5', 'flat-pack without fighting', 'build something together as calmly as humanly possible. it’s a test, lovingly.', 'create', { ...IN_EVE, priceBand: '€€', avgDurationMin: 90 }),
-  m('cm-c6', 'a vision board for the year', 'cut, stick and dream out loud about the next twelve months.', 'create', { ...LOW_EVE, priceBand: '€', avgDurationMin: 90 }),
-  m('cm-c7', 'ten ordinary-beautiful photos', 'photograph ten lovely small things at home you usually walk past.', 'create', { indoorOutdoor: 'indoor', idealTimeOfDay: ['afternoon', 'evening'], priceBand: 'free', avgDurationMin: 45, energy: 'low', weatherFit: ['any', 'rain', 'cold'] }),
+  m('cm-c6', 'a vision board for the year', 'cut, stick and dream out loud about the next twelve months.', 'create', { ...LOW_EVE, priceBand: '€', avgDurationMin: 90 , spaceTypes: ALL }),
+  m('cm-c7', 'ten ordinary-beautiful photos', 'photograph ten lovely small things at home you usually walk past.', 'create', { indoorOutdoor: 'indoor', idealTimeOfDay: ['afternoon', 'evening'], priceBand: 'free', avgDurationMin: 45, energy: 'low', weatherFit: ['any', 'rain', 'cold'] , spaceTypes: ALL }),
   m('cm-c8', 'a magic trick each', 'learn one trick each from a video and perform them with full drama.', 'create', { ...IN_EVE, priceBand: 'free', avgDurationMin: 60 }),
   m('cm-c9', 'design your dream home', 'sketch the place you’d live someday — rooms, garden, the silly details.', 'create', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 60, spaceTypes: COUPLE }),
-  m('cm-c10', 'a zine about your week', 'fold one sheet into a tiny magazine about the last seven days.', 'create', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 60 }),
+  m('cm-c10', 'a zine about your week', 'fold one sheet into a tiny magazine about the last seven days.', 'create', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 60 , spaceTypes: ALL }),
   m('cm-c11', 'draw your day as a comic', 'each turn today into a four-panel strip and compare.', 'create', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 45 }),
   m('cm-c12', 'a letter to future-you', 'hand-write a postcard to open in a year, then hide it well.', 'create', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 30, spaceTypes: COUPLE }),
-  m('cm-c13', 'tallest thing on the shelf', 'build the tallest free-standing structure from what’s already in the room.', 'create', { ...IN_EVE, priceBand: 'free', avgDurationMin: 45 }),
+  m('cm-c13', 'tallest thing on the shelf', 'build the tallest free-standing structure from what’s already in the room.', 'create', { ...IN_EVE, priceBand: 'free', avgDurationMin: 45 , spaceTypes: ALL }),
   m('cm-c14', 'a one-minute time capsule', 'record a voice memo to your future selves and diary the date to replay it.', 'create', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 30, spaceTypes: COUPLE }),
   m('cm-c15', 'redo one corner', 'pick one corner of a room and restyle it together tonight.', 'create', { ...IN_EVE, priceBand: '€', avgDurationMin: 90 }),
   m('cm-c16', 'make bracelets', 'thread something for each other to wear until it falls apart.', 'create', { ...LOW_EVE, priceBand: '€', avgDurationMin: 60 }),
   m('cm-c17', 'a watercolour-and-wine night', 'cheap paints, one glass each, paint the same thing and compare.', 'create', { ...IN_EVE, priceBand: '€', avgDurationMin: 90 }),
   m('cm-c18', 'write a chorus together', 'no instruments needed — invent a four-line chorus about your day.', 'create', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 45 }),
-  m('cm-c19', 'press today’s flowers', 'if you picked anything on a walk, press it between heavy books.', 'create', { indoorOutdoor: 'indoor', idealTimeOfDay: ['afternoon', 'evening'], priceBand: 'free', avgDurationMin: 30, energy: 'low', weatherFit: ['any'] }),
+  m('cm-c19', 'press today’s flowers', 'if you picked anything on a walk, press it between heavy books.', 'create', { indoorOutdoor: 'indoor', idealTimeOfDay: ['afternoon', 'evening'], priceBand: 'free', avgDurationMin: 30, energy: 'low', weatherFit: ['any'] , spaceTypes: ALL }),
   m('cm-c20', 'a tiny stop-motion', 'animate something daft on a phone, thirty frames, big laughs.', 'create', { ...IN_EVE, priceBand: 'free', avgDurationMin: 60 }),
 
   // ── CALM ─────────────────────────────────────────────────────────────────
@@ -138,21 +150,21 @@ export const CURATED_MOMENTS: TogetherMoment[] = [
   m('cm-k2', 'read aloud, taking turns', 'one book, a chapter each, the other just listens.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 45 }),
   m('cm-k3', 'breathe together', 'a ten-minute guided breathing session, side by side.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 20 }),
   m('cm-k4', 'three gratitudes each', 'name three small good things from today and why they mattered.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 20, spaceTypes: COUPLE }),
-  m('cm-k5', 'a full album, eyes closed', 'lie down, play one album start to finish, say nothing until it ends.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 45 }),
+  m('cm-k5', 'a full album, eyes closed', 'lie down, play one album start to finish, say nothing until it ends.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 45 , spaceTypes: ALL }),
   m('cm-k6', 'trade a childhood memory', 'each tell one story from being small, and just listen to the other.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 45, spaceTypes: COUPLE }),
   m('cm-k7', 'a bath-then-tea ritual', 'a long soak, then tea and quiet — a proper wind-down.', 'calm', { ...LOW_EVE, priceBand: '€', avgDurationMin: 75, spaceTypes: COUPLE }),
   m('cm-k8', 'letters, read in silence', 'write each other a letter, swap, read without speaking.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 45, spaceTypes: COUPLE }),
   m('cm-k9', 'talk until you’re done', 'no plan, no timer — just talk until the conversation naturally ends.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 60, spaceTypes: COUPLE }),
   m('cm-k10', 'a ten-minute massage each', 'hands or shoulders, ten minutes each, no phones nearby.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 30, spaceTypes: COUPLE }),
-  m('cm-k11', 'watch the rain', 'tea, a window, the rain. permission to do absolutely nothing.', 'calm', { indoorOutdoor: 'indoor', idealTimeOfDay: ['afternoon', 'evening'], priceBand: 'free', avgDurationMin: 45, energy: 'low', weatherFit: ['rain'] }),
-  m('cm-k12', 'a screen-free evening', 'nothing with a screen after 8pm. see what the evening becomes.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 120 }),
+  m('cm-k11', 'watch the rain', 'tea, a window, the rain. permission to do absolutely nothing.', 'calm', { indoorOutdoor: 'indoor', idealTimeOfDay: ['afternoon', 'evening'], priceBand: 'free', avgDurationMin: 45, energy: 'low', weatherFit: ['rain'] , spaceTypes: ALL }),
+  m('cm-k12', 'a screen-free evening', 'nothing with a screen after 8pm. see what the evening becomes.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 120 , spaceTypes: ALL }),
   m('cm-k13', 'gentle yoga side by side', 'follow a short, easy flow together — wobbling allowed.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 30 }),
-  m('cm-k14', 'café people-watching', 'sit, order something slow, and quietly invent lives for strangers.', 'calm', { indoorOutdoor: 'flexible', idealTimeOfDay: ['afternoon'], priceBand: '€', avgDurationMin: 60, energy: 'low', weatherFit: ['any'] }),
+  m('cm-k14', 'café people-watching', 'sit, order something slow, and quietly invent lives for strangers.', 'calm', { indoorOutdoor: 'flexible', idealTimeOfDay: ['afternoon'], priceBand: '€', avgDurationMin: 60, energy: 'low', weatherFit: ['any'] , spaceTypes: ALL }),
   m('cm-k15', 'highs and lows of the year', 'walk back through the year together — the best bits and the hard ones.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 60, spaceTypes: COUPLE }),
   m('cm-k16', 'an unapologetic nap', 'an afternoon nap together, guilt-free, curtains drawn.', 'calm', { indoorOutdoor: 'indoor', idealTimeOfDay: ['afternoon'], priceBand: 'free', avgDurationMin: 60, energy: 'low', weatherFit: ['any', 'rain', 'cold'], spaceTypes: COUPLE }),
   m('cm-k17', 'journal in the same room', 'light a candle, write separately in the same quiet space.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 30 }),
   m('cm-k18', 'a slow morning, no plans', 'coffee, no alarm, nowhere to be. protect the whole morning.', 'calm', { indoorOutdoor: 'indoor', idealTimeOfDay: ['morning'], priceBand: '€', avgDurationMin: 120, energy: 'low', weatherFit: ['any', 'rain', 'cold'], spaceTypes: COUPLE }),
-  m('cm-k19', 'a quiet drive + playlist', 'drive nowhere in particular with a good playlist and the windows down.', 'calm', { indoorOutdoor: 'flexible', idealTimeOfDay: ['evening'], priceBand: '€', avgDurationMin: 75, energy: 'low', weatherFit: ['any', 'sunny'] }),
+  m('cm-k19', 'a quiet drive + playlist', 'drive nowhere in particular with a good playlist and the windows down.', 'calm', { indoorOutdoor: 'flexible', idealTimeOfDay: ['evening'], priceBand: '€', avgDurationMin: 75, energy: 'low', weatherFit: ['any', 'sunny'] , spaceTypes: ALL }),
   m('cm-k20', 'name what you’re thankful for', 'a slow walk, naming things you’re grateful for, one each at a time.', 'calm', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['morning', 'afternoon'], priceBand: 'free', avgDurationMin: 45, energy: 'low', weatherFit: ['sunny', 'cold'] }),
 
   // ── PLAY ─────────────────────────────────────────────────────────────────
@@ -176,4 +188,43 @@ export const CURATED_MOMENTS: TogetherMoment[] = [
   m('cm-p18', 'two truths and a lie, hard mode', 'only obscure facts about yourselves allowed. surprisingly revealing.', 'play', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 30 }),
   m('cm-p19', 'a "favourite ever" speed round', 'rapid-fire favourites — film, meal, day, smell — no thinking too long.', 'play', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 30, spaceTypes: COUPLE }),
   m('cm-p20', 'ultimate snack + game night', 'the best snacks you can assemble and a stack of games. friends welcome.', 'play', { ...IN_EVE, priceBand: '€', avgDurationMin: 150, spaceTypes: FRIENDS }),
+
+  // ── SOLO ─────────────────────────────────────────────────────────────────
+  // Für eine Person geschrieben, nicht aus Paar-Ideen umgebogen. Wer allein
+  // unterwegs ist, soll etwas finden, das für ihn gemeint ist — und nicht
+  // lesen, wie schön das zu zweit wäre (MANIFESTO §1 und §3).
+  m('cm-s1', 'cook the thing nobody else likes', 'the dish only you love. no compromise, no negotiation, extra of the good part.', 'food', { ...IN_EVE, priceBand: '€€', avgDurationMin: 90, spaceTypes: SOLO }),
+  m('cm-s2', 'a restaurant, a book, a table for one', 'go out properly. order a starter. read between courses. it is a lovely evening.', 'food', { indoorOutdoor: 'indoor', idealTimeOfDay: ['evening'], priceBand: '€€', avgDurationMin: 90, energy: 'low', weatherFit: ['any', 'rain', 'cold'], spaceTypes: SOLO }),
+  m('cm-s3', 'breakfast that takes an hour', 'the slow version on a weekday morning. eggs done right, good bread, no rushing.', 'food', { indoorOutdoor: 'indoor', idealTimeOfDay: ['morning'], priceBand: '€', avgDurationMin: 60, energy: 'low', weatherFit: ['any', 'rain', 'cold'], spaceTypes: SOLO }),
+  m('cm-s4', 'one recipe, learned properly', 'make the same dish three times this month until it needs no recipe at all.', 'food', { ...IN_EVE, priceBand: '€€', avgDurationMin: 120, spaceTypes: SOLO }),
+  m('cm-s5', 'the café you always walk past', 'go in, sit at the window, order the thing that sounded strange.', 'food', { indoorOutdoor: 'indoor', idealTimeOfDay: ['afternoon'], priceBand: '€', avgDurationMin: 60, energy: 'low', weatherFit: ['any'], spaceTypes: SOLO }),
+  m('cm-s6', 'a picnic for one, properly packed', 'a real plate, a cloth napkin, one good thing to drink. absurd and worth it.', 'food', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['afternoon'], priceBand: '€', avgDurationMin: 90, weatherFit: ['sunny'], spaceTypes: SOLO }),
+
+  m('cm-s7', 'walk until the thought finishes', 'leave with one thing on your mind and stay out until it has an ending.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['afternoon', 'evening'], priceBand: 'free', avgDurationMin: 90, energy: 'low', weatherFit: ['sunny', 'cold'], spaceTypes: SOLO }),
+  m('cm-s8', 'a train, one stop too far', 'ride past where you meant to get off and walk back through somewhere new.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['afternoon'], priceBand: '€', avgDurationMin: 150, weatherFit: ['sunny', 'any'], spaceTypes: SOLO }),
+  m('cm-s9', 'sunrise, alone on purpose', 'set the alarm, take the coffee outside, watch the light arrive before anyone else is up.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['morning'], priceBand: 'free', avgDurationMin: 60, energy: 'low', weatherFit: ['sunny', 'cold'], spaceTypes: SOLO }),
+  m('cm-s10', 'the long way home', 'no shortcut today. add twenty minutes and take streets you have no reason to take.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['evening'], priceBand: 'free', avgDurationMin: 45, energy: 'low', weatherFit: ['sunny', 'cold'], spaceTypes: SOLO }),
+  m('cm-s11', 'swim before the day starts', 'lake, lido or pool at opening time, when the water is still flat.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['morning'], priceBand: '€', avgDurationMin: 75, energy: 'high', weatherFit: ['sunny'], spaceTypes: SOLO }),
+  m('cm-s12', 'one hill, no music', 'walk up something steep with nothing in your ears and sit at the top a while.', 'outdoors', { indoorOutdoor: 'outdoor', idealTimeOfDay: ['morning', 'afternoon'], priceBand: 'free', avgDurationMin: 120, energy: 'high', weatherFit: ['sunny', 'cold'], spaceTypes: SOLO }),
+
+  m('cm-s13', 'draw the room you are in', 'twenty minutes, one pen, no rubbing out. it will be wrong and that is the point.', 'create', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 30, spaceTypes: SOLO }),
+  m('cm-s14', 'write the letter you will not send', 'to anyone, about anything unfinished. keep it or burn it — both count.', 'create', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 45, spaceTypes: SOLO }),
+  m('cm-s15', 'a playlist for this exact month', 'twelve songs that will sound like right now when you play them in a year.', 'create', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 45, spaceTypes: SOLO }),
+  m('cm-s16', 'learn the first eight bars', 'any instrument, any song, just the opening. eight bars is a real thing to own.', 'create', { ...IN_EVE, priceBand: 'free', avgDurationMin: 60, spaceTypes: SOLO }),
+  m('cm-s17', 'photograph one colour all day', 'pick a colour in the morning and shoot only that until the light goes.', 'create', { indoorOutdoor: 'flexible', idealTimeOfDay: ['morning', 'afternoon'], priceBand: 'free', avgDurationMin: 90, energy: 'low', weatherFit: ['any', 'sunny'], spaceTypes: SOLO }),
+  m('cm-s18', 'repair instead of replace', 'the thing with the hole, the loose handle, the dead lamp. one evening, one fix.', 'create', { ...IN_EVE, priceBand: '€', avgDurationMin: 90, spaceTypes: SOLO }),
+
+  m('cm-s19', 'a bath and nothing else', 'no phone on the edge, no episode running. just hot water and an hour.', 'calm', { ...LOW_EVE, priceBand: '€', avgDurationMin: 60, spaceTypes: SOLO }),
+  m('cm-s20', 'read until the book ends', 'one sitting, one book, no stopping at the good bit. clear the evening for it.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 180, spaceTypes: SOLO }),
+  m('cm-s21', 'write down what is loud right now', 'three pages, unedited, nobody reads it. it gets quieter on paper.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 30, spaceTypes: SOLO }),
+  m('cm-s22', 'half a day with the phone in a drawer', 'from waking until the afternoon, out of reach, not on silent. notice what the hands do instead.', 'calm', { indoorOutdoor: 'flexible', idealTimeOfDay: ['morning', 'afternoon'], priceBand: 'free', avgDurationMin: 240, energy: 'low', weatherFit: ['any'], spaceTypes: SOLO }),
+  m('cm-s23', 'sit in a church, or any big quiet room', 'no belief required. a high ceiling and no reason to be there does something.', 'calm', { indoorOutdoor: 'indoor', idealTimeOfDay: ['afternoon'], priceBand: 'free', avgDurationMin: 45, energy: 'low', weatherFit: ['any', 'rain'], spaceTypes: SOLO }),
+  m('cm-s24', 'a slow stretch before sleep', 'twenty minutes on the floor, lights low, nothing to finish afterwards.', 'calm', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 20, spaceTypes: SOLO }),
+
+  m('cm-s25', 'the film nobody would sit through', 'the four-hour one, the subtitled one, the one from 1974. tonight it wins.', 'play', { ...LOW_EVE, priceBand: 'free', avgDurationMin: 240, spaceTypes: SOLO }),
+  m('cm-s26', 'a museum at opening time', 'first hour, empty rooms, and permission to spend it all on three paintings.', 'play', { indoorOutdoor: 'indoor', idealTimeOfDay: ['morning'], priceBand: '€€', avgDurationMin: 120, energy: 'low', weatherFit: ['any', 'rain', 'cold'], spaceTypes: SOLO }),
+  m('cm-s27', 'dance around the kitchen', 'loud, badly, with the curtains open if you dare. four songs minimum.', 'play', { ...IN_EVE, priceBand: 'free', avgDurationMin: 30, energy: 'high', spaceTypes: SOLO }),
+  m('cm-s28', 'a game you loved at twelve', 'dig it out, play it for an hour, feel exactly twelve again.', 'play', { ...IN_EVE, priceBand: 'free', avgDurationMin: 60, spaceTypes: SOLO }),
+  m('cm-s29', 'say yes to the first invitation', 'whatever lands in the next week — go, unless there is a real reason not to.', 'play', { indoorOutdoor: 'flexible', idealTimeOfDay: ['evening'], priceBand: '€', avgDurationMin: 120, weatherFit: ['any'], spaceTypes: SOLO }),
+  m('cm-s30', 'a concert, ticket bought this week', 'small venue, band you half know. standing alone at a gig is completely normal.', 'play', { indoorOutdoor: 'indoor', idealTimeOfDay: ['evening'], priceBand: '€€', avgDurationMin: 180, energy: 'high', weatherFit: ['any'], spaceTypes: SOLO }),
 ];

@@ -75,7 +75,9 @@ export default function ProfileScreen() {
             <Text style={styles.spaceType}>
               {activeSpace.type === 'couple'
                 ? t('couple space', 'Paar-Space')
-                : t('friends space', 'Freunde-Space')}
+                : activeSpace.type === 'solo'
+                  ? t('just you', 'nur du')
+                  : t('friends space', 'Freunde-Space')}
             </Text>
             {/* Archive, not a scoreboard: a quiet line, never big vanity numbers. */}
             {!memoriesLoading && !memoriesError && (
@@ -85,8 +87,8 @@ export default function ProfileScreen() {
                 // Wahrheit „wir wissen es nicht" — und eine 0 wäre dann eine
                 // Scheinzahl (MANIFESTO §1). Der Bildschirm sagt dann lieber
                 // nichts über Zahlen.
-                `${memories.length} moment${memories.length !== 1 ? 's' : ''} kept · ${chillyCount} challenge${chillyCount !== 1 ? 's' : ''} done together`,
-                `${memories.length} Moment${memories.length !== 1 ? 'e' : ''} festgehalten · ${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''} zusammen geschafft`,
+                `${memories.length} moment${memories.length !== 1 ? 's' : ''} kept · ${chillyCount} challenge${chillyCount !== 1 ? 's' : ''} done`,
+                `${memories.length} Moment${memories.length !== 1 ? 'e' : ''} festgehalten · ${chillyCount} Challenge${chillyCount !== 1 ? 's' : ''} geschafft`,
               )}
             </Text>
             )}

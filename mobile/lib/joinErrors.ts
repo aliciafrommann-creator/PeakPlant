@@ -14,6 +14,7 @@
 export type JoinFailure =
   | 'invalid_code'
   | 'space_full'
+  | 'space_solo'
   | 'too_many_attempts'
   | 'not_authenticated'
   | 'unknown';
@@ -21,6 +22,10 @@ export type JoinFailure =
 export function classifyJoinError(err: unknown): JoinFailure {
   const message = extractMessage(err).toLowerCase();
   if (message.includes('space is full')) return 'space_full';
+  // Migration 0024: In einen Solo-Space kommt niemand hinein. Ohne eigenen
+  // Fall landete das unter „unbekannt" — und der Mensch mit dem Code suchte
+  // den Fehler bei sich, obwohl der Code stimmt.
+  if (message.includes('space is solo')) return 'space_solo';
   if (message.includes('too many attempts')) return 'too_many_attempts';
   if (message.includes('invalid invite code')) return 'invalid_code';
   if (message.includes('not authenticated')) return 'not_authenticated';

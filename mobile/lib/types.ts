@@ -35,11 +35,19 @@ export interface CardContent {
 }
 
 /**
- * A Space is the shared container two-or-more people preserve moments in.
- * The original couple is just one kind of space; friends spaces use the exact
- * same model. A single user can belong to several spaces at once.
+ * A Space is the container moments are preserved in. The original couple is
+ * just one kind; friends spaces use the exact same model, and so does `solo`
+ * — ein Space für eine Person. A single user can belong to several at once.
+ *
+ * `solo` ist seit 18.08.2026 ein echter Typ und wird beim Anlegen GEWÄHLT,
+ * nicht aus der Mitgliederzahl geraten. Der Unterschied ist inhaltlich: Ein
+ * Paar-Space, dessen zweite Person noch nicht beigetreten ist, soll weiter
+ * Paar-Inhalte zeigen — diese Person wartet, sie ist nicht allein unterwegs.
+ * Geraten hieße, ihr die Inhalte genau dann wegzuziehen, wenn sie einlädt.
+ * Ein Solo-Space lässt sich später öffnen (`open_space`), ohne dass ein
+ * einziger Moment verloren geht; zurück geht es bewusst nicht.
  */
-export type SpaceType = 'couple' | 'friends';
+export type SpaceType = 'couple' | 'friends' | 'solo';
 
 export interface Space {
   id: string;

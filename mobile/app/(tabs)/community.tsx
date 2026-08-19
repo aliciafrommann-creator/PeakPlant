@@ -21,6 +21,7 @@ import { Spacing, Radii, Shadows, Opacity } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { voice } from '../../lib/voice';
 import { feedbackRepository, publicPlaceFeedbackRepository, savedDateRepository } from '../../lib/repositories';
 import {
   LOCAL_PLACES,
@@ -122,6 +123,7 @@ function liveFailureMessage(
 export default function PlacesScreen() {
   const { place: initialPlaceId } = useLocalSearchParams<{ place?: string }>();
   const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const { t } = useLanguage();
   const firstPlaceId = LOCAL_PLACES.some((place) => place.id === initialPlaceId)
     ? initialPlaceId!
@@ -645,8 +647,8 @@ export default function PlacesScreen() {
       Alert.alert(
         t('lovely — done together ♥', 'schön — zusammen erlebt ♥'),
         t(
-          'Keep it as a private memory, or leave an anonymous tip on the map? Your notes and photos always stay private to your space.',
-          'Als private Erinnerung behalten oder einen anonymen Tipp auf der Karte lassen? Eure Notizen und Fotos bleiben immer privat in eurem Space.',
+          `Keep it as a private memory, or leave an anonymous tip on the map? Your notes and photos always stay ${v.privateToSpace.en}.`,
+          `Als private Erinnerung behalten oder einen anonymen Tipp auf der Karte lassen? Notizen und Fotos bleiben immer ${v.privateToSpace.de}.`,
         ),
         [
           { text: t('Create memory', 'Erinnerung anlegen'), onPress: () => createMemoryForSelected() },
@@ -906,7 +908,7 @@ export default function PlacesScreen() {
           ) : ownSummary.count > 0 ? (
             <View style={styles.feedbackBlock}>
               <Text style={styles.feedbackLabel}>
-                {t('YOUR SPACE RECOMMENDS THIS', 'EUER SPACE EMPFIEHLT DIESEN ORT')}
+                {t(v.spaceRecommends.en, v.spaceRecommends.de)}
               </Text>
               <Text style={styles.stars}>
                 {'★'.repeat(Math.round(ownSummary.average))}
@@ -962,7 +964,7 @@ export default function PlacesScreen() {
               <Text style={[styles.loopStatusText, selectedIsDone && styles.loopStatusTextDone]}>
                 {selectedIsDone
                   ? t('✓ you’ve done this together', '✓ ihr habt das zusammen gemacht')
-                  : t('◷ planned for your space', '◷ für euren Space geplant')}
+                  : t(v.plannedForSpace.en, v.plannedForSpace.de)}
               </Text>
             </View>
           )}
@@ -1181,12 +1183,12 @@ export default function PlacesScreen() {
           <View style={styles.sheet}>
             <Text style={styles.sheetKicker}>{t('OUR PLACE', 'UNSER ORT')}</Text>
             <Text style={styles.sheetTitle}>
-              {t('a place that is yours', 'ein Ort, der euch gehört')}
+              {t(v.aPlaceOfYours.en, v.aPlaceOfYours.de)}
             </Text>
             <Text style={styles.sheetNote}>
               {t(
-                'The café where you met, your bench, the corner kiosk. Stays private in your space — plan dates there and keep moments.',
-                'Das Café vom ersten Date, eure Bank, der Kiosk an der Ecke. Bleibt privat in eurem Space — plant Dates dort und haltet Momente fest.',
+                `The café where you met, your bench, the corner kiosk. Stays ${v.privateToSpace.en} — plan something there and keep moments.`,
+                `Das Café vom ersten Date, die Bank, der Kiosk an der Ecke. Bleibt ${v.privateToSpace.de} — plant dort etwas und haltet Momente fest.`,
               )}
             </Text>
             <TextInput

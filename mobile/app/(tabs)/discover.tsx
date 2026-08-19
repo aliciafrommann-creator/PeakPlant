@@ -21,6 +21,7 @@ import { Toast } from '../../components/ui/Toast';
 import { AnimatedFill } from '../../components/ui/AnimatedFill';
 import { IdeaCardSkeleton } from '../../components/ui/Skeleton';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { voice } from '../../lib/voice';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useAppStore } from '../../lib/store';
 import { computeSharedWeeks } from '../../lib/streaks';
@@ -94,6 +95,7 @@ const DISCOVER = Sections.discover; // sunlit gold identity; actions stay chili
 
 export default function DiscoverScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const { memories } = useMemories(activeSpace?.id);
   const goals = useAppStore((s) => s.goals);
   const streaksEnabled = useAppStore((s) => s.features.streaks);
@@ -269,7 +271,7 @@ export default function DiscoverScreen() {
           status: 'saved',
         });
         await confirmSuccess();
-        setToast(t('saved to your space ♥', 'in eurem Space gemerkt ♥'));
+        setToast(t(v.savedToSpace.en, v.savedToSpace.de));
       } catch {
         // Roll back the optimistic flip and tell the user — a silently dropped
         // save looks identical to success and is exactly what confused testers.
@@ -305,7 +307,7 @@ export default function DiscoverScreen() {
               accessibilityLabel={t('Switch, add or share a space', 'Space wechseln, hinzufügen oder teilen')}
             >
               <Text style={styles.spaceName} numberOfLines={1}>
-                {(activeSpace?.name ?? t('your space', 'euer Space')).toLowerCase()}
+                {(activeSpace?.name ?? t(v.spaceFallbackName.en, v.spaceFallbackName.de)).toLowerCase()}
               </Text>
               <Ionicons name="chevron-down" size={15} color={Colors.textMuted} />
             </TouchableOpacity>
@@ -644,15 +646,22 @@ export default function DiscoverScreen() {
         </View>
 
         <Text style={styles.tagline}>
+          {/* Drei Arten, drei Sätze. Der Solo-Space fiel vorher in den
+              Else-Zweig — und die App behauptete eine Beziehung. */}
           {activeSpace?.type === 'friends'
             ? t(
                 'time with friends is not something to optimise.\nit is something to notice.',
                 'Zeit mit Freunden ist nichts zum Optimieren.\nSie ist etwas zum Bemerken.',
               )
-            : t(
-                'your relationship is not something to optimise.\nit is something to notice.',
-                'Eure Beziehung ist nichts zum Optimieren.\nSie ist etwas zum Bemerken.',
-              )}
+            : activeSpace?.type === 'solo'
+              ? t(
+                  'your life is not something to optimise.\nit is something to notice.',
+                  'Dein Leben ist nichts zum Optimieren.\nEs ist etwas zum Bemerken.',
+                )
+              : t(
+                  'your relationship is not something to optimise.\nit is something to notice.',
+                  'Eure Beziehung ist nichts zum Optimieren.\nSie ist etwas zum Bemerken.',
+                )}
         </Text>
       </ScrollView>
     </SafeAreaView>

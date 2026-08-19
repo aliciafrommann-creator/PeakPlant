@@ -28,6 +28,40 @@ credentials), tracked as O-001/O-002 in the Decision Register.
 > policy + `space-avatars` bucket with 4 member policies). Security advisors
 > reported no new findings from these migrations.
 
+### `0024_solo_spaces.sql` — **NOCH NICHT ANGEWANDT** (braucht Alicias Freigabe)
+
+Macht `solo` zu einem echten dritten `spaces.type`. Vier Teile:
+
+1. **CHECK erweitert** auf `('couple','friends','solo')`. Validiert gegen vier
+   Bestandszeilen, alle `couple` — kein Risiko.
+2. **`create_space`** kennt den Fall samt Vorgabename `My space`.
+3. **`redeem_invite` lässt niemanden in einen Solo-Space** (`'space is solo'`).
+   Ohne diese Zeile wäre „solo" nur ein Etikett: Ein weitergegebener Code
+   ließe eine fremde Person in ein Tagebuch, das ausdrücklich für eine Person
+   angelegt wurde (MANIFESTO §2).
+4. **`open_space(uuid, text)`** — neu. Macht aus einem Solo-Space einen Paar-
+   oder Freundes-Space, ohne dass ein Moment verloren geht. Nur der Besitzer,
+   nur aus `solo` heraus, mit Zeilensperre. Zurück geht es bewusst nicht: Das
+   würde eine bereits beigetretene Person aussperren.
+5. **Spaltenrechte auf `spaces`.** Die UPDATE-Policy aus 0012 erlaubte dem
+   Client JEDE Spalte, also auch `type` und `invite_code` — damit hätte ein
+   Client die Regeln aus 3. und 4. umgehen können. Schreibbar bleiben genau
+   die vier Spalten, die der Client wirklich schreibt (`name`, `emoji`,
+   `avatar_path`, `collectible_emoji`), für `authenticated` und `anon`.
+
+**Read-before-write, geprüft (nicht angenommen):** Die in der Datenbank
+stehenden Fassungen von `create_space` und `redeem_invite` wurden mit
+`pg_get_functiondef` gegen 0008/0018 gestellt — sie sind logisch identisch,
+das `create or replace` überschreibt also keine neuere Fassung. `redeem_invite`
+läuft als SECURITY DEFINER mit Owner `postgres` auf einer Tabelle ohne
+`force row level security`; die Code-Rotation funktioniert nach dem Revoke
+unverändert. Keine Edge Function schreibt auf `spaces`.
+
+**REIHENFOLGE, wichtiger als die SQL-Details:** Erst die Migration anwenden,
+dann die App ausrollen. Umgekehrt läuft `spaceRepository.openSpace` in ein
+„function does not exist", und der Mensch sieht nur „Der Space ließ sich nicht
+öffnen". Danach `get_advisors(security)` laufen lassen.
+
 ### `0022_shares_audiences_follows.sql` + `0023_share_cards.sql` — **ANGEWANDT** (18.08.2026)
 
 Der Unterbau für geteilte Aktivitäten, Feed und später Abende. **Additiv,

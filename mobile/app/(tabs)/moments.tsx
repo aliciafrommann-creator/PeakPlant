@@ -15,6 +15,7 @@ import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { voice } from '../../lib/voice';
 import { useBiometric } from '../../lib/hooks/useBiometric';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
@@ -32,6 +33,7 @@ export default function MomentsScreen() {
   const { activeSpace } = useSpaces();
   const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
   const { t } = useLanguage();
+  const v = voice(activeSpace?.type);
   const { authenticate } = useBiometric();
   const obscured = usePrivacyOverlay();
 
@@ -138,7 +140,7 @@ export default function MomentsScreen() {
             <BackButton />
             <View style={styles.kickerRow}>
               <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
-              <Text style={styles.kicker}>{t('YOUR MOMENTS', 'EURE MOMENTE')}</Text>
+              <Text style={styles.kicker}>{t(v.momentsKicker.en, v.momentsKicker.de)}</Text>
             </View>
             <Text style={styles.title}>
               {t('everything you kept.', 'alles, was ihr behalten habt.')}
@@ -146,10 +148,10 @@ export default function MomentsScreen() {
             {memories.length > 0 && (
               <Text style={styles.subtitle}>
                 {memories.length === 1
-                  ? t('1 moment · private to your space.', '1 Moment · privat in eurem Space.')
+                  ? t(`1 moment · ${v.privateToSpace.en}.`, `1 Moment · ${v.privateToSpace.de}.`)
                   : t(
-                      `${memories.length} moments · private to your space.`,
-                      `${memories.length} Momente · privat in eurem Space.`,
+                      `${memories.length} moments · ${v.privateToSpace.en}.`,
+                      `${memories.length} Momente · ${v.privateToSpace.de}.`,
                     )}
               </Text>
             )}
@@ -163,7 +165,7 @@ export default function MomentsScreen() {
             <MemoryFeedSkeleton />
           ) : error ? (
             <EmptyState
-              title={t("couldn't load your moments.", 'eure Momente konnten nicht geladen werden.')}
+              title={t("couldn't load your moments.", 'deine Momente konnten nicht geladen werden.')}
               hint={t(
                 'they are safe — this is just a connection hiccup.',
                 'sie sind sicher — das ist nur ein Verbindungsproblem.',
@@ -173,11 +175,8 @@ export default function MomentsScreen() {
             />
           ) : (
             <EmptyState
-              title={t('your story starts here.', 'eure Geschichte beginnt hier.')}
-              hint={t(
-                'live a card together, scan its QR — and the moment lands here, with your photo and your words.',
-                'erlebt eine Karte zusammen, scannt ihren QR-Code — und der Moment landet hier, mit eurem Foto und euren Worten.',
-              )}
+              title={t(v.momentsEmptyTitle.en, v.momentsEmptyTitle.de)}
+              hint={t(v.momentsEmptyHint.en, v.momentsEmptyHint.de)}
               ctaLabel={t('SCAN YOUR FIRST CARD', 'ERSTE KARTE SCANNEN')}
               onCta={() => router.push('/(tabs)/scan')}
               // Ohne physisches Deck war „Karte scannen" hier eine Sackgasse:
@@ -193,8 +192,8 @@ export default function MomentsScreen() {
           memories.length > 0 ? (
             <Text style={styles.footer}>
               {t(
-                '✦ every moment here is private to your space.',
-                '✦ jeder Moment hier ist privat in eurem Space.',
+                `✦ every moment here is ${v.privateToSpace.en}.`,
+                `✦ jeder Moment hier ist ${v.privateToSpace.de}.`,
               )}
             </Text>
           ) : null

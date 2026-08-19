@@ -26,6 +26,7 @@ import { FadeInImage } from '../../components/ui/FadeInImage';
 import { shareMemory } from '../../lib/share';
 import { ShareToChallenge } from '../../components/memory/ShareToChallenge';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { voice } from '../../lib/voice';
 import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { confirmSuccess } from '../../lib/haptics';
 import type { Memory } from '../../lib/types';
@@ -42,6 +43,7 @@ export default function MemoryDetailScreen() {
   const [error, setError] = useState<string | null>(null);
   const { t, l } = useLanguage();
   const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const { weekly } = useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
   const obscured = usePrivacyOverlay();
 
@@ -102,8 +104,8 @@ export default function MemoryDetailScreen() {
     Alert.alert(
       t('delete this moment?', 'Diesen Moment löschen?'),
       t(
-        'this removes it from your diary for everyone in this space. it cannot be undone.',
-        'Das nimmt ihn für euch beide aus dem Tagebuch. Das lässt sich nicht rückgängig machen.',
+        `${v.memoryDeleteWarning.en} it cannot be undone.`,
+        `${v.memoryDeleteWarning.de} Das lässt sich nicht rückgängig machen.`,
       ),
       [
         { text: t('keep it', 'behalten'), style: 'cancel' },

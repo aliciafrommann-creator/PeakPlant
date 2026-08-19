@@ -95,6 +95,10 @@ export function composePartnerMomentPush(isDE: boolean): NotificationPayload {
   return {
     category: 'partner_activity',
     title: 'PeakPlant',
+    // „eurem" ist hier bewusst geblieben: Diese Nachricht geht ausschließlich
+    // an die ANDEREN Mitglieder eines Space (siehe `decideDelivery`), es gibt
+    // also per Definition mindestens zwei. In einem Solo-Space entsteht sie
+    // nie. anrede-ok.
     body: isDE
       ? 'In eurem Space liegt ein neuer Moment.'
       : 'A new moment is waiting in your space.',
@@ -111,6 +115,9 @@ export function composePartnerJoinedPush(isDE: boolean): NotificationPayload {
   return {
     category: 'partner_activity',
     title: 'PeakPlant',
+    // anrede-ok: „Partner beigetreten" setzt zwei Menschen voraus — der Satz
+    // beschreibt genau den Moment, in dem der Space keiner für eine Person
+    // mehr ist.
     body: isDE
       ? 'Ihr seid jetzt zu zweit in eurem Space.'
       : 'You are two in your space now.',

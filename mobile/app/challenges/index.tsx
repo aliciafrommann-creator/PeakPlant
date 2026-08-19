@@ -47,14 +47,14 @@ export default function ChallengesScreen() {
           <Text style={styles.intro}>
             {t(
               'we could not read how far you are — your moments are safe. pull down or try again in a moment.',
-              'wir konnten euren Stand nicht lesen — eure Momente sind sicher. Gleich nochmal versuchen.',
+              'wir konnten den Stand nicht lesen — die Momente sind sicher. Gleich nochmal versuchen.',
             )}
           </Text>
         )}
         <Text style={styles.intro}>
           {t(
-            'gentle, finite goals you can take on together. complete one, keep the badge. no scores, no rush.',
-            'sanfte, endliche Ziele, die ihr gemeinsam angehen könnt. eines abschließen, das Abzeichen behalten. keine Punkte, keine Eile.',
+            'gentle, finite goals you can take on. complete one, keep the badge. no scores, no rush.',
+            'sanfte, endliche Ziele zum Angehen. eines abschließen, das Abzeichen behalten. keine Punkte, keine Eile.',
           )}
         </Text>
 

@@ -19,6 +19,7 @@ import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
+import { voice } from '../../lib/voice';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { savedDateRepository } from '../../lib/repositories';
 import { confirmSuccess } from '../../lib/haptics';
@@ -71,6 +72,7 @@ export default function CreateMemoryScreen() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const { memories, createMemory } = useMemories(activeSpace?.id);
 
   const { t, l } = useLanguage();
@@ -394,7 +396,7 @@ export default function CreateMemoryScreen() {
               // viele ihr seid, und ist die Formulierung, die das Manifest
               // selbst als richtig benennt.
               'stays private to your space.',
-              'bleibt privat in eurem Space.',
+              v.staysPrivate.de,
             )}
           </Text>
         </ScrollView>

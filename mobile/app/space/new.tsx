@@ -14,11 +14,52 @@ import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { spaceRepository } from '../../lib/repositories';
+import { classifyJoinError } from '../../lib/joinErrors';
 import { getActiveUser } from '../../lib/session';
 import { confirmSuccess } from '../../lib/haptics';
 import { useAppStore } from '../../lib/store';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import type { SpaceType } from '../../lib/types';
+
+/**
+ * Die drei Arten von Space, in Worten.
+ *
+ * `solo` ist seit dem 18.08.2026 dabei und steht bewusst ZUERST: In der
+ * Produktionsdatenbank hatte kein einziger Space eine zweite Person. Wer allein
+ * anfängt, sollte nicht erst ein Paar behaupten müssen, um die App zu benutzen
+ * — und der Hinweis sagt gleich dazu, dass sich daran später nichts verbaut
+ * (MANIFESTO §3: einladen, nie drängen).
+ */
+const TYPE_LABEL: Record<
+  SpaceType,
+  {
+    titleEn: string; titleDe: string;
+    hintEn: string; hintDe: string;
+    a11yEn: string; a11yDe: string;
+    placeholderEn: string; placeholderDe: string;
+  }
+> = {
+  solo: {
+    titleEn: 'just me', titleDe: 'nur ich',
+    hintEn: 'you can open it up later', hintDe: 'kann später geöffnet werden',
+    a11yEn: 'Just me', a11yDe: 'Nur ich',
+    placeholderEn: 'e.g. my year', placeholderDe: 'z.B. mein Jahr',
+  },
+  couple: {
+    titleEn: 'a couple', titleDe: 'ein Paar',
+    // anrede-ok: Diese Auswahl BESCHREIBT zwei Menschen — hier ist die
+    // Zwei-Personen-Anrede die Aussage, nicht der Fehler.
+    hintEn: 'just the two of you', hintDe: 'nur ihr zwei',
+    a11yEn: 'A couple', a11yDe: 'Ein Paar',
+    placeholderEn: 'e.g. you & them', placeholderDe: 'z.B. ihr & er/sie',
+  },
+  friends: {
+    titleEn: 'friends', titleDe: 'Freunde',
+    hintEn: 'a small group', hintDe: 'eine kleine Gruppe',
+    a11yEn: 'Friends', a11yDe: 'Freunde',
+    placeholderEn: 'e.g. the saturday people', placeholderDe: 'z.B. die Samstagsmenschen',
+  },
+};
 
 export default function NewSpaceScreen() {
   const setActiveSpace = useAppStore((s) => s.setActiveSpace);
@@ -63,9 +104,40 @@ export default function NewSpaceScreen() {
       void confirmSuccess();
       setActiveSpace(space.id);
       router.back();
-    } catch {
+    } catch (err) {
       setBusy(false);
-      setError(t("that code didn't work. check it and try again.", 'Dieser Code hat nicht funktioniert. Prüfe ihn und versuche es erneut.'));
+      // Vorher fing dieser Zweig JEDEN Fehler mit „Prüfe den Code" ab — auch
+      // die drei Fälle, in denen der Code völlig richtig ist. Der Mensch suchte
+      // den Fehler dann bei sich. `classifyJoinError` gibt es genau dafür; nur
+      // dieser Bildschirm hat es nie benutzt (MANIFESTO §1).
+      switch (classifyJoinError(err)) {
+        case 'space_solo':
+          setError(t(
+            'this space is for one person. whoever sent the code can open it up — then the same code works.',
+            'Dieser Space ist für eine Person. Wer dir den Code geschickt hat, kann ihn öffnen — danach funktioniert derselbe Code.',
+          ));
+          break;
+        case 'space_full':
+          setError(t(
+            'this space already has two people in it. ask for a fresh code — a new one appears once the first pair is complete.',
+            'In diesem Space sind schon zwei Menschen. Bitte um einen frischen Code — sobald das erste Paar vollständig ist, entsteht ein neuer.',
+          ));
+          break;
+        case 'too_many_attempts':
+          setError(t(
+            'that was a lot of tries in a short time. take a breath and try again in an hour.',
+            'Das waren viele Versuche in kurzer Zeit. Atme kurz durch und versuch es in einer Stunde nochmal.',
+          ));
+          break;
+        case 'not_authenticated':
+          setError(t(
+            'your sign-in expired. sign in again, then enter the code.',
+            'Deine Anmeldung ist abgelaufen. Melde dich neu an und gib den Code dann ein.',
+          ));
+          break;
+        default:
+          setError(t("that code didn't work. check it and try again.", 'Dieser Code hat nicht funktioniert. Prüfe ihn und versuche es erneut.'));
+      }
     }
   };
 
@@ -98,8 +170,9 @@ export default function NewSpaceScreen() {
           <View style={styles.section}>
             <Text style={styles.label}>{t('WHAT KIND OF SPACE?', 'WELCHE ART VON SPACE?')}</Text>
             <View style={styles.typeRow}>
-              {(['couple', 'friends'] as SpaceType[]).map((spaceType) => {
+              {(['solo', 'couple', 'friends'] as SpaceType[]).map((spaceType) => {
                 const active = type === spaceType;
+                const label = TYPE_LABEL[spaceType];
                 return (
                   <TouchableOpacity
                     key={spaceType}
@@ -108,15 +181,13 @@ export default function NewSpaceScreen() {
                     activeOpacity={0.85}
                     accessibilityRole="button"
                     accessibilityState={{ selected: active }}
-                    accessibilityLabel={spaceType === 'couple' ? t('A couple', 'Ein Paar') : t('Friends', 'Freunde')}
+                    accessibilityLabel={t(label.a11yEn, label.a11yDe)}
                   >
                     <Text style={[styles.typeText, active && styles.typeTextActive]}>
-                      {spaceType === 'couple' ? t('a couple', 'ein Paar') : t('friends', 'Freunde')}
+                      {t(label.titleEn, label.titleDe)}
                     </Text>
                     <Text style={[styles.typeHint, active && styles.typeHintActive]}>
-                      {spaceType === 'couple'
-                        ? t('just the two of you', 'nur ihr zwei')
-                        : t('a small group', 'eine kleine Gruppe')}
+                      {t(label.hintEn, label.hintDe)}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -128,9 +199,7 @@ export default function NewSpaceScreen() {
             <Text style={styles.label}>{t('NAME', 'NAME')}</Text>
             <TextInput
               style={styles.input}
-              placeholder={type === 'couple'
-                ? t('e.g. you & them', 'z.B. ihr & er/sie')
-                : t('e.g. the saturday people', 'z.B. die Samstagsmenschen')}
+              placeholder={t(TYPE_LABEL[type].placeholderEn, TYPE_LABEL[type].placeholderDe)}
               placeholderTextColor={Colors.textSubtle}
               value={name}
               onChangeText={setName}

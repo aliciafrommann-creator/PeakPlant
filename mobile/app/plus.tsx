@@ -82,7 +82,7 @@ export default function PlusScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Text style={styles.kicker}>PEAKPLANT PLUS</Text>
         <Text style={styles.heading}>
-          {t('An AI that knows you two.', 'Eine KI, die euch kennt.')}
+          {t('An AI that knows your space.', 'Eine KI, die deinen Space kennt.')}
         </Text>
         <Text style={styles.sub}>
           {t(
@@ -95,7 +95,7 @@ export default function PlusScreen() {
           {[
             [
               t('Ask PeakPlant', 'Ask PeakPlant'),
-              t('Conversational date ideas, just for you two.', 'Date-Ideen im Gespräch, nur für euch.'),
+              t('Conversational ideas, in your own words.', 'Ideen im Gespräch, in deinen eigenen Worten.'),
             ],
             [
               t('Personalized recommendations', 'Personalisierte Empfehlungen'),

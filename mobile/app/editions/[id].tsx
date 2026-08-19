@@ -23,6 +23,7 @@ import { PressableScale } from '../../components/ui/PressableScale';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { ShopLink } from '../../components/edition/ShopLink';
 import { editionInk, EDITION_INK_DARK, EDITION_INK_LIGHT } from '../../lib/editionInk';
+import { voice } from '../../lib/voice';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import { EmptyState } from '../../components/ui/EmptyState';
 import type { Memory, MomentCard } from '../../lib/types';
@@ -30,6 +31,7 @@ import type { Memory, MomentCard } from '../../lib/types';
 export default function EditionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { activeSpace } = useSpaces();
+  const v = voice(activeSpace?.type);
   const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
   const obscured = usePrivacyOverlay();
   const { t } = useLanguage();
@@ -138,7 +140,7 @@ export default function EditionScreen() {
               <Text style={[styles.stat, { color: fg }]}>{momentCount}</Text>
               {edition.sensitive && (
                 <Text style={[styles.privateNote, { color: fg }]}>
-                  {t('this diary stays private to your space', 'dieses Tagebuch bleibt privat in eurem Space')}
+                  {t(`this diary stays ${v.privateToSpace.en}`, `dieses Tagebuch bleibt ${v.privateToSpace.de}`)}
                 </Text>
               )}
             </View>

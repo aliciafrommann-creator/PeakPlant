@@ -16,6 +16,7 @@ import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { voice } from '../../lib/voice';
 import { useWeeklyChallenge } from '../../lib/hooks/useWeeklyChallenge';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
@@ -34,6 +35,7 @@ export default function StoryScreen() {
   const { memories, loading, error, refresh } = useMemories(activeSpace?.id);
   const { chillyCount } = useWeeklyChallenge(activeSpace?.id, activeSpace?.type);
   const { t } = useLanguage();
+  const v = voice(activeSpace?.type);
   const obscured = usePrivacyOverlay();
 
   const [savedDates, setSavedDates] = useState<SavedDate[]>([]);
@@ -116,7 +118,7 @@ export default function StoryScreen() {
           <BackButton />
           <View style={styles.kickerRow}>
             <View style={[styles.kickerDot, { backgroundColor: TOGETHER }]} />
-            <Text style={styles.kicker}>{t('OUR STORY', 'EURE GESCHICHTE')}</Text>
+            <Text style={styles.kicker}>{t(v.ourStoryKicker.en, v.ourStoryKicker.de)}</Text>
           </View>
         </View>
         <EmptyState
@@ -147,11 +149,8 @@ export default function StoryScreen() {
           </View>
         </View>
         <EmptyState
-          title={t('your story starts here.', 'eure Geschichte beginnt hier.')}
-          hint={t(
-            'once you keep your first moment, this is where you will see what grew between you.',
-            'sobald ihr euren ersten Moment festhaltet, seht ihr hier, was zwischen euch gewachsen ist.',
-          )}
+          title={t(v.storyStartsHere.en, v.storyStartsHere.de)}
+          hint={t(v.storyStartsHint.en, v.storyStartsHint.de)}
           ctaLabel={t('FIND SOMETHING TO DO', 'ETWAS ZUM ERLEBEN FINDEN')}
           onCta={() => router.push('/(tabs)/discover')}
         />
@@ -176,7 +175,7 @@ export default function StoryScreen() {
             <Text style={styles.kicker}>{t('OUR STORY', 'EURE GESCHICHTE')}</Text>
           </View>
           <Text style={styles.title}>
-            {t('what grew between you.', 'was zwischen euch gewachsen ist.')}
+            {t(`${v.whatGrew.en}.`, `${v.whatGrew.de}.`)}
           </Text>
         </View>
 
@@ -233,7 +232,7 @@ export default function StoryScreen() {
         <Text style={styles.footer}>
           {t(
             'all of this is counted from what you kept — nothing is guessed, nothing leaves your space.',
-            'all das ist aus dem gezählt, was ihr festgehalten habt — nichts geraten, nichts verlässt euren Space.',
+            v.countedFromWhatYouKept.de,
           )}
         </Text>
       </ScrollView>
