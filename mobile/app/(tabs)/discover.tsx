@@ -340,8 +340,17 @@ export default function DiscoverScreen() {
           />
         )}
 
-        {/* Section toggle: Surprise me / Idea library / Places map */}
-        <View style={styles.sectionToggle}>
+        {/* Section toggle: Surprise me / Idea library / Places map.
+            WISCHBAR, und das war ein Fehler: Bis zum 19.08.2026 stand hier ein
+            fester Block. Der dritte Knopf (die Karte) ragte über den Rand und
+            war damit UNERREICHBAR — Alicia auf dem Gerät: „bei surprise me und
+            all ideas kann man nicht wischen und alles sehen." Ein Weg, den man
+            sieht und nicht gehen kann, ist schlimmer als keiner (K3). */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.sectionToggle}
+        >
           <TouchableOpacity
             style={[styles.toggleChip, styles.toggleChipActive]}
             onPress={resetFilters}
@@ -377,7 +386,7 @@ export default function DiscoverScreen() {
               <Ionicons name="arrow-forward" size={11} color={Colors.textSubtle} />
             </Text>
           </TouchableOpacity>
-        </View>
+        </ScrollView>
 
         <View style={styles.titleBlock}>
           <Text style={styles.generatorLabel}>{t(v.discoverKicker.en, v.discoverKicker.de)}</Text>
@@ -806,7 +815,8 @@ const styles = StyleSheet.create({
   chips: {
     flexDirection: 'row',
     gap: Spacing.sm,
-    paddingHorizontal: Spacing.screen,
+    paddingLeft: Spacing.screen,
+    paddingRight: Spacing.xl,
     paddingTop: Spacing.lg,
     alignItems: 'center',
   },
@@ -957,7 +967,12 @@ const styles = StyleSheet.create({
   sectionToggle: {
     flexDirection: 'row',
     gap: Spacing.sm,
-    paddingHorizontal: Spacing.screen,
+    // Rechts mehr Luft als links: Der letzte Knopf endet dadurch sichtbar VOR
+    // dem Rand, statt abgeschnitten zu wirken — das ist der Hinweis, dass die
+    // Reihe weitergeht. Ein Wischbereich ohne diesen Hinweis wird nicht
+    // gewischt, weil niemand ahnt, dass er es kann.
+    paddingLeft: Spacing.screen,
+    paddingRight: Spacing.xl,
     paddingTop: Spacing.lg,
   },
   toggleChip: {

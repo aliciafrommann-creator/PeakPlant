@@ -63,7 +63,20 @@ export function DyeField({ editionId, style, children }: DyeFieldProps) {
     <View style={[styles.feld, style, { backgroundColor: dye.ground }]}>
       <Image
         source={BILDER[dyeImageKey(editionId)]}
-        style={StyleSheet.absoluteFill}
+        // BREITE UND HÖHE STEHEN AUSDRÜCKLICH DA — und das ist der ganze Fix.
+        //
+        // Vorher stand hier nur `StyleSheet.absoluteFill`. Das setzt top,
+        // left, right und bottom auf 0, aber KEINE Größe. Bei einem `View`
+        // reicht das; ein `Image` bringt jedoch seine eigene Größe aus der
+        // Datei mit (200 × 140), und die gewinnt. Ergebnis auf dem Gerät:
+        // Die Färbung saß als Kasten oben links, der Rest der Fläche blieb
+        // flacher Grundton — mit einer harten Kante mittendrin.
+        //
+        // Alicia hat es am 19.08.2026 auf ihrem iPhone gesehen und richtig
+        // benannt: „die Hintergründe reichen immer nur ein wenig". Kein
+        // Geschmack, ein Fehler — und einer, den kein Test dieser Datei
+        // finden konnte, weil er erst beim Zeichnen entsteht.
+        style={styles.bild}
         resizeMode="cover"
         // Rein dekorativ: Die Bedeutung steht in der Schrift darauf, nicht in
         // der Färbung. Ein Screenreader soll sie überspringen.
@@ -77,4 +90,10 @@ export function DyeField({ editionId, style, children }: DyeFieldProps) {
 
 const styles = StyleSheet.create({
   feld: { overflow: 'hidden' },
+  bild: {
+    ...StyleSheet.absoluteFillObject,
+    // Ohne diese zwei Zeilen zeichnet sich das Bild in seiner Dateigröße.
+    width: '100%',
+    height: '100%',
+  },
 });

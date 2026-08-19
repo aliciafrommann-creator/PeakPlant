@@ -184,6 +184,28 @@ describe('Batik leise — die Färbung bleibt selten', () => {
     ).toEqual([]);
   });
 
+  it('das Bild füllt seine Fläche wirklich', () => {
+    // DER TEUERSTE FEHLER DIESES ENTWURFS, gefunden von Alicia auf ihrem
+    // iPhone am 19.08.2026: „die Hintergründe reichen immer nur ein wenig."
+    //
+    // `StyleSheet.absoluteFill` setzt top/left/right/bottom auf 0, aber KEINE
+    // Größe. Ein `View` füllt damit; ein `Image` bringt seine eigene Größe aus
+    // der Datei mit (200 × 140 Punkte) und gewinnt. Die Färbung saß als
+    // Kasten oben links, daneben flacher Grundton mit harter Kante.
+    //
+    // Kein Test konnte das sehen — Kontrast, Rezept und Bilddaten waren alle
+    // grün, weil der Fehler erst beim ZEICHNEN entsteht. Deshalb prüft dieser
+    // Test das Einzige, was aus der Quelle lesbar ist: dass die Größe
+    // ausdrücklich dasteht.
+    const quelle = fs.readFileSync(path.join(WURZEL, 'components/ui/DyeField.tsx'), 'utf8');
+    const bild = quelle.slice(quelle.indexOf('bild: {'));
+    const rumpf = bild.slice(0, bild.indexOf('},'));
+    expect(rumpf, "DyeField.bild ohne width — das Bild zeichnet sich dann in seiner Dateigröße").toMatch(
+      /width:\s*'100%'/,
+    );
+    expect(rumpf, 'DyeField.bild ohne height').toMatch(/height:\s*'100%'/);
+  });
+
   it('findet überhaupt Färbungen (sonst prüft der Test nichts)', () => {
     const mit = QUELLEN.filter((f) => fs.readFileSync(f, 'utf8').includes('<DyeField'));
     expect(mit.length, 'keine einzige gefärbte Fläche gefunden').toBeGreaterThanOrEqual(5);

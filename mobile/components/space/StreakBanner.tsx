@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { Spacing } from '../../constants/spacing';
-import { spaceTheme } from '../../lib/spaceTheme';
 import type { SpaceType } from '../../lib/types';
 
 interface SharedWeeksBannerProps {
@@ -12,7 +11,6 @@ interface SharedWeeksBannerProps {
   active: boolean;
 }
 
-const MAX_DOTS = 8;
 
 /**
  * Gesammelte Wochen — eine warme Tatsache, keine Serie.
@@ -28,21 +26,34 @@ const MAX_DOTS = 8;
  * (Entscheidung Alicia, 17.08.2026 — „freischalten ja, verlieren nein".)
  */
 export function StreakBanner({ spaceType, count, active }: SharedWeeksBannerProps) {
-  const theme = spaceTheme(spaceType);
 
   if (!active) {
     return (
       <View style={styles.container} accessibilityRole="summary">
         <Text style={styles.label}>WEEKS TOGETHER</Text>
         <Text style={styles.invite}>
-          {theme.emoji} keep a moment in any week and it joins your collection — skipped
-          weeks cost nothing.
+          keep a moment in any week and it joins your collection — skipped weeks
+          cost nothing.
         </Text>
       </View>
     );
   }
 
-  const dots = theme.emoji.repeat(Math.min(count, MAX_DOTS));
+  /**
+   * HIER STAND EINE REIHE AUS DEM SAMMELZEICHEN — und das war ein Fehler.
+   *
+   * Alicia auf dem Gerät, 19.08.2026: „die Chillis machen irgendwie keinen
+   * Sinn, es sind doch gar keine weeks collected." Sie hatte recht, und der
+   * Grund ist derselbe wie bei den Editions-Emojis am selben Tag: EIN Zeichen,
+   * ZWEI Bedeutungen. Die Peak-Reihe auf dem Startbildschirm setzt ein
+   * Sammelzeichen je festgehaltenem Moment. Dieser Banner setzte dasselbe
+   * Zeichen je WOCHE. Zwei verschiedene Tatsachen, gleich aussehend,
+   * zufällig oft dieselbe Zahl.
+   *
+   * Die Reihe gehört zum Peak. Eine Woche ist keine Sache, die man sammelt,
+   * sondern ein Zeitraum, in dem etwas passiert ist — sie bekommt eine Zahl
+   * und einen Satz, kein Abzeichen.
+   */
 
   return (
     <View
@@ -53,10 +64,6 @@ export function StreakBanner({ spaceType, count, active }: SharedWeeksBannerProp
       <Text style={styles.label}>WEEKS TOGETHER</Text>
       <Text style={styles.count}>
         {count} {count === 1 ? 'week' : 'weeks'} collected
-      </Text>
-      <Text style={styles.dots} numberOfLines={2}>
-        {dots}
-        {count > MAX_DOTS ? `  +${count - MAX_DOTS}` : ''}
       </Text>
       <Text style={styles.note}>
         {count === 1
