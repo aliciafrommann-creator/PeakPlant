@@ -358,6 +358,29 @@ notifications, automatic social sharing, generic AI chat surfaces.
 
 ## Running
 
+**Für Alicia der einzige Befehl:**
+
+```
+bash mobile/start.sh
+```
+
+Er holt den Stand von `main`, legt lokale Änderungen beiseite statt am Pull zu
+scheitern, legt die `.env` an, zieht Pakete nur nach wenn nötig, und sagt in
+vier Zeilen, was geladen ist — dann startet er Expo.
+
+**Warum es das gibt (19.08.2026):** Alicia hat an diesem Tag DREIMAL vergeblich
+versucht, den aktuellen Stand auf ihr Telefon zu bekommen. Jedes Mal lag es
+nicht am Code: falscher Branch, ein `git pull`, der wegen einer erzeugten Datei
+abbrach, und eine fehlende `.env`. Ihr Satz dazu: *„die letzten Male hat der
+Code nie funktioniert."* Sie hatte recht — die Ursache war jedes Mal die
+Anleitung. Wer ihr künftig einen selbstgebauten Befehl schickt, wiederholt den
+Fehler.
+
+Der erste Testlauf des Skripts hat übrigens sofort einen eigenen Fehler
+gefunden: Mit `git stash -u` räumte es sich SELBST weg, weil es noch nicht
+eingecheckt war. Jetzt ohne `-u` — unverfolgte Dateien sind fast immer die
+Arbeit eines Menschen, und ein Startskript fasst so etwas nicht an.
+
 ```
 npm start        # Expo dev server (needs a device/simulator — no web build)
 npx tsc --noEmit # types
