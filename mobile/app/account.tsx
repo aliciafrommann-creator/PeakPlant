@@ -13,14 +13,99 @@ import { router } from 'expo-router';
 import { Colors } from '../constants/colors';
 import { Spacing, Radii } from '../constants/spacing';
 import { isSupabaseConfigured } from '../lib/supabase/client';
-import { signOut, deleteAccount } from '../lib/supabase/auth';
+import { signOut, deleteAccount, getSessionUser } from '../lib/supabase/auth';
 import { useAppStore } from '../lib/store';
 import { useLanguage } from '../lib/hooks/useLanguage';
+import * as FileSystem from 'expo-file-system/legacy';
+import * as Sharing from 'expo-sharing';
+import { useSpaces } from '../lib/hooks/useSpaces';
+import {
+  memoryRepository,
+  noteRepository,
+  savedDateRepository,
+  feedbackRepository,
+  spaceRepository,
+} from '../lib/repositories';
+import { buildDataExport, exportDateiname, type SpaceExport } from '../lib/dataExport';
 
 export default function AccountScreen() {
   const reset = useAppStore((s) => s.reset);
   const [busy, setBusy] = useState(false);
+  const [exportiert, setExportiert] = useState(false);
+  const { spaces } = useSpaces();
   const { t } = useLanguage();
+
+  /**
+   * Auskunft und Mitnahme (Art. 15/20 DSGVO).
+   *
+   * Die App konnte ein Konto löschen, aber nicht sagen, was sie über einen
+   * Menschen weiß. Löschen ist ein Knopf, Auskunft ist Arbeit — und genau
+   * deshalb fehlte die unangenehmere Hälfte.
+   *
+   * Was hier NICHT passiert: kein Versand, kein Server, kein Ticket. Die
+   * Datei entsteht auf dem Gerät und geht in das Teilen-Blatt. Ein
+   * Auskunftsweg, der die Daten erst an einen Dienst schickt, wäre ein
+   * neuer Datenfluss, um einen Datenschutz-Anspruch zu erfüllen.
+   */
+  const handleExport = async () => {
+    setBusy(true);
+    try {
+      const teile: SpaceExport[] = [];
+      for (const space of spaces) {
+        const [momente, notizen, gemerkteIdeen, bewertungen, mitglieder] = await Promise.all([
+          memoryRepository.getAll(space.id),
+          noteRepository.getAll(space.id),
+          savedDateRepository.getAll(space.id),
+          feedbackRepository.getAll(space.id),
+          spaceRepository.getMembers(space.id),
+        ]);
+        teile.push({ space, mitglieder, momente, notizen, gemerkteIdeen, bewertungen });
+      }
+
+      // Ohne Supabase (lokaler Betrieb) gibt es kein Konto — die Auskunft
+      // gilt dann für die Daten auf diesem Gerät und sagt das über die
+      // fehlende Kennung auch aus.
+      const person = await getSessionUser();
+      const paket = buildDataExport({
+        userId: person?.id ?? 'nur auf diesem Gerät',
+        email: person?.email ?? null,
+        name: person?.name ?? null,
+        erstelltAm: new Date().toISOString(),
+        spaces: teile,
+      });
+
+      const datei = `${FileSystem.cacheDirectory}${exportDateiname(paket.erstelltAm)}`;
+      await FileSystem.writeAsStringAsync(datei, JSON.stringify(paket, null, 2));
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(datei, {
+          mimeType: 'application/json',
+          dialogTitle: t('Your data', 'Deine Daten'),
+        });
+        setExportiert(true);
+      } else {
+        // Ehrlich statt stumm: Ohne Teilen-Blatt liegt die Datei zwar da,
+        // aber der Mensch käme nicht an sie heran.
+        Alert.alert(
+          t('not possible here', 'hier nicht möglich'),
+          t(
+            'this device cannot share files. write to the address in the privacy policy and you will get the same package by mail.',
+            'Dieses Gerät kann keine Dateien teilen. Schreib an die Adresse in der Datenschutzerklärung, dann bekommst du dasselbe Paket per Mail.',
+          ),
+        );
+      }
+    } catch {
+      Alert.alert(
+        t('could not build the file', 'Datei konnte nicht erstellt werden'),
+        t(
+          'nothing was sent and nothing changed. try again, or write to the address in the privacy policy.',
+          'Es wurde nichts verschickt und nichts verändert. Versuch es nochmal, oder schreib an die Adresse in der Datenschutzerklärung.',
+        ),
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const handleSignOut = async () => {
     setBusy(true);
@@ -113,6 +198,31 @@ export default function AccountScreen() {
           ) : (
             <Text style={styles.arrow}>-{'>'}</Text>
           )}
+        </TouchableOpacity>
+
+        {/* Auskunft steht VOR der Gefahrenzone: Wer über das Löschen
+            nachdenkt, soll vorher mitnehmen können, was ihm gehört. */}
+        <TouchableOpacity
+          style={styles.row}
+          onPress={handleExport}
+          disabled={busy}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+          accessibilityLabel={t('Export your data', 'Deine Daten mitnehmen')}
+        >
+          <View style={styles.rowText}>
+            <Text style={styles.rowLabel}>
+              {exportiert
+                ? t('take your data again', 'Daten erneut mitnehmen')
+                : t('take your data with you', 'deine Daten mitnehmen')}
+            </Text>
+            <Text style={styles.rowDesc}>
+              {t(
+                'builds a file with everything this app holds under your account, on this device. photos are files and stay outside it — the package says so itself.',
+                'Baut auf diesem Gerät eine Datei mit allem, was die App unter deinem Konto führt. Fotos sind Bilddateien und bleiben außen vor — das Paket sagt es selbst.',
+              )}
+            </Text>
+          </View>
         </TouchableOpacity>
 
         <View style={styles.dangerZone}>
