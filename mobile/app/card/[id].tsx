@@ -15,6 +15,8 @@ import { Spacing, Radii } from '../../constants/spacing';
 import { findCard, isSampleCard, getEdition, SEED_EDITION } from '../../lib/seed';
 import { sampleNotice } from '../../lib/content/samples';
 import { editionInk } from '../../lib/editionInk';
+import { dyeFor } from '../../constants/dyes';
+import { DyeField } from '../../components/ui/DyeField';
 import { useLanguage } from '../../lib/hooks/useLanguage';
 import { usePrivacyOverlay } from '../../lib/hooks/usePrivacyOverlay';
 import { useBiometric } from '../../lib/hooks/useBiometric';
@@ -117,7 +119,10 @@ export default function CardDetailScreen() {
   // unter die 4,5:1 für kleine Schrift. Unterschieden werden die beiden
   // Etiketten jetzt über das Schriftgewicht (600 gegen 400) — der einzige
   // Hebel, der hier keine Lesbarkeit kostet.
-  const ink = editionInk(edition.color);
+  // Dieselbe Färbung wie auf dem Editions-Kopf — eine Karte gehört sichtbar
+  // zu ihrem Deck (`constants/dyes.ts`).
+  const kartenGrund = dyeFor(edition.id)?.ground ?? edition.color;
+  const ink = editionInk(kartenGrund);
   // Als Beispiel gelesen: entweder über den Beispiel-Block (Parameter) oder
   // weil es eine Karte einer noch nicht erschienenen Edition ist — die kann
   // niemand gescannt haben.
@@ -239,7 +244,7 @@ export default function CardDetailScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
         {/* Card visual — mirrors the physical card */}
-        <View style={[styles.cardVisual, { backgroundColor: edition.color }]}>
+        <DyeField editionId={edition.id} style={styles.cardVisual}>
           <View style={styles.cardInner}>
             <Text style={[styles.cardEdition, { color: ink }]}>
               PEAKPLANT — {edition.name.toUpperCase()}
@@ -255,7 +260,7 @@ export default function CardDetailScreen() {
               ]}
             />
           </View>
-        </View>
+        </DyeField>
 
         {/* Eine Beispielkarte sagt, dass sie eine ist. Sie sieht sonst genau
             aus wie eine, die jemand mit einem gekauften Deck geöffnet hat —

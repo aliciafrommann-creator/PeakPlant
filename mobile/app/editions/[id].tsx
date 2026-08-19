@@ -23,6 +23,8 @@ import { PressableScale } from '../../components/ui/PressableScale';
 import { MemoryCard } from '../../components/memory/MemoryCard';
 import { ShopLink } from '../../components/edition/ShopLink';
 import { editionInk, EDITION_INK_DARK, EDITION_INK_LIGHT } from '../../lib/editionInk';
+import { dyeFor } from '../../constants/dyes';
+import { DyeField } from '../../components/ui/DyeField';
 import { voice } from '../../lib/voice';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import { EmptyState } from '../../components/ui/EmptyState';
@@ -90,7 +92,15 @@ export default function EditionScreen() {
   // (0,62 / 0,5) blieb auf elf bzw. auf allen zwölf Editionsfarben unter den
   // 4,5:1, die kleine Schrift braucht. Hierarchie kommt hier aus Größe,
   // Gewicht und Sperrung.
-  const fg = editionInk(edition.color);
+  // Der Kopf trägt jetzt den GRUND der Färbung statt der flachen
+  // Editionsfarbe (Entscheidung Alicia, 19.08.2026 — `constants/dyes.ts`).
+  // Die Tinte wird weiter gerechnet und nicht angenommen: Der Grund IST zwar
+  // per Wächter dunkel genug für Papierschrift, aber diese Zeile ist die
+  // einzige Stelle, an der das gilt — und sie soll auch dann stimmen, wenn
+  // jemand die Färbung ändert.
+  const dye = dyeFor(edition.id);
+  const flaeche = dye?.ground ?? edition.color;
+  const fg = editionInk(flaeche);
   const sample = sampleCardFor(edition.id);
   const btnBg = fg;
   const btnText = fg === EDITION_INK_DARK ? EDITION_INK_LIGHT : EDITION_INK_DARK;
@@ -131,7 +141,7 @@ export default function EditionScreen() {
         }
         ListHeaderComponent={
           <>
-            <View style={[styles.header, { backgroundColor: edition.color }]}>
+            <DyeField editionId={edition.id} style={styles.header}>
             <Text style={styles.symbol}>{edition.symbol}</Text>
             <Text style={[styles.editionLabel, { color: fg }]}>{edition.subtitle.toUpperCase()}</Text>
             <Text style={[styles.title, { color: fg }]}>{edition.name.toLowerCase()}</Text>
@@ -159,7 +169,7 @@ export default function EditionScreen() {
             {editionMemories.length > 0 && (
               <Text style={[styles.diaryLabel, { color: fg }]}>{t('YOUR DIARY', 'EUER TAGEBUCH')}</Text>
             )}
-            </View>
+            </DyeField>
 
             {/* Die Beispielkarte. Vorher zeigte diese Seite zwölf nummerierte
                 Umrisse und keinen einzigen Satz davon, was auf einer Karte
@@ -326,7 +336,11 @@ const styles = StyleSheet.create({
   back: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
   list: { paddingBottom: Spacing.xl },
   header: {
-    backgroundColor: Colors.backgroundDark,
+    // Hier steht bewusst KEINE eigene Hintergrundfarbe. Der Grundton kommt
+    // aus `DyeField` und darf nicht überschrieben werden: Ein `backgroundDark`
+    // an dieser Stelle hat die gerechnete Tinte für zehn von zwölf Editionen
+    // auf 1,02:1 gedrückt, solange das Bild lud. `lib/dyeUse.test.ts` hält das
+    // jetzt fest.
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.xl,
@@ -339,7 +353,7 @@ const styles = StyleSheet.create({
   // täuscht beim Lesen eine Entscheidung vor und liest sich beim Prüfen wie
   // ein Fehler. Genau das ist beim ersten Durchgang passiert.
   editionLabel: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2 },
-  title: { ...Typography.editorial },
+  title: { ...Typography.stack },
   description: {
     fontSize: 14,
     fontWeight: '300',

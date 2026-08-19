@@ -11,6 +11,7 @@ import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Shadows, Layout } from '../../constants/spacing';
 import { PressableScale } from '../../components/ui/PressableScale';
+import { DyeField, dyeOf } from '../../components/ui/DyeField';
 import { Typography } from '../../constants/typography';
 import { SEED_EDITIONS } from '../../lib/seed';
 import { cardRepository } from '../../lib/repositories';
@@ -104,13 +105,15 @@ export default function EditionsScreen() {
     const done = progress[item.id] ?? 0;
     return (
       <TouchableOpacity
-        style={[styles.card, { borderLeftWidth: 3, borderLeftColor: item.color }]}
+        style={styles.card}
         onPress={() => void handleEditionPress(item)}
         activeOpacity={0.85}
         accessibilityRole="button"
         accessibilityLabel={`${item.name}, ${t('open edition', 'Edition öffnen')}`}
       >
-        <Text style={styles.symbol}>{item.symbol}</Text>
+        <DyeField editionId={item.id} style={styles.band}>
+          <Text style={styles.symbol}>{dyeOf(item.id).emoji}</Text>
+        </DyeField>
         <View style={styles.cardBody}>
           <Text style={styles.editionLabel}>{item.subtitle.toUpperCase()}</Text>
           <Text style={styles.name}>{item.name.toLowerCase()}</Text>
@@ -297,7 +300,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   kicker: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
-  title: { ...Typography.editorial },
+  title: { ...Typography.stack },
   lead: {
     fontSize: 14,
     fontWeight: '300',
@@ -325,13 +328,23 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.screen,
     marginBottom: Spacing.sm,
     padding: Spacing.lg,
+    alignItems: 'center',
     backgroundColor: Colors.backgroundWarm,
     borderWidth: 1,
     borderColor: Colors.border,
     borderRadius: Radii.md,
     ...Shadows.subtle,
   },
-  symbol: { fontSize: 28 },
+  /** Das Kopfband trägt die Färbung der Edition — die Sammlung wird dadurch
+   *  auf einen Blick unterscheidbar, ohne dass eine Karte zum Plakat wird. */
+  band: {
+    width: 60,
+    height: 60,
+    borderRadius: Radii.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  symbol: { fontSize: 26 },
   cardBody: { flex: 1, gap: 3 },
   editionLabel: { fontSize: 11, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
   name: { fontSize: 20, fontWeight: '300', color: Colors.text, letterSpacing: -0.3 },

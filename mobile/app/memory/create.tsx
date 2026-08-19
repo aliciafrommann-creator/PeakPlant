@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Colors, Accents, AccentInks, Sections, SectionInks } from '../../constants/colors';
+import { Colors, Accents, AccentInks, SectionInks } from '../../constants/colors';
 import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { useMemories } from '../../lib/hooks/useMemories';
@@ -30,8 +30,9 @@ import { persistPickedPhoto } from '../../lib/photoStorage';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { FadeInImage } from '../../components/ui/FadeInImage';
 import { findCard } from '../../lib/seed';
+import { DyeField, dyeOf } from '../../components/ui/DyeField';
+import { editionInk } from '../../lib/editionInk';
 
-const MOMENT = Sections.together; // warm apricot — capturing "our" moment
 // Die Schrift-/Vordergrund-Fassung derselben Farbe. `MOMENT` als Symbol- oder
 // Randfarbe erreichte auf `Colors.surface` 2,65:1 und auf `Accents.cream`
 // 2,14:1 — beides unter den 3:1, die WCAG 1.4.11 für ein bedeutungstragendes
@@ -101,6 +102,9 @@ export default function CreateMemoryScreen() {
   // etwas festhält, soll sehen, worum es ging.
   const angezeigteKarte = findCard(typeof cardId === 'string' ? cardId : undefined);
   const card = angezeigteKarte;
+  // Der Knopf trägt die Färbung der Karte, zu der der Moment gehört — oder die
+  // des Hauses, wenn es ein freier Moment ist. Die Tinte wird gerechnet.
+  const knopfTinte = editionInk(dyeOf(card?.edition).ground);
 
   const cardTitle = card?.content ? l(card.content.title) : card?.prompt ?? '';
   const notePlaceholder = t(
@@ -397,14 +401,17 @@ export default function CreateMemoryScreen() {
           )}
 
           <PressableScale
-            style={[styles.keepButton, ((!note.trim() && !photoUri) || saving) && styles.keepButtonDisabled]}
+            containerStyle={((!note.trim() && !photoUri) || saving) ? styles.keepButtonDisabled : undefined}
+            style={styles.keepPress}
             onPress={() => void handleSave()}
             disabled={(!note.trim() && !photoUri) || saving}
             accessibilityLabel={t('Preserve this moment', 'Diesen Moment festhalten')}
           >
-            <Text style={styles.keepButtonText}>
-              {saving ? t('KEEPING…', 'FESTHALTEN…') : t('PRESERVE THIS MOMENT', 'MOMENT FESTHALTEN')}
-            </Text>
+            <DyeField editionId={card?.edition} style={styles.keepButton}>
+              <Text style={[styles.keepButtonText, { color: knopfTinte }]}>
+                {saving ? t('KEEPING…', 'FESTHALTEN…') : t('PRESERVE THIS MOMENT', 'MOMENT FESTHALTEN')}
+              </Text>
+            </DyeField>
           </PressableScale>
 
           <Text style={styles.privateNote}>
@@ -426,13 +433,14 @@ export default function CreateMemoryScreen() {
 }
 
 const styles = StyleSheet.create({
+  /** Die laute Handlung — und die einzige gefärbte Fläche dieses Bildschirms.
+   *  Farbe und Schrift kommen beim Rendern (`DyeField` + `editionInk`). */
+  keepPress: { marginTop: Spacing.lg },
   keepButton: {
     height: 56,
     borderRadius: Radii.pill,
-    backgroundColor: Colors.text,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: Spacing.lg,
   },
   keepButtonDisabled: { opacity: 0.35 },
   keepButtonText: {

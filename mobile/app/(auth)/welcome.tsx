@@ -8,11 +8,15 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
+import { HOUSE_DYE } from '../../constants/dyes';
+import { DyeField } from '../../components/ui/DyeField';
+import { editionInk } from '../../lib/editionInk';
 import { Spacing, Radii } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
 import { Logo } from '../../components/ui/Logo';
 
 export default function WelcomeScreen() {
+  const knopfTinte = editionInk(HOUSE_DYE.ground);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.inner}>
@@ -30,11 +34,13 @@ export default function WelcomeScreen() {
 
         <View style={styles.bottom}>
           <TouchableOpacity
-            style={styles.beginButton}
+            style={styles.beginPress}
             onPress={() => router.push('/(auth)/language')}
             activeOpacity={0.8}
           >
-            <Text style={styles.beginText}>BEGIN</Text>
+            <DyeField style={styles.beginButton}>
+              <Text style={[styles.beginText, { color: knopfTinte }]}>BEGIN</Text>
+            </DyeField>
           </TouchableOpacity>
           {/* Wer schon ein Konto hat, soll nicht durch den Einstieg laufen.
               Seit dieser Bildschirm wieder der erste ist, ist das der Weg für
@@ -110,13 +116,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: Spacing.md,
   },
+  // Der Knopf war vorher inhaltsbreit. Mit der Färbung darauf ist er über die
+  // volle Breite: Eine gefärbte Fläche in Wortbreite sieht aus wie ein
+  // Textmarker, nicht wie die eine Handlung dieses Bildschirms (K3). Das war
+  // beim ersten Durchgang eine stille Änderung — sie steht jetzt hier.
+  beginPress: { alignSelf: 'stretch' },
+  /** Der erste Knopf der App — und die erste Färbung, die jemand sieht. */
   beginButton: {
-    height: 52,
-    paddingHorizontal: Spacing.xl,
-    backgroundColor: Colors.text,
-    justifyContent: 'center',
-    alignItems: 'center',
+    height: 56,
     borderRadius: Radii.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   signInLink: {
     minHeight: 44,
@@ -130,10 +140,12 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   beginText: {
+    // KEINE Farbe hier: Sie wird beim Rendern gerechnet (`knopfTinte`). Ein
+    // statischer Wert, der nie zum Tragen kommt, täuscht beim Lesen eine
+    // Entscheidung vor — und beim nächsten Umbau glaubt ihn jemand.
     fontSize: 11,
     fontWeight: '500',
     letterSpacing: 1.2,
-    color: Colors.white,
   },
   hint: {
     fontSize: 11,

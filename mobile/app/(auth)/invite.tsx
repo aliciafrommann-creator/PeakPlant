@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
     color: Colors.textSubtle,
   },
   title: {
-    ...Typography.editorial,
+    ...Typography.stack,
   },
   subtitle: {
     fontSize: 14,

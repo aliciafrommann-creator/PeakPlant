@@ -172,6 +172,60 @@ Stellen, die eine einbanden, überschrieben sie direkt daneben. Die Datei
 steuerte nichts. Dazu: 67 % der Schrift ≤ 13 pt, gleichzeitig 15 Bildschirme mit
 26–36 pt Titeln — zweigipflig, nicht zu groß.
 
+## K7b — Batik: die Färbung bleibt selten
+
+Alicias Richtung vom 19.08.2026, gewählt unter fünf Entwürfen. Der gewählte
+hieß „Batik leise", und der Name ist die Regel.
+
+- **Eine gefärbte Fläche pro Bildschirm.** Papier bleibt der Grund. Bei vierzig
+  Momenten erschlägt einen sonst eine Farbwand. (`lib/dyeUse.test.ts` deckelt
+  bei EINER je Datei. Der Deckel stand zuerst bei zwei — und übersah dadurch,
+  dass der Startbildschirm zwei gefärbte Flächen hatte, weil die zweite in
+  einer anderen Datei lag. Der Test zählt Dateien, nicht Bildschirme; die
+  Lücke bleibt bestehen, sie ist nur kleiner geworden.)
+- **Nie eine Färbung in einer Wiederholung.** Zehn Challenge-Karten mit
+  demselben Kopfband sind die Farbwand, gegen die diese Regel argumentiert.
+  Eine Liste, deren Einträge je eine EIGENE Welt haben (die Sammlung), ist der
+  erlaubte Fall — dort ist die Färbung die Information.
+- **Die Tinte auf einer Färbung wird IMMER gerechnet** (`editionInk`), nie
+  gesetzt. Die Fläche ist je Edition eine andere; eine feste Farbe stimmt
+  höchstens für eine der dreizehn Welten. Auch das hält der Test.
+- **Unter dem Bild liegt immer der Grundton als Füllung** — und er steht in
+  `DyeField` bewusst HINTER dem Style des Aufrufers, damit ein eigenes
+  `backgroundColor` ihn nicht still ausschalten kann. Genau das war auf dem
+  Editions-Kopf passiert: darunter lag `backgroundDark`, und solange das Bild
+  lud, stand die gerechnete Tinte für zehn von zwölf Editionen bei 1,02:1 —
+  unsichtbar. Der Test schlägt jetzt auf ein `backgroundColor` in einem an
+  `DyeField` übergebenen Style an.
+- **Das Rezept steht in `constants/dyes.ts`, das Bild entsteht daraus**
+  (`scripts/renderDyes.mjs`). Wer ein Rezept ändert, druckt neu — sonst zeigt
+  die App eine Färbung, die es im Code nicht mehr gibt. Jedes PNG trägt dazu
+  den Fingerabdruck seines Rezepts in einem `tEXt`-Stück, und
+  `lib/dyes.test.ts` rechnet ihn nach. Bis zum 19.08.2026 stand dieser Satz
+  hier, ohne dass ihn etwas hielt: ein Prüfer drehte einen Grundton auf
+  Knallgrün, ohne neu zu drucken — alle Tests blieben grün.
+- **Die Tinte muss auf dem BILD tragen, nicht nur auf dem Grundton.** Eine
+  Färbung ist keine Fläche: An den hellsten Stellen mischen sich die Lichter in
+  den Grund. Beim ersten Durchgang fielen dadurch zwölf von dreizehn Welten
+  unter 4,5:1 — bis auf 1,55:1 —, während ihre Grundtöne bei 5 bis 13:1 lagen.
+  Der Drucker klemmt jede Stelle jetzt selbst in den lesbaren Bereich
+  (`inDenBereich`), und `lib/dyeImages.test.ts` liest die ausgelieferten PNG
+  Punkt für Punkt nach.
+- **Der gestapelte Titel** (`Typography.stack`) höchstens EINMAL je Bildschirm
+  und nie unter 24 pt. Eine Serife wird klein dünn, und dünn auf einer Färbung
+  ist genau die Kombination, die K7 rausgeräumt hat. Die Untergrenze hält
+  `lib/klarheit.test.ts` — sie wurde beim ERSTEN Anwenden gebrochen (16 pt auf
+  der Partner-Notiz des Startbildschirms).
+- **Ein Zeichen je Edition.** Das Emoji im Rezept ist dasselbe wie `symbol` im
+  Seed. In der ersten Fassung waren es zwei: Wer in der Sammlung auf 🌹 tippte,
+  landete auf einer Seite mit 🌻 (`lib/dyes.test.ts`).
+
+*Befund:* Fünf Entwürfe waren nötig, bis die Richtung stand — und zwei
+Korrekturen von Alicia unterwegs: „was soll denn das braun" (meine
+Foto-Platzhalter färbten jede Richtung ein) und „ein bisschen extrem batik
+dunkel" (ich hatte die Gründe fast schwarz gemacht, damit helle Schrift
+trägt; ihre Vorbilder machen es umgekehrt — helle Färbung, dunkle Schrift).
+
 ## K8 — Die App muss den Zustand bemerken, in dem sie ist
 
 Ein Space mit einer Person sah exakt aus wie einer mit zweien, während überall
@@ -195,7 +249,8 @@ Ein Teil dieser Regeln steht als Wächtertest und scheitert in der CI:
 `lib/palette.test.ts` (Akzente nie als kleine Schrift; jede andere Schriftfarbe
 muss auf dem Papierton bestehen oder eine erklärte Dunkel-Tinte sein; Ausnahmen
 brauchen `// kontrast-ok: <Grund>`),
-`lib/editionInk.test.ts` (die zwölf Editionsfarben). Was ein Test **nicht** kann, ist die eigentliche Frage von
+`lib/editionInk.test.ts` (die zwölf Editionsfarben), `lib/dyes.test.ts`
+(Färberezepte und ihre gedruckten Bilder) und `lib/dyeUse.test.ts` (K7b). Was ein Test **nicht** kann, ist die eigentliche Frage von
 K1, K2 und K6 beantworten — ob ein Bildschirm ein Hauptobjekt hat und ob ein
 Reiter berechtigt ist. Das bleibt Urteil, und dafür ist dieses Dokument da.
 

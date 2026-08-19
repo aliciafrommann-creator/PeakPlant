@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     marginBottom: -Spacing.sm,
   },
   heading: {
-    ...Typography.editorial,
+    ...Typography.stack,
     letterSpacing: -0.5,
   },
   sub: {
