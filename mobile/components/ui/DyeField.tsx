@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { View, ImageBackground, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { DYES, HOUSE_DYE, type Dye } from '../../constants/dyes';
 
 /**
@@ -61,22 +61,27 @@ export function DyeField({ editionId, style, children }: DyeFieldProps) {
     // genau das war auf dem Editions-Kopf passiert: darunter lag `backgroundDark`,
     // und solange das Bild lud, stand die gerechnete Tinte bei 1,02:1.
     <View style={[styles.feld, style, { backgroundColor: dye.ground }]}>
-      <Image
+      <ImageBackground
         source={BILDER[dyeImageKey(editionId)]}
-        // BREITE UND HÖHE STEHEN AUSDRÜCKLICH DA — und das ist der ganze Fix.
+        // ZWEITE FASSUNG DES FIX — die erste war unvollständig.
         //
-        // Vorher stand hier nur `StyleSheet.absoluteFill`. Das setzt top,
-        // left, right und bottom auf 0, aber KEINE Größe. Bei einem `View`
-        // reicht das; ein `Image` bringt jedoch seine eigene Größe aus der
-        // Datei mit (200 × 140), und die gewinnt. Ergebnis auf dem Gerät:
-        // Die Färbung saß als Kasten oben links, der Rest der Fläche blieb
-        // flacher Grundton — mit einer harten Kante mittendrin.
+        // Anlauf 1 war `StyleSheet.absoluteFill` allein: Das setzt Kanten,
+        // aber keine Größe, und ein `Image` bringt seine eigene aus der Datei
+        // mit (200 × 140). Die Färbung saß als Kasten oben links.
         //
-        // Alicia hat es am 19.08.2026 auf ihrem iPhone gesehen und richtig
-        // benannt: „die Hintergründe reichen immer nur ein wenig". Kein
-        // Geschmack, ein Fehler — und einer, den kein Test dieser Datei
-        // finden konnte, weil er erst beim Zeichnen entsteht.
-        style={styles.bild}
+        // Anlauf 2 setzte `width: '100%'` dazu. Besser, aber immer noch
+        // falsch: Eine Prozentbreite misst sich am INHALTSBEREICH des Eltern-
+        // elements (ohne Polsterung), `left/right: 0` dagegen am RAHMEN. Jedes
+        // Band mit `paddingHorizontal` behielt dadurch rechts einen flachen
+        // Streifen — genau so breit wie zweimal seine Polsterung. Alicia sah
+        // es beim zweiten Durchgang wieder: „immer noch die Banner, in den
+        // Farben leider nicht alle covered".
+        //
+        // `ImageBackground` ist für genau diesen Fall gebaut: Es legt das Bild
+        // hinter den Inhalt und sizt es am Rahmen, unabhängig von Polsterung.
+        // Kein Prozentwert, keine zwei Bezugssysteme, nichts zu verrechnen.
+        style={StyleSheet.absoluteFill}
+        imageStyle={styles.bild}
         resizeMode="cover"
         // Rein dekorativ: Die Bedeutung steht in der Schrift darauf, nicht in
         // der Färbung. Ein Screenreader soll sie überspringen.
@@ -90,10 +95,14 @@ export function DyeField({ editionId, style, children }: DyeFieldProps) {
 
 const styles = StyleSheet.create({
   feld: { overflow: 'hidden' },
+  /**
+   * Der Zuschnitt des Bildes INNERHALB der Fläche. Die Größe kommt von
+   * `ImageBackground` selbst — hier steht nur noch, dass die Ecken mitgehen,
+   * damit an einem runden Knopf keine eckige Färbung übersteht.
+   */
   bild: {
-    ...StyleSheet.absoluteFillObject,
-    // Ohne diese zwei Zeilen zeichnet sich das Bild in seiner Dateigröße.
     width: '100%',
     height: '100%',
+    borderRadius: undefined,
   },
 });

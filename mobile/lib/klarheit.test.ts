@@ -259,3 +259,33 @@ describe('K4 — kein technischer Fehlertext auf einem Bildschirm', () => {
     ).toEqual([]);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Ein Weg, der etwas verspricht, muss es auch anbieten.
+// ---------------------------------------------------------------------------
+describe('Wege halten, was ihr Etikett sagt', () => {
+  it('„Sprache & Einstellungen" enthält wirklich einen Sprachschalter', () => {
+    // Alicia, 19.08.2026: „hier switcht man zu deutsch und es bleibt english."
+    // Der Eintrag unter „Du" hieß „Sprache & Einstellungen"; der Bildschirm
+    // dahinter bot nur Personalisierung. Umstellen ging NUR beim allerersten
+    // Start und danach nie wieder. Eine Einstellung, die man einmal trifft und
+    // nie korrigieren kann, ist keine Einstellung, sondern eine Falle.
+    const quelle = read(join(MOBILE, 'app/settings/preferences.tsx'));
+    expect(quelle, 'Sprachschalter fehlt auf dem Einstellungs-Bildschirm').toMatch(
+      /setLanguage\(/,
+    );
+    expect(quelle, 'beide Sprachen müssen wählbar sein').toMatch(/'de'/);
+    expect(quelle).toMatch(/'en'/);
+  });
+
+  it('der Weg dorthin und der Titel dort sagen dasselbe', () => {
+    // Der Link hieß „Sprache & Einstellungen", die Seite „Personalisierung".
+    // Wer etwas sucht, glaubt dann, er sei falsch abgebogen.
+    const link = read(join(MOBILE, 'app/(tabs)/profile.tsx'));
+    const seite = read(join(MOBILE, 'app/settings/preferences.tsx'));
+    expect(link).toMatch(/language & preferences/);
+    expect(seite, 'Titel der Seite passt nicht zum Weg dorthin').toMatch(
+      /language & preferences/,
+    );
+  });
+});

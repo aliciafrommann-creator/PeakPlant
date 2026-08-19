@@ -185,25 +185,29 @@ describe('Batik leise — die Färbung bleibt selten', () => {
   });
 
   it('das Bild füllt seine Fläche wirklich', () => {
-    // DER TEUERSTE FEHLER DIESES ENTWURFS, gefunden von Alicia auf ihrem
-    // iPhone am 19.08.2026: „die Hintergründe reichen immer nur ein wenig."
+    // DER FEHLER, DER ZWEI ANLÄUFE GEBRAUCHT HAT. Alicia auf ihrem iPhone:
+    // erst „die Hintergründe reichen immer nur ein wenig", dann — nach dem
+    // ersten Fix — „immer noch die Banner, in den Farben leider nicht alle
+    // covered".
     //
-    // `StyleSheet.absoluteFill` setzt top/left/right/bottom auf 0, aber KEINE
-    // Größe. Ein `View` füllt damit; ein `Image` bringt seine eigene Größe aus
-    // der Datei mit (200 × 140 Punkte) und gewinnt. Die Färbung saß als
-    // Kasten oben links, daneben flacher Grundton mit harter Kante.
+    // Anlauf 1: `StyleSheet.absoluteFill` allein. Setzt Kanten, keine Größe;
+    //           ein `Image` nimmt seine Dateigröße (200 × 140).
+    // Anlauf 2: `width: '100%'` dazu. Eine Prozentbreite misst sich am
+    //           INHALTSBEREICH, `left/right: 0` am RAHMEN — jedes Band mit
+    //           Polsterung behielt rechts einen flachen Streifen.
+    // Anlauf 3: `ImageBackground`. Dafür gebaut, kein Prozentwert nötig.
     //
-    // Kein Test konnte das sehen — Kontrast, Rezept und Bilddaten waren alle
-    // grün, weil der Fehler erst beim ZEICHNEN entsteht. Deshalb prüft dieser
-    // Test das Einzige, was aus der Quelle lesbar ist: dass die Größe
-    // ausdrücklich dasteht.
+    // Der Test hält deshalb das WERKZEUG fest, nicht die Zahlen: Wer zurück
+    // auf ein nacktes `<Image>` mit absoluteFill geht, holt sich beide alten
+    // Fehler zurück.
     const quelle = fs.readFileSync(path.join(WURZEL, 'components/ui/DyeField.tsx'), 'utf8');
-    const bild = quelle.slice(quelle.indexOf('bild: {'));
-    const rumpf = bild.slice(0, bild.indexOf('},'));
-    expect(rumpf, "DyeField.bild ohne width — das Bild zeichnet sich dann in seiner Dateigröße").toMatch(
-      /width:\s*'100%'/,
+    expect(quelle, 'DyeField zeichnet die Färbung nicht mehr mit ImageBackground').toMatch(
+      /<ImageBackground/,
     );
-    expect(rumpf, 'DyeField.bild ohne height').toMatch(/height:\s*'100%'/);
+    expect(
+      quelle.includes('<Image\n') || /<Image\s/.test(quelle),
+      'nacktes <Image> zurück in DyeField — es nimmt seine Dateigröße',
+    ).toBe(false);
   });
 
   it('findet überhaupt Färbungen (sonst prüft der Test nichts)', () => {
