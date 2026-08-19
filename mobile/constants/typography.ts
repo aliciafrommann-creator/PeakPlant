@@ -55,6 +55,19 @@ export const Typography = {
    * — kein Schrift-Asset, keine zusätzliche Abhängigkeit. Die Richtung trägt
    * schon so; ein eigener Schnitt (Bodoni Moda o. ä.) wäre eine eigene
    * Entscheidung samt Asset und Ladeweg.
+   *
+   * `includeFontPadding: false` ist ANDROID-PFLICHT, sobald der Zeilenabstand
+   * unter der Schriftgröße liegt. Android legt um jede Textzeile ein Polster
+   * für Ober- und Unterlängen; ist die Zeile niedriger als dieses Polster,
+   * beschneidet Android Auf- und Abstriche, statt sie überlappen zu lassen.
+   * Bei 34 pt Georgia auf 31 pt Zeile trifft das genau die Buchstaben, die
+   * den Stapel ausmachen — das „g" in „grow", das „p" in „peakplant".
+   *
+   * EHRLICH: Das ist eine Vorsorge, keine Messung. Ich habe die App auf
+   * keinem Android-Gerät gesehen; dieser Wert ist die dokumentierte Abhilfe
+   * für ein dokumentiertes Verhalten. Wer sie zum ersten Mal auf einem Gerät
+   * sieht, prüft `app/(auth)/language.tsx` („how do you want\nthe app to
+   * speak?") — dort steht der längste umbrechende Stapel.
    */
   stack: {
     fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'Georgia' }),
@@ -63,6 +76,7 @@ export const Typography = {
     letterSpacing: -1,
     color: Colors.text,
     lineHeight: 31,
+    includeFontPadding: false,
   },
   /** Das Größte der App: die eine Aussage auf Willkommen/Onboarding. War 40/44. */
   display: {

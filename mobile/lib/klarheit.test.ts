@@ -124,6 +124,44 @@ describe('K7 — Schrift und Kontrast', () => {
     ).toEqual([]);
   });
 
+  it('enge Zeilen tragen auf Android kein Polster', () => {
+    // Android legt um jede Textzeile ein Polster für Ober- und Unterlängen.
+    // Ist die Zeile NIEDRIGER als die Schrift hoch ist, beschneidet Android
+    // Auf- und Abstriche, statt sie überlappen zu lassen — genau das, was der
+    // gestapelte Titel absichtlich tut. `includeFontPadding: false` schaltet
+    // das Polster ab.
+    //
+    // EHRLICH: Diese Regel ist Vorsorge nach dokumentiertem RN-Verhalten,
+    // nicht nach einer Messung auf einem Gerät. Sie kostet nichts und
+    // verhindert eine Klasse von Fehlern, die man erst auf Android sieht.
+    const treffer: string[] = [];
+    for (const f of [...SOURCES, join(MOBILE, 'constants/typography.ts')]) {
+      const quelle = read(f);
+      const re = /^ {2}([A-Za-z0-9_]+):\s*\{/gm;
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(quelle))) {
+        let tiefe = 0;
+        let i = m.index + m[0].length - 1;
+        const start = i + 1;
+        for (; i < quelle.length; i++) {
+          if (quelle[i] === '{') tiefe++;
+          else if (quelle[i] === '}' && --tiefe === 0) break;
+        }
+        const rumpf = quelle.slice(start, i);
+        const gr = rumpf.match(/fontSize:\s*(\d+(?:\.\d+)?)/);
+        const zh = rumpf.match(/lineHeight:\s*(\d+(?:\.\d+)?)/);
+        if (!gr || !zh) continue;
+        if (Number(zh[1]) >= Number(gr[1])) continue;
+        if (/includeFontPadding:\s*false/.test(rumpf)) continue;
+        treffer.push(`${rel(f)} → ${m[1]}: ${gr[1]}pt auf ${zh[1]}pt`);
+      }
+    }
+    expect(
+      treffer,
+      `Zeile enger als die Schrift, ohne includeFontPadding: false — Android schneidet dort Unterlängen ab: ${treffer.join(' · ')}`,
+    ).toEqual([]);
+  });
+
   /**
    * KONTRAST BLEIBT HIER UNGEPRÜFT — und das ist eine Entscheidung, keine Lücke.
    *
