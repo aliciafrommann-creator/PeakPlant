@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useFocusEffect } from 'expo-router';
 import { Colors } from '../../constants/colors';
 import { Spacing, Radii, Shadows, Layout } from '../../constants/spacing';
+import { Ionicons } from '@expo/vector-icons';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { DyeField, dyeOf } from '../../components/ui/DyeField';
 import { Typography } from '../../constants/typography';
@@ -149,16 +150,25 @@ export default function EditionsScreen() {
                 <Text style={styles.kicker}>{t('COLLECTION', 'SAMMLUNG')}</Text>
                 <Text style={styles.title}>{t('your editions', 'deine Editionen')}</Text>
               </View>
-              <TouchableOpacity
-                style={styles.scanButton}
-                onPress={() => router.push('/(tabs)/scan')}
-                activeOpacity={0.85}
-                accessibilityRole="button"
-                accessibilityLabel={t('Scan a card', 'Karte scannen')}
-              >
-                <Text style={styles.scanButtonText}>{t('SCAN CARD', 'KARTE SCANNEN')}</Text>
-              </TouchableOpacity>
             </View>
+
+            {/* DER SCANNER IST DIE HAUPTHANDLUNG DIESES BILDSCHIRMS.
+                Er stand hier als kleine Pille oben rechts, gleich laut wie
+                eine Rückwärts-Beschriftung — dabei ist er die eine Bewegung,
+                auf der das ganze Produkt beruht: gedruckte Karte → Scan →
+                Tagebuch. Ohne ihn ist eine Edition ein Katalog.
+                (Alicia, 19.08.2026: „manche Wege sollten prominenter sein und
+                nicht random irgendwo als Button.") */}
+            <PressableScale
+              containerStyle={styles.scanSlot}
+              style={styles.scanButton}
+              onPress={() => router.push('/(tabs)/scan')}
+              scaleTo={0.98}
+              accessibilityLabel={t('Scan a card', 'Karte scannen')}
+            >
+              <Ionicons name="qr-code-outline" size={18} color={Colors.background} />
+              <Text style={styles.scanButtonText}>{t('SCAN A CARD', 'KARTE SCANNEN')}</Text>
+            </PressableScale>
             {progressFailed && (
               <TouchableOpacity
                 style={styles.retry}
@@ -294,27 +304,31 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   kicker: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
-  title: { ...Typography.stack },
+  title: { ...Typography.editorial },
   lead: {
     fontSize: 14,
     fontWeight: '300',
     color: Colors.textMuted,
     lineHeight: 21,
   },
+  scanSlot: { marginTop: Spacing.md },
   scanButton: {
-    height: Layout.tapMin,
-    paddingHorizontal: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.text,
+    height: Layout.cta,
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    backgroundColor: Colors.text,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: Radii.pill,
   },
   scanButtonText: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '500',
     letterSpacing: 1.2,
-    color: Colors.text,
+    // kontrast-ok: Papierfarbe sitzt hier NUR auf der dunklen Füllung des
+    // Scan-Knopfs (`scanButton`, backgroundColor: Colors.text) — 15,4:1.
+    // Auf dem hellen Grund käme sie nie zum Tragen.
+    color: Colors.background,
   },
   card: {
     flexDirection: 'row',

@@ -47,6 +47,7 @@ import {
 import type { LivePlace } from '../../lib/discovery/providers/interface';
 import { acknowledgeSelection, confirmSuccess } from '../../lib/haptics';
 import type { DateFeedback, PublicPlaceFeedback, PublicPlaceSpot, SavedDate } from '../../lib/types';
+import { ModeSwitch } from '../../components/ui/ModeSwitch';
 
 // Schrift-Fassung: blossom lag als Etikett bei 3,61:1 (Papier) bzw. 3,65:1
 // (backgroundCream).
@@ -676,6 +677,11 @@ export default function PlacesScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Derselbe Schalter wie auf der Ideen-Hälfte — damit man sieht, wo
+            man ist, und mit einem Tipp zurückkommt. Vorher führte hierher nur
+            ein Chip von drüben, und zurück ging es gar nicht sichtbar. */}
+        <ModeSwitch aktiv="orte" t={t} />
+
         <View style={styles.header}>
           <Text style={styles.kicker}>{t('LIVE PLACE DISCOVERY', 'LIVE-ORTE FINDEN')}</Text>
           <Text style={styles.title}>{t('find a real place', 'findet einen echten Ort')}</Text>
@@ -1517,7 +1523,7 @@ const styles = StyleSheet.create({
   sheetTitle: { fontSize: 24, fontWeight: '200', color: Colors.text, letterSpacing: -0.3 },
   sheetNote: { fontSize: 12, fontWeight: '300', color: Colors.textMuted, lineHeight: 18 },
   sheetStars: { flexDirection: 'row', gap: Spacing.md },
-  sheetStar: { fontSize: 34, color: Colors.border },
+  sheetStar: { fontSize: 28, color: Colors.border },
   // kontrast-ok: ein gefüllter Stern ist ein grafisches Objekt, kein Text —
   // dafür verlangt WCAG 1.4.11 drei zu eins, und `accent` steht bei 3,96:1.
   sheetStarOn: { color: Colors.accent },

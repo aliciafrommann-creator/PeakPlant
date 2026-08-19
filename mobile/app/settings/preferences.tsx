@@ -17,6 +17,7 @@ import { Typography } from '../../constants/typography';
 import { useAppStore } from '../../lib/store';
 import { useSpaces } from '../../lib/hooks/useSpaces';
 import { useLanguage } from '../../lib/hooks/useLanguage';
+import { acknowledgeSelection } from '../../lib/haptics';
 import { savedDateRepository } from '../../lib/repositories';
 import { summarizeLearning } from '../../lib/discovery/learning';
 import { momentById, type MomentCategory } from '../../lib/together';
@@ -46,7 +47,7 @@ export default function PreferencesScreen() {
   const personalizationResetAt = useAppStore((s) => s.personalizationResetAt);
   const resetLearning = useAppStore((s) => s.resetLearning);
   const { activeSpace } = useSpaces();
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
 
   const [saved, setSaved] = useState<SavedDate[]>([]);
   useFocusEffect(
@@ -128,10 +129,49 @@ export default function PreferencesScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <BackButton label={t('BACK', 'ZURÜCK')} />
-        <Text style={styles.title}>{t('personalization', 'Personalisierung')}</Text>
+        {/* Der Titel sagt jetzt, was der Bildschirm wirklich kann — vorher
+            hieß der Weg hierher „Sprache & Einstellungen" und die Seite
+            „Personalisierung". */}
+        <Text style={styles.title}>{t('language & preferences', 'Sprache & Einstellungen')}</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+        {/* DER SPRACHSCHALTER — er hat hier gefehlt, und das war ein
+            Versprechen ohne Deckung. Der Eintrag unter „Du" heißt „Sprache &
+            Einstellungen"; dieser Bildschirm bot aber nur Personalisierung
+            an. Umstellen ging NUR beim allerersten Start und danach nie
+            wieder — Alicia am 19.08.2026: „hier switcht man zu deutsch und es
+            bleibt english."
+
+            Eine Einstellung, die man einmal trifft und nie korrigieren kann,
+            ist keine Einstellung, sondern eine Falle. */}
+        <Text style={styles.sectionLabel}>{t('LANGUAGE', 'SPRACHE')}</Text>
+        <View style={styles.sprachen}>
+          {([
+            ['en', 'English'],
+            ['de', 'Deutsch'],
+          ] as const).map(([code, label]) => {
+            const an = language === code;
+            return (
+              <TouchableOpacity
+                key={code}
+                style={[styles.sprache, an && styles.spracheAn]}
+                onPress={() => {
+                  if (an) return;
+                  void acknowledgeSelection();
+                  setLanguage(code);
+                }}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={an ? `${label} — ${t('selected', 'ausgewählt')}` : label}
+              >
+                <Text style={[styles.spracheText, an && styles.spracheTextAn]}>{label}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        <Text style={styles.sectionLabel}>{t('PERSONALIZATION', 'PERSONALISIERUNG')}</Text>
         <Text style={styles.lead}>
           {t(
             "here is everything that shapes your Discover picks. nothing is inferred behind the scenes — only what you've explicitly told us is used.",
@@ -272,6 +312,20 @@ export default function PreferencesScreen() {
 }
 
 const styles = StyleSheet.create({
+  sprachen: { flexDirection: 'row', gap: Spacing.sm, marginBottom: Spacing.lg },
+  sprache: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: Radii.pill,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    alignItems: 'center',
+  },
+  spracheAn: { backgroundColor: Colors.text, borderColor: Colors.text },
+  spracheText: { fontSize: 14, fontWeight: '400', color: Colors.text },
+  // kontrast-ok: Papierfarbe sitzt nur auf der dunklen Füllung `spracheAn`
+  // (Colors.text) — 15,4:1. Auf hellem Grund kommt sie nie vor.
+  spracheTextAn: { color: Colors.background },
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
     paddingHorizontal: Spacing.screen,
@@ -282,7 +336,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   back: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
-  title: { ...Typography.stack },
+  title: { ...Typography.editorial },
   scroll: { padding: Spacing.screen, gap: Spacing.lg, paddingBottom: Spacing.xxxl },
   lead: {
     fontSize: 14,

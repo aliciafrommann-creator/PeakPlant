@@ -56,6 +56,10 @@ const BEKANNT: Record<string, string> = {
 
   // Fünf abgelöste Oberflächen-Bausteine. Es gibt jeweils etwas Neueres, das
   // dasselbe tut und live ist.
+  // Abgelöst am 19.08.2026: „Moment festhalten" sitzt jetzt als runder Knopf
+  // in der MITTE der Reiterleiste (Alicias Wahl, wie bei Instagram). Ein
+  // zweiter schwebender Knopf für dieselbe Handlung wäre einer zu viel.
+  'components/ui/FloatingActionButton.tsx': 'abgelöst durch den Reiterleisten-Knopf',
   'components/ui/Button.tsx': 'abgelöst — Bildschirme nutzen PressableScale',
   'components/ui/Surface.tsx': 'abgelöst',
   'components/memory/MemoryListItem.tsx': 'abgelöst',

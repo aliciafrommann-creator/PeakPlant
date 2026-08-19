@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.display,
-    fontSize: 32,
+    fontSize: 28,
     lineHeight: 38,
     color: '#FAF7F0',
     textAlign: 'center',

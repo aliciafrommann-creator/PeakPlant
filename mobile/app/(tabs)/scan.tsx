@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   label: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
-  title: { ...Typography.stack },
+  title: { ...Typography.editorial },
   cameraArea: {
     flex: 1,
     backgroundColor: Colors.backgroundDark,

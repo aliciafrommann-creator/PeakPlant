@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, StyleSheet, StyleProp, ViewStyle } from 'react-native';
+import { View, ImageBackground, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { DYES, HOUSE_DYE, type Dye } from '../../constants/dyes';
 
 /**
@@ -61,9 +61,27 @@ export function DyeField({ editionId, style, children }: DyeFieldProps) {
     // genau das war auf dem Editions-Kopf passiert: darunter lag `backgroundDark`,
     // und solange das Bild lud, stand die gerechnete Tinte bei 1,02:1.
     <View style={[styles.feld, style, { backgroundColor: dye.ground }]}>
-      <Image
+      <ImageBackground
         source={BILDER[dyeImageKey(editionId)]}
+        // ZWEITE FASSUNG DES FIX — die erste war unvollständig.
+        //
+        // Anlauf 1 war `StyleSheet.absoluteFill` allein: Das setzt Kanten,
+        // aber keine Größe, und ein `Image` bringt seine eigene aus der Datei
+        // mit (200 × 140). Die Färbung saß als Kasten oben links.
+        //
+        // Anlauf 2 setzte `width: '100%'` dazu. Besser, aber immer noch
+        // falsch: Eine Prozentbreite misst sich am INHALTSBEREICH des Eltern-
+        // elements (ohne Polsterung), `left/right: 0` dagegen am RAHMEN. Jedes
+        // Band mit `paddingHorizontal` behielt dadurch rechts einen flachen
+        // Streifen — genau so breit wie zweimal seine Polsterung. Alicia sah
+        // es beim zweiten Durchgang wieder: „immer noch die Banner, in den
+        // Farben leider nicht alle covered".
+        //
+        // `ImageBackground` ist für genau diesen Fall gebaut: Es legt das Bild
+        // hinter den Inhalt und sizt es am Rahmen, unabhängig von Polsterung.
+        // Kein Prozentwert, keine zwei Bezugssysteme, nichts zu verrechnen.
         style={StyleSheet.absoluteFill}
+        imageStyle={styles.bild}
         resizeMode="cover"
         // Rein dekorativ: Die Bedeutung steht in der Schrift darauf, nicht in
         // der Färbung. Ein Screenreader soll sie überspringen.
@@ -77,4 +95,14 @@ export function DyeField({ editionId, style, children }: DyeFieldProps) {
 
 const styles = StyleSheet.create({
   feld: { overflow: 'hidden' },
+  /**
+   * Der Zuschnitt des Bildes INNERHALB der Fläche. Die Größe kommt von
+   * `ImageBackground` selbst — hier steht nur noch, dass die Ecken mitgehen,
+   * damit an einem runden Knopf keine eckige Färbung übersteht.
+   */
+  bild: {
+    width: '100%',
+    height: '100%',
+    borderRadius: undefined,
+  },
 });

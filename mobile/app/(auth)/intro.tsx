@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  mark: { fontSize: 32 },
+  mark: { fontSize: 28 },
   title: { ...Typography.editorial },
   body: { fontSize: 16, fontWeight: '300', color: Colors.textMuted, lineHeight: 24, maxWidth: 360 },
   bottom: { paddingHorizontal: Spacing.screen, paddingBottom: Spacing.xl, paddingTop: Spacing.md },

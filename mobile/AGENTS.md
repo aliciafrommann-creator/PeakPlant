@@ -115,6 +115,57 @@ Ways into the hidden screens (each has exactly one door — don't add a second):
 Discover · `profile` → the person icon in the Home header · `scan` → the "scan
 a card" link on Home.
 
+### Entscheidung 030 — Fünf Reiter, und der Startbildschirm führt allein (Alicia, 19.08.2026)
+
+Alicia hat die App zum ersten Mal auf ihrem iPhone benutzt. Ihr Urteil zur
+Navigation: *„unten sind nur noch drei Reiter, die Übersicht ist eher
+schlechter geworden … nirgends sehe ich unten in der Bar my spaces, es gibt
+keine Auswahlmöglichkeiten gegenüber Insta und Strava."* Und zum
+Startbildschirm: *„der Home Screen ist ultra überfordernd voll."*
+
+**Das nimmt Entscheidung 021 in einem Punkt zurück — und der Grund ist
+lehrreich.** Damals wurden fünf Reiter zu drei, weil drei davon für den
+einzigen real existierenden Nutzerzustand leer waren. Das war richtig
+gerechnet und im Ergebnis falsch. Der Fehler steckte nicht in der ZAHL,
+sondern darin, WAS gestrichen wurde: „Du" ist kein leerer Reiter, sondern der
+Ort für Space-Wechsel, Konto und Einstellungen — und den fand niemand mehr,
+weil er hinter einem kleinen Symbol im Kopf des Startbildschirms hing. **Ein
+Weg, den man nicht sieht, existiert nicht.**
+
+Die Leiste hat jetzt fünf Plätze: **Zusammen · Entdecken · [+] · Sammlung ·
+Du.** Der mittlere ist kein Bildschirm, sondern die Haupthandlung — ein
+gefüllter Kreis, der `/memory/create` öffnet. Der schwebende Knopf auf dem
+Startbildschirm ist dafür weg; zwei Wege zur selben Handlung auf einem
+Bildschirm sind einer zu viel (§5).
+
+**Der Startbildschirm führt mit der Momente-Wand, sonst nichts.** Sechs
+Textlinks, die Peak-Reihe und die Wochen-Zeile sind zu „Du" gezogen — nichts
+gelöscht, alles mit einem Zuhause. Er ist dadurch von 1447 auf 512 Zeilen
+geschrumpft. Das war ein Rückfall in genau das, was 021 abgeschafft hatte:
+ein Hub statt eines Bildschirms.
+
+**Was das für die Regel „ein Weg je verstecktem Bildschirm" bedeutet:** Die
+Türen liegen jetzt in „Du", nicht mehr am Fuß der Wand. Wer eine zweite Tür
+baut, baut sie weiterhin nicht.
+
+### Entscheidung 031 — Die Schrift, dritte Stauchung (Alicia, 19.08.2026)
+
+*„Schrift zu groß."* Derselbe Satz wie am 17.08., diesmal vom echten Gerät
+statt vom Entwurf. Der Kopf der Leiter ist deshalb noch einmal gestaucht
+worden — systematisch, nicht einzeln gezupft:
+
+| | vorher | jetzt |
+|---|---|---|
+| `display` | 32 | 28 |
+| `editorial` | 26 | 23 |
+| `stack` | 34 | 28 |
+| größter Wert der App | 52 | 40 |
+
+Die Untergrenze von 24 pt für `stack` bleibt und wird von
+`lib/klarheit.test.ts` gehalten: Darunter wird die Serife dünn, und dünn auf
+einer Färbung ist genau die Kombination, die der Kontrast-Durchgang
+rausgeräumt hat.
+
 ### Entscheidung 021 — Startbildschirm, Reiter, Sammel-Wochen (Alicia, 17.08.2026)
 
 Nach Alicias erstem Test auf einem echten Gerät: *„das Modell funktioniert,

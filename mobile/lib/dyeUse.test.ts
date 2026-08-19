@@ -184,6 +184,32 @@ describe('Batik leise — die Färbung bleibt selten', () => {
     ).toEqual([]);
   });
 
+  it('das Bild füllt seine Fläche wirklich', () => {
+    // DER FEHLER, DER ZWEI ANLÄUFE GEBRAUCHT HAT. Alicia auf ihrem iPhone:
+    // erst „die Hintergründe reichen immer nur ein wenig", dann — nach dem
+    // ersten Fix — „immer noch die Banner, in den Farben leider nicht alle
+    // covered".
+    //
+    // Anlauf 1: `StyleSheet.absoluteFill` allein. Setzt Kanten, keine Größe;
+    //           ein `Image` nimmt seine Dateigröße (200 × 140).
+    // Anlauf 2: `width: '100%'` dazu. Eine Prozentbreite misst sich am
+    //           INHALTSBEREICH, `left/right: 0` am RAHMEN — jedes Band mit
+    //           Polsterung behielt rechts einen flachen Streifen.
+    // Anlauf 3: `ImageBackground`. Dafür gebaut, kein Prozentwert nötig.
+    //
+    // Der Test hält deshalb das WERKZEUG fest, nicht die Zahlen: Wer zurück
+    // auf ein nacktes `<Image>` mit absoluteFill geht, holt sich beide alten
+    // Fehler zurück.
+    const quelle = fs.readFileSync(path.join(WURZEL, 'components/ui/DyeField.tsx'), 'utf8');
+    expect(quelle, 'DyeField zeichnet die Färbung nicht mehr mit ImageBackground').toMatch(
+      /<ImageBackground/,
+    );
+    expect(
+      quelle.includes('<Image\n') || /<Image\s/.test(quelle),
+      'nacktes <Image> zurück in DyeField — es nimmt seine Dateigröße',
+    ).toBe(false);
+  });
+
   it('findet überhaupt Färbungen (sonst prüft der Test nichts)', () => {
     const mit = QUELLEN.filter((f) => fs.readFileSync(f, 'utf8').includes('<DyeField'));
     expect(mit.length, 'keine einzige gefärbte Fläche gefunden').toBeGreaterThanOrEqual(5);

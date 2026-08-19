@@ -226,3 +226,66 @@ describe('§3 — was nicht ausdrückbar sein soll, bleibt es', () => {
     expect(treffer, `Verlust-Mechanik aufgetaucht in: ${treffer.join(', ')}`).toEqual([]);
   });
 });
+
+// ---------------------------------------------------------------------------
+// K4 — Fehlermeldungen sind für Menschen, nicht für Entwickler.
+// ---------------------------------------------------------------------------
+describe('K4 — kein technischer Fehlertext auf einem Bildschirm', () => {
+  it('kein Dienstname aus dem Maschinenraum in der Oberfläche', () => {
+    // Alicia sah am 19.08.2026 auf ihrem Telefon rot und auf Englisch
+    // „Supabase not configured" — den Namen eines Dienstes, von dem sie nichts
+    // wissen muss, ohne Erklärung und ohne Ausweg.
+    //
+    // Solche Sätze entstehen, wenn ein `catch` die rohe `error.message`
+    // anzeigt. Der Test findet nicht jeden Fall (die Zeichenkette entsteht ja
+    // erst zur Laufzeit), aber er findet den, der immer wieder passiert:
+    // `setError(e.message)` ohne Übersetzung.
+    const treffer: string[] = [];
+    for (const f of SOURCES) {
+      if (!/\/app\//.test(f)) continue;
+      const quelle = read(f);
+      for (const m of quelle.matchAll(/setError\(\s*([^)]{0,80})\)/g)) {
+        const wert = m[1];
+        // Erlaubt: übersetzte Sätze (`t(...)`) und eigene Übersetzer-Funktionen.
+        if (/^t\(/.test(wert.trim())) continue;
+        if (/^null$/.test(wert.trim())) continue;
+        if (/menschlich\(|humanise\(|uebersetze\(/.test(wert)) continue;
+        if (/\.message/.test(wert)) treffer.push(`${rel(f)} → setError(${wert.trim().slice(0, 50)})`);
+      }
+    }
+    expect(
+      treffer,
+      `rohe Fehlermeldung auf einem Bildschirm — gehört durch eine Übersetzung:\n  ${treffer.join('\n  ')}`,
+    ).toEqual([]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Ein Weg, der etwas verspricht, muss es auch anbieten.
+// ---------------------------------------------------------------------------
+describe('Wege halten, was ihr Etikett sagt', () => {
+  it('„Sprache & Einstellungen" enthält wirklich einen Sprachschalter', () => {
+    // Alicia, 19.08.2026: „hier switcht man zu deutsch und es bleibt english."
+    // Der Eintrag unter „Du" hieß „Sprache & Einstellungen"; der Bildschirm
+    // dahinter bot nur Personalisierung. Umstellen ging NUR beim allerersten
+    // Start und danach nie wieder. Eine Einstellung, die man einmal trifft und
+    // nie korrigieren kann, ist keine Einstellung, sondern eine Falle.
+    const quelle = read(join(MOBILE, 'app/settings/preferences.tsx'));
+    expect(quelle, 'Sprachschalter fehlt auf dem Einstellungs-Bildschirm').toMatch(
+      /setLanguage\(/,
+    );
+    expect(quelle, 'beide Sprachen müssen wählbar sein').toMatch(/'de'/);
+    expect(quelle).toMatch(/'en'/);
+  });
+
+  it('der Weg dorthin und der Titel dort sagen dasselbe', () => {
+    // Der Link hieß „Sprache & Einstellungen", die Seite „Personalisierung".
+    // Wer etwas sucht, glaubt dann, er sei falsch abgebogen.
+    const link = read(join(MOBILE, 'app/(tabs)/profile.tsx'));
+    const seite = read(join(MOBILE, 'app/settings/preferences.tsx'));
+    expect(link).toMatch(/language & preferences/);
+    expect(seite, 'Titel der Seite passt nicht zum Weg dorthin').toMatch(
+      /language & preferences/,
+    );
+  });
+});

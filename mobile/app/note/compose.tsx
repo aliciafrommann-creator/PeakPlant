@@ -114,6 +114,9 @@ export default function ComposeNoteScreen() {
             textAlignVertical="top"
             returnKeyType="default"
           />
+          {/* Der Zähler gehört UNTER das Feld — er zählt, was darin steht.
+              Solange das Feld keine Höhe hatte, stand er darüber und sah aus
+              wie eine Angabe zum Bildschirm. */}
           <Text style={[styles.counter, remaining < 40 && styles.counterWarn]}>
             {remaining}
           </Text>
@@ -198,8 +201,10 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   emptyNote: {
+    // Kleiner und leiser als das Eingabefeld — sonst liest man ihn als
+    // Platzhalter und wundert sich, warum das Tippen nichts ändert.
     ...Typography.micro,
-    color: Colors.textMuted,
+    color: Colors.textSubtle,
     lineHeight: 18,
   },
   noteSlot: {},
@@ -262,10 +267,19 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   input: {
-    ...Typography.title,
+    // DAS FELD WAR UNSICHTBAR. `flex: 1` in einem Elternteil OHNE eigene
+    // Höhe ergibt null — das Eingabefeld war ein Schlitz von wenigen Punkten,
+    // und was darunter stand („nothing written yet…") sah aus wie sein
+    // Platzhalter, war aber ein anderer Text. Alicia, 19.08.2026: „hier kann
+    // ich nicht schreiben … bzw. man sieht es nicht."
+    //
+    // Eine feste Mindesthöhe statt `flex`: Das Feld ist jetzt ein Blatt, auf
+    // das man schreibt, und wächst mit dem Text.
+    ...Typography.body,
     color: Colors.text,
-    flex: 1,
+    minHeight: 132,
     textAlignVertical: 'top',
+    lineHeight: 24,
   },
   counter: {
     fontSize: 11,

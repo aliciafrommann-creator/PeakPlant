@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Logo } from '../../components/ui/Logo';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { SpacePicker } from '../../components/space/SpacePicker';
+import { ModeSwitch } from '../../components/ui/ModeSwitch';
 import { StreakBanner } from '../../components/space/StreakBanner';
 import { Toast } from '../../components/ui/Toast';
 import { AnimatedFill } from '../../components/ui/AnimatedFill';
@@ -91,7 +92,6 @@ const GROUP_OF: Record<string, string> = Object.fromEntries(
   FILTER_GROUPS.flatMap((g) => g.options.map((o) => [o.key, g.label])),
 );
 
-const DISCOVER = Sections.discover; // sunlit gold identity; actions stay chili
 
 export default function DiscoverScreen() {
   const { spaces, activeSpace, setActiveSpace } = useSpaces();
@@ -340,13 +340,20 @@ export default function DiscoverScreen() {
           />
         )}
 
-        {/* Section toggle: Surprise me / Idea library / Places map */}
+        {/* Zwei Hälften, nicht drei Chips: IDEEN und ORTE sind Bereiche,
+            keine Filter. Der Karten-Chip stand hier bis zum 19.08.2026
+            gleichberechtigt neben zwei Filter-Knöpfen — und ragte über den
+            Rand. Ein ganzer Teil der App war dadurch unerreichbar.
+            (Alicia: „manche Wege sollten prominenter sein und nicht random
+            irgendwo als Button.") */}
+        <ModeSwitch aktiv="ideen" t={t} />
+
+        {/* Die zwei Wege INNERHALB der Ideen-Hälfte. */}
         <View style={styles.sectionToggle}>
           <TouchableOpacity
             style={[styles.toggleChip, styles.toggleChipActive]}
             onPress={resetFilters}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: true }}
+            accessibilityRole="button"
             accessibilityLabel={t('Surprise me — reset filters', 'Überrasch mich — Filter zurücksetzen')}
           >
             <Text style={[styles.toggleChipText, styles.toggleChipTextActive]}>
@@ -363,40 +370,6 @@ export default function DiscoverScreen() {
             <Text style={styles.toggleChipText}>
               {t('💡 ALL IDEAS', '💡 ALLE IDEEN')}{'  '}
               <Ionicons name="arrow-forward" size={11} color={Colors.textSubtle} />
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.toggleChip}
-            onPress={() => { void acknowledgeSelection(); router.push('/(tabs)/community'); }}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
-          >
-            <Text style={styles.toggleChipText}>
-              {t('🗺️ MAP', '🗺️ KARTE')}{'  '}
-              <Ionicons name="arrow-forward" size={11} color={Colors.textSubtle} />
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.titleBlock}>
-          <Text style={styles.generatorLabel}>{t(v.discoverKicker.en, v.discoverKicker.de)}</Text>
-          <Text style={styles.title}>{t(v.discoverQuestion.en, v.discoverQuestion.de)}</Text>
-          <Text style={styles.subtitle}>
-            {t(
-              `a real, doable idea — tuned to this ${timeOfDay}. tap a chip to refine.`,
-              `eine konkrete Idee für diesen ${timeOfDay === 'morning' ? 'Morgen' : timeOfDay === 'afternoon' ? 'Nachmittag' : 'Abend'}. chip antippen zum Eingrenzen.`,
-            )}
-          </Text>
-          <TouchableOpacity
-            style={styles.askInline}
-            onPress={() => router.push('/ask')}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={t('Ask PeakPlant for a specific idea', 'PeakPlant nach einer spezifischen Idee fragen')}
-          >
-            <Text style={styles.askInlineText}>
-              {t('ASK PEAKPLANT FOR SOMETHING SPECIFIC', 'PEAKPLANT NACH ETWAS SPEZIFISCHEM FRAGEN')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -703,7 +676,12 @@ function RecommendationCard({
       scaleTo={compact ? 0.98 : 0.985}
       accessibilityLabel={`${rec.title}. ${rec.why}`}
     >
-      {!compact && <View style={styles.cardAccent} />}
+      {/* HIER STAND EIN GOLDENER ZIERSTREIFEN. Alicia, 19.08.2026: „was macht
+          das gelbe über plan one tiny adventure?" — genau die Frage ist das
+          Urteil. Er war 4 pt hoch, trug keine Bedeutung, und weil die Karte
+          kein `overflow: hidden` hat, hing er oben heraus wie ein Versehen.
+          Zierde, die eine Frage auslöst, ohne sie zu beantworten, ist keine
+          Zierde. */}
       <Text style={styles.cardTitle}>{rec.title}</Text>
       <Text style={styles.cardConcept}>{rec.concept}</Text>
 
@@ -806,7 +784,8 @@ const styles = StyleSheet.create({
   chips: {
     flexDirection: 'row',
     gap: Spacing.sm,
-    paddingHorizontal: Spacing.screen,
+    paddingLeft: Spacing.screen,
+    paddingRight: Spacing.xl,
     paddingTop: Spacing.lg,
     alignItems: 'center',
   },
@@ -845,16 +824,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.backgroundWarm,
     paddingTop: Spacing.lg,
     ...Shadows.subtle,
-  },
-  cardAccent: {
-    position: 'absolute',
-    top: 0,
-    left: Spacing.lg,
-    width: 40,
-    height: 4,
-    borderBottomLeftRadius: 4,
-    borderBottomRightRadius: 4,
-    backgroundColor: DISCOVER,
   },
   cardTitle: { ...Typography.title, },
   cardConcept: { fontSize: 14, fontWeight: '400', color: Colors.textMuted, lineHeight: 21 },
@@ -957,7 +926,12 @@ const styles = StyleSheet.create({
   sectionToggle: {
     flexDirection: 'row',
     gap: Spacing.sm,
-    paddingHorizontal: Spacing.screen,
+    // Rechts mehr Luft als links: Der letzte Knopf endet dadurch sichtbar VOR
+    // dem Rand, statt abgeschnitten zu wirken — das ist der Hinweis, dass die
+    // Reihe weitergeht. Ein Wischbereich ohne diesen Hinweis wird nicht
+    // gewischt, weil niemand ahnt, dass er es kann.
+    paddingLeft: Spacing.screen,
+    paddingRight: Spacing.xl,
     paddingTop: Spacing.lg,
   },
   toggleChip: {

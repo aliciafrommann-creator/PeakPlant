@@ -194,3 +194,39 @@ describe('Der Riegel: eine Beispielkarte füllt keine Sammlung', () => {
     expect(offen, `Weg in die Kartenansicht ohne Entscheidung:\n  ${offen.join('\n  ')}`).toEqual([]);
   });
 });
+
+describe('Eine Edition bietet nur an, was es gibt (K3, Alicia 19.08.2026)', () => {
+  /**
+   * Alicia mit einem Bild von Edition 08 („wild cards", noch nicht
+   * erschienen): Dort standen ZWEI Knöpfe „KARTE SCANNEN" für ein Deck, das
+   * es nicht gibt — und darüber „0 MOMENTE BEWAHRT", als hätte sie etwas
+   * versäumt.
+   *
+   * Dieser Test liest Quelltext, nicht Verhalten. Er kann nicht beweisen,
+   * dass der Knopf verschwindet; er hält nur fest, dass die Entscheidung
+   * überhaupt getroffen WIRD — dass also `status` den Bildschirm steuert und
+   * nicht bloß danebensteht.
+   */
+  const quelle = fs.readFileSync(
+    path.resolve(__dirname, '..', '..', 'app', 'editions', '[id].tsx'),
+    'utf8',
+  );
+
+  it('der Bildschirm fragt, ob die Edition erschienen ist', () => {
+    expect(quelle).toMatch(/const erschienen = edition\.status === 'available'/);
+  });
+
+  it('der Scan-Knopf hängt an dieser Frage', () => {
+    // Ohne die Bedingung zeigt er auf eine Kamera, die auf nichts warten kann.
+    const i = quelle.indexOf('SCAN A CARD');
+    const davor = quelle.slice(Math.max(0, i - 700), i);
+    expect(davor, 'Scan-Knopf ohne Prüfung auf `erschienen`').toMatch(/erschienen/);
+  });
+
+  it('eine ungedruckte Edition zeigt keine bewahrte Null', () => {
+    // Eine Null, die „es gibt das Deck noch nicht" heißt, ist eine Scheinzahl
+    // (K5) — sie liest sich wie ein Versäumnis der Nutzerin.
+    expect(quelle).toMatch(/not printed yet/);
+    expect(quelle).toMatch(/noch nicht gedruckt/);
+  });
+});
