@@ -117,10 +117,25 @@ export default function EditionScreen() {
     );
   }
 
-  const momentCount = t(
-    `${editionMemories.length} moment${editionMemories.length !== 1 ? 's' : ''} preserved`,
-    `${editionMemories.length} Moment${editionMemories.length !== 1 ? 'e' : ''} bewahrt`,
-  );
+  /**
+   * ERSCHIENEN ODER NICHT — die Frage entscheidet, was dieser Bildschirm
+   * überhaupt anbieten darf.
+   *
+   * Alicia, 19.08.2026, mit einem Bild von Edition 08 („wild cards", noch
+   * nicht erschienen): Dort standen ZWEI Knöpfe „KARTE SCANNEN" für ein Deck,
+   * das es nicht gibt, und darüber „0 MOMENTE BEWAHRT" — als hätte sie etwas
+   * versäumt. Beides ist K3 in Reinform: Biete keine Handlung an, die niemand
+   * ausführen kann, und stelle keine Null hin, die „wir wissen es nicht"
+   * heißt (K5).
+   */
+  const erschienen = edition.status === 'available';
+
+  const momentCount = erschienen
+    ? t(
+        `${editionMemories.length} moment${editionMemories.length !== 1 ? 's' : ''} preserved`,
+        `${editionMemories.length} Moment${editionMemories.length !== 1 ? 'e' : ''} bewahrt`,
+      )
+    : t('not printed yet', 'noch nicht gedruckt');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -156,15 +171,19 @@ export default function EditionScreen() {
               )}
             </View>
 
-            <TouchableOpacity
-              style={[styles.scanButton, { backgroundColor: btnBg }]}
-              onPress={() => router.push('/(tabs)/scan')}
-              activeOpacity={0.85}
-              accessibilityRole="button"
-              accessibilityLabel={t('Scan a card from this edition', 'Karte aus dieser Edition scannen')}
-            >
-              <Text style={[styles.scanButtonText, { color: btnText }]}>{t('SCAN A CARD', 'KARTE SCANNEN')}</Text>
-            </TouchableOpacity>
+            {/* Der Scan-Knopf erscheint NUR, wenn es das Deck gibt. Sonst
+                zeigt er auf eine Kamera, die auf nichts warten kann. */}
+            {erschienen && (
+              <TouchableOpacity
+                style={[styles.scanButton, { backgroundColor: btnBg }]}
+                onPress={() => router.push('/(tabs)/scan')}
+                activeOpacity={0.85}
+                accessibilityRole="button"
+                accessibilityLabel={t('Scan a card from this edition', 'Karte aus dieser Edition scannen')}
+              >
+                <Text style={[styles.scanButtonText, { color: btnText }]}>{t('SCAN A CARD', 'KARTE SCANNEN')}</Text>
+              </TouchableOpacity>
+            )}
 
             {editionMemories.length > 0 && (
               <Text style={[styles.diaryLabel, { color: fg }]}>{t(v.diaryLabel.en, v.diaryLabel.de)}</Text>
@@ -300,11 +319,31 @@ export default function EditionScreen() {
             // dieselbe Erklärung, aber mit einem Ausgang (MANIFESTO §5).
             <EmptyState
               title={t('no moments yet.', 'noch keine Momente.')}
-              hint={t(v.addToDiaryHint.en, v.addToDiaryHint.de)}
-              ctaLabel={t('SCAN A CARD', 'KARTE SCANNEN')}
-              onCta={() => router.push('/(tabs)/scan')}
-              secondaryLabel={t('no deck yet? keep a moment anyway', 'noch kein Deck? trotzdem einen Moment festhalten')}
-              onSecondary={() => router.push('/memory/create')}
+              hint={
+                erschienen
+                  ? t(v.addToDiaryHint.en, v.addToDiaryHint.de)
+                  : t(
+                      'this edition is not printed yet. you can still keep a moment here — it will be waiting when the deck arrives.',
+                      'diese Edition ist noch nicht gedruckt. Du kannst hier trotzdem einen Moment festhalten — er wartet dann, wenn das Deck kommt.',
+                    )
+              }
+              // Bei einer noch nicht erschienenen Edition ist Festhalten die
+              // EINZIGE mögliche Handlung — also ist sie die Hauptaktion,
+              // nicht die leise Zweitwahl (MANIFESTO §5).
+              ctaLabel={
+                erschienen
+                  ? t('SCAN A CARD', 'KARTE SCANNEN')
+                  : t('KEEP A MOMENT', 'MOMENT FESTHALTEN')
+              }
+              onCta={() =>
+                router.push(erschienen ? '/(tabs)/scan' : '/memory/create')
+              }
+              secondaryLabel={
+                erschienen
+                  ? t('no deck yet? keep a moment anyway', 'noch kein Deck? trotzdem einen Moment festhalten')
+                  : undefined
+              }
+              onSecondary={erschienen ? () => router.push('/memory/create') : undefined}
             />
           )
         }
