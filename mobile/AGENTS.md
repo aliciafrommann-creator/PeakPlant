@@ -258,6 +258,19 @@ notifications, automatic social sharing, generic AI chat surfaces.
   vergessen kann. Die Push-Schlüssel entstehen beim ersten `eas build`
   (Expo fragt, ob es sie anlegen darf); Tabellen: Migration `0021`.
 
+  **KORREKTUR (19.08.2026): Push ist gebaut, aber NICHT VERDRAHTET.** Alicia
+  fragte, ob alle Funktionen integriert sind. Eine Nachrechnung vom Router aus
+  fand achtzehn Dateien, die von keinem Bildschirm der App aus erreichbar sind
+  — darunter alle sieben Push-Dateien. Der Absatz oben beschrieb sie wie
+  lebende Logik („kein Schalter, den jemand vergessen kann"); tatsächlich ruft
+  **niemand** `decideDelivery()` oder `register()` auf. Die Regeln stimmen und
+  sind getestet, sie laufen nur nie. Das ist genau die Sorte Satz, die
+  MANIFESTO §1 verbietet — und sie stand hier, nicht in der Oberfläche, was sie
+  schlimmer macht: Sie hat die nächste Session belogen.
+  Der neue Wächter `lib/erreichbarkeit.test.ts` hält die Liste ab jetzt
+  ehrlich; jeder Eintrag trägt seinen Grund, und ein Eintrag, der nicht mehr
+  stimmt, macht den Test rot.
+
 ## Running
 
 ```
