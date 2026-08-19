@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   kickerRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   kickerDot: { width: 6, height: 6, borderRadius: 3 },
   kicker: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
-  title: { ...Typography.stack },
+  title: { ...Typography.editorial },
   subtitle: {
     fontSize: 13,
     fontWeight: '300',

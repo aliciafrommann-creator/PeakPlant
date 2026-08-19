@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   back: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
-  title: { ...Typography.stack },
+  title: { ...Typography.editorial },
   scroll: { padding: Spacing.screen, gap: Spacing.lg, paddingBottom: Spacing.xxxl },
   lead: {
     fontSize: 14,

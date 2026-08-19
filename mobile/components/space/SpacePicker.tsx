@@ -10,7 +10,7 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Colors } from '../../constants/colors';
@@ -57,6 +57,7 @@ function typeLabel(type: Space['type'], t: (en: string, de: string) => string): 
  */
 export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose }: SpacePickerProps) {
   const { t } = useLanguage();
+  const insets = useSafeAreaInsets();
   const reduced = useReducedMotion();
   const anim = useRef(new Animated.Value(0)).current;
 
@@ -99,7 +100,12 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel={t('Close', 'Schließen')}>
-        <SafeAreaView edges={['top']} style={styles.safe}>
+        {/* AUSDRÜCKLICHER SICHERHEITSABSTAND statt `SafeAreaView`.
+            In einem `Modal` rendert iOS außerhalb des Anbieters, der die
+            Einzüge kennt — `SafeAreaView` bekam dort eine Null und die
+            Überschrift „DEINE SPACES" verschwand hinter der Uhrzeit.
+            (Alicia, 19.08.2026: „Space wechseln ist sehr verdeckt.") */}
+        <View style={[styles.safe, { paddingTop: insets.top + Spacing.sm }]}>
           <Animated.View
             style={[styles.sheet, { opacity: anim, transform: [{ translateY }] }]}
             // Stop taps inside the sheet from closing it.
@@ -206,7 +212,7 @@ export function SpacePicker({ visible, spaces, activeSpaceId, onSelect, onClose 
               <Text style={styles.addText}>{t('new space', 'neuer Space')}</Text>
             </PressableScale>
           </Animated.View>
-        </SafeAreaView>
+        </View>
       </Pressable>
     </Modal>
   );
@@ -221,7 +227,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
   },
   sheet: {
-    marginTop: Spacing.sm,
     backgroundColor: Colors.surface,
     borderRadius: Radii.lg,
     paddingVertical: Spacing.sm,
@@ -238,7 +243,10 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xs,
   },
   list: {
+    // Die Liste durfte vorher nicht wachsen und wurde mitten in der zweiten
+    // Zeile abgeschnitten — es sah aus, als gäbe es nur einen Space.
     flexGrow: 0,
+    maxHeight: 320,
   },
   listContent: {
     paddingVertical: Spacing.xs,

@@ -47,7 +47,11 @@ export const Typography = {
    *
    * Zwei Regeln, ohne die es kippt:
    *   1. HÖCHSTENS EINE pro Bildschirm. Zwei gestapelte Titel heben sich auf.
-   *   2. Nie unter 24 pt. Eine Serife wird klein dünn, und dünn auf einer
+   *   2. Nie unter 24 pt.
+   *   3. NUR auf Bildschirmen, die eine einzige Aussage tragen: Willkommen,
+   *      Sprache, Einladung, Editions-Kopf, Karte. Nicht auf Werkzeug-
+   *      Bildschirmen (Einstellungen, gemerkte Pläne, Plus, Profil) — dort
+   *      steht `editorial`. Eine Serife wird klein dünn, und dünn auf einer
    *      Färbung ist genau die Kombination, die der Kontrast-Durchgang
    *      rausgeräumt hat.
    *
@@ -71,17 +75,24 @@ export const Typography = {
    */
   stack: {
     fontFamily: Platform.select({ ios: 'Georgia', android: 'serif', default: 'Georgia' }),
-    // 34 → 28 (Alicia auf dem Gerät, 19.08.2026: „Schrift zu groß"). Die
-    // Untergrenze von 24 pt bleibt: Darunter wird die Serife dünn, und dünn
-    // auf einer Färbung ist die Kombination, die der Kontrast-Durchgang
+    // 34 → 28 → 24 (Alicia, 19.08.2026, dreimal derselbe Satz vom Gerät:
+    // „Schrift zu groß", dann „die fette Schrift überall"). 24 ist die
+    // Untergrenze und bleibt es: Darunter wird die Serife dünn, und dünn auf
+    // einer Färbung ist die Kombination, die der Kontrast-Durchgang
     // rausgeräumt hat. `lib/klarheit.test.ts` hält das fest.
-    fontSize: 28,
+    //
+    // „ÜBERALL" war der zweite Teil ihres Satzes und der wichtigere: Der
+    // gestapelte Titel stand auf ZWÖLF Bildschirmen, darunter Einstellungen
+    // und gemerkte Pläne. Eine Auszeichnung, die überall steht, zeichnet
+    // nichts mehr aus. Er ist jetzt den Bildschirmen vorbehalten, die EINE
+    // Aussage tragen (siehe Regel 3 unten).
+    fontSize: 24,
     fontWeight: '700' as const,
-    letterSpacing: -0.8,
+    letterSpacing: -0.6,
     color: Colors.text,
     // Weiter unter der Schriftgröße — das ist die Stapel-Wirkung, nicht die
-    // Größe. Verhältnis wie vorher (31/34 ≈ 26/28).
-    lineHeight: 26,
+    // Größe. Verhältnis wie vorher (31/34 ≈ 22/24).
+    lineHeight: 22,
     includeFontPadding: false,
   },
   /** Das Größte der App: die eine Aussage auf Willkommen/Onboarding.

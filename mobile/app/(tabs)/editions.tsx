@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   kicker: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
-  title: { ...Typography.stack },
+  title: { ...Typography.editorial },
   lead: {
     fontSize: 14,
     fontWeight: '300',

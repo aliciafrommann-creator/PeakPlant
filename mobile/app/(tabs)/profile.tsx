@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     color: Colors.textSubtle,
   },
   title: {
-    ...Typography.stack,
+    ...Typography.editorial,
   },
   content: {
     paddingBottom: Spacing.xxxl,
