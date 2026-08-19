@@ -287,23 +287,41 @@ export default function HomeScreen() {
         )}
 
         {/* Eine Notiz vom anderen Menschen ist das Wertvollste, was in einer
-            Paar-App ankommen kann — sie bekommt eine eigene Zeile, aber nur
-            wenn es sie wirklich gibt. Die eigene letzte Notiz ist keine
-            Nachricht und steht deshalb unten bei den Links. */}
-        {latestFromPartner && (
-          <PressableScale
-            containerStyle={styles.stripSlot}
-            style={styles.partnerNote}
-            onPress={() => router.push('/note/compose')}
-            scaleTo={0.99}
-            accessibilityLabel={t('Read the note from your partner', 'Notiz von deinem Menschen lesen')}
-          >
-            <Text style={styles.partnerHeart}>♥</Text>
+            Paar-App ankommen kann — sie bekommt eine eigene Zeile.
+            
+            DIESE ZEILE STEHT JETZT IMMER, und das war Alicias Fund vom
+            19.08.2026 („manche Wege sollten prominenter sein"): Vorher gab es
+            sie NUR, wenn schon eine Notiz da war. Wer noch keine bekommen
+            hatte — also jeder am Anfang —, fand das Schreiben nur als leise
+            Textzeile zwei Bildschirme weiter. Eine Funktion, deren Tür erst
+            aufgeht, nachdem jemand anderes sie benutzt hat, kann nie
+            anfangen.
+
+            Im Solo-Space ist es eine Notiz an sich selbst; die Anrede kommt
+            aus `lib/voice.ts`. */}
+        <PressableScale
+          containerStyle={styles.stripSlot}
+          style={styles.partnerNote}
+          onPress={() => router.push('/note/compose')}
+          scaleTo={0.99}
+          accessibilityLabel={
+            latestFromPartner
+              ? t('Read the note and write back', 'Notiz lesen und zurückschreiben')
+              : t(v.writeNoteInvite.en, v.writeNoteInvite.de)
+          }
+        >
+          <Text style={styles.partnerHeart}>♥</Text>
+          {latestFromPartner ? (
             <Text style={styles.partnerText} numberOfLines={2}>
               {latestFromPartner.text}
             </Text>
-          </PressableScale>
-        )}
+          ) : (
+            <Text style={[styles.partnerText, styles.partnerInvite]} numberOfLines={2}>
+              {t(v.writeNoteInvite.en, v.writeNoteInvite.de)}
+            </Text>
+          )}
+          <Text style={styles.partnerArrow}>→</Text>
+        </PressableScale>
 
         {loading && recentMemories.length === 0 && !error && <MemoryFeedSkeleton count={3} />}
 
@@ -466,6 +484,10 @@ const styles = StyleSheet.create({
     borderLeftColor: Colors.accent,
   },
   partnerHeart: { fontSize: 14, color: Colors.accentInk, marginTop: 2 },
+  /** Die Einladung ist leiser als eine echte Notiz — sie ist ein Angebot,
+   *  keine Nachricht. Aber sie steht an derselben, sichtbaren Stelle. */
+  partnerInvite: { color: Colors.textMuted },
+  partnerArrow: { fontSize: 14, color: Colors.textSubtle, marginTop: 2 },
   partnerText: {
     // Bewusst `editorial`, NICHT `stack`: Der gestapelte Titel ist eine
     // Überschrift ab 24 pt. Hier steht der Satz eines anderen Menschen bei

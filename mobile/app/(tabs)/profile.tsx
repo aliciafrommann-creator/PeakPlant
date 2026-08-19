@@ -42,8 +42,11 @@ export default function ProfileScreen() {
     // der Ort für Steuerung und Nebenwege, der Startbildschirm der Ort für
     // die Momente. (Alicia auf dem Gerät: „der Home Screen ist ultra
     // überfordernd voll.")
+    // „Notiz schreiben" steht bewusst NICHT mehr hier: Seit dem 19.08.2026
+    // hat sie ihre Tür oben auf dem Startbildschirm, immer sichtbar. Zwei
+    // Türen zu derselben Sache sind eine zu viel — die Regel steht in
+    // AGENTS.md und gilt weiter.
     { emoji: '🏔️', label: t('take on this week', 'Woche annehmen'), route: '/challenges' },
-    { emoji: '📝', label: t('write a note', 'Notiz schreiben'), route: '/note/compose' },
     { emoji: '💬', label: t('ask peakplant', 'peakplant fragen'), route: '/ask' },
     { emoji: '📷', label: t('scan a card', 'Karte scannen'), route: '/(tabs)/scan' },
     { emoji: '🌱', label: t(v.whatGrew.en, v.whatGrew.de), route: '/(tabs)/story' },

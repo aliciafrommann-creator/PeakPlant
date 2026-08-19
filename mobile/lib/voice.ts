@@ -133,6 +133,8 @@ export interface Voice {
   preserveYourMemory: Phrase;
   openYourPlan: Phrase;
   savedToYourList: Phrase;
+  /** Startbildschirm: die Einladung, eine Notiz zu schreiben. */
+  writeNoteInvite: Phrase;
 
   // ── Sätze, die vom Tagebuch des Space sprechen ────────────────────────
   /** Sammlung: warum ein Deck nichts freischaltet. */
@@ -359,6 +361,10 @@ const GETEILT: Voice = {
     de: 'Wenn ihr hier eine Idee erlebt habt, erscheinen eure Bewertung und euer praktischer Tipp privat auf diesem Gerät.',
   },
   placeAlreadyDone: { en: '✓ you’ve done this together', de: '✓ ihr habt das zusammen gemacht' },
+  writeNoteInvite: {
+    en: 'leave a note for them',
+    de: 'lass ihnen eine Notiz da',
+  },
 };
 
 const ALLEIN: Voice = {
@@ -545,6 +551,10 @@ const ALLEIN: Voice = {
     de: 'Wenn du hier eine Idee erlebt hast, erscheinen deine Bewertung und dein praktischer Tipp privat auf diesem Gerät.',
   },
   placeAlreadyDone: { en: '✓ you’ve done this', de: '✓ du hast das gemacht' },
+  writeNoteInvite: {
+    en: 'leave a note for yourself',
+    de: 'lass dir selbst eine Notiz da',
+  },
 };
 
 /**
