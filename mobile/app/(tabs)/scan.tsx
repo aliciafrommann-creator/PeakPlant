@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   label: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textSubtle },
-  title: { ...Typography.editorial },
+  title: { ...Typography.stack },
   cameraArea: {
     flex: 1,
     backgroundColor: Colors.backgroundDark,

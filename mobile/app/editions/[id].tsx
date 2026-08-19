@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
   // täuscht beim Lesen eine Entscheidung vor und liest sich beim Prüfen wie
   // ein Fehler. Genau das ist beim ersten Durchgang passiert.
   editionLabel: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2 },
-  title: { ...Typography.editorial },
+  title: { ...Typography.stack },
   description: {
     fontSize: 14,
     fontWeight: '300',

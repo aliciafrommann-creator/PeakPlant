@@ -624,7 +624,7 @@ const styles = StyleSheet.create({
   },
   partnerHeart: { fontSize: 14, color: Colors.accentInk, marginTop: 2 },
   partnerText: {
-    ...Typography.editorial,
+    ...Typography.stack,
     flex: 1,
     fontSize: 16,
     lineHeight: 23,

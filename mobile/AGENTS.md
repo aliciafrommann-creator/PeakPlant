@@ -267,6 +267,33 @@ npx eslint app components lib --ext .ts,.tsx
 npx vitest run   # unit tests
 ```
 
+### Entscheidung 027 — Batik-Farbwelten (Alicia, 19.08.2026)
+
+Nach dem Vergleich mit dem boomenden Kartenset-Markt (beherzt „nackt."/„LIEBE",
+DeepLove, „the deep talk") hat Alicia unter fünf Entwürfen **„Batik leise"**
+gewählt, mit **einer Färbung je Edition**.
+
+**Das Rezept** steht in `constants/dyes.ts`: ein Grundton plus vier Lichter.
+Vier Welten hat sie benannt (Velvet Passion, Cyber Midnight, Warm Ember, Acid
+Electric), acht sind abgeleitet und als solche gekennzeichnet. Dazu
+`HOUSE_DYE` für Flächen ohne Edition.
+
+**Hell, nicht dunkel.** Der erste Anlauf machte jeden Grund fast schwarz, damit
+helle Schrift trägt. Ihr Urteil: „ein bisschen extrem batik dunkel" — und ihre
+Vorbilder machen es umgekehrt: „LIEBE" ist knallgelb mit schwarzer Schrift. Die
+Färbung leuchtet, die TINTE passt sich an (`editionInk`). Der Wächter prüft
+deshalb nicht „hell genug", sondern **nicht dazwischen**.
+
+**Bilder statt Verläufe.** React Native kann weder überlagerte Verläufe noch
+die Störung, die aus einem Verlauf gefärbten Stoff macht. Statt drei Pakete
+dazuzunehmen rendert `scripts/renderDyes.mjs` die Rezepte einmal zu PNG (reines
+Node, kein Fremdpaket, deterministisch). 229 KB für dreizehn Bilder; ein
+Wächter zieht die Grenze bei 400 KB. Rezept geändert heißt: neu drucken.
+
+**Die Regel, die das Ganze trägt, ist K7b im Skill `klarheit`:** eine gefärbte
+Fläche je Bildschirm, Papier bleibt der Grund. Der Entwurf, der gewonnen hat,
+heißt nicht umsonst „leise".
+
 ### Entscheidung 026 — Eine offene Beispielkarte je Edition (Alicia, 18.08.2026)
 
 Die Editionsseite zeigte Karten als nummerierte Umrisse. Wer kein Deck hat —

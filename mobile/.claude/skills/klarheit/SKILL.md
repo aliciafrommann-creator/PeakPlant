@@ -172,6 +172,32 @@ Stellen, die eine einbanden, überschrieben sie direkt daneben. Die Datei
 steuerte nichts. Dazu: 67 % der Schrift ≤ 13 pt, gleichzeitig 15 Bildschirme mit
 26–36 pt Titeln — zweigipflig, nicht zu groß.
 
+## K7b — Batik: die Färbung bleibt selten
+
+Alicias Richtung vom 19.08.2026, gewählt unter fünf Entwürfen. Der gewählte
+hieß „Batik leise", und der Name ist die Regel.
+
+- **Eine gefärbte Fläche pro Bildschirm.** Papier bleibt der Grund. Bei vierzig
+  Momenten erschlägt einen sonst eine Farbwand. (`lib/dyeUse.test.ts` deckelt
+  bei zwei je Datei — Listen rendern ihre Kachel je Eintrag.)
+- **Die Tinte auf einer Färbung wird IMMER gerechnet** (`editionInk`), nie
+  gesetzt. Die Fläche ist je Edition eine andere; eine feste Farbe stimmt
+  höchstens für eine der dreizehn Welten. Auch das hält der Test.
+- **Unter dem Bild liegt immer der Grundton als Füllung.** Solange das Bild
+  lädt, steht die Schrift sonst auf Weiß.
+- **Das Rezept steht in `constants/dyes.ts`, das Bild entsteht daraus**
+  (`scripts/renderDyes.mjs`). Wer ein Rezept ändert, druckt neu — sonst zeigt
+  die App eine Färbung, die es im Code nicht mehr gibt (`lib/dyes.test.ts`).
+- **Der gestapelte Titel** (`Typography.stack`) höchstens EINMAL je Bildschirm
+  und nie unter 24 pt. Eine Serife wird klein dünn, und dünn auf einer Färbung
+  ist genau die Kombination, die K7 rausgeräumt hat.
+
+*Befund:* Fünf Entwürfe waren nötig, bis die Richtung stand — und zwei
+Korrekturen von Alicia unterwegs: „was soll denn das braun" (meine
+Foto-Platzhalter färbten jede Richtung ein) und „ein bisschen extrem batik
+dunkel" (ich hatte die Gründe fast schwarz gemacht, damit helle Schrift
+trägt; ihre Vorbilder machen es umgekehrt — helle Färbung, dunkle Schrift).
+
 ## K8 — Die App muss den Zustand bemerken, in dem sie ist
 
 Ein Space mit einer Person sah exakt aus wie einer mit zweien, während überall
@@ -195,7 +221,8 @@ Ein Teil dieser Regeln steht als Wächtertest und scheitert in der CI:
 `lib/palette.test.ts` (Akzente nie als kleine Schrift; jede andere Schriftfarbe
 muss auf dem Papierton bestehen oder eine erklärte Dunkel-Tinte sein; Ausnahmen
 brauchen `// kontrast-ok: <Grund>`),
-`lib/editionInk.test.ts` (die zwölf Editionsfarben). Was ein Test **nicht** kann, ist die eigentliche Frage von
+`lib/editionInk.test.ts` (die zwölf Editionsfarben), `lib/dyes.test.ts`
+(Färberezepte und ihre gedruckten Bilder) und `lib/dyeUse.test.ts` (K7b). Was ein Test **nicht** kann, ist die eigentliche Frage von
 K1, K2 und K6 beantworten — ob ein Bildschirm ein Hauptobjekt hat und ob ein
 Reiter berechtigt ist. Das bleibt Urteil, und dafür ist dieses Dokument da.
 

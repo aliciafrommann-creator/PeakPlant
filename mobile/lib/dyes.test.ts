@@ -3,7 +3,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { DYES, HOUSE_DYE, dyeFor } from '../constants/dyes';
 import { SEED_EDITIONS } from './seed';
-import { Colors } from '../constants/colors';
 import { contrastRatio, luminance } from './contrast';
 import { editionInk, editionInkPassesAA } from './editionInk';
 
