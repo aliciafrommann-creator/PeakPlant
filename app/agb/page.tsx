@@ -1,6 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
 import { NavBar } from '../../components/NavBar'
+import { WIDERRUF_DE, WIDERRUF_EN, type WiderrufTexte } from '../../lib/widerruf'
 
 const PP = '"Helvetica Neue", Helvetica, Arial, sans-serif'
 
@@ -17,7 +18,7 @@ const sections = [
     heading: '§ 2 Zustandekommen des Vertrages',
     paragraphs: [
       '(1) Die Darstellung der Produkte im Online-Shop stellt kein rechtlich bindendes Angebot dar, sondern eine Einladung zur Abgabe eines Angebots (invitatio ad offerendum).',
-      '(2) Durch Klicken des Buttons „Kaufen“ bzw. „Jetzt kaufen“ gibt der Käufer ein verbindliches Angebot zum Kauf der im Warenkorb befindlichen Waren ab.',
+      '(2) Durch Klicken des Bestellbuttons („preorder now“ bzw. „jetzt vorbestellen“) und Abschluss des anschließenden Bezahlvorgangs gibt der Käufer ein verbindliches Angebot zum Kauf der ausgewählten Waren ab.',
       '(3) Der Verkäufer bestätigt den Eingang der Bestellung unverzüglich per E-Mail. Diese Eingangsbestätigung stellt noch keine Annahme des Angebots dar. Ein Kaufvertrag kommt erst zustande, wenn der Verkäufer die Bestellung durch eine gesonderte E-Mail ausdrücklich annimmt oder die Ware versendet.',
     ],
   },
@@ -82,7 +83,16 @@ const sections = [
     ],
   },
   {
-    heading: '§ 10 Rechtswahl und Gerichtsstand',
+    heading: '§ 10 Widerrufsrecht',
+    paragraphs: [
+      '(1) Verbrauchern steht das nachfolgend beschriebene gesetzliche Widerrufsrecht zu. Die vollständige Widerrufsbelehrung und das Muster-Widerrufsformular finden sich unter Abschnitt III dieser Seite.',
+      '(2) Das Widerrufsrecht steht nur Verbrauchern zu. Käufer, die Unternehmer im Sinne des § 14 BGB sind, haben kein Widerrufsrecht.',
+      '(3) Ein Widerruf kann formlos erklärt werden — per E-Mail an hello@peak-plant.com oder postalisch an die in Abschnitt III genannte Anschrift. Die Verwendung des Muster-Widerrufsformulars ist möglich, aber nicht vorgeschrieben.',
+      '(4) Über das gesetzliche Widerrufsrecht hinaus gewährt der Verkäufer bei Vorbestellungen ein vertragliches Rücktrittsrecht: Bis zum Versand der Ware kann der Käufer jederzeit ohne Angabe von Gründen zurücktreten und erhält den vollen Kaufpreis erstattet. Dieses Recht besteht zusätzlich zum gesetzlichen Widerrufsrecht und lässt es unberührt.',
+    ],
+  },
+  {
+    heading: '§ 11 Rechtswahl und Gerichtsstand',
     paragraphs: [
       '(1) Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts.',
       '(2) Gerichtsstand für alle Streitigkeiten aus dem Vertragsverhältnis mit Kaufleuten, juristischen Personen des öffentlichen Rechts oder öffentlich-rechtlichen Sondervermögen ist der Sitz des Verkäufers.',
@@ -98,11 +108,11 @@ const customerInfo = [
   },
   {
     heading: '2. Informationen zum Vertragsschluss',
-    text: 'Die technischen Schritte zum Vertragsschluss sowie der Vertragstext werden nach Bestellabschluss per E-Mail mitgeteilt. Der Vertragstext wird vom Verkäufer gespeichert.',
+    text: 'Nach Bestellabschluss erhält der Käufer eine Bestätigung per E-Mail. Sie enthält die Bestelldaten sowie die vollständige Widerrufsbelehrung und das Muster-Widerrufsformular. Die Bestelldaten werden vom Verkäufer gespeichert; die jeweils geltende Fassung dieser AGB steht auf dieser Seite.',
   },
   {
     heading: '3. Vertragssprache',
-    text: 'Die für den Vertragsschluss zur Verfügung stehenden Sprachen sind Deutsch und Englisch.',
+    text: 'Vertragssprache ist Deutsch. Die englischen Fassungen der Vertragsunterlagen sind Übersetzungen zur besseren Verständlichkeit; maßgeblich ist der deutsche Wortlaut.',
   },
   {
     heading: '4. Wesentliche Eigenschaften der Waren',
@@ -114,13 +124,63 @@ const customerInfo = [
   },
   {
     heading: '6. Lieferbedingungen',
-    text: 'Die Lieferung erfolgt weltweit. Versandkosten und voraussichtliche Lieferzeiten sind in der Produktbeschreibung angegeben.',
+    text: 'Geliefert wird nach Deutschland, Österreich, in die Schweiz, nach Luxemburg, Belgien und in die Niederlande. Versandkosten und voraussichtliche Lieferzeiten sind in der Produktbeschreibung angegeben.',
   },
   {
-    heading: '7. Streitbeilegung',
+    heading: '7. Widerrufsrecht',
+    text: 'Verbrauchern steht ein vierzehntägiges Widerrufsrecht zu. Die vollständige Widerrufsbelehrung und das Muster-Widerrufsformular stehen in Abschnitt III dieser Seite.',
+  },
+  {
+    heading: '8. Streitbeilegung',
     text: 'Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: https://ec.europa.eu/consumers/odr. Wir sind weder bereit noch verpflichtet, an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.',
   },
 ]
+
+/**
+ * Ein Belehrungsblock, deutsch oder englisch.
+ *
+ * Die Sichtbarkeit ohne JavaScript liegt NICHT hier, sondern in
+ * `app/template.tsx` (`noscript`-Stil). Ein erster Anlauf hatte hier ein
+ * `opacity: 1` gesetzt und im Kommentar behauptet, der Block bringe „seine
+ * eigene Deckkraft mit" — das ist falsch: Die Deckkraft eines Vorfahren ist
+ * von einem Kind nicht zurückzuholen, und dieser Block sitzt in zwei solchen
+ * Vorfahren. Die Zeile hatte keine Wirkung, der Kommentar schickte die
+ * nächste Sitzung auf eine falsche Fährte (MANIFESTO §1).
+ */
+function Belehrung({ texte }: { texte: WiderrufTexte }) {
+  return (
+    <div>
+      <p style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '2rem', fontFamily: PP }}>{texte.intro}</p>
+
+      {texte.blocks.map(({ title, paragraphs }) => (
+        <div key={title} style={{ marginBottom: '2rem' }}>
+          <p style={{ fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.04em', marginBottom: '0.75rem', color: '#1A1A1A', fontFamily: PP }}>{title}</p>
+          {paragraphs.map((absatz, i) => (
+            <p key={i} style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '0.75rem', fontFamily: PP }}>{absatz}</p>
+          ))}
+        </div>
+      ))}
+
+      <div style={{ border: '1px solid #ebebeb', padding: '1.5rem', marginTop: '1rem' }}>
+        <p style={{ fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.04em', marginBottom: '0.75rem', color: '#1A1A1A', fontFamily: PP }}>{texte.formTitle}</p>
+        <p style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '1.25rem', fontFamily: PP }}>{texte.formIntro}</p>
+        {texte.formLines.map((zeile, i) =>
+          zeile ? (
+            <p key={i} style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, marginBottom: '0.35rem', fontFamily: PP }}>{zeile}</p>
+          ) : (
+            // Leerraum als Abstand, nicht als leerer Absatz: ein Absatz mit
+            // durchsichtigem Geviertstrich ist für Screenreader nur Rauschen.
+            <div key={i} style={{ height: '1.2rem' }} aria-hidden="true" />
+          ),
+        )}
+      </div>
+
+      {texte.bindingNote && (
+        <p style={{ fontSize: '0.8rem', lineHeight: 1.8, color: '#888', fontWeight: 300, marginTop: '1.5rem', fontFamily: PP }}>{texte.bindingNote}</p>
+      )}
+    </div>
+  )
+}
 
 export default function AGBPage() {
   return (
@@ -157,6 +217,21 @@ export default function AGBPage() {
                 <p style={{ fontSize: '0.9rem', lineHeight: 1.8, color: '#555', fontWeight: 300, fontFamily: PP }}>{text}</p>
               </div>
             ))}
+          </div>
+
+          {/* Abschnitt III — die Widerrufsbelehrung.
+              Eigener, deutlich abgesetzter Block: Sie ist keine Fußnote,
+              sondern die Pflichtinformation, ohne die die Widerrufsfrist nicht
+              zu laufen beginnt. Auf der Seite ALLEIN reicht sie dafür nicht —
+              eine Webseite ist kein dauerhafter Datenträger (EuGH C-49/11).
+              Deshalb geht derselbe Text aus `lib/widerruf.ts` auch in die
+              Bestellbestätigung. */}
+          <div id="widerruf" style={{ borderTop: '2px solid #ebebeb', paddingTop: '2rem', marginTop: '1rem', scrollMarginTop: '6rem' }}>
+            <p style={{ fontSize: '0.85rem', fontWeight: 500, marginBottom: '2rem', color: '#1A1A1A', fontFamily: PP }}>III. {WIDERRUF_DE.heading}</p>
+            <Belehrung texte={WIDERRUF_DE} />
+            <div style={{ borderTop: '1px solid #ebebeb', marginTop: '3rem', paddingTop: '2rem' }}>
+              <Belehrung texte={WIDERRUF_EN} />
+            </div>
           </div>
         </motion.div>
       </section>

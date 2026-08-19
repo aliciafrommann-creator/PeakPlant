@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { isAdmin } from '../../../../lib/adminAuth'
 import { PRODUCT_COPY, type ProductKey } from '../../../../lib/products'
+import { sendMail } from '../../../../lib/email'
+import { widerrufEmailHtml } from '../../../../lib/widerruf'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -103,6 +105,47 @@ export async function POST(req: NextRequest) {
     const finalized = await stripe.invoices.finalizeInvoice(invoice.id)
     await stripe.invoices.sendInvoice(finalized.id)
 
+    /**
+     * Die Widerrufsbelehrung — auch auf diesem Weg.
+     *
+     * Stripe verschickt hier die Rechnung, und es gibt KEINEN Webhook-Zweig
+     * für `invoice.paid`. Wer per Rechnung kauft, bekam die Pflichtinformation
+     * damit nie in Textform — und die Widerrufsfrist begann nicht zu laufen
+     * (§ 356 Abs. 3 BGB). Die Kundeninformation in den AGB behauptet, jede
+     * Bestätigung enthalte sie; für diesen Weg war das unwahr (MANIFESTO §1).
+     *
+     * Eigene Mail statt Rechnungsanhang, weil Stripe die Rechnung selbst
+     * verschickt und wir ihren Inhalt nicht bestimmen. Ein Fehlschlag hier
+     * darf die Rechnung nicht zurücknehmen — er wird aber laut protokolliert
+     * und im Antwortkörper gemeldet, damit er nicht still verschwindet.
+     */
+    let widerrufMailOk = true
+    if (order.email) {
+      try {
+        await sendMail({
+          to: order.email,
+          subject: 'your right of withdrawal · dein Widerrufsrecht',
+          html: `
+<div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;max-width:520px;margin:0 auto;padding:40px 32px;background:#fff;color:#1A1A1A">
+  <p style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;opacity:0.4;margin-bottom:32px">∧ peakplant</p>
+  <p style="font-size:14px;line-height:1.8;color:#555;font-weight:300;margin-bottom:24px">
+    your invoice is on its way in a separate email. below is your right of withdrawal —
+    keep this message, it is the version that counts.<br><br>
+    Deine Rechnung kommt in einer eigenen E-Mail. Unten steht dein Widerrufsrecht —
+    heb diese Nachricht auf, sie ist die maßgebliche Fassung.
+  </p>
+  ${widerrufEmailHtml()}
+</div>`,
+        })
+      } catch (mailErr) {
+        widerrufMailOk = false
+        console.error('[Invoice] Widerrufsbelehrung konnte nicht zugestellt werden', order.email, mailErr)
+      }
+    } else {
+      widerrufMailOk = false
+      console.error('[Invoice] keine E-Mail-Adresse an der Bestellung — Widerrufsbelehrung nicht zugestellt', orderId)
+    }
+
     // ── mark the order ───────────────────────────────────────────────
     const patch = await fetch(`${SUP_URL}/rest/v1/orders?id=eq.${orderId}`, {
       method: 'PATCH',
@@ -133,7 +176,16 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    return NextResponse.json({ ok: true, invoiceUrl: finalized.hosted_invoice_url })
+    return NextResponse.json({
+      ok: true,
+      invoiceUrl: finalized.hosted_invoice_url,
+      // Sichtbar im Antwortkörper: Eine still verlorene Belehrung heißt, dass
+      // die Widerrufsfrist nicht läuft. Das darf niemand übersehen.
+      widerrufMailOk,
+      ...(widerrufMailOk
+        ? {}
+        : { warnung: 'Rechnung ist raus, die Widerrufsbelehrung aber NICHT zugestellt. Bitte von Hand nachschicken.' }),
+    })
   } catch (err: any) {
     console.error('[Invoice] Error:', err)
     return NextResponse.json({ error: err.message ?? 'invoice failed' }, { status: 500 })

@@ -149,3 +149,25 @@ export async function sendMail(input: MailInput): Promise<MailResult> {
     return { sent: false, provider, error }
   }
 }
+
+/**
+ * HTML-Escape für alles, was ein Mensch selbst eingegeben hat.
+ *
+ * WARUM: Bis zum 18.08.2026 gingen Lieferadresse und Name roh in die
+ * Bestellbestätigung. Ein Name aus vier Zeichen — `<!--` — kommentiert alles
+ * dahinter weg, inklusive der kompletten Widerrufsbelehrung. Bitter daran:
+ * Der Käufer gibt die Adresse selbst ein UND profitiert davon, dass die
+ * Belehrung fehlt (§ 356 Abs. 3 BGB: die Frist beginnt dann nicht zu laufen).
+ * Ein `<a href="…">Zahlung bestätigen</a>` im Namensfeld landete außerdem in
+ * der Admin-Mail.
+ *
+ * Wer eine Mail baut, führt JEDEN Wert aus einer Bestellung hier durch.
+ */
+export function escapeHtml(value: unknown): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
