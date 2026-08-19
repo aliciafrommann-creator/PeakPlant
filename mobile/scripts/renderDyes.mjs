@@ -19,6 +19,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const HIER = path.dirname(fileURLToPath(import.meta.url));
@@ -35,6 +36,47 @@ const H = 140;
 // einem weichen Verlauf nicht.
 const STUFE = 4;
 
+// ── Der sichere Bereich ────────────────────────────────────────────────────
+// DER WICHTIGSTE TEIL DIESER DATEI. Eine Färbung ist ein BILD, kein flacher
+// Ton: Die Lichter sind heller als der Grund, die Störung hebt und senkt
+// zusätzlich. Schrift sitzt aber nicht auf dem Grund, sondern auf dem BILD.
+//
+// Am 19.08.2026 nachgemessen: Der Grund trug seine Tinte überall mit 5–13:1,
+// die hellsten Punkte der Bilder aber nur mit 1,55–3,94:1. ZWÖLF von dreizehn
+// Welten wären an ihrer schlechtesten Stelle durchgefallen — und kein Test
+// hätte es gemerkt, weil alle nur gegen den Grundton rechneten. Genau die
+// Sorte Fehler, die den Kontrast-Durchgang fünf Runden gekostet hat.
+//
+// Also wird jeder Punkt, der zu weit läuft, zum Grund zurückgezogen — nur so
+// weit wie nötig. Der Farbton bleibt, die Helligkeit kommt in den Bereich, in
+// dem die gewählte Tinte trägt. Das ist der Unterschied zwischen „sieht schön
+// aus" und „kann man lesen".
+const KANAL = (v) => { const c = v / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); };
+const LUM = ([r, g, b]) => 0.2126 * KANAL(r) + 0.7152 * KANAL(g) + 0.0722 * KANAL(b);
+const KONTRAST = (a, b) => {
+  const la = LUM(a), lb = LUM(b);
+  const [h, d] = la >= lb ? [la, lb] : [lb, la];
+  return (h + 0.05) / (d + 0.05);
+};
+const TINTE_DUNKEL = [0x1a, 0x1a, 0x1a];
+const TINTE_HELL = [0xfa, 0xf7, 0xf0];
+// Etwas über 4,5, damit das Runden auf Farbstufen die Grenze nicht wieder
+// unterschreitet.
+const ZIEL_KONTRAST = 4.7;
+
+function inDenBereich(farbe, grund, tinte) {
+  if (KONTRAST(tinte, farbe) >= ZIEL_KONTRAST) return farbe;
+  // Zum Grund mischen, bis es trägt. Der Grund selbst besteht — das hält
+  // `lib/dyes.test.ts` fest —, also endet die Suche immer.
+  let lo = 0, hi = 1;
+  for (let i = 0; i < 18; i++) {
+    const m = (lo + hi) / 2;
+    const probe = farbe.map((c, k) => c + (grund[k] - c) * m);
+    if (KONTRAST(tinte, probe) >= ZIEL_KONTRAST) hi = m; else lo = m;
+  }
+  return farbe.map((c, k) => c + (grund[k] - c) * hi);
+}
+
 // ── Rezepte aus constants/dyes.ts lesen ────────────────────────────────────
 // Bewusst per Textauswertung statt Import: Die Datei ist TypeScript, und ein
 // Build-Schritt nur fürs Drucken wäre eine Abhängigkeit zu viel.
@@ -50,6 +92,15 @@ function rezepte() {
   if (haus) out.push({ id: 'house', ground: haus[1], lights: [...haus[2].matchAll(/#[0-9A-Fa-f]{6}/g)].map((x) => x[0]) });
   return out;
 }
+
+/**
+ * Der Fingerabdruck eines Rezepts. Er wird als `tEXt`-Stück ins PNG geschrieben,
+ * damit `lib/dyes.test.ts` merkt, wenn jemand ein Rezept ändert und das Drucken
+ * vergisst. Vorher BEHAUPTETE der Test das nur: Ein Prüfer hat am 19.08.2026
+ * einen Grundton auf Knallgrün gedreht, ohne neu zu drucken — alles blieb grün.
+ */
+export const fingerabdruck = (rez) =>
+  crypto.createHash('sha256').update(`${rez.ground}|${rez.lights.join(',')}`).digest('hex').slice(0, 16);
 
 const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 
@@ -85,6 +136,9 @@ function fbm(seed, x, y) {
 function male({ ground, lights }, seed) {
   const g = hex(ground);
   const L = lights.map(hex);
+  // Welche Tinte auf diesem Grund liest — dieselbe Wahl wie `editionInk()`
+  // in der App. Danach richtet sich der sichere Bereich.
+  const tinte = KONTRAST(TINTE_DUNKEL, g) >= KONTRAST(TINTE_HELL, g) ? TINTE_DUNKEL : TINTE_HELL;
   // Die Lichter sitzen an festen Stellen, aber je Welt leicht versetzt —
   // „immer etwas anders" (Alicia, 19.08.2026), nie zufällig unterschiedlich.
   const r = prng(seed);
@@ -113,19 +167,21 @@ function male({ ground, lights }, seed) {
         summe += amp; amp *= 0.5; frq *= 2.1;
       }
       const f = 1 + ((n / summe) - 0.5) * 0.22;
+      const roh = [cr * f, cg * f, cb * f].map((c) => Math.max(0, Math.min(255, c)));
+      const sicher = inDenBereich(roh, g, tinte);
       const k = (c) => {
-        const v = Math.max(0, Math.min(255, Math.round(c * f)));
+        const v = Math.max(0, Math.min(255, Math.round(c)));
         return Math.min(255, Math.round(v / STUFE) * STUFE);
       };
       const i3 = (y * B + x) * 3;
-      px[i3] = k(cr); px[i3 + 1] = k(cg); px[i3 + 2] = k(cb);
+      px[i3] = k(sicher[0]); px[i3 + 1] = k(sicher[1]); px[i3 + 2] = k(sicher[2]);
     }
   }
   return px;
 }
 
 // ── PNG schreiben (ohne Fremdpaket) ────────────────────────────────────────
-function png(px) {
+function png(px, abdruck) {
   const roh = Buffer.alloc((B * 3 + 1) * H);
   for (let y = 0; y < H; y++) {
     roh[y * (B * 3 + 1)] = 0;
@@ -143,6 +199,8 @@ function png(px) {
   return Buffer.concat([
     Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
     stueck('IHDR', ihdr),
+    // Der Fingerabdruck des Rezepts, aus dem dieses Bild entstanden ist.
+    stueck('tEXt', Buffer.concat([Buffer.from('rezept\0', 'latin1'), Buffer.from(abdruck, 'latin1')])),
     stueck('IDAT', zlib.deflateSync(roh, { level: 9 })),
     stueck('IEND', Buffer.alloc(0)),
   ]);
@@ -162,7 +220,7 @@ fs.mkdirSync(ZIEL, { recursive: true });
 let gesamt = 0;
 for (const [i, rez] of rezepte().entries()) {
   const datei = path.join(ZIEL, `${rez.id}.png`);
-  const daten = png(male(rez, 1000 + i * 137));
+  const daten = png(male(rez, 1000 + i * 137), fingerabdruck(rez));
   fs.writeFileSync(datei, daten);
   gesamt += daten.length;
   console.log(`${rez.id}.png  ${(daten.length / 1024).toFixed(0)} KB`);

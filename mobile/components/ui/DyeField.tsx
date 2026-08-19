@@ -56,7 +56,11 @@ export function dyeImageKey(editionId?: string): string {
 export function DyeField({ editionId, style, children }: DyeFieldProps) {
   const dye = dyeOf(editionId);
   return (
-    <View style={[styles.feld, { backgroundColor: dye.ground }, style]}>
+    // Der Grundton steht ABSICHTLICH hinter `style`. Stünde er davor, könnte
+    // ein Aufrufer ihn mit einem eigenen `backgroundColor` still ausschalten —
+    // genau das war auf dem Editions-Kopf passiert: darunter lag `backgroundDark`,
+    // und solange das Bild lud, stand die gerechnete Tinte bei 1,02:1.
+    <View style={[styles.feld, style, { backgroundColor: dye.ground }]}>
       <Image
         source={BILDER[dyeImageKey(editionId)]}
         style={StyleSheet.absoluteFill}

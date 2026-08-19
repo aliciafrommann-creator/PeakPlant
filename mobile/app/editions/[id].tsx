@@ -336,7 +336,11 @@ const styles = StyleSheet.create({
   back: { fontSize: 12, fontWeight: '500', letterSpacing: 1.2, color: Colors.textMuted },
   list: { paddingBottom: Spacing.xl },
   header: {
-    backgroundColor: Colors.backgroundDark,
+    // Hier steht bewusst KEINE eigene Hintergrundfarbe. Der Grundton kommt
+    // aus `DyeField` und darf nicht überschrieben werden: Ein `backgroundDark`
+    // an dieser Stelle hat die gerechnete Tinte für zehn von zwölf Editionen
+    // auf 1,02:1 gedrückt, solange das Bild lud. `lib/dyeUse.test.ts` hält das
+    // jetzt fest.
     paddingHorizontal: Spacing.screen,
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.xl,

@@ -624,7 +624,10 @@ const styles = StyleSheet.create({
   },
   partnerHeart: { fontSize: 14, color: Colors.accentInk, marginTop: 2 },
   partnerText: {
-    ...Typography.stack,
+    // Bewusst `editorial`, NICHT `stack`: Der gestapelte Titel ist eine
+    // Überschrift ab 24 pt. Hier steht der Satz eines anderen Menschen bei
+    // 16 pt — als `stack` wäre er fette, eng gesperrte Georgia gewesen.
+    ...Typography.editorial,
     flex: 1,
     fontSize: 16,
     lineHeight: 23,

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { DYES, HOUSE_DYE, dyeFor } from '../constants/dyes';
 import { SEED_EDITIONS } from './seed';
 import { contrastRatio, luminance } from './contrast';
@@ -98,6 +99,18 @@ describe('Batik-Farbwelten', () => {
     expect(ihre).toEqual(['edition-01', 'edition-02', 'edition-03', 'edition-04']);
     expect(DYES['edition-02'].name).toBe('Cyber Midnight');
   });
+
+  it('ein Zeichen je Edition — Rezept und Seed sagen dasselbe', () => {
+    // In der ersten Fassung trug die Färbung ein EIGENES Emoji, neben dem
+    // `symbol` der Edition aus `lib/seed.ts`. Die Sammlung zeigte das eine,
+    // die Detailseite das andere: Wer auf 🌹 tippte, landete bei 🌻 — und 🌹
+    // markierte in der Liste Edition 01, in der Detailansicht Edition 02.
+    // Ein Zeichen, das zwei Dinge bedeutet, ist schlimmer als keines.
+    const uneins = SEED_EDITIONS.filter((e) => dyeFor(e.id)?.emoji !== e.symbol).map(
+      (e) => `${e.id}: Rezept ${dyeFor(e.id)?.emoji} ≠ Seed ${e.symbol}`,
+    );
+    expect(uneins, `zwei Zeichen für dieselbe Edition: ${uneins.join(' · ')}`).toEqual([]);
+  });
 });
 
 describe('Die gedruckten Färbungen', () => {
@@ -105,7 +118,9 @@ describe('Die gedruckten Färbungen', () => {
    * WARUM DAS GEPRÜFT WIRD: Die Färbung ist ein Bild, das aus dem Rezept
    * gerendert wurde (`scripts/renderDyes.mjs`). Rezept und Bild können
    * auseinanderlaufen — jemand ändert eine Welt und vergisst, neu zu drucken.
-   * Dann zeigt die App eine Färbung, die es im Code nicht mehr gibt.
+   * Dann zeigt die App eine Färbung, die es im Code nicht mehr gibt. Genau das
+   * hält der Fingerabdruck-Test unten fest; bis zum 19.08.2026 stand hier nur
+   * die Behauptung, geprüft wurde es nicht.
    */
   const ORDNER = path.resolve(__dirname, '..', 'assets', 'dyes');
 
@@ -124,6 +139,51 @@ describe('Die gedruckten Färbungen', () => {
       .map((f) => f.replace('.png', ''))
       .filter((id) => !erlaubt.has(id));
     expect(verwaist, `Bild ohne Rezept: ${verwaist.join(', ')}`).toEqual([]);
+  });
+
+  it('kein Bild, das zu einem alten Rezept gehört', () => {
+    // DER TEUERSTE WÄCHTER HIER. Vorher stand nur als Kommentar da, dass
+    // Rezept und Bild auseinanderlaufen können — geprüft wurde es nie. Ein
+    // Prüfer hat am 19.08.2026 einen Grundton auf Knallgrün gedreht, ohne neu
+    // zu drucken: dreizehn von dreizehn Tests blieben grün, und die App hätte
+    // eine Färbung gezeigt, die es im Code nicht mehr gibt.
+    //
+    // Seitdem trägt jedes PNG den Fingerabdruck seines Rezepts in einem
+    // `tEXt`-Stück (`scripts/renderDyes.mjs`). Hier wird er nachgerechnet.
+    const abdruck = (d: { ground: string; lights: readonly string[] }) =>
+      crypto.createHash('sha256').update(`${d.ground}|${d.lights.join(',')}`).digest('hex').slice(0, 16);
+
+    /** Liest das `tEXt`-Stück mit dem Schlüsselwort `rezept` aus einem PNG. */
+    const gedruckt = (datei: string): string | null => {
+      const buf = fs.readFileSync(datei);
+      let i = 8; // Signatur überspringen
+      while (i + 8 <= buf.length) {
+        const len = buf.readUInt32BE(i);
+        const typ = buf.toString('ascii', i + 4, i + 8);
+        if (typ === 'tEXt') {
+          const roh = buf.toString('latin1', i + 8, i + 8 + len);
+          const [schluessel, wert] = roh.split('\0');
+          if (schluessel === 'rezept') return wert;
+        }
+        i += 12 + len;
+      }
+      return null;
+    };
+
+    const alt: string[] = [];
+    const welten: [string, { ground: string; lights: readonly string[] }][] = [
+      ...Object.entries(DYES),
+      ['house', HOUSE_DYE],
+    ];
+    for (const [id, dye] of welten) {
+      const ist = gedruckt(path.join(ORDNER, `${id}.png`));
+      const soll = abdruck(dye);
+      if (ist !== soll) alt.push(`${id}: Bild ${ist ?? 'ohne Fingerabdruck'}, Rezept ${soll}`);
+    }
+    expect(
+      alt,
+      `Rezept geändert, aber nicht neu gedruckt (\`node scripts/renderDyes.mjs\`): ${alt.join(' · ')}`,
+    ).toEqual([]);
   });
 
   it('die Bilder bleiben klein genug fürs Bundle', () => {

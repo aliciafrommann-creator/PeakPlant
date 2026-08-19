@@ -116,6 +116,10 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     gap: Spacing.md,
   },
+  // Der Knopf war vorher inhaltsbreit. Mit der Färbung darauf ist er über die
+  // volle Breite: Eine gefärbte Fläche in Wortbreite sieht aus wie ein
+  // Textmarker, nicht wie die eine Handlung dieses Bildschirms (K3). Das war
+  // beim ersten Durchgang eine stille Änderung — sie steht jetzt hier.
   beginPress: { alignSelf: 'stretch' },
   /** Der erste Knopf der App — und die erste Färbung, die jemand sieht. */
   beginButton: {
@@ -136,10 +140,12 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   beginText: {
+    // KEINE Farbe hier: Sie wird beim Rendern gerechnet (`knopfTinte`). Ein
+    // statischer Wert, der nie zum Tragen kommt, täuscht beim Lesen eine
+    // Entscheidung vor — und beim nächsten Umbau glaubt ihn jemand.
     fontSize: 11,
     fontWeight: '500',
     letterSpacing: 1.2,
-    color: Colors.white,
   },
   hint: {
     fontSize: 11,

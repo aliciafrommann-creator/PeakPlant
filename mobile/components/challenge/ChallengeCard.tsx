@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Colors } from '../../constants/colors';
 import { HOUSE_DYE } from '../../constants/dyes';
-import { DyeField } from '../ui/DyeField';
 import { editionInk } from '../../lib/editionInk';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { Typography } from '../../constants/typography';
@@ -31,15 +30,17 @@ export function ChallengeCard({ challenge, joined, progress, onPress }: Challeng
       accessibilityRole="button"
       accessibilityLabel={`${l(challenge.title)}. ${l(challenge.subtitle)}`}
     >
-      {/* Das Kopfband trägt die Haus-Färbung — die eine farbige Fläche dieser
-          Karte. Der Rest bleibt Papier, damit zehn Challenges untereinander
-          keine Farbwand ergeben („Batik leise", Alicia 19.08.2026). */}
-      <DyeField style={styles.head}>
+      {/* Das Kopfband trägt den GRUNDTON des Hauses als flache Fläche, nicht
+          die Färbung. Diese Karte steht in einer Liste: zehn Challenges
+          untereinander ergäben zehn gleiche Batik-Bänder — genau die Farbwand,
+          gegen die „Batik leise" argumentiert (Alicia, 19.08.2026). Eine
+          Färbung gehört auf eine einzelne Fläche, nicht in eine Wiederholung. */}
+      <View style={[styles.head, { backgroundColor: HOUSE_DYE.ground }]}>
         <Text style={styles.badge}>{complete ? challenge.badge : HOUSE_DYE.emoji}</Text>
         <Text style={[styles.duration, { color: kopfTinte }]}>
           {l(challenge.durationLabel).toUpperCase()}
         </Text>
-      </DyeField>
+      </View>
       <Text style={styles.title}>{l(challenge.title)}</Text>
       <Text style={styles.subtitle} numberOfLines={2}>
         {l(challenge.subtitle)}

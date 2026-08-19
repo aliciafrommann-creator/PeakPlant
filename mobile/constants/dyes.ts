@@ -42,11 +42,10 @@ export interface Dye {
   /** Der Name der Farbwelt. */
   readonly name: string;
   /**
-   * Das Zeichen der Welt.
-   *
-   * Alicia am 19.08.2026 zu den Entwürfen: „mit den emojis haaammmer". Es
-   * gehört deshalb zum Rezept und nicht zur Edition — eine Welt bringt ihr
-   * Zeichen mit, so wie sie ihre Farben mitbringt.
+   * Das Zeichen der Edition — dasselbe wie `symbol` in `lib/seed.ts`. Es gibt
+   * bewusst nur EINES pro Edition: In der ersten Fassung trug die Färbung ein
+   * eigenes Zeichen, und wer in der Sammlung auf 🌹 tippte, landete auf einer
+   * Seite mit 🌻. `lib/dyes.test.ts` hält Rezept und Seed jetzt zusammen.
    */
   readonly emoji: string;
   /**
@@ -64,28 +63,28 @@ export const DYES: Readonly<Record<string, Dye>> = {
   // ── Alicias vier Welten (19.08.2026) ──────────────────────────────────
   'edition-01': {
     name: 'Velvet Passion',
-    emoji: '🌹',
+    emoji: '🌻',
     ground: '#F06AA8',
     lights: ['#FBC2DC', '#C0399B', '#F58A6E', '#F2C14E'],
     namedByAlicia: true,
   },
   'edition-02': {
     name: 'Cyber Midnight',
-    emoji: '🌙',
+    emoji: '🌹',
     ground: '#1D2B6B',
     lights: ['#22D3EE', '#8B5CF6', '#3B82F6', '#FF2D95'],
     namedByAlicia: true,
   },
   'edition-03': {
     name: 'Warm Ember',
-    emoji: '🔥',
+    emoji: '🌼',
     ground: '#F2A85E',
     lights: ['#FBD9A8', '#E8633A', '#D93B4E', '#F5C978'],
     namedByAlicia: true,
   },
   'edition-04': {
     name: 'Acid Electric',
-    emoji: '⚡',
+    emoji: '🌿',
     ground: '#C6F135',
     lights: ['#EAFCA0', '#E01E86', '#35E0E8', '#8B5CF6'],
     namedByAlicia: true,
@@ -139,7 +138,7 @@ export const DYES: Readonly<Record<string, Dye>> = {
   },
   'edition-11': {
     name: 'Lantern',
-    emoji: '🏮',
+    emoji: '🌙',
     ground: '#3D4A6B',
     lights: ['#7FA8C9', '#9AB4CE', '#5B4A7A', '#22D3EE'],
     namedByAlicia: false,

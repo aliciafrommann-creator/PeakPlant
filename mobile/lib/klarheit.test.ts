@@ -96,6 +96,34 @@ describe('K7 — Schrift und Kontrast', () => {
     expect(treffer, `zu klein: ${treffer.join(' · ')}`).toEqual([]);
   });
 
+  it('der gestapelte Titel bleibt ein Titel — nie unter 24 pt', () => {
+    // `Typography.stack` ist die gestapelte Serife nach Alicias Vorbild
+    // („schrift teils in die richtung wäre mega", 19.08.2026): 700er Georgia,
+    // Sperrung -1, Zeilen dichter als die Schrift hoch ist. Das trägt eine
+    // Überschrift und erschlägt einen Fließtext.
+    //
+    // Die Regel steht seit dem ersten Tag in `constants/typography.ts` — und
+    // wurde beim ERSTEN Anwenden gebrochen: Auf dem Startbildschirm saß sie
+    // auf der Notiz des anderen Menschen, bei 16 pt. Eine Regel, die nur als
+    // Kommentar dasteht, hält genau bis zur nächsten schnellen Zeile.
+    const treffer: string[] = [];
+    for (const f of SOURCES) {
+      const quelle = read(f);
+      for (const m of quelle.matchAll(/\.\.\.Typography\.stack\b/g)) {
+        // Der Style-Rumpf ab dem Spread bis zur schließenden Klammer.
+        const rest = quelle.slice(m.index!);
+        const ende = rest.indexOf('},');
+        const rumpf = ende === -1 ? rest.slice(0, 300) : rest.slice(0, ende);
+        const eigen = rumpf.match(/fontSize:\s*(\d+(?:\.\d+)?)/);
+        if (eigen && Number(eigen[1]) < 24) treffer.push(`${rel(f)} → ${eigen[1]}pt`);
+      }
+    }
+    expect(
+      treffer,
+      `gestapelter Titel unter 24 pt — dort gehört Typography.editorial hin: ${treffer.join(' · ')}`,
+    ).toEqual([]);
+  });
+
   /**
    * KONTRAST BLEIBT HIER UNGEPRÜFT — und das ist eine Entscheidung, keine Lücke.
    *

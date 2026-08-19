@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, StyleProp, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Spacing, Radii, Shadows } from '../../constants/spacing';
 import { PressableScale } from './PressableScale';
-import { DyeField, dyeOf } from './DyeField';
+import { HOUSE_DYE } from '../../constants/dyes';
 import { editionInk } from '../../lib/editionInk';
 
 interface FloatingActionButtonProps {
@@ -12,10 +12,6 @@ interface FloatingActionButtonProps {
   icon?: React.ComponentProps<typeof Ionicons>['name'];
   /** Optional short label rendered beside the icon (extended FAB). */
   label?: string;
-  /** Färbung dieser Edition. Ohne Angabe: die Haus-Färbung. */
-  editionId?: string;
-  /** Feste Fläche statt Färbung — nur, wo eine Färbung fehl am Platz wäre. */
-  color?: string;
   accessibilityLabel: string;
   style?: StyleProp<ViewStyle>;
 }
@@ -29,22 +25,22 @@ export function FloatingActionButton({
   onPress,
   icon = 'add',
   label,
-  /**
-   * Ohne Angabe trägt der Knopf die HAUS-FÄRBUNG (Alicia, 19.08.2026) — die
-   * lauteste Handlung der App bekommt die auffälligste Fläche.
-   *
-   * Die Beschriftung ist deshalb NICHT mehr fest weiß: Auf der hellen Färbung
-   * wäre sie 2,41:1. Sie wird gerechnet (`editionInk`) — dieselbe Falle, in
-   * die dieser Knopf am 18.08. schon einmal gelaufen ist, weil seine Füllung
-   * ein Vorgabewert in den Props ist und kein Style-Block, den ein Wächter
-   * sieht.
-   */
-  editionId,
-  color,
   accessibilityLabel,
   style,
 }: FloatingActionButtonProps) {
-  const tinte = editionInk(dyeOf(editionId).ground);
+  /**
+   * Der Knopf trägt den GRUNDTON des Hauses als flache Fläche — bewusst KEINE
+   * Färbung. Der Startbildschirm hatte sonst zwei gefärbte Flächen (Vorschlag
+   * des Tages und dieser Knopf), und K7b lässt eine zu. Alicias Richtung hieß
+   * „Batik leise … nur auf dem Vorschlag des Tages und dem Space-Punkt" — der
+   * Vorschlag behält sie, dieser Knopf gibt sie ab.
+   *
+   * Die Beschriftung ist NICHT fest weiß: Auf dem hellen Grundton wäre sie
+   * 2,41:1. Sie wird gerechnet (`editionInk`) — dieselbe Falle, in die dieser
+   * Knopf am 18.08. schon einmal gelaufen ist.
+   */
+  const grund = HOUSE_DYE.ground;
+  const tinte = editionInk(grund);
 
   return (
     <PressableScale
@@ -59,17 +55,10 @@ export function FloatingActionButton({
       containerStyle={[styles.fab, style]}
       style={[label ? styles.extended : styles.round, Shadows.float]}
     >
-      {color ? (
-        <View style={[styles.flaeche, { backgroundColor: color }]}>
-          <Ionicons name={icon} size={24} color={editionInk(color)} />
-          {label ? <Text style={[styles.label, { color: editionInk(color) }]}>{label}</Text> : null}
-        </View>
-      ) : (
-        <DyeField editionId={editionId} style={styles.flaeche}>
-          <Ionicons name={icon} size={24} color={tinte} />
-          {label ? <Text style={[styles.label, { color: tinte }]}>{label}</Text> : null}
-        </DyeField>
-      )}
+      <View style={[styles.flaeche, { backgroundColor: grund }]}>
+        <Ionicons name={icon} size={24} color={tinte} />
+        {label ? <Text style={[styles.label, { color: tinte }]}>{label}</Text> : null}
+      </View>
     </PressableScale>
   );
 }

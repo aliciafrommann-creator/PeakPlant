@@ -287,12 +287,25 @@ deshalb nicht „hell genug", sondern **nicht dazwischen**.
 **Bilder statt Verläufe.** React Native kann weder überlagerte Verläufe noch
 die Störung, die aus einem Verlauf gefärbten Stoff macht. Statt drei Pakete
 dazuzunehmen rendert `scripts/renderDyes.mjs` die Rezepte einmal zu PNG (reines
-Node, kein Fremdpaket, deterministisch). 229 KB für dreizehn Bilder; ein
-Wächter zieht die Grenze bei 400 KB. Rezept geändert heißt: neu drucken.
+Node, kein Fremdpaket, deterministisch — zweimal gelaufen, gleiche Bytes).
+216 KB für dreizehn Bilder; ein Wächter zieht die Grenze bei 400 KB. Rezept
+geändert heißt: neu drucken, und jedes PNG trägt den Fingerabdruck seines
+Rezepts, damit das nicht bloß ein Vorsatz bleibt.
+
+**Die Korrektur, die das Ganze fast gekostet hätte.** Die Tinte wurde gegen den
+GRUNDTON gerechnet — aber gesehen wird das BILD, und dort mischen sich die
+Lichter in den Grund. Ein Prüfdurchgang am 19.08.2026 hat jedes Pixel
+nachgerechnet: **zwölf von dreizehn Welten** fielen unter 4,5:1, „Cyber
+Midnight" (live, Edition 02) auf 1,55:1 bei 16,9 % der Fläche. Derselbe
+Fehlertyp, der im Kontrast-Durchgang schon fünf Runden gekostet hatte, nur eine
+Ebene tiefer verschoben: von der Deckkraft ins Bild. Der Drucker klemmt jede
+Stelle jetzt in den lesbaren Bereich, `lib/dyeImages.test.ts` liest die
+ausgelieferten PNG nach. **Merksatz:** Was die Tinte trägt, ist die Fläche, die
+ein Mensch sieht — nie der Wert, aus dem sie gerechnet wurde.
 
 **Die Regel, die das Ganze trägt, ist K7b im Skill `klarheit`:** eine gefärbte
-Fläche je Bildschirm, Papier bleibt der Grund. Der Entwurf, der gewonnen hat,
-heißt nicht umsonst „leise".
+Fläche je Bildschirm, Papier bleibt der Grund, und nie eine Färbung in einer
+Wiederholung. Der Entwurf, der gewonnen hat, heißt nicht umsonst „leise".
 
 ### Entscheidung 026 — Eine offene Beispielkarte je Edition (Alicia, 18.08.2026)
 
