@@ -1,4 +1,5 @@
 import { Edition, Memory, MomentCard, Space, SpaceMember, User } from './types';
+import { SAMPLE_CARDS, SAMPLE_CARD_BY_EDITION } from './content/samples';
 import { EDITION_01_CARDS } from './content/edition01';
 import { EDITION_02_CARDS } from './content/edition02';
 import { EDITION_03_CARDS } from './content/edition03';
@@ -43,6 +44,33 @@ export const SEED_MEMBERS: SpaceMember[] = [
  * Edition 02 is cards 21–40; each card's `number` is its position in its deck.
  */
 export const SEED_CARDS: MomentCard[] = [...EDITION_01_CARDS, ...EDITION_02_CARDS, ...EDITION_03_CARDS];
+
+/**
+ * Jede Karte, die die App ANZEIGEN kann — inklusive der Beispielkarten für die
+ * angekündigten Editionen.
+ *
+ * Bewusst getrennt von `SEED_CARDS`: Das Deck einer Edition, die Sammel-Zählung
+ * und der Scanner arbeiten weiter nur mit den echten Karten. Eine Beispielkarte
+ * ist etwas zum Lesen, nichts zum Sammeln — sonst stünde in der Sammlung eine
+ * Edition, die es noch nicht gibt.
+ */
+export const READABLE_CARDS: MomentCard[] = [...SEED_CARDS, ...SAMPLE_CARDS];
+
+/** Karte nach id — Deck-Karte oder Beispielkarte. */
+export function findCard(id: string | undefined): MomentCard | undefined {
+  if (!id) return undefined;
+  return READABLE_CARDS.find((c) => c.id === id);
+}
+
+/** Ist das eine Beispielkarte? Die Oberfläche muss das sagen dürfen (§1). */
+export function isSampleCard(id: string | undefined): boolean {
+  return !!id && SAMPLE_CARDS.some((c) => c.id === id);
+}
+
+/** Die offene Beispielkarte dieser Edition. */
+export function sampleCardFor(editionId: string): MomentCard | undefined {
+  return findCard(SAMPLE_CARD_BY_EDITION[editionId]);
+}
 
 /** Which cards each space has already preserved a moment for (spaceId → cardIds). */
 export const SEED_ACTIVATIONS: Record<string, string[]> = {

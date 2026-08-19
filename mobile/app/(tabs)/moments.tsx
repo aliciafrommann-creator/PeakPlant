@@ -23,7 +23,7 @@ import { MemoryFeedSkeleton } from '../../components/ui/Skeleton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { BackButton } from '../../components/ui/BackButton';
 import { MemoryCard } from '../../components/memory/MemoryCard';
-import { SEED_CARDS, SEED_EDITIONS } from '../../lib/seed';
+import { READABLE_CARDS, SEED_EDITIONS } from '../../lib/seed';
 import { shareMemory } from '../../lib/share';
 import type { Memory } from '../../lib/types';
 
@@ -37,12 +37,14 @@ export default function MomentsScreen() {
   const { authenticate } = useBiometric();
   const obscured = usePrivacyOverlay();
 
-  const cardById = useMemo(() => new Map(SEED_CARDS.map((c) => [c.id, c])), []);
+  const cardById = useMemo(() => new Map(READABLE_CARDS.map((c) => [c.id, c])), []);
   const sensitiveCardIds = useMemo(() => {
     const sensitiveEditions = new Set(
       SEED_EDITIONS.filter((e) => e.sensitive).map((e) => e.id),
     );
-    return new Set(SEED_CARDS.filter((c) => sensitiveEditions.has(c.edition)).map((c) => c.id));
+    // READABLE_CARDS, nicht SEED_CARDS: Eine Beispielkarte aus einer sensiblen
+    // Edition muss hinter derselben Biometrie liegen wie eine echte (§2).
+    return new Set(READABLE_CARDS.filter((c) => sensitiveEditions.has(c.edition)).map((c) => c.id));
   }, []);
 
   // A moment from a sensitive edition opens only behind biometrics — the same

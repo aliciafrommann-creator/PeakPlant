@@ -29,7 +29,7 @@ import { currentWeeklyChallenge, weeklyProgressFor, inSameIsoWeek } from '../../
 import { persistPickedPhoto } from '../../lib/photoStorage';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { FadeInImage } from '../../components/ui/FadeInImage';
-import { SEED_CARDS } from '../../lib/seed';
+import { findCard } from '../../lib/seed';
 
 const MOMENT = Sections.together; // warm apricot — capturing "our" moment
 // Die Schrift-/Vordergrund-Fassung derselben Farbe. `MOMENT` als Symbol- oder
@@ -41,6 +41,7 @@ const MOMENT_INK = SectionInks.together;
 export default function CreateMemoryScreen() {
   const {
     cardId,
+    scanned,
     prefillNote,
     savedDateId,
     savedDateTitle,
@@ -55,6 +56,20 @@ export default function CreateMemoryScreen() {
   } =
     useLocalSearchParams<{
       cardId?: string;
+      /**
+       * Nachweis, dass diese Karte wirklich in der Hand war.
+       *
+       * Gesetzt AUSSCHLIESSLICH von der Kartenansicht, und dort nur, wenn sie
+       * nicht als Beispiel geöffnet wurde. Ohne diesen Nachweis wird der
+       * Moment an KEINE Karte gehängt — er ist dann ein freier Moment.
+       *
+       * Warum an dieser Stelle und nicht am Weg hierher: Der Riegel hing
+       * vorher an einem Parameter, den zwei von sechs Aufrufern setzten. Der
+       * Demo-Knopf im Scanner und der geteilte Link `/c/card-01` setzten ihn
+       * nicht — vier Tipps ohne Deck ergaben „1 von 20 Karten geöffnet".
+       * Hier kann kein vergessener Parameter mehr etwas aufblähen.
+       */
+      scanned?: string;
       prefillNote?: string;
       savedDateId?: string;
       savedDateTitle?: string;
@@ -79,8 +94,13 @@ export default function CreateMemoryScreen() {
   // A moment only belongs to a card when a card actually sent us here (scan /
   // card screen). Everything else is a free moment — attributing it to card-01
   // would fake the collection count (MANIFESTO §1).
-  const selectedCardId = typeof cardId === 'string' && cardId.length > 0 ? cardId : undefined;
-  const card = selectedCardId ? SEED_CARDS.find((c) => c.id === selectedCardId) : undefined;
+  const selectedCardId =
+    scanned === '1' && typeof cardId === 'string' && cardId.length > 0 ? cardId : undefined;
+  // Die Karte wird trotzdem ANGEZEIGT, wenn sie mitgegeben wurde — nur
+  // gezählt wird sie nicht. Wer eine Beispielkarte gelesen hat und danach
+  // etwas festhält, soll sehen, worum es ging.
+  const angezeigteKarte = findCard(typeof cardId === 'string' ? cardId : undefined);
+  const card = angezeigteKarte;
 
   const cardTitle = card?.content ? l(card.content.title) : card?.prompt ?? '';
   const notePlaceholder = t(
