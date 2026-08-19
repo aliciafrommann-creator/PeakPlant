@@ -29,6 +29,7 @@ import { voice } from '../../lib/voice';
 import { PrivacyScreen } from '../../components/ui/PrivacyScreen';
 import { EmptyState } from '../../components/ui/EmptyState';
 import type { Memory, MomentCard } from '../../lib/types';
+import { DeckCard } from '../../components/edition/DeckCard';
 
 export default function EditionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -260,44 +261,49 @@ export default function EditionScreen() {
                     // zu zeigen, hieße: derselbe Bildschirm sagt oben „offen
                     // für alle" und unten „die gedruckte Karte öffnet sie".
                     const istBeispiel = sample?.id === c.id;
-                    return opened || istBeispiel ? (
-                      <PressableScale
+                    const offen = opened || istBeispiel;
+                    return (
+                      <DeckCard
                         key={c.id}
-                        containerStyle={styles.chipSlot}
-                        style={[styles.chip, styles.chipOpen]}
-                        scaleTo={0.96}
-                        onPress={() =>
-                          router.push({
-                            pathname: '/card/[id]',
-                            params: { id: c.id, ...(opened ? {} : { sample: '1' }) },
-                          })
+                        editionId={edition.id}
+                        number={c.number}
+                        offen={offen}
+                        titel={offen ? c.prompt : undefined}
+                        versiegeltText={t(
+                          'the printed card opens this one.',
+                          'die gedruckte Karte öffnet diese hier.',
+                        )}
+                        leseText={t('READ →', 'LESEN →')}
+                        onOeffnen={
+                          offen
+                            ? () =>
+                                router.push({
+                                  pathname: '/card/[id]',
+                                  params: { id: c.id, ...(opened ? {} : { sample: '1' }) },
+                                })
+                            : undefined
                         }
-                        accessibilityLabel={
-                          opened
+                        width={72}
+                        labelVorne={
+                          offen
                             ? t(
-                                `Card ${c.number}, opened — read it again`,
-                                `Karte ${c.number}, geöffnet — noch einmal lesen`,
+                                `Card ${c.number}, opened — tap to turn it`,
+                                `Karte ${c.number}, geöffnet — tippen zum Umdrehen`,
                               )
                             : t(
-                                `Card ${c.number}, the sample card — open to everyone`,
-                                `Karte ${c.number}, die Beispielkarte — offen für alle`,
+                                `Card ${c.number}, sealed — tap to turn it`,
+                                `Karte ${c.number}, versiegelt — tippen zum Umdrehen`,
                               )
                         }
-                      >
-                        <Text style={styles.chipNumOpen}>{String(c.number).padStart(2, '0')}</Text>
-                      </PressableScale>
-                    ) : (
-                      <View
-                        key={c.id}
-                        style={[styles.chip, styles.chipSealed]}
-                        accessible
-                        accessibilityLabel={t(
-                          `Card ${c.number}, sealed — the printed card opens it`,
-                          `Karte ${c.number}, versiegelt — die gedruckte Karte öffnet sie`,
-                        )}
-                      >
-                        <Text style={styles.chipNumSealed}>{String(c.number).padStart(2, '0')}</Text>
-                      </View>
+                        labelHinten={
+                          offen
+                            ? t(`Read card ${c.number}`, `Karte ${c.number} lesen`)
+                            : t(
+                                `Card ${c.number} — the printed card opens it`,
+                                `Karte ${c.number} — die gedruckte Karte öffnet sie`,
+                              )
+                        }
+                      />
                     );
                   })}
                 </View>
@@ -469,38 +475,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     marginTop: Spacing.xs,
   },
-  chipSlot: {},
-  chip: {
-    width: 46,
-    height: 46,
-    borderRadius: Radii.sm,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   /** Geöffnet: volle Farbe, antippbar — die Karte ist wieder lesbar. */
-  chipOpen: {
-    backgroundColor: Colors.text,
-  },
-  chipNumOpen: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: Colors.white,
-    fontVariant: ['tabular-nums'],
-  },
   /** Versiegelt: nur Umriss. Kein Schloss-Symbol — es ist keine Sicherheits-
       sperre, sondern eine Karte, die noch niemand gezogen hat. */
-  chipSealed: {
-    borderWidth: 1,
-    borderColor: Colors.border,
-    backgroundColor: 'transparent',
-  },
-  chipNumSealed: {
-    fontSize: 13,
-    fontWeight: '400',
-    // textFaint erreicht auf dem Papierton nur 3,03:1 — bei 13 pt zu wenig
-    // (AA verlangt 4,5). textSubtle liegt bei 4,55:1 und sieht fast gleich
-    // zurückgenommen aus.
-    color: Colors.textSubtle,
-    fontVariant: ['tabular-nums'],
-  },
 });

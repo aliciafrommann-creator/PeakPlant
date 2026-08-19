@@ -110,6 +110,27 @@ export interface Memory {
   updatedAt: string;
 }
 
+/**
+ * Die Tageskarte — ein Foto und eine Notiz, einmal am Tag, je Person.
+ * Eigenständig neben `Memory`: Ein Moment hängt an einer Karte oder Idee,
+ * eine Tageskarte an einem TAG und einer PERSON. Siehe `lib/daily.ts`.
+ */
+export interface Daily {
+  id: string;
+  spaceId: string;
+  authorId: string;
+  /** Für die Anzeige mitgeführt — sonst bräuchte jede Karte eine zweite Abfrage. */
+  authorName: string;
+  /** `YYYY-MM-DD` in der ORTSZEIT der schreibenden Person. */
+  day: string;
+  /** Die Rückseite. Darf leer sein: ein Foto allein ist auch ein Tag. */
+  note: string;
+  /** Die Vorderseite. Darf fehlen: ein Satz allein ist auch ein Tag. */
+  photoUri?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface User {
   id: string;
   name: string;

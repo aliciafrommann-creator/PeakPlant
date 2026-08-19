@@ -19,6 +19,11 @@ import { MemoryFeedSkeleton } from '../../components/ui/Skeleton';
 import { FadeInImage } from '../../components/ui/FadeInImage';
 import { useNotes } from '../../lib/hooks/useNotes';
 import { SpacePicker } from '../../components/space/SpacePicker';
+import { DailyRow } from '../../components/daily/DailyRow';
+import { dailyRepository } from '../../lib/repositories';
+import { tagesSchluessel, tagesReihe, karteVon } from '../../lib/daily';
+import { getSessionUser } from '../../lib/supabase/auth';
+import type { Daily } from '../../lib/types';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { MomentWall } from '../../components/home/MomentWall';
 import { AloneRow } from '../../components/home/AloneRow';
@@ -85,6 +90,39 @@ export default function HomeScreen() {
   // Die Tinte auf der Haus-Färbung — gerechnet, nicht gesetzt.
   const hausTinte = editionInk(HOUSE_DYE.ground);
   const { latestFromPartner } = useNotes(activeSpace?.id);
+
+  /**
+   * Die Tageskarten (Entscheidung Alicia, 19.08.2026 — eigenständig wie
+   * BeReal). Sie werden bei jeder Rückkehr auf den Bildschirm neu geholt:
+   * Wer gerade etwas dagelassen hat, soll es sofort sehen, ohne die App neu
+   * zu starten.
+   */
+  const [tageskarten, setTageskarten] = useState<Daily[]>([]);
+  const [eigeneId, setEigeneId] = useState<string>('lokal');
+  const tag = tagesSchluessel(new Date());
+
+  useFocusEffect(
+    useCallback(() => {
+      let lebt = true;
+      (async () => {
+        if (!activeSpace) return;
+        try {
+          const [person, alle] = await Promise.all([
+            getSessionUser(),
+            dailyRepository.getAll(activeSpace.id),
+          ]);
+          if (!lebt) return;
+          setEigeneId(person?.id ?? 'lokal');
+          setTageskarten(alle);
+        } catch {
+          // Kein Leerzustand behaupten, wenn wir es nur nicht wissen (K5).
+        }
+      })();
+      return () => {
+        lebt = false;
+      };
+    }, [activeSpace]),
+  );
 
 
   const hour = new Date().getHours();
@@ -322,6 +360,17 @@ export default function HomeScreen() {
           )}
           <Text style={styles.partnerArrow}>→</Text>
         </PressableScale>
+
+        {/* Die Tageskarten: was heute im Space dagelassen wurde. Der leere
+            Platz vorn ist die Einladung — nie ein „du hast heute noch
+            nicht" (MANIFESTO §3). */}
+        {activeSpace && (
+          <DailyRow
+            heute={tagesReihe(tageskarten, tag, eigeneId)}
+            eigeneDa={!!karteVon(tageskarten, eigeneId, tag)}
+            t={t}
+          />
+        )}
 
         {loading && recentMemories.length === 0 && !error && <MemoryFeedSkeleton count={3} />}
 

@@ -7,7 +7,7 @@
 import { supabase } from '../supabase/client';
 import { deleteMemoryPhoto, uploadMemoryPhoto, signedPhotoUrl } from '../supabase/storage';
 import { SEED_CARDS } from '../seed';
-import type {
+import type { Daily,
   Audience,
   AudienceKind,
   Share,
@@ -20,7 +20,7 @@ import type {
   PublicPlaceFeedback,
   PartnerNote,
 } from '../types';
-import type {
+import type { IDailyRepository,
   IShareRepository,
   IMemoryRepository,
   ICardRepository,
@@ -422,6 +422,69 @@ function mapNote(r: any): PartnerNote {
     createdAt: r.created_at,
   };
 }
+
+/* ---------------------------------------------------------------------------
+ * Tageskarten
+ *
+ * `upsert` mit `onConflict: 'space_id,author_id,day'` — die Regel „eine Karte
+ * je Person und Tag" steht damit in der DATENBANK, nicht nur im Bildschirm.
+ * Ein zweites Ablegen ersetzt; es entsteht nie eine zweite Zeile. Wer sich
+ * darauf verlaesst, dass die Oberflaeche das verhindert, hat die Regel nicht.
+ * ------------------------------------------------------------------------ */
+function mapDaily(row: Record<string, unknown>): Daily {
+  return {
+    id: row.id as string,
+    spaceId: row.space_id as string,
+    authorId: row.author_id as string,
+    authorName: (row.author_name as string) ?? '',
+    day: row.day as string,
+    note: (row.note as string) ?? '',
+    photoUri: (row.photo_path as string) ?? undefined,
+    createdAt: row.created_at as string,
+    updatedAt: (row.updated_at as string) ?? (row.created_at as string),
+  };
+}
+
+export const supabaseDailyRepository: IDailyRepository = {
+  async getAll(spaceId: string): Promise<Daily[]> {
+    const { data, error } = await db()
+      .from('dailies')
+      .select('*')
+      .eq('space_id', spaceId)
+      .order('day', { ascending: false })
+      .order('created_at', { ascending: true });
+    if (error) throw error;
+    return (data ?? []).map(mapDaily);
+  },
+
+  async upsert(item: Omit<Daily, 'id' | 'createdAt' | 'updatedAt'>): Promise<Daily> {
+    const { data: user } = await db().auth.getUser();
+    const autor = user.user?.id;
+    if (!autor) throw new Error('not signed in');
+    const { data, error } = await db()
+      .from('dailies')
+      .upsert(
+        {
+          space_id: item.spaceId,
+          author_id: autor,
+          author_name: item.authorName,
+          day: item.day,
+          note: item.note,
+          photo_path: item.photoUri ?? null,
+        },
+        { onConflict: 'space_id,author_id,day' },
+      )
+      .select()
+      .single();
+    if (error) throw error;
+    return mapDaily(data);
+  },
+
+  async remove(id: string): Promise<void> {
+    const { error } = await db().from('dailies').delete().eq('id', id);
+    if (error) throw error;
+  },
+};
 
 export const supabaseNoteRepository: INoteRepository = {
   async getAll(spaceId: string): Promise<PartnerNote[]> {

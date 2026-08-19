@@ -1,5 +1,5 @@
 import { storage } from '../storage';
-import type {
+import type { Daily,
   Audience,
   AudienceKind,
   Share,
@@ -23,7 +23,7 @@ import {
   SEED_MEMBERS,
   SEED_ACTIVATIONS,
 } from '../seed';
-import type {
+import type { IDailyRepository,
   IShareRepository,
   IMemoryRepository,
   ICardRepository,
@@ -462,6 +462,44 @@ export const localNoteRepository: INoteRepository = {
   },
 };
 
+
+/* ---------------------------------------------------------------------------
+ * Tageskarten — lokaler Rueckfall
+ *
+ * Auch ohne Server gilt die Regel: EINE Karte je Person und Tag. `upsert`
+ * ersetzt deshalb, statt anzulegen. Ohne das haette der lokale Betrieb eine
+ * andere Wahrheit als der echte, und der Fehler faellt erst auf, wenn zwei
+ * Menschen wirklich zusammen schreiben.
+ * ------------------------------------------------------------------------ */
+const DAILIES_KEY = 'peakplant.dailies';
+
+export const localDailyRepository: IDailyRepository = {
+  async getAll(spaceId: string): Promise<Daily[]> {
+    const stored = await storage.get<Daily[]>(DAILIES_KEY);
+    return (stored ?? [])
+      .filter((d) => d.spaceId === spaceId)
+      .sort((a, b) => b.day.localeCompare(a.day) || a.createdAt.localeCompare(b.createdAt));
+  },
+
+  async upsert(item: Omit<Daily, 'id' | 'createdAt' | 'updatedAt'>): Promise<Daily> {
+    const stored = (await storage.get<Daily[]>(DAILIES_KEY)) ?? [];
+    const vorhanden = stored.find(
+      (d) => d.spaceId === item.spaceId && d.authorId === item.authorId && d.day === item.day,
+    );
+    const jetzt = now();
+    const eintrag: Daily = vorhanden
+      ? { ...vorhanden, ...item, updatedAt: jetzt }
+      : { ...item, id: generateId('daily'), createdAt: jetzt, updatedAt: jetzt };
+    const rest = stored.filter((d) => d.id !== eintrag.id);
+    await storage.set(DAILIES_KEY, [eintrag, ...rest]);
+    return eintrag;
+  },
+
+  async remove(id: string): Promise<void> {
+    const stored = (await storage.get<Daily[]>(DAILIES_KEY)) ?? [];
+    await storage.set(DAILIES_KEY, stored.filter((d) => d.id !== id));
+  },
+};
 
 /* ---------------------------------------------------------------------------
  * Freigaben — lokaler Rueckfall
