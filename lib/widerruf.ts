@@ -18,6 +18,12 @@
  * („Gesetzlichkeitsfiktion"); wer daran formuliert, verliert diesen Schutz.
  * Umformulieren also nur mit anwaltlicher Prüfung.
  *
+ * ENTSCHIEDEN (Alicia, 19.08.2026): **Der Käufer trägt die Rücksendekosten.**
+ * Das ist zulässig, WEIL der Satz „Sie tragen die unmittelbaren Kosten der
+ * Rücksendung der Waren." unten im Muster steht — ohne diese Angabe trägt der
+ * Verkäufer sie kraft Gesetzes. Wer den Satz je entfernt, dreht damit die
+ * Kostenlast um, ohne es zu merken.
+ *
  * NICHT GEPRÜFT (MANIFESTO §1): Dieser Text ist aus dem amtlichen Muster
  * zusammengesetzt, nicht von einer Juristin geprüft. Zwei Punkte gehören
  * ausdrücklich mit auf den Zettel für die Prüfung:
