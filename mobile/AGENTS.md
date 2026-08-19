@@ -1,12 +1,46 @@
 # PeakPlant Mobile — Agent Notes
 
-Expo SDK 51 / React Native 0.74 / expo-router v3 / TypeScript strict. The mobile
+Expo SDK 54 / React Native 0.81 / React 19 / expo-router v6 / TypeScript strict. The mobile
 companion to the PeakPlant website (Next.js, parent directory). Read this before
 building; it reflects the **current** codebase, not the initial scaffold.
 
 > The product constitution lives in `../MANIFESTO.md` (wired via `CLAUDE.md`).
 > This file is the *how*; the manifesto is the *why and the guardrails*. When
 > they seem to conflict, the manifesto wins.
+
+### Entscheidung 029 — Umstieg auf Expo SDK 54 (19.08.2026)
+
+**Der Auslöser war kein Wunsch, sondern eine Sperre.** Alicia wollte die App
+auf ihrem iPhone ansehen. Expo Go für iOS unterstützt **immer nur die neueste
+SDK-Version** — man kann keine ältere installieren, das lässt Apple nicht zu.
+Mit SDK 51 war die App auf einem iPhone also nur über Xcode (7 GB) oder ein
+Apple-Entwicklerkonto (99 €/Jahr) erreichbar. Das ist keine Unbequemlichkeit,
+das ist eine Wand zwischen der Gründerin und ihrem eigenen Produkt.
+
+**Wie die Versionen gefunden wurden — ohne Raten.** Der übliche Weg
+(`npx expo install --fix`) braucht `api.expo.dev`, und das ist aus der
+Bau-Umgebung gesperrt. Die richtigen Versionen stehen aber im SDK selbst:
+`node_modules/expo/bundledNativeModules.json`. Daraus 24 Pakete angeglichen —
+gelesen, nicht erinnert.
+
+**Die drei echten Bruchstellen:**
+1. `expo-file-system`: Die alte API (`documentDirectory`, `cacheDirectory`)
+   liegt jetzt unter `expo-file-system/legacy`; der neue Einstieg hat eine
+   andere Form (File/Directory-Objekte). Drei Dateien auf den Legacy-Pfad
+   gezogen. **Bewusst keine Umschreibung:** Der Umstieg war nötig, damit die
+   App überhaupt startet — eine gleichzeitige Neufassung der Foto- und
+   Teilen-Wege wäre eine zweite, ungetestete Baustelle im selben Schritt.
+2. `react-dom` wurde transitiv auf 19.2 gezogen und stritt mit dem von SDK 54
+   vorgegebenen `react@19.1.0`. Gelöst mit einem `overrides`-Eintrag.
+3. `babel-preset-expo` war bis SDK 51 nur unter `expo` verschachtelt und wird
+   jetzt oben gebraucht — als ausdrückliche devDependency eingetragen.
+   TypeScript musste auf ~5.9 (SDK 54 nutzt `"module": "preserve"`).
+
+**Was NICHT geprüft ist:** dass die App auf einem Gerät läuft. `tsc`, ESLint,
+470 Tests und `expo export` sind grün — das beweist, dass sie *baut*, nicht
+dass sie *läuft*. React 18 → 19 und RN 0.74 → 0.81 sind drei SDK-Sprünge; wo
+es bricht, bricht es zur Laufzeit. Der erste Start auf einem echten Telefon ist
+der eigentliche Test, und den kann nur Alicia machen.
 
 ## Working agreement (every session)
 

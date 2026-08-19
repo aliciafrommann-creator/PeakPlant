@@ -5,7 +5,14 @@
  */
 
 import { Share } from 'react-native';
-import * as FileSystem from 'expo-file-system';
+// SDK 54: Die alte Datei-API (`documentDirectory`, `cacheDirectory`,
+// `copyAsync` …) liegt jetzt unter `expo-file-system/legacy`. Der neue
+// Einstieg `expo-file-system` hat eine andere Form (File/Directory-Objekte).
+// Bewusst der Legacy-Pfad statt einer Umschreibung: Der Umstieg auf SDK 54
+// war nötig, damit die App überhaupt auf einem iPhone startet — eine
+// gleichzeitige Umschreibung der Foto- und Teilen-Wege wäre eine zweite,
+// ungetestete Baustelle im selben Schritt gewesen.
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { buildICS } from './calendar';
 import type { CalendarPlan } from './calendar';
