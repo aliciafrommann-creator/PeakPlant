@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Logo } from '../../components/ui/Logo';
 import { PressableScale } from '../../components/ui/PressableScale';
 import { SpacePicker } from '../../components/space/SpacePicker';
+import { ModeSwitch } from '../../components/ui/ModeSwitch';
 import { StreakBanner } from '../../components/space/StreakBanner';
 import { Toast } from '../../components/ui/Toast';
 import { AnimatedFill } from '../../components/ui/AnimatedFill';
@@ -340,22 +341,20 @@ export default function DiscoverScreen() {
           />
         )}
 
-        {/* Section toggle: Surprise me / Idea library / Places map.
-            WISCHBAR, und das war ein Fehler: Bis zum 19.08.2026 stand hier ein
-            fester Block. Der dritte Knopf (die Karte) ragte über den Rand und
-            war damit UNERREICHBAR — Alicia auf dem Gerät: „bei surprise me und
-            all ideas kann man nicht wischen und alles sehen." Ein Weg, den man
-            sieht und nicht gehen kann, ist schlimmer als keiner (K3). */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.sectionToggle}
-        >
+        {/* Zwei Hälften, nicht drei Chips: IDEEN und ORTE sind Bereiche,
+            keine Filter. Der Karten-Chip stand hier bis zum 19.08.2026
+            gleichberechtigt neben zwei Filter-Knöpfen — und ragte über den
+            Rand. Ein ganzer Teil der App war dadurch unerreichbar.
+            (Alicia: „manche Wege sollten prominenter sein und nicht random
+            irgendwo als Button.") */}
+        <ModeSwitch aktiv="ideen" t={t} />
+
+        {/* Die zwei Wege INNERHALB der Ideen-Hälfte. */}
+        <View style={styles.sectionToggle}>
           <TouchableOpacity
             style={[styles.toggleChip, styles.toggleChipActive]}
             onPress={resetFilters}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: true }}
+            accessibilityRole="button"
             accessibilityLabel={t('Surprise me — reset filters', 'Überrasch mich — Filter zurücksetzen')}
           >
             <Text style={[styles.toggleChipText, styles.toggleChipTextActive]}>
@@ -372,40 +371,6 @@ export default function DiscoverScreen() {
             <Text style={styles.toggleChipText}>
               {t('💡 ALL IDEAS', '💡 ALLE IDEEN')}{'  '}
               <Ionicons name="arrow-forward" size={11} color={Colors.textSubtle} />
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.toggleChip}
-            onPress={() => { void acknowledgeSelection(); router.push('/(tabs)/community'); }}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={t('Local places near you', 'Orte in eurer Nähe')}
-          >
-            <Text style={styles.toggleChipText}>
-              {t('🗺️ MAP', '🗺️ KARTE')}{'  '}
-              <Ionicons name="arrow-forward" size={11} color={Colors.textSubtle} />
-            </Text>
-          </TouchableOpacity>
-        </ScrollView>
-
-        <View style={styles.titleBlock}>
-          <Text style={styles.generatorLabel}>{t(v.discoverKicker.en, v.discoverKicker.de)}</Text>
-          <Text style={styles.title}>{t(v.discoverQuestion.en, v.discoverQuestion.de)}</Text>
-          <Text style={styles.subtitle}>
-            {t(
-              `a real, doable idea — tuned to this ${timeOfDay}. tap a chip to refine.`,
-              `eine konkrete Idee für diesen ${timeOfDay === 'morning' ? 'Morgen' : timeOfDay === 'afternoon' ? 'Nachmittag' : 'Abend'}. chip antippen zum Eingrenzen.`,
-            )}
-          </Text>
-          <TouchableOpacity
-            style={styles.askInline}
-            onPress={() => router.push('/ask')}
-            activeOpacity={0.85}
-            accessibilityRole="button"
-            accessibilityLabel={t('Ask PeakPlant for a specific idea', 'PeakPlant nach einer spezifischen Idee fragen')}
-          >
-            <Text style={styles.askInlineText}>
-              {t('ASK PEAKPLANT FOR SOMETHING SPECIFIC', 'PEAKPLANT NACH ETWAS SPEZIFISCHEM FRAGEN')}
             </Text>
           </TouchableOpacity>
         </View>
